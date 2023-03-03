@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35509c77914aacb49bba3d043e124f3a, type: 3}
+  m_Name: EditorResources
+  m_EditorClassIdentifier: 
+  moveToolPan: {fileID: 2800000, guid: 3b233a1b08a26b24a9c79be6ccc146e1, type: 3}
+  moveTool3D: {fileID: 2800000, guid: 48b3ff5a1acd92f438744b38d67b3cad, type: 3}
+  RotateTool: {fileID: 2800000, guid: 4efa43d04a54d3a4c92ebc13523a3721, type: 3}
+  addNodeForward: {fileID: 2800000, guid: 6860e9cafcbf4e64cbd44bc71d2e4ab7, type: 3}
+  addNodeBack: {fileID: 2800000, guid: 36312bd0e4d2acb4b8b84521b4356627, type: 3}
+  removeNode: {fileID: 2800000, guid: c3a1ab41c8496c94c885a4cefba1f6c9, type: 3}

@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="mscorlib">
+    <type fullname="System.Diagnostics.DebuggableAttribute" preserve="all" />
+    <type fullname="System.Diagnostics.DebuggableAttribute/DebuggingModes" preserve="all" />
+    <type fullname="System.Nullable`1" preserve="all" />
+    <type fullname="System.Runtime.CompilerServices.CompilationRelaxationsAttribute" preserve="all" />
+    <type fullname="System.Runtime.CompilerServices.RuntimeCompatibilityAttribute" preserve="all" />
+    <type fullname="System.String" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.CoreModule">
+    <type fullname="UnityEngine.Camera" preserve="all" />
+    <type fullname="UnityEngine.CameraClearFlags" preserve="all" />
+    <type fullname="UnityEngine.Color" preserve="all" />
+    <type fullname="UnityEngine.CreateAssetMenuAttribute" preserve="all" />
+    <type fullname="UnityEngine.Material" preserve="all" />
+    <type fullname="UnityEngine.Rendering.CommandBuffer" preserve="all" />
+    <type fullname="UnityEngine.Rendering.CullingResults" preserve="all" />
+    <type fullname="UnityEngine.Rendering.DrawingSettings" preserve="all" />
+    <type fullname="UnityEngine.Rendering.FilteringSettings" preserve="all" />
+    <type fullname="UnityEngine.Rendering.RenderPipeline" preserve="all" />
+    <type fullname="UnityEngine.Rendering.RenderPipelineAsset" preserve="all" />
+    <type fullname="UnityEngine.Rendering.RenderQueueRange" preserve="all" />
+    <type fullname="UnityEngine.Rendering.ScriptableCullingParameters" preserve="all" />
+    <type fullname="UnityEngine.Rendering.ScriptableRenderContext" preserve="all" />
+    <type fullname="UnityEngine.Rendering.ShaderTagId" preserve="all" />
+    <type fullname="UnityEngine.Rendering.SortingCriteria" preserve="all" />
+    <type fullname="UnityEngine.Rendering.SortingSettings" preserve="all" />
+    <type fullname="UnityEngine.Shader" preserve="all" />
+  </assembly>
+</linker>

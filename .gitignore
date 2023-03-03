@@ -1,0 +1,14 @@
+/HelloWorld.vs/
+/HelloWorld/Bundles
+/HelloWorld/BundlesCache
+/HelloWorld/HybridCLRData/AssembliesPostIl2CppStrip
+/HelloWorld/HybridCLRData/HotUpdateDlls
+/HelloWorld/HybridCLRData/iOSBuild
+/HelloWorld/HybridCLRData/LocalIl2CppData-WindowsEditor
+/HelloWorld/HybridCLRData/StrippedAOTDllsTempProj
+/HelloWorld/Library/
+/HelloWorld/Logs
+/HelloWorld/obj
+/HelloWorld/Temp/
+/HelloWorld/*.csproj
+/HelloWorld/*.sln
