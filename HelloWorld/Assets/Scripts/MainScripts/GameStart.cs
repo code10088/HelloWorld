@@ -8,6 +8,7 @@ public partial class GameStart : MonoSingletion<GameStart>
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void Game()
     {
+        Application.runInBackground = true;
         GameStart.Instance.Init();
     }
     private void Init()
@@ -17,7 +18,6 @@ public partial class GameStart : MonoSingletion<GameStart>
     }
     private void Update()
     {
-        EventManager.Instance.Update();
-
+        AsyncManager.Instance.Update();
     }
 }

@@ -2,73 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public delegate void EventBindFunction(object obj);
-public class EventItem
-{
-    private event EventBindFunction eventBindFunction;
-    private object parameter;
-    private float time;
-    private float timer;
-    private int count;
-    public object Parameter
-    {
-        set { parameter = value; }
-        get { return parameter; }
-    }
-    public float Time
-    {
-        set { time = value; }
-        get { return time; }
-    }
-    public float Timer
-    {
-        set { timer = value; }
-        get { return timer; }
-    }
-    public int Count
-    {
-        set { count = value; }
-        get { return count; }
-    }
-    public void Add(EventBindFunction function)
-    {
-        eventBindFunction += function;
-    }
-    public void Remove(EventBindFunction function)
-    {
-        try
-        {
-            eventBindFunction -= function;
-        }
-        catch(Exception ex)
-        {
-            GameDebug.LogError(ex + "：卸载不存在事件");
-        }
-    }
-    public void Handle()
-    {
-        if (eventBindFunction != null)
-            eventBindFunction(parameter);
-    }
-}
-public class EventManager
+
+public class EventManager : Singletion<EventManager>
 {
     private Dictionary<GameEventType, EventItem> eventDic = new Dictionary<GameEventType, EventItem>();
-    private List<EventItem> eventList = new List<EventItem>();
 
-    private EventManager() { }
-    private static EventManager instance;
-    public static EventManager Instance
-    {
-        get
-        {
-            if (instance == null)
-                instance = new EventManager();
-            return instance;
-        }
-    }
-
-    public void RegisterEvent(GameEventType eventType, EventBindFunction function)
+    public void RegisterEvent(GameEventType eventType, Action<object> function)
     {
         if (eventDic.ContainsKey(eventType))
         {
@@ -81,21 +20,19 @@ public class EventManager
             eventDic.Add(eventType, item);
         }
     }
-    public void UnRegisterEvent(GameEventType eventType, EventBindFunction function)
+    public void UnRegisterEvent(GameEventType eventType, Action<object> function)
     {
         if (eventDic.ContainsKey(eventType))
         {
             EventItem item = eventDic[eventType];
             item.Remove(function);
-            if (eventList.Contains(item))
-                eventList.Remove(item);
         }
         else
         {
             GameDebug.LogError("卸载不存在事件类型");
         }
     }
-    public void FireEvent(GameEventType eventType, object obj = null)
+    public void FireEvent(GameEventType eventType, params object[] obj)
     {
         if (eventDic.ContainsKey(eventType))
         {
@@ -107,39 +44,33 @@ public class EventManager
             GameDebug.LogError("执行不存在事件类型");
         }
     }
-    public void FireEventDelay(GameEventType eventType, float timer, object obj = null, int count = 1)
+    private class EventItem
     {
-        if (eventDic.ContainsKey(eventType))
+        private event Action<object> eventBindFunction;
+        private object[] parameter;
+        public object[] Parameter
         {
-            EventItem item = eventDic[eventType];
-            item.Parameter = obj;
-            item.Timer = timer;
-            item.Count = count;
-            eventList.Add(item);
+            set { parameter = value; }
+            get { return parameter; }
         }
-        else
+        public void Add(Action<object> function)
         {
-            GameDebug.LogError("执行不存在事件类型");
+            eventBindFunction += function;
         }
-    }
-    public void Update()
-    {
-        for (int i = 0; i < eventList.Count;)
+        public void Remove(Action<object> function)
         {
-            EventItem item = eventList[i];
-            item.Time += Time.deltaTime;
-            if (item.Time > item.Timer)
+            try
             {
-                item.Handle();
-                item.Time = 0;
-                item.Count--;
-                if (item.Count <= 0)
-                {
-                    eventList.Remove(item);
-                    continue;
-                }
+                eventBindFunction -= function;
             }
-            i++;
+            catch (Exception ex)
+            {
+                GameDebug.LogError(ex + "：卸载不存在事件");
+            }
+        }
+        public void Handle()
+        {
+            if (eventBindFunction != null) eventBindFunction(parameter);
         }
     }
 }

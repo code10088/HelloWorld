@@ -11,6 +11,7 @@ public class UIManager : Singletion<UIManager>
     public Transform tUIRoot;
     public Camera UICamera;
     private EventSystem eventSystem;
+    public static int layer = 0;
     private List<UIItem> loadUI = new List<UIItem>();
     private List<UIItem> curUI = new List<UIItem>();
     private List<UIItem> cacheUI = new List<UIItem>();
@@ -26,11 +27,22 @@ public class UIManager : Singletion<UIManager>
     }
     public void OpenUI(UIType type, Action open = null, params object[] param)
     {
+        UIType from = GetFromUI();
+        if (type == UIType.MainUI)
+        {
+            for (int i = 0; i < loadUI.Count; i++) loadUI[i].Release();
+            cacheUI.AddRange(loadUI);
+            loadUI.Clear();
+            for (int i = 0; i < curUI.Count; i++) curUI[i].Release();
+            cacheUI.AddRange(loadUI);
+            curUI.Clear();
+        }
+
         int tempIndex = loadUI.FindIndex(a => a.Type == type);
         if (tempIndex >= 0)
         {
             UIItem item = loadUI[tempIndex];
-            item.SetParam(open, param);
+            item.SetParam(from, open, param);
             item.Load();
             return;
         }
@@ -39,7 +51,7 @@ public class UIManager : Singletion<UIManager>
         if (tempIndex >= 0)
         {
             UIItem item = curUI[tempIndex];
-            item.SetParam(open, param);
+            item.SetParam(from, open, param);
             curUI.RemoveAt(tempIndex);
             loadUI.Add(item);
             item.Load();
@@ -50,7 +62,7 @@ public class UIManager : Singletion<UIManager>
         if (tempIndex >= 0)
         {
             UIItem item = cacheUI[tempIndex];
-            item.SetParam(open, param);
+            item.SetParam(from, open, param);
             cacheUI.RemoveAt(tempIndex);
             loadUI.Add(item);
             item.Load();
@@ -58,7 +70,7 @@ public class UIManager : Singletion<UIManager>
         }
 
         UIItem _item = new UIItem(type);
-        _item.SetParam(open, param);
+        _item.SetParam(from, open, param);
         loadUI.Add(_item);
         _item.Load();
     }
@@ -104,6 +116,11 @@ public class UIManager : Singletion<UIManager>
         }
         return null;
     }
+    private UIType GetFromUI()
+    {
+        //TODO：获取当前非本身、非提示UI
+        return UIType.None;
+    }
 
     public void SetEventSystemState(bool state)
     {
@@ -111,16 +128,18 @@ public class UIManager : Singletion<UIManager>
         if (cur != state) eventSystem.enabled = state;
     }
 
-    public class UIItem
+    private class UIItem
     {
         private UIType type;
+        private UIType from;
+        private UIConfig config;
         private InstantiateRequest ir;
         private UIBase baseUI;
         private Action open = null;
         private object[] param = null;
 
         private int state = 0;//7：二进制111：分别表示release init load
-        private float releaseTime = 30f;
+        private float releaseTime = 10f;
         private int timerId = -1;
 
         public UIType Type => type;
@@ -131,9 +150,11 @@ public class UIManager : Singletion<UIManager>
         public UIItem(UIType type)
         {
             this.type = type;
+            //config = 
         }
-        public void SetParam(Action open = null, params object[] param)
+        public void SetParam(UIType from, Action open = null, params object[] param)
         {
+            this.from = from;
             this.open = open;
             this.param = param;
         }
@@ -158,8 +179,8 @@ public class UIManager : Singletion<UIManager>
         private void LoadFinish(Request request)
         {
             if (ir != null && ir.result == Request.Result.Success) state |= 1;
-            else Release();
-            releaseTime = Mathf.Lerp(releaseTime, 120f, 0.5f);
+            else Release(true);
+            releaseTime = Mathf.Lerp(releaseTime, 120f, 0.2f);
             Instance.SetEventSystemState(true);
             Instance.InitUI(this);
         }
@@ -170,7 +191,7 @@ public class UIManager : Singletion<UIManager>
                 Type t = System.Type.GetType(type.ToString());
                 ConstructorInfo c = t.GetConstructor(new Type[] { });
                 baseUI = (UIBase)c.Invoke(new object[] { });
-                baseUI.InitUI(ir.gameObject, param);
+                baseUI.InitUI(ir.gameObject, config, from, param);
                 open?.Invoke();
                 state |= 2;
             }
@@ -180,9 +201,10 @@ public class UIManager : Singletion<UIManager>
                 open?.Invoke();
             }
         }
-        public void Release()
+        public void Release(bool immediate = false)
         {
-            if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, _Release);
+            if (immediate) _Release();
+            else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);
             state |= 4;
         }
         private void _Release()

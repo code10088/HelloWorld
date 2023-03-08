@@ -1,28 +1,58 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityExtensions.Tween;
 
 public class UIBase
 {
-    public GameObject UIObj;
-    public virtual void InitUI(GameObject UIObj, params object[] param)
+    protected GameObject UIObj;
+    protected UIConfig config;
+    protected UIType from;
+    private Dictionary<int, int> layerRecord = new Dictionary<int, int>();
+    public virtual void InitUI(GameObject UIObj, UIConfig config, UIType from, params object[] param)
     {
         this.UIObj = UIObj;
-        OnPlayUIAnimation();
+        this.config = config;
+        this.from = from;
+        ResetUILayer();
+        PlayInitAni();
     }
     public virtual void Refresh(params object[] param)
     {
-
+        ResetUILayer();
     }
-    public virtual void OnPlayUIAnimation()
+    private void ResetUILayer()
+    {
+        Canvas[] canvas = UIObj.GetComponentsInChildren<Canvas>(true);
+        for (int i = 0; i < canvas.Length; i++)
+        {
+            int tempKey = canvas[i].GetInstanceID();
+            if (layerRecord.TryGetValue(tempKey, out int tempLayer))
+            {
+                UIManager.layer += tempLayer;
+                canvas[i].sortingOrder = UIManager.layer;
+            }
+            else
+            {
+                tempLayer = canvas[i].sortingOrder;
+                layerRecord[tempKey] = tempLayer;
+                UIManager.layer += tempLayer;
+                canvas[i].sortingOrder = UIManager.layer;
+            }
+        }
+    }
+    public virtual void PlayInitAni()
     {
         TweenPlayer tp = UIObj.GetComponent<TweenPlayer>();
         if (tp) tp.SetForwardDirectionAndEnabled();
     }
 	public virtual void OnDestroy()
     {
-
+        layerRecord.Clear();
+    }
+    protected virtual void OnClose()
+    {
+        UIManager.Instance.CloseUI(config.type);
+        UIManager.Instance.OpenUI(from);
     }
 }
