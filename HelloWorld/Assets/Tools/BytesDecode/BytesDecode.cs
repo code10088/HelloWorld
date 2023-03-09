@@ -65,6 +65,17 @@ public class BytesDecode
         index++;
         return bc;
     }
+    public bool[] ToBoolArray()
+    {
+        int len = ToInt();
+        if (len > 0)
+        {
+            bool[] bc = new bool[len];
+            for (int i = 0; i < len; i++) bc[i] = ToBool();
+            return bc;
+        }
+        return null;
+    }
     public byte ToByte()
     {
         byte bc = bytes[index];
@@ -89,6 +100,17 @@ public class BytesDecode
         index += 2;
         return bc;
     }
+    public short[] ToShortArray()
+    {
+        int len = ToInt();
+        if (len > 0)
+        {
+            short[] bc = new short[len];
+            for (int i = 0; i < len; i++) bc[i] = ToShort();
+            return bc;
+        }
+        return null;
+    }
     public int ToInt()
     {
         int bc = BitConverter.ToInt32(bytes, index);
@@ -111,6 +133,17 @@ public class BytesDecode
         float bc = BitConverter.ToSingle(bytes, index);
         index += 4;
         return bc;
+    }
+    public float[] ToFloatArray()
+    {
+        int len = ToInt();
+        if (len > 0)
+        {
+            float[] bc = new float[len];
+            for (int i = 0; i < len; i++) bc[i] = ToFloat();
+            return bc;
+        }
+        return null;
     }
     public string ToStr()
     {
@@ -140,6 +173,17 @@ public class BytesDecode
         float y = ToFloat();
         float z = ToFloat();
         return new Vector3(x, y, z);
+    }
+    public Vector3[] ToVector3Array()
+    {
+        int len = ToInt();
+        if (len > 0)
+        {
+            Vector3[] bc = new Vector3[len];
+            for (int i = 0; i < len; i++) bc[i] = ToVector3();
+            return bc;
+        }
+        return null;
     }
     public Quaternion ToQuaternion()
     {
@@ -226,6 +270,11 @@ public class BytesDecode
         ToBytes(a.y);
         ToBytes(a.z);
     }
+    public void ToBytes(Vector3[] a)
+    {
+        ToBytes(a.Length);
+        for (int i = 0; i < a.Length; i++) ToBytes(a[i]);
+    }
     public void ToBytes(Quaternion a)
     {
         ToBytes(a.x);
@@ -292,15 +341,19 @@ public class BytesDecode
             switch (tempStr)
             {
                 case "System.Boolean": str2 += $"        {fileds[i].Name} = bd.ToBool();\n"; break;
+                case "System.Boolean[]": str2 += $"        {fileds[i].Name} = bd.ToBoolArray();\n"; break;
                 case "System.Byte": str2 += $"        {fileds[i].Name} = bd.ToByte();\n"; break;
                 case "System.Byte[]": str2 += $"        {fileds[i].Name} = bd.ToByteArray();\n"; break;
                 case "System.Int16": str2 += $"        {fileds[i].Name} = bd.ToShort();\n"; break;
+                case "System.Int16[]": str2 += $"        {fileds[i].Name} = bd.ToShortArray();\n"; break;
                 case "System.Int32": str2 += $"        {fileds[i].Name} = bd.ToInt();\n"; break;
                 case "System.Int32[]": str2 += $"        {fileds[i].Name} = bd.ToIntArray();\n"; break;
                 case "System.Single": str2 += $"        {fileds[i].Name} = bd.ToFloat();\n"; break;
+                case "System.Single[]": str2 += $"        {fileds[i].Name} = bd.ToFloatArray();\n"; break;
                 case "System.String": str2 += $"        {fileds[i].Name} = bd.ToStr();\n"; break;
                 case "System.String[]": str2 += $"        {fileds[i].Name} = bd.ToStrArray();\n"; break;
                 case "UnityEngine.Vector3": str2 += $"        {fileds[i].Name} = bd.ToVector3();\n"; break;
+                case "UnityEngine.Vector3[]": str2 += $"        {fileds[i].Name} = bd.ToVector3Array();\n"; break;
                 case "UnityEngine.Quaternion": str2 += $"        {fileds[i].Name} = bd.ToQuaternion();\n"; break;
                 default:
                     if (tempStr.EndsWith("[]"))
