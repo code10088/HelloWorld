@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
-public class Data_testArray : BytesDecodeInterface
+public class Data_TestArray : BytesDecodeInterface
 {
-    public Data_test[] array;
+    public Data_Test[] array;
     public void Deserialize(BytesDecode bd)
     {
-        array = bd.ToBDIArray(() => new Data_test());
+        array = bd.ToBDIArray(() => new Data_Test());
     }
     public void Serialize(BytesDecode bd)
     {
         bd.ToBytes(array);
     }
 }
-public class Data_test : BytesDecodeInterface
+public class Data_Test : BytesDecodeInterface
 {
     public int ID;
     public string Name;
@@ -19,10 +19,10 @@ public class Data_test : BytesDecodeInterface
     public float Time1;
     public short Time2;
     public byte Data;
-    public Mgb mMgb;
-    public Vector3 CmdV;
-    public Vector3[] Cmd2;
-    public int[] Cmd;
+    public Mgb nMgb;
+    public Vector3 Data2;
+    public Vector3[] Data3;
+    public int[] Data4;
     public void Deserialize(BytesDecode bd)
     {
         ID = bd.ToInt();
@@ -31,10 +31,10 @@ public class Data_test : BytesDecodeInterface
         Time1 = bd.ToFloat();
         Time2 = bd.ToShort();
         Data = bd.ToByte();
-        mMgb = (Mgb)bd.ToInt();
-        CmdV = bd.ToVector3();
-        Cmd2 = bd.ToVector3Array();
-        Cmd = bd.ToIntArray();
+        nMgb = (Mgb)bd.ToInt();
+        Data2 = bd.ToVector3();
+        Data3 = bd.ToVector3Array();
+        Data4 = bd.ToIntArray();
     }
     public void Serialize(BytesDecode bd)
     {
@@ -44,10 +44,10 @@ public class Data_test : BytesDecodeInterface
         bd.ToBytes(Time1);
         bd.ToBytes(Time2);
         bd.ToBytes(Data);
-        bd.ToBytes((int)mMgb);
-        bd.ToBytes(CmdV);
-        bd.ToBytes(Cmd2);
-        bd.ToBytes(Cmd);
+        bd.ToBytes((int)nMgb);
+        bd.ToBytes(Data2);
+        bd.ToBytes(Data3);
+        bd.ToBytes(Data4);
     }
 }
 public enum Mgb

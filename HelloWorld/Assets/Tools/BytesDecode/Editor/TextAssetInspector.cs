@@ -86,11 +86,10 @@ namespace UnityEditor
                         {
                             byte[] bytes = m_TextAsset.bytes;
                             BytesDecode bd = new BytesDecode(bytes);
-                            string name = bd.ToStr();
-                            Type type = Assembly.GetExecutingAssembly().GetType(name);
-                            var mi = type.GetMethod("Deserialize");
-                            object obj = Activator.CreateInstance(type);
-                            mi.Invoke(obj, new object[] { bd });
+                            Assembly assembly = Assembly.GetAssembly(typeof(BytesDecode));
+                            dynamic obj = assembly.CreateInstance(bd.ToStr());
+                            obj?.Deserialize(bd);
+                            Debug.LogError(111);
                             bytesPropertyTree = PropertyTree.Create(obj);
                         }
                         catch

@@ -1,0 +1,12 @@
+C:\Users\user\Desktop\ExcelData\obj\Debug\ExcelData.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\ExcelData\obj\Debug\ExcelData.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\ExcelData\bin\Debug\ExcelData.exe.config
+C:\Users\user\Desktop\ExcelData\bin\Debug\ExcelData.exe
+C:\Users\user\Desktop\ExcelData\bin\Debug\ExcelData.pdb
+C:\Users\user\Desktop\ExcelData\obj\Debug\ExcelData.exe
+C:\Users\user\Desktop\ExcelData\obj\Debug\ExcelData.pdb
+C:\Users\user\Desktop\ExcelData\bin\Debug\UnityEngine.CoreModule.dll
+C:\Users\user\Desktop\ExcelData\bin\Debug\UnityEngine.SharedInternalsModule.dll
+C:\Users\user\Desktop\ExcelData\bin\Debug\UnityEngine.CoreModule.xml
+C:\Users\user\Desktop\ExcelData\bin\Debug\UnityEngine.SharedInternalsModule.xml
+C:\Users\user\Desktop\ExcelData\obj\Debug\ExcelData.csproj.CopyComplete
