@@ -25,19 +25,6 @@ public class Data_test : BytesDecodeInterface
     public int[] Cmd;
     public void Deserialize(BytesDecode bd)
     {
-        bd.ToBytes(ID);
-        bd.ToBytes(Name);
-        bd.ToBytes(Old);
-        bd.ToBytes(Time1);
-        bd.ToBytes(Time2);
-        bd.ToBytes(Data);
-        bd.ToBytes((int)mMgb);
-        bd.ToBytes(CmdV);
-        bd.ToBytes(Cmd2);
-        bd.ToBytes(Cmd);
-    }
-    public void Serialize(BytesDecode bd)
-    {
         ID = bd.ToInt();
         Name = bd.ToStr();
         Old = bd.ToBool();
@@ -48,6 +35,19 @@ public class Data_test : BytesDecodeInterface
         CmdV = bd.ToVector3();
         Cmd2 = bd.ToVector3Array();
         Cmd = bd.ToIntArray();
+    }
+    public void Serialize(BytesDecode bd)
+    {
+        bd.ToBytes(ID);
+        bd.ToBytes(Name);
+        bd.ToBytes(Old);
+        bd.ToBytes(Time1);
+        bd.ToBytes(Time2);
+        bd.ToBytes(Data);
+        bd.ToBytes((int)mMgb);
+        bd.ToBytes(CmdV);
+        bd.ToBytes(Cmd2);
+        bd.ToBytes(Cmd);
     }
 }
 public enum Mgb

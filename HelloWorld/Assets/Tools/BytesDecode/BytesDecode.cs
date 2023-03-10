@@ -26,14 +26,14 @@ public class BytesDecode
     /// </summary>
     /// <param name="bdi"></param>
     /// <param name="num"></param>
-    /// <param name="path">Assets下的相对路径</param>
+    /// <param name="path"></param>
     public static void Serialize(BytesDecodeInterface bdi, int num, string path)
     {
         List<byte> list = new List<byte>(num);
         BytesDecode bd = new BytesDecode(list);
         bd.ToBytes(bdi.GetType().ToString());
         bdi.Serialize(bd);
-        File.WriteAllBytes($"{Application.dataPath}/{path}.bytes", list.ToArray());
+        File.WriteAllBytes(path, list.ToArray());
 
         bd.bytes = null;
         bd.result = null;
@@ -392,10 +392,10 @@ public class BytesDecode
         var objs = UnityEditor.Selection.objects;
         for (int i = 0; i < objs.Length; i++)
         {
-            if(objs[i] is ScriptableObject && objs[i] is BytesDecodeInterface)
+            if (objs[i] is ScriptableObject && objs[i] is BytesDecodeInterface)
             {
                 string path = UnityEditor.AssetDatabase.GetAssetPath(objs[i]);
-                path = path.Substring(7, path.Length - 13);
+                path = Application.dataPath + path.Substring(6).Replace(".asset", ".bytes");
                 Serialize((BytesDecodeInterface)objs[i], 0, path);
             }
         }

@@ -395,7 +395,7 @@ namespace UnityExtensions.Tween
                     {
                         TweenAnimation.tweenAniRoot = target.transform;
                         string path = AssetDatabase.GetAssetPath(target.config);
-                        path = path.Substring(7, path.Length - 13);
+                        path = Application.dataPath + path.Substring(6).Replace(".asset", ".bytes");
                         BytesDecode.Serialize(target, 0, path);
                         return;
                     }
