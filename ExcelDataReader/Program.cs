@@ -83,6 +83,7 @@ namespace MyClass
             string enumCode = "";
             string serializeCode = "";
             string deserializeCode = "";
+            code += "using System;\n";
             code += "using UnityEngine;\n";
             code += $"public class {className}Array : BytesDecodeInterface\n";
             code += "{\n";
@@ -96,6 +97,9 @@ namespace MyClass
             code += "        bd.ToBytes(array);\n";
             code += "    }\n";
             code += "}\n";
+            code += "#if UNITY_EDITOR\n";
+            code += "[Serializable]\n";
+            code += "#endif\n";
             code += $"public class {className} : BytesDecodeInterface\n";
             code += "{\n";
             for (int i = 0; i < table.Columns.Count; i++)

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 public class Data_TestArray : BytesDecodeInterface
 {
     public Data_Test[] array;
@@ -11,6 +12,9 @@ public class Data_TestArray : BytesDecodeInterface
         bd.ToBytes(array);
     }
 }
+#if UNITY_EDITOR
+[Serializable]
+#endif
 public class Data_Test : BytesDecodeInterface
 {
     public int ID;

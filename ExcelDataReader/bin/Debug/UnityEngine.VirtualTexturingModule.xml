@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<doc>
+  <members>
+    <assembly>
+      <name>UnityEngine.VirtualTexturingModule</name>
+    </assembly>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.FilterMode">
+      <summary>
+        <para>Filtering modes available in the virtual texturing system.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.FilterMode.Bilinear">
+      <summary>
+        <para>Bilinear filtering.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.FilterMode.Trilinear">
+      <summary>
+        <para>Trilinear filtering.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.GPUCacheSetting">
+      <summary>
+        <para>Settings for a virtual texturing GPU cache.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.GPUCacheSetting.format">
+      <summary>
+        <para>Format of the cache these settings are applied to.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.GPUCacheSetting.sizeInMegaBytes">
+      <summary>
+        <para>Size in MegaBytes of the cache created with these settings.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural">
+      <summary>
+        <para>Static class representing the Procedural Virtual Texturing system.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStack">
+      <summary>
+        <para>Procedural virtual texturing stack where request data resides in CPU memory.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStack.#ctor(System.String,UnityEngine.Rendering.VirtualTexturing.Procedural/CreationParameters)">
+      <summary>
+        <para>Create a new CPUTextureStack object.</para>
+      </summary>
+      <param name="_name">Name of this stack.</param>
+      <param name="creationParams">The properties used to create this stack.</param>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestLayerParameters">
+      <summary>
+        <para>Per-layer properties of a ProceduralTextureRequest.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestLayerParameters.mipScanlineSize">
+      <summary>
+        <para>Datasize (in bytes) of a single scanline of the tile's lower-resolution mip data for this layer, used for trilinear filtering.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestLayerParameters.requiresCachedMip">
+      <summary>
+        <para>Indicates that this request needs both the actual tile data as well as the corresponding data at the next lower-resolution mip.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestLayerParameters.scanlineSize">
+      <summary>
+        <para>Datasize (in bytes) of a single scanline of the tile data for this layer.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestLayerParameters.GetData">
+      <summary>
+        <para>Get a reference to the tile layer data to write texture data to.</para>
+      </summary>
+      <returns>
+        <para>The array where tile layer data can be written to.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestLayerParameters.GetMipData">
+      <summary>
+        <para>Get a reference to the tile layer mip date to write texture data to.</para>
+      </summary>
+      <returns>
+        <para>The array where mip data can be written to.</para>
+      </returns>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestParameters">
+      <summary>
+        <para>A single procedural virtual texture tile generation request, to be filled in CPU memory.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestParameters.height">
+      <summary>
+        <para>Height of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestParameters.level">
+      <summary>
+        <para>Miplevel of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestParameters.numLayers">
+      <summary>
+        <para>Number of layers inside the request.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestParameters.width">
+      <summary>
+        <para>Width of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestParameters.x">
+      <summary>
+        <para>X offset of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestParameters.y">
+      <summary>
+        <para>Y offset of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.CPUTextureStackRequestParameters.GetLayer(System.Int32)">
+      <summary>
+        <para>Get the request properties of one of the requested layers.</para>
+      </summary>
+      <param name="index">Layer index.</param>
+      <returns>
+        <para>Properties of the requested layer.</para>
+      </returns>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.CreationParameters">
+      <summary>
+        <para>Struct that contains all parameters required to create a ProceduralTextureStack.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CreationParameters.filterMode">
+      <summary>
+        <para>Filtering mode that will be used when sampling this PVT stack.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CreationParameters.height">
+      <summary>
+        <para>Height of the virtual UV space the stack has.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CreationParameters.layers">
+      <summary>
+        <para>The layers this stack contains.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CreationParameters.maxActiveRequests">
+      <summary>
+        <para>How many request do you plan on processing each frame.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CreationParameters.tilesize">
+      <summary>
+        <para>Size of a single tile inside the stack.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CreationParameters.width">
+      <summary>
+        <para>Width of the virtual UV space the stack has.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CreationParameters.MaxNumLayers">
+      <summary>
+        <para>Internal limit of maximum number of layers.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.CreationParameters.MaxRequestsPerFrameSupported">
+      <summary>
+        <para>Internal limit on maximum number of requests per frame.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.GetCPUCacheSize">
+      <summary>
+        <para>Gets the Procedural Virtual Texturing CPU cache size.</para>
+      </summary>
+      <returns>
+        <para>The size of the CPU caches.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.GetGPUCacheSettings">
+      <summary>
+        <para>Gets the Procedural Virtual Texturing GPU cache settings.</para>
+      </summary>
+      <returns>
+        <para>An array of GPU cache settings.</para>
+      </returns>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStack">
+      <summary>
+        <para>Procedural virtual texturing stack where request data resides in GPU memory.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStack.#ctor(System.String,UnityEngine.Rendering.VirtualTexturing.Procedural/CreationParameters)">
+      <summary>
+        <para>Create a new GPUTextureStack object.</para>
+      </summary>
+      <param name="_name">Name of this stack.</param>
+      <param name="creationParams">The properties used to create this stack.</param>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestLayerParameters">
+      <summary>
+        <para>Per-layer properties of a request.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestLayerParameters.dest">
+      <summary>
+        <para>RenderTarget where the tile should be generated on.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestLayerParameters.destX">
+      <summary>
+        <para>X offset inside the destination RenderTexture.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestLayerParameters.destY">
+      <summary>
+        <para>Y offset inside the destination RenderTexture.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestLayerParameters.GetHeight">
+      <summary>
+        <para>Gets the height of the RenderTexture asociated with the request.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestLayerParameters.GetWidth">
+      <summary>
+        <para>Gets the width of the RenderTexture asociated with the request.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestParameters">
+      <summary>
+        <para>A single procedural virtual texture tile generation request, to be filled in GPU memory.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestParameters.height">
+      <summary>
+        <para>Height of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestParameters.level">
+      <summary>
+        <para>Miplevel of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestParameters.numLayers">
+      <summary>
+        <para>Number of layers inside the request.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestParameters.width">
+      <summary>
+        <para>Width of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestParameters.x">
+      <summary>
+        <para>X offset of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestParameters.y">
+      <summary>
+        <para>Y offset of the requested rectangle.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.GPUTextureStackRequestParameters.GetLayer(System.Int32)">
+      <summary>
+        <para>Get the request properties of one of the requested layers.</para>
+      </summary>
+      <param name="index">Layer index.</param>
+      <returns>
+        <para>Properties of the requested layer.</para>
+      </returns>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.RequestStatus">
+      <summary>
+        <para>The status that can be given to a request.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.RequestStatus.Dropped">
+      <summary>
+        <para>No data is provided and the VT system should fall back to a lower resolution.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.RequestStatus.Generated">
+      <summary>
+        <para>Data is filled in properly and can be used by the VT system.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.SetCPUCacheSize(System.Int32)">
+      <summary>
+        <para>Sets the Procedural Virtual Texturing CPU cache size (in MegaBytes).</para>
+      </summary>
+      <param name="sizeInMegabytes"></param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.SetGPUCacheSettings(UnityEngine.Rendering.VirtualTexturing.GPUCacheSetting[])">
+      <summary>
+        <para>Sets the Procedural Virtual Texturing GPU cache settings.</para>
+      </summary>
+      <param name="cacheSettings"></param>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase`1">
+      <summary>
+        <para>Procedural virtual texturing stack.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.borderSize">
+      <summary>
+        <para>Size of the border around each tile.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.AllMips">
+      <summary>
+        <para>Specify all mipmaps starting from the 'mipMap' argument, for use with the Invalidate and MakeResident functions.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.BindGlobally">
+      <summary>
+        <para>Try to bind the texture stack globally for all shaders.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.BindToMaterial(UnityEngine.Material)">
+      <summary>
+        <para>Try to bind this texture stack to a Material so it can be used for sampling the VT.</para>
+      </summary>
+      <param name="mat">Material to bind this stack on.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.BindToMaterialPropertyBlock(UnityEngine.MaterialPropertyBlock)">
+      <summary>
+        <para>Try to bind this texture stack to a MaterialPropertyBlock so it can be used for sampling the VT.</para>
+      </summary>
+      <param name="mpb">The property block to assign this procedural virtual texture stack too.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.#ctor(System.String,UnityEngine.Rendering.VirtualTexturing.Procedural/CreationParameters,System.Boolean)">
+      <summary>
+        <para>Create a new ProceduralTextureStack.</para>
+      </summary>
+      <param name="_name">Name of this stack.</param>
+      <param name="_creationParams">This properties used to create this stack.</param>
+      <param name="gpuGeneration">Whether the data should be generated in GPU-memory or CPU-memory.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.Dispose">
+      <summary>
+        <para>Disposes this object.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.EvictRegion(UnityEngine.Rect,System.Int32,System.Int32)">
+      <summary>
+        <para>Evict the data in the specified rectangle causing it to be procedurally  re-generated. The data will become unavailable immediately causing lower resolution fallback textures to be used in the mean time. Use this method to immediately free up memory for other VT tiles when data will not be needed in the near future.</para>
+      </summary>
+      <param name="r">The rectangle in 0-1 UV space to evict.  Anything outside the [ 0...1 [ x [ 0...1 [ rectangle will be silently ignored.</param>
+      <param name="mipMap">The miplevel to evict. Mips are numbered from 0 (= full resolution) to n (= lowest resolution) where n is the mipmap level what is a single tile in size.  Invalid mips are silently ignored.</param>
+      <param name="numMips">The number of miplevels starting from 'mipMap' to evict. Invalid mips are silently ignored.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.InvalidateRegion(UnityEngine.Rect,System.Int32,System.Int32)">
+      <summary>
+        <para>Invalidate the data in the specified rectangle causing it to be procedurally  re-generated. Any existing data will continue to be used while the new data is being re-generated. Use this method to cause re-generation of data in interactive applications like painting.</para>
+      </summary>
+      <param name="r">The rectangle in 0-1 UV space to invalidate.  Anything outside the [ 0...1 [ x [ 0...1 [ rectangle will be silently ignored.</param>
+      <param name="mipMap">The miplevel to invalidate. Mips are numbered from 0 (= full resolution) to n (= lowest resolution) where n is the mipmap level what is a single tile in size.  Invalid mips are silently ignored.</param>
+      <param name="numMips">The number of miplevels starting from 'mipMap' to invalidate. Invalid mips are silently ignored.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.IsValid">
+      <summary>
+        <para>Check if a texture stack is valid.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.PopRequests(Unity.Collections.NativeSlice`1&lt;UnityEngine.Rendering.VirtualTexturing.Procedural/TextureStackRequestHandle`1&lt;T&gt;&gt;)">
+      <summary>
+        <para>Get the active requests for this stack that were not previously popped from the internal request queue.</para>
+      </summary>
+      <param name="requestHandles">The slice into which the resulting requests will be written.</param>
+      <returns>
+        <para>The number of valid requests written in requestHandles.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackBase_1.RequestRegion(UnityEngine.Rect,System.Int32,System.Int32)">
+      <summary>
+        <para>Make a rectangle in UV space resident for a given stack.</para>
+      </summary>
+      <param name="r">The rectangle in 0-1 UV space to make resident.  Anything outside the [ 0...1 [ x [ 0...1 [ rectangle will be silently ignored.</param>
+      <param name="mipMap">The miplevel to make resident. Mips are numbered from 0 (= full resolution) to n (= lowest resolution) where n is the mipmap level what is a single tile in size.  Requesting invalid mips is silently ignored.</param>
+      <param name="numMips">The number of miplevels starting from 'mipMap' to make resident. Requesting invalid mips is silently ignored.</param>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackRequestHandle`1">
+      <summary>
+        <para>Handle for a (CPUTextureStackRequestParameters|CPU or GPUTextureStackRequestParameters|GPU) TextureStackRequest.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackRequestHandle_1.CompleteRequest(UnityEngine.Rendering.VirtualTexturing.Procedural/RequestStatus)">
+      <summary>
+        <para>Complete the request with a given status.</para>
+      </summary>
+      <param name="status">Completion status for the request.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackRequestHandle_1.CompleteRequests(Unity.Collections.NativeSlice`1&lt;UnityEngine.Rendering.VirtualTexturing.Procedural/TextureStackRequestHandle`1&lt;T&gt;&gt;,Unity.Collections.NativeSlice`1&lt;UnityEngine.Rendering.VirtualTexturing.Procedural/RequestStatus&gt;)">
+      <summary>
+        <para>Complete a number of requests with a given status.</para>
+      </summary>
+      <param name="status">Status for each request in requestHandles.</param>
+      <param name="requestHandles">Handles of the requests that will be completed.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Procedural.TextureStackRequestHandle_1.GetRequestParameters">
+      <summary>
+        <para>Fetch the actual (CPUTextureStackRequestParameters|CPU or GPUTextureStackRequestParameters|GPU) request associated with this handle.</para>
+      </summary>
+      <returns>
+        <para>The request parameters associated with this handle.</para>
+      </returns>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Resolver">
+      <summary>
+        <para>Class responsable for virtual texturing feedback analysis.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Resolver.#ctor">
+      <summary>
+        <para>Create a new VirtualTextureResolver object.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Rendering.VirtualTexturing.Resolver.CurrentHeight">
+      <summary>
+        <para>&gt;Height of the texture that the internal buffers can hold.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Rendering.VirtualTexturing.Resolver.CurrentWidth">
+      <summary>
+        <para>Width of the texture that the internal buffers can hold.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Resolver.Dispose">
+      <summary>
+        <para>Disposes this object.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Resolver.Process(UnityEngine.Rendering.CommandBuffer,UnityEngine.Rendering.RenderTargetIdentifier,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+      <summary>
+        <para>Process the passed in feedback texture.</para>
+      </summary>
+      <param name="cmd">The commandbuffer used to schedule processing.</param>
+      <param name="rt">Texture containing the feedback data.</param>
+      <param name="x">X position of the subrect that is processed.</param>
+      <param name="width">Width of the subrect that is processed.</param>
+      <param name="y">Y position of the subrect that is processed.</param>
+      <param name="height">Height of the subrect that is processed.</param>
+      <param name="mip">Miplevel of the texture to process.</param>
+      <param name="slice">Arrayslice of the texture to process.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Resolver.Process(UnityEngine.Rendering.CommandBuffer,UnityEngine.Rendering.RenderTargetIdentifier)">
+      <summary>
+        <para>Process the passed in feedback texture.</para>
+      </summary>
+      <param name="cmd">The commandbuffer used to schedule processing.</param>
+      <param name="rt">Texture containing the feedback data.</param>
+      <param name="x">X position of the subrect that is processed.</param>
+      <param name="width">Width of the subrect that is processed.</param>
+      <param name="y">Y position of the subrect that is processed.</param>
+      <param name="height">Height of the subrect that is processed.</param>
+      <param name="mip">Miplevel of the texture to process.</param>
+      <param name="slice">Arrayslice of the texture to process.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Resolver.UpdateSize(System.Int32,System.Int32)">
+      <summary>
+        <para>Update the internal buffers.</para>
+      </summary>
+      <param name="width">Width of the texture passed in during Process.</param>
+      <param name="height">Height of the texture passed in during Process.</param>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.Streaming">
+      <summary>
+        <para>Static class representing the Streaming Virtual Texturing system.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Streaming.GetTextureStackSize(UnityEngine.Material,System.Int32,System.Int32&amp;,System.Int32&amp;)">
+      <summary>
+        <para>Gets the width and height of a Virtual Texture Stack, in pixels.</para>
+      </summary>
+      <param name="mat">The Material that contains the Virtual Texture Stack. The Virtual Texture Stacks contained in a Material are declared in the Material's Shader.</param>
+      <param name="stackNameId">The unique identifier for the name of the Virtual Texture Stack, as declared in the Shader. To find the identifier for a given Shader property name, use Shader.PropertyToID.</param>
+      <param name="width">Unity populates width with the width of the Virtual Texture Stack, in pixels.</param>
+      <param name="height">Unity populates height with the height of the Virtual Texture Stack, in pixels.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Streaming.RequestRegion(UnityEngine.Material,System.Int32,UnityEngine.Rect,System.Int32,System.Int32)">
+      <summary>
+        <para>Make a rectangle in UV space resident for a given Virtual Texture Stack.</para>
+      </summary>
+      <param name="mat">The Material that contains the Virtual Texture Stack. The Virtual Texture Stacks contained in a Material are declared in the Material's Shader.</param>
+      <param name="stackNameId">The unique identifier for the name of the Virtual Texture Stack, as declared in the Shader. To find the identifier for a given Shader property name, use Shader.PropertyToID.</param>
+      <param name="r">The rectangle in 0-1 UV space to make resident.  Anything outside the [ 0...1 [ x [ 0...1 [ rectangle will be silently ignored.</param>
+      <param name="mipMap">The mip level to make resident. Mips are numbered from 0 (= full resolution) to n (= lowest resolution) where n is the mipmap level what is a single tile in size.  Requesting invalid mips is silently ignored.</param>
+      <param name="numMips">The number of mip levels starting from 'mipMap' to make resident. Requesting invalid mips is silently ignored.</param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Streaming.SetCPUCacheSize(System.Int32)">
+      <summary>
+        <para>Sets the CPU cache size (in MegaBytes) used by Streaming Virtual Texturing.</para>
+      </summary>
+      <param name="sizeInMegabytes"></param>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.Streaming.SetGPUCacheSettings(UnityEngine.Rendering.VirtualTexturing.GPUCacheSetting[])">
+      <summary>
+        <para>Sets the GPU cache settings used by Streaming Virtual Texturing.</para>
+      </summary>
+      <param name="cacheSettings"></param>
+    </member>
+    <member name="T:UnityEngine.Rendering.VirtualTexturing.System">
+      <summary>
+        <para>The virtual texturing system.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Rendering.VirtualTexturing.System.AllMips">
+      <summary>
+        <para>Request all avalable mips.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Rendering.VirtualTexturing.System.Update">
+      <summary>
+        <para>Update the virtual texturing system.</para>
+      </summary>
+    </member>
+    <member name="A:UnityEngine.VirtualTexturingModule">
+      <summary>
+        <para>Module that implements virtual texturing.</para>
+      </summary>
+    </member>
+  </members>
+</doc>

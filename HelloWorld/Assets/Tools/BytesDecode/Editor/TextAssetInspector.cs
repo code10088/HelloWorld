@@ -89,7 +89,6 @@ namespace UnityEditor
                             Assembly assembly = Assembly.GetAssembly(typeof(BytesDecode));
                             dynamic obj = assembly.CreateInstance(bd.ToStr());
                             obj?.Deserialize(bd);
-                            Debug.LogError(111);
                             bytesPropertyTree = PropertyTree.Create(obj);
                         }
                         catch
