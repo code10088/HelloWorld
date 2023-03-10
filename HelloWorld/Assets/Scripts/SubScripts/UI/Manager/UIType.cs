@@ -1,8 +1,8 @@
 public enum UIType
 {
     None,
-    MainUI,
-    UITest,
+    MainUI=1,
+    UITest=2,
 
     Max,
 }

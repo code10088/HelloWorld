@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UITest : UIBase
 {
-    public override void InitUI(GameObject UIObj, UIConfig config, UIType from, params object[] param)
+    public override void InitUI(GameObject UIObj, Data_UIConfig config, UIType from, params object[] param)
     {
         GameDebug.Log("UITest InitUI");
         base.InitUI(UIObj, config, from, param);

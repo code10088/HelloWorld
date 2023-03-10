@@ -6,10 +6,10 @@ using UnityExtensions.Tween;
 public class UIBase
 {
     protected GameObject UIObj;
-    protected UIConfig config;
+    protected Data_UIConfig config;
     protected UIType from;
     private Dictionary<int, int> layerRecord = new Dictionary<int, int>();
-    public virtual void InitUI(GameObject UIObj, UIConfig config, UIType from, params object[] param)
+    public virtual void InitUI(GameObject UIObj, Data_UIConfig config, UIType from, params object[] param)
     {
         this.UIObj = UIObj;
         this.config = config;
@@ -52,7 +52,7 @@ public class UIBase
     }
     protected virtual void OnClose()
     {
-        UIManager.Instance.CloseUI(config.type);
+        UIManager.Instance.CloseUI((UIType)config.ID);
         UIManager.Instance.OpenUI(from);
     }
 }

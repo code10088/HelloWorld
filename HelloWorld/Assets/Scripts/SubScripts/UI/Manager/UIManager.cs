@@ -132,7 +132,7 @@ public class UIManager : Singletion<UIManager>
     {
         private UIType type;
         private UIType from;
-        private UIConfig config;
+        private Data_UIConfig config;
         private InstantiateRequest ir;
         private UIBase baseUI;
         private Action open = null;
@@ -189,8 +189,7 @@ public class UIManager : Singletion<UIManager>
             if (state == 1)
             {
                 Type t = System.Type.GetType(type.ToString());
-                ConstructorInfo c = t.GetConstructor(new Type[] { });
-                baseUI = (UIBase)c.Invoke(new object[] { });
+                baseUI = Activator.CreateInstance(t) as UIBase;
                 baseUI.InitUI(ir.gameObject, config, from, param);
                 open?.Invoke();
                 state |= 2;
