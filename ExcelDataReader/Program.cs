@@ -1,11 +1,9 @@
 ﻿using System;
-using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
-using System.Reflection;
 using ExcelDataReader;
-using Microsoft.CSharp;
 using UnityEngine;
 
 namespace MyClass
@@ -63,6 +61,10 @@ namespace MyClass
             {
                 infos[0] = new FileInfo(filePath);
             }
+
+            string gameConfigsCode = "";
+            gameConfigsCode += $"public partial class GameConfigs\n";
+            gameConfigsCode += "{\n";
             foreach (FileInfo info in infos)
             {
                 FileStream stream = info.Open(FileMode.Open, FileAccess.Read);
@@ -71,15 +73,21 @@ namespace MyClass
                 excelReader.Close();
                 stream.Close();
 
-                string className = "Data_" + info.Name.Replace(".xls", "");
-                string code = GenerateCode(codePath, className, result.Tables[0]);
-                CompilerResults cr = DynamicCompilation(code);
-                GenerateBinaryFile(binaryPath, cr, className, result.Tables[0]);
+                string fileName = info.Name.Replace(".xls", string.Empty);
+                string className = "Data_" + fileName;
+                gameConfigsCode += $"    public {className}Array {fileName}Data = new {className}Array();\n";
+                GenerateCode(codePath, className, result.Tables[0]);
+                GenerateBinaryFile(binaryPath, className, result.Tables[0]);
             }
+            gameConfigsCode += "}\n";
+            string targetPath = codePath + "/GameConfigs.cs";
+            File.WriteAllText(targetPath, gameConfigsCode, System.Text.Encoding.UTF8);
         }
-        static string GenerateCode(string targetPath, string className, DataTable table)
+        static void GenerateCode(string targetPath, string className, DataTable table)
         {
             string code = "";
+            string variableCode = "";
+            string propertyCode = "";
             string enumCode = "";
             string serializeCode = "";
             string deserializeCode = "";
@@ -87,14 +95,23 @@ namespace MyClass
             code += "using UnityEngine;\n";
             code += $"public class {className}Array : BytesDecodeInterface\n";
             code += "{\n";
-            code += $"    public {className}[] array;\n";
+            code += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {className}[] _array;\n";
+            code += $"    public {className}[] array {{ get => _array; }}\n";
+            code += $"    public {className} GetDataByID(int id)\n";
+            code += "    {\n";
+            code += "        for (int i = 0; i < _array.Length; i++)\n";
+            code += "        {\n";
+            code += "            if (_array[i].ID == id) return _array[i];\n";
+            code += "        }\n";
+            code += "        return null;\n";
+            code += "    }\n";
             code += "    public void Deserialize(BytesDecode bd)\n";
             code += "    {\n";
-            code += $"        array = bd.ToBDIArray(() => new {className}());\n";
+            code += $"        _array = bd.ToBDIArray(() => new {className}());\n";
             code += "    }\n";
             code += "    public void Serialize(BytesDecode bd)\n";
             code += "    {\n";
-            code += "        bd.ToBytes(array);\n";
+            code += "        bd.ToBytes(_array);\n";
             code += "    }\n";
             code += "}\n";
             code += "#if UNITY_EDITOR\n";
@@ -109,44 +126,52 @@ namespace MyClass
                 switch (fieldType)
                 {
                     case "bool":
-                        code += $"    public {fieldType} {fieldName};\n";
-                        serializeCode += $"        bd.ToBytes({fieldName});\n";
-                        deserializeCode += $"        {fieldName} = bd.ToBool();\n";
+                        variableCode += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {fieldType} _{fieldName};\n";
+                        propertyCode += $"    public {fieldType} {fieldName} {{ get => _{fieldName}; }}\n";
+                        serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                        deserializeCode += $"        _{fieldName} = bd.ToBool();\n";
                         break;
                     case "byte":
-                        code += $"    public {fieldType} {fieldName};\n";
-                        serializeCode += $"        bd.ToBytes({fieldName});\n";
-                        deserializeCode += $"        {fieldName} = bd.ToByte();\n";
+                        variableCode += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {fieldType} _{fieldName};\n";
+                        propertyCode += $"    public {fieldType} {fieldName} {{ get => _{fieldName}; }}\n";
+                        serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                        deserializeCode += $"        _{fieldName} = bd.ToByte();\n";
                         break;
                     case "short":
-                        code += $"    public {fieldType} {fieldName};\n";
-                        serializeCode += $"        bd.ToBytes({fieldName});\n";
-                        deserializeCode += $"        {fieldName} = bd.ToShort();\n";
+                        variableCode += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {fieldType} _{fieldName};\n";
+                        propertyCode += $"    public {fieldType} {fieldName} {{ get => _{fieldName}; }}\n";
+                        serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                        deserializeCode += $"        _{fieldName} = bd.ToShort();\n";
                         break;
                     case "int":
-                        code += $"    public {fieldType} {fieldName};\n";
-                        serializeCode += $"        bd.ToBytes({fieldName});\n";
-                        deserializeCode += $"        {fieldName} = bd.ToInt();\n";
+                        variableCode += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {fieldType} _{fieldName};\n";
+                        propertyCode += $"    public {fieldType} {fieldName} {{ get => _{fieldName}; }}\n";
+                        serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                        deserializeCode += $"        _{fieldName} = bd.ToInt();\n";
                         break;
                     case "float":
-                        code += $"    public {fieldType} {fieldName};\n";
-                        serializeCode += $"        bd.ToBytes({fieldName});\n";
-                        deserializeCode += $"        {fieldName} = bd.ToFloat();\n";
+                        variableCode += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {fieldType} _{fieldName};\n";
+                        propertyCode += $"    public {fieldType} {fieldName} {{ get => _{fieldName}; }}\n";
+                        serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                        deserializeCode += $"        _{fieldName} = bd.ToFloat();\n";
                         break;
                     case "string":
-                        code += $"    public {fieldType} {fieldName};\n";
-                        serializeCode += $"        bd.ToBytes({fieldName});\n";
-                        deserializeCode += $"        {fieldName} = bd.ToStr();\n";
+                        variableCode += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {fieldType} _{fieldName};\n";
+                        propertyCode += $"    public {fieldType} {fieldName} {{ get => _{fieldName}; }}\n";
+                        serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                        deserializeCode += $"        _{fieldName} = bd.ToStr();\n";
                         break;
                     case "Vector3":
-                        code += $"    public {fieldType} {fieldName};\n";
-                        serializeCode += $"        bd.ToBytes({fieldName});\n";
-                        deserializeCode += $"        {fieldName} = bd.ToVector3();\n";
+                        variableCode += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {fieldType} _{fieldName};\n";
+                        propertyCode += $"    public {fieldType} {fieldName} {{ get => _{fieldName}; }}\n";
+                        serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                        deserializeCode += $"        _{fieldName} = bd.ToVector3();\n";
                         break;
                     case "enum":
                         string enumNameStr = table.Rows[3][i].ToString();
                         string[] enumName = enumNameStr.Split(':');
-                        code += $"    public {enumName[0]} {fieldName};\n";
+                        variableCode += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {enumName[0]} _{fieldName};\n";
+                        propertyCode += $"    public {enumName[0]} {fieldName} {{ get => _{fieldName}; }}\n";
                         enumCode += $"public enum {enumName[0]}\n";
                         enumCode += "{\n";
                         string[] strs = enumName[1].Split('|');
@@ -155,46 +180,49 @@ namespace MyClass
                             enumCode += $"    {item},\n";
                         }
                         enumCode += "}\n";
-                        serializeCode += $"        bd.ToBytes((int){fieldName});\n";
-                        deserializeCode += $"        {fieldName} = ({enumName[0]})bd.ToInt();\n";
+                        serializeCode += $"        bd.ToBytes((int)_{fieldName});\n";
+                        deserializeCode += $"        _{fieldName} = ({enumName[0]})bd.ToInt();\n";
                         break;
                     case "Array":
                         fieldType = table.Rows[3][i].ToString();
-                        code += $"    public {fieldType}[] {fieldName};\n";
+                        variableCode += $"#if UNITY_EDITOR\n[SerializeField]\n#endif\n    private {fieldType}[] _{fieldName};\n";
+                        propertyCode += $"    public {fieldType}[] {fieldName} {{ get => _{fieldName}; }}\n";
                         switch (fieldType)
                         {
                             case "bool":
-                                serializeCode += $"        bd.ToBytes({fieldName});\n";
-                                deserializeCode += $"        {fieldName} = bd.ToBoolArray();\n";
+                                serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                                deserializeCode += $"        _{fieldName} = bd.ToBoolArray();\n";
                                 break;
                             case "byte":
-                                serializeCode += $"        bd.ToBytes({fieldName});\n";
-                                deserializeCode += $"        {fieldName} = bd.ToByteArray();\n";
+                                serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                                deserializeCode += $"        _{fieldName} = bd.ToByteArray();\n";
                                 break;
                             case "short":
-                                serializeCode += $"        bd.ToBytes({fieldName});\n";
-                                deserializeCode += $"        {fieldName} = bd.ToShortArray();\n";
+                                serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                                deserializeCode += $"        _{fieldName} = bd.ToShortArray();\n";
                                 break;
                             case "int":
-                                serializeCode += $"        bd.ToBytes({fieldName});\n";
-                                deserializeCode += $"        {fieldName} = bd.ToIntArray();\n";
+                                serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                                deserializeCode += $"        _{fieldName} = bd.ToIntArray();\n";
                                 break;
                             case "float":
-                                serializeCode += $"        bd.ToBytes({fieldName});\n";
-                                deserializeCode += $"        {fieldName} = bd.ToFloatArray();\n";
+                                serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                                deserializeCode += $"        _{fieldName} = bd.ToFloatArray();\n";
                                 break;
                             case "string":
-                                serializeCode += $"        bd.ToBytes({fieldName});\n";
-                                deserializeCode += $"        {fieldName} = bd.ToStrArray();\n";
+                                serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                                deserializeCode += $"        _{fieldName} = bd.ToStrArray();\n";
                                 break;
                             case "Vector3":
-                                serializeCode += $"        bd.ToBytes({fieldName});\n";
-                                deserializeCode += $"        {fieldName} = bd.ToVector3Array();\n";
+                                serializeCode += $"        bd.ToBytes(_{fieldName});\n";
+                                deserializeCode += $"        _{fieldName} = bd.ToVector3Array();\n";
                                 break;
                         }
                         break;
                 }
             }
+            code += variableCode;
+            code += propertyCode;
             code += "    public void Deserialize(BytesDecode bd)\n";
             code += "    {\n";
             code += deserializeCode;
@@ -207,50 +235,51 @@ namespace MyClass
             code += enumCode;
             targetPath += "/" + className + ".cs";
             File.WriteAllText(targetPath, code, System.Text.Encoding.UTF8);
-            return code;
         }
-        static CompilerResults DynamicCompilation(string code)
+        static void GenerateBinaryFile(string targetPath, string className, DataTable table)
         {
-            CSharpCodeProvider csharpCodePrivoder = new CSharpCodeProvider();
-            CompilerParameters compilerParameters = new CompilerParameters();
-            //添加需要引用的dll
-            compilerParameters.ReferencedAssemblies.Add("System.dll");
-            compilerParameters.ReferencedAssemblies.Add("UnityEngine.CoreModule.dll");
-            compilerParameters.ReferencedAssemblies.Add("BytesDecodeDll.dll");
-            //是否生成可执行文件(exe)
-            compilerParameters.GenerateExecutable = false;
-            //是否生成在内存中
-            compilerParameters.GenerateInMemory = true;
-            //编译代码
-            return csharpCodePrivoder.CompileAssemblyFromSource(compilerParameters, code);
-        }
-        static void GenerateBinaryFile(string targetPath, CompilerResults cr, string className, DataTable table)
-        {
-            Assembly objAssembly = cr.CompiledAssembly;
-            dynamic list = objAssembly.CreateInstance(className + "Array");
-            FieldInfo listFieldInfo = list.GetType().GetField("array");
-            Type arrayType = GetArrayElementType(listFieldInfo.FieldType);
-            Array listInstance = Array.CreateInstance(arrayType, table.Rows.Count - 4);
-            MethodInfo listMethodInfo = listInstance.GetType().GetMethod("Set");
+            List<byte> bytes = new List<byte>(1024);
+            BytesDecode bd = new BytesDecode(bytes);
+            bd.ToBytes(className + "Array");
+            bd.ToBytes(table.Rows.Count - 4);
+
             for (int i = 4; i < table.Rows.Count; i++)
             {
-                object obj = objAssembly.CreateInstance(className);
                 for (int j = 0; j < table.Columns.Count; j++)
                 {
                     string fieldType = table.Rows[1][j].ToString();
-                    string fieldName = table.Rows[2][j].ToString();
                     string fieldValue = table.Rows[i][j].ToString();
-                    FieldInfo fieldInfo = obj.GetType().GetField(fieldName);
-                    object convertValue = null;
                     switch (fieldType)
                     {
                         case "bool":
+                            Type t = Type.GetType("System.Boolean");
+                            dynamic convertValue = TypeDescriptor.GetConverter(t).ConvertFrom(fieldValue);
+                            bd.ToBytes(convertValue);
+                            break;
                         case "byte":
+                            t = Type.GetType("System.Byte");
+                            convertValue = TypeDescriptor.GetConverter(t).ConvertFrom(fieldValue);
+                            bd.ToBytes(convertValue);
+                            break;
                         case "short":
+                            t = Type.GetType("System.Int16");
+                            convertValue = TypeDescriptor.GetConverter(t).ConvertFrom(fieldValue);
+                            bd.ToBytes(convertValue);
+                            break;
                         case "int":
+                            t = Type.GetType("System.Int32");
+                            convertValue = TypeDescriptor.GetConverter(t).ConvertFrom(fieldValue);
+                            bd.ToBytes(convertValue);
+                            break;
                         case "float":
+                            t = Type.GetType("System.Single");
+                            convertValue = TypeDescriptor.GetConverter(t).ConvertFrom(fieldValue);
+                            bd.ToBytes(convertValue);
+                            break;
                         case "string":
-                            convertValue = TypeDescriptor.GetConverter(fieldInfo.FieldType).ConvertFrom(fieldValue);
+                            t = Type.GetType("System.String");
+                            convertValue = TypeDescriptor.GetConverter(t).ConvertFrom(fieldValue);
+                            bd.ToBytes(convertValue);
                             break;
                         case "Vector3":
                             string[] vs = fieldValue.Split(',');
@@ -258,29 +287,73 @@ namespace MyClass
                             v.x = vs.Length > 0 ? float.Parse(vs[0]) : 0;
                             v.y = vs.Length > 1 ? float.Parse(vs[1]) : 0;
                             v.z = vs.Length > 2 ? float.Parse(vs[2]) : 0;
-                            convertValue = v;
+                            bd.ToBytes(v);
                             break;
                         case "enum":
-                            convertValue = Enum.Parse(fieldInfo.FieldType, fieldValue);
+                            string enumNameStr = table.Rows[3][j].ToString();
+                            string[] enumName = enumNameStr.Split(':');
+                            string[] strs = enumName[1].Split('|');
+                            for (int k = 0; k < strs.Length; k++)
+                            {
+                                if(strs[k] == fieldValue)
+                                {
+                                    bd.ToBytes(k);
+                                    break;
+                                }
+                            }
                             break;
                         case "Array":
                             fieldType = table.Rows[3][j].ToString();
                             string[] fields = fieldValue.Split('|');
-                            arrayType = GetArrayElementType(fieldInfo.FieldType);
-                            convertValue = Array.CreateInstance(arrayType, fields.Length);
-                            MethodInfo add = convertValue.GetType().GetMethod("Set");
+                            bd.ToBytes(fields.Length);
                             switch (fieldType)
                             {
                                 case "bool":
-                                case "byte":
-                                case "short":
-                                case "int":
-                                case "float":
-                                case "string":
+                                    t = Type.GetType("System.Boolean");
                                     for (int k = 0; k < fields.Length; k++)
                                     {
-                                        object tempData = TypeDescriptor.GetConverter(arrayType).ConvertFrom(fields[k]);
-                                        add.Invoke(convertValue, new object[] { k, tempData });
+                                        dynamic tempData = TypeDescriptor.GetConverter(t).ConvertFrom(fields[k]);
+                                        bd.ToBytes(tempData);
+                                    }
+                                    break;
+                                case "byte":
+                                    t = Type.GetType("System.Byte");
+                                    for (int k = 0; k < fields.Length; k++)
+                                    {
+                                        dynamic tempData = TypeDescriptor.GetConverter(t).ConvertFrom(fields[k]);
+                                        bd.ToBytes(tempData);
+                                    }
+                                    break;
+                                case "short":
+                                    t = Type.GetType("System.Int16");
+                                    for (int k = 0; k < fields.Length; k++)
+                                    {
+                                        dynamic tempData = TypeDescriptor.GetConverter(t).ConvertFrom(fields[k]);
+                                        bd.ToBytes(tempData);
+                                    }
+                                    break;
+                                case "int":
+                                    t = Type.GetType("System.Int32");
+                                    for (int k = 0; k < fields.Length; k++)
+                                    {
+                                        dynamic tempData = TypeDescriptor.GetConverter(t).ConvertFrom(fields[k]);
+                                        bd.ToBytes(tempData);
+                                    }
+                                    break;
+                                case "float":
+                                    t = Type.GetType("System.Single");
+                                    for (int k = 0; k < fields.Length; k++)
+                                    {
+                                        dynamic tempData = TypeDescriptor.GetConverter(t).ConvertFrom(fields[k]);
+                                        bd.ToBytes(tempData);
+                                    }
+                                    break;
+                                case "string":
+                                    t = Type.GetType("System.String");
+                                    for (int k = 0; k < fields.Length; k++)
+                                    {
+                                        dynamic tempData = TypeDescriptor.GetConverter(t).ConvertFrom(fields[k]);
+                                        bd.ToBytes(tempData);
                                     }
                                     break;
                                 case "Vector3":
@@ -291,28 +364,17 @@ namespace MyClass
                                         v.x = vs.Length > 0 ? float.Parse(vs[0]) : 0;
                                         v.y = vs.Length > 1 ? float.Parse(vs[1]) : 0;
                                         v.z = vs.Length > 2 ? float.Parse(vs[2]) : 0;
-                                        add.Invoke(convertValue, new object[] { k, v });
+                                        bd.ToBytes(v);
                                     }
                                     break;
                             }
                             break;
                     }
-                    fieldInfo.SetValue(obj, convertValue);
                 }
-                listMethodInfo.Invoke(listInstance, new object[] { i - 4, obj });
-                listFieldInfo.SetValue(list, listInstance);
             }
 
-            BytesDecode.Serialize(list, 1024, targetPath + "/" + className + ".bytes");
+            File.WriteAllBytes(targetPath + "/" + className + ".bytes", bytes.ToArray());
             Console.WriteLine("导出成功：" + className);
-        }
-
-        static Type GetArrayElementType(Type t)
-        {
-            if (!t.IsArray) return null;
-            string name = t.FullName.Replace("[]", string.Empty);
-            Type result = t.Assembly.GetType(name);
-            return result;
         }
     }
 }
