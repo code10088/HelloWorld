@@ -75,7 +75,7 @@ namespace MyClass
 
                 string fileName = info.Name.Replace(".xls", string.Empty);
                 string className = "Data_" + fileName;
-                gameConfigsCode += $"    public {className}Array {fileName}Data = new {className}Array();\n";
+                gameConfigsCode += $"    public {className}Array {className} = new {className}Array();\n";
                 GenerateCode(codePath, className, result.Tables[0]);
                 GenerateBinaryFile(binaryPath, className, result.Tables[0]);
             }

@@ -2,14 +2,26 @@
 using UnityEngine;
 public class Data_UIConfigArray : BytesDecodeInterface
 {
-    public Data_UIConfig[] array;
+#if UNITY_EDITOR
+[SerializeField]
+#endif
+    private Data_UIConfig[] _array;
+    public Data_UIConfig[] array { get => _array; }
+    public Data_UIConfig GetDataByID(int id)
+    {
+        for (int i = 0; i < _array.Length; i++)
+        {
+            if (_array[i].ID == id) return _array[i];
+        }
+        return null;
+    }
     public void Deserialize(BytesDecode bd)
     {
-        array = bd.ToBDIArray(() => new Data_UIConfig());
+        _array = bd.ToBDIArray(() => new Data_UIConfig());
     }
     public void Serialize(BytesDecode bd)
     {
-        bd.ToBytes(array);
+        bd.ToBytes(_array);
     }
 }
 #if UNITY_EDITOR
@@ -17,23 +29,39 @@ public class Data_UIConfigArray : BytesDecodeInterface
 #endif
 public class Data_UIConfig : BytesDecodeInterface
 {
-    public int ID;
-    public string name;
-    public string prefabName;
-    public UILayer UILayer;
+#if UNITY_EDITOR
+[SerializeField]
+#endif
+    private int _ID;
+#if UNITY_EDITOR
+[SerializeField]
+#endif
+    private string _name;
+#if UNITY_EDITOR
+[SerializeField]
+#endif
+    private string _prefabName;
+#if UNITY_EDITOR
+[SerializeField]
+#endif
+    private UILayer _UILayer;
+    public int ID { get => _ID; }
+    public string name { get => _name; }
+    public string prefabName { get => _prefabName; }
+    public UILayer UILayer { get => _UILayer; }
     public void Deserialize(BytesDecode bd)
     {
-        ID = bd.ToInt();
-        name = bd.ToStr();
-        prefabName = bd.ToStr();
-        UILayer = (UILayer)bd.ToInt();
+        _ID = bd.ToInt();
+        _name = bd.ToStr();
+        _prefabName = bd.ToStr();
+        _UILayer = (UILayer)bd.ToInt();
     }
     public void Serialize(BytesDecode bd)
     {
-        bd.ToBytes(ID);
-        bd.ToBytes(name);
-        bd.ToBytes(prefabName);
-        bd.ToBytes((int)UILayer);
+        bd.ToBytes(_ID);
+        bd.ToBytes(_name);
+        bd.ToBytes(_prefabName);
+        bd.ToBytes((int)_UILayer);
     }
 }
 public enum UILayer

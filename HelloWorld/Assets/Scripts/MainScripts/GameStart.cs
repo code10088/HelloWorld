@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public partial class GameStart : MonoSingletion<GameStart>
+public class GameStart : MonoSingletion<GameStart>
 {
     //xasset RuntimeInitializeOnLoad之后
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -13,9 +13,24 @@ public partial class GameStart : MonoSingletion<GameStart>
     }
     private void Init()
     {
-        XAssetInit();
         UIManager.Instance.Init();
+        AssetManager.Instance.Init(HotUpdate);
     }
+    private void HotUpdate(dynamic param)
+    {
+        GameDebug.Log("HotUpdate");
+        HotUpdateManager.Instance.Start(InitConfig);
+    }
+    private void InitConfig()
+    {
+        GameDebug.Log("InitConfig");
+        ConfigManager.Instance.InitConfig(EnterMainScene);
+    }
+    private void EnterMainScene()
+    {
+        GameDebug.Log("EnterMainScene");
+    }
+
     private void Update()
     {
         AsyncManager.Instance.Update();

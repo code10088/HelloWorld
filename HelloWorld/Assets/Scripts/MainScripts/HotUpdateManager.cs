@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using xasset;
 
-public partial class GameStart
+public class HotUpdateManager : Singletion<HotUpdateManager>
 {
+    private Action action;
     private Versions versions;
 
-    public void XAssetInit()
+    public void Start(Action action)
     {
-        var initializeAsync = Assets.InitializeAsync(CheckUpdateInfo);
+        this.action = action;
+        CheckUpdateInfo();
     }
-    private void CheckUpdateInfo(Request request)
+    private void CheckUpdateInfo()
     {
         if (Assets.SimulationMode)
         {
@@ -43,7 +46,7 @@ public partial class GameStart
         else
         {
             //重试按钮
-            CheckUpdateInfo(null);
+            CheckUpdateInfo();
         }
     }
     private void CheckDownloadInfo(Request request)
@@ -58,7 +61,7 @@ public partial class GameStart
         else
         {
             //重试按钮
-            CheckUpdateInfo(null);
+            CheckUpdateInfo();
         }
     }
     private void StartDownload(Request request)
@@ -130,6 +133,6 @@ public partial class GameStart
     }
     private void UpdateFinish()
     {
-
+        action?.Invoke();
     }
 }

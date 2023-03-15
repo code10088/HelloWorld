@@ -17,10 +17,26 @@ MonoBehaviour:
     bundle: 
     type: GameObject
     entry: Assets/ZRes/UI
-    lastWriteTime: 133229143966895991
+    lastWriteTime: 133232689390923932
     addressMode: 2
     dependencies:
     - Assets/Pipeline/Test.shader
     - Assets/Pipeline/Test.mat
     - Packages/com.unity.collab-proxy/Editor/PlasticSCM/Assets/Images/buttonssosigningoogle.png
+    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
+  - path: Assets/ZRes/Config/Data_Test.bytes
+    bundle: 
+    type: TextAsset
+    entry: Assets/ZRes/Config
+    lastWriteTime: 0
+    addressMode: 2
+    dependencies: []
+    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
+  - path: Assets/ZRes/Config/Data_UIConfig.bytes
+    bundle: 
+    type: TextAsset
+    entry: Assets/ZRes/Config
+    lastWriteTime: 0
+    addressMode: 2
+    dependencies: []
     group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}

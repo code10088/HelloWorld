@@ -38,12 +38,12 @@ public class BytesDecode
         bd.bytes = null;
         bd.result = null;
     }
-    public static void Deserialize(BytesDecodeInterface bdi, byte[] bytes, Action complete)
+    public static void Deserialize(BytesDecodeInterface bdi, byte[] bytes, Action<dynamic> complete, dynamic param = null)
     {
         void A()
         {
             Deserialize(bdi, bytes);
-            complete?.Invoke();
+            complete?.Invoke(param);
         }
         Thread thread = new Thread(A);
         thread.Start();

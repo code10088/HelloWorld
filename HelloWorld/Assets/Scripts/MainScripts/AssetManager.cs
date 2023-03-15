@@ -7,6 +7,12 @@ public class AssetManager : Singletion<AssetManager>
 {
     private static Dictionary<int, AssetItem> total = new Dictionary<int, AssetItem>();
     private static AssetItem cache = new AssetItem();
+
+    public void Init(Action<dynamic> action)
+    {
+        Assets.InitializeAsync(action);
+    }
+
     public int Load<T>(string path, Action<int, dynamic, dynamic> action = null, dynamic param = null) where T : Object
     {
         AssetItem temp = (AssetItem)cache.next;
@@ -33,6 +39,7 @@ public class AssetManager : Singletion<AssetManager>
 
         public void Init<T>(string path, Action<int, dynamic, dynamic> action, dynamic param) where T : Object
         {
+            base.Init(null);
             this.action = action;
             this.param = param;
             ar = Asset.LoadAsync(path, typeof(T));
@@ -48,6 +55,7 @@ public class AssetManager : Singletion<AssetManager>
         }
         public void Unload()
         {
+            base.Reset();
             if (ar != null) ar.Release();
             ar = null;
             next = cache.next;
