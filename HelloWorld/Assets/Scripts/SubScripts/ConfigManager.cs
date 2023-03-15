@@ -1,19 +1,44 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
-using xasset;
+using Object = UnityEngine.Object;
 
 public class ConfigManager : Singletion<ConfigManager>
 {
-    private Data_TestArray data_Test = new Data_TestArray();
-    public void Deserialize()
+    private GameConfigs gameConfigs;
+    private int configCounter = 0;
+    private Action finish;
+    private void Load(string path, BytesDecodeInterface bdi)
     {
-        var ar = Asset.LoadAsync("Data_Test", typeof(TextAsset));
-        ar.completed += a =>
+        AssetManager.Instance.Load<TextAsset>(path, Deserialize, bdi);
+    }
+    private void Deserialize(int id, dynamic obj, dynamic param)
+    {
+        TextAsset ta = obj as TextAsset;
+        BytesDecode.Deserialize((BytesDecodeInterface)param, ta.bytes, Finish);
+        AssetManager.Instance.Unload(id);
+    }
+    private void Finish()
+    {
+        configCounter--;
+        if (configCounter == 0)
         {
-            var ta = ar.asset as TextAsset;
-            byte[] bytes = ta.bytes;
-            BytesDecode.Deserialize(data_Test, bytes);
-        };
+            finish?.Invoke();
+            GC.Collect();
+        }
+    }
+
+    public void InitConfig(Action finish)
+    {
+        this.finish = finish;
+        //∑¥…‰»°gameConfigs÷–◊÷∂Œ
+        PropertyInfo[] pis = typeof(GameConfigs).GetProperties();
+        
+        for (int i = 0; i < pis.Length; i++)
+        {
+            Load("Data_Test", (BytesDecodeInterface)pis[i].GetValue(gameConfigs));
+        }
     }
 }

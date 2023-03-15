@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using xasset;
+using Object = UnityEngine.Object;
 
 public class UIManager : Singletion<UIManager>
 {
@@ -133,8 +132,9 @@ public class UIManager : Singletion<UIManager>
         private UIType type;
         private UIType from;
         private Data_UIConfig config;
-        private InstantiateRequest ir;
+        private int loaderID;
         private UIBase baseUI;
+        private GameObject baseObj;
         private Action open = null;
         private object[] param = null;
 
@@ -166,20 +166,29 @@ public class UIManager : Singletion<UIManager>
             }
             if (state > 0)
             {
-                LoadFinish(null);
+                LoadFinish(loaderID, baseObj);
             }
             else
             {
                 Instance.SetEventSystemState(false);
-                ir = Asset.InstantiateAsync(type.ToString(), Instance.tUIRoot);
-                if (ir == null) LoadFinish(null);
-                else ir.completed += LoadFinish;
+                if (loaderID <= 0) loaderID = AssetManager.Instance.Load<GameObject>(type.ToString(), LoadFinish);
             }
         }
-        private void LoadFinish(Request request)
+        private void LoadFinish(int id, dynamic asset, dynamic param = null)
         {
-            if (ir != null && ir.result == Request.Result.Success) state |= 1;
-            else Release(true);
+            if (asset == null)
+            {
+                Release(true);
+            }
+            else if ((state & 1) == 0)
+            {
+                state |= 1;
+                baseObj = Object.Instantiate(asset) as GameObject;
+                baseObj.transform.SetParent(Instance.tUIRoot);
+                baseObj.transform.localPosition = Vector3.zero;
+                baseObj.transform.localRotation = Quaternion.identity;
+                baseObj.transform.localScale = Vector3.one;
+            }
             releaseTime = Mathf.Lerp(releaseTime, 120f, 0.2f);
             Instance.SetEventSystemState(true);
             Instance.InitUI(this);
@@ -190,9 +199,9 @@ public class UIManager : Singletion<UIManager>
             {
                 Type t = System.Type.GetType(type.ToString());
                 baseUI = Activator.CreateInstance(t) as UIBase;
-                baseUI.InitUI(ir.gameObject, config, from, param);
+                baseUI.InitUI(baseObj, config, from, param);
                 open?.Invoke();
-                state |= 2;
+                state = 3;
             }
             else if (state == 3)
             {
@@ -209,7 +218,9 @@ public class UIManager : Singletion<UIManager>
         private void _Release()
         {
             if (baseUI != null) baseUI.OnDestroy();
-            if (ir != null) ir.Release();
+            if (baseObj != null) GameObject.Destroy(baseObj);
+            AssetManager.Instance.Unload(loaderID);
+            baseObj = null;
             baseUI = null;
             timerId = -1;
             state = 0;

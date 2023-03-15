@@ -2,7 +2,15 @@
 using UnityEngine;
 public class Data_TestArray : BytesDecodeInterface
 {
-    public Data_Test[] array;
+    public Data_Test[] array { get; private set; }
+    public Data_Test GetDataByID(int id)
+    {
+        for (int i = 0; i < array.Length; i++)
+        {
+            if (array[i].ID == id) return array[i];
+        }
+        return null;
+    }
     public void Deserialize(BytesDecode bd)
     {
         array = bd.ToBDIArray(() => new Data_Test());

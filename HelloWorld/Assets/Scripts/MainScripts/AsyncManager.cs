@@ -1,8 +1,10 @@
 using System;
+using UnityEngine;
 
 public class AsyncManager : Singletion<AsyncManager>
 {
     private AsyncItem first = new AsyncItem();
+    private float realtimeSinceStartup = 0;
 
     public void Add(AsyncItem item)
     {
@@ -23,6 +25,7 @@ public class AsyncManager : Singletion<AsyncManager>
     }
 	public void Update()
     {
+        realtimeSinceStartup = Time.realtimeSinceStartup;
         AsyncItem item = first;
         while (item != null)
         {
@@ -32,6 +35,7 @@ public class AsyncManager : Singletion<AsyncManager>
             if (temp.mark) item.next = temp.next;
             else item = temp;
             if (temp.mark) temp.Reset();
+            if (Time.realtimeSinceStartup - realtimeSinceStartup > GameData.Instance.updateTimeSlice) return;
         }
     }
 }
