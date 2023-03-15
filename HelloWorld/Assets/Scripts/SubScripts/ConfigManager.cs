@@ -18,13 +18,12 @@ public class ConfigManager : Singletion<ConfigManager>
         {
             string tempPath = fis[i].Name;
             var v = fis[i].GetValue(gameConfigs);
-            int a = AssetManager.Instance.Load<TextAsset>(tempPath, Deserialize, v);
+            AssetManager.Instance.Load<TextAsset>(tempPath, Deserialize, v);
         }
     }
     private void Deserialize(int id, dynamic obj, dynamic param)
     {
-        TextAsset ta = obj as TextAsset;
-        BytesDecode.Deserialize((BytesDecodeInterface)param, ta.bytes, Finish, id);
+        BytesDecode.Deserialize((BytesDecodeInterface)param, (byte[])obj.bytes, Finish, id);
     }
     private void Finish(dynamic param)
     {

@@ -12,8 +12,42 @@ MonoBehaviour:
   m_Script: {fileID: 1137305049, guid: a4865f1ab4504ed8a368670db22f409c, type: 3}
   m_Name: InspectorConfig
   m_EditorClassIdentifier: 
-  enableOdinInInspector: 1
-  defaultEditorBehaviour: 11
+  enableOdinInInspector: 0
+  defaultEditorBehaviour: 0
   processMouseMoveInInspector: 1
   drawingConfig:
-    configs: []
+    configs:
+    - DrawnTypeName: xasset.AutoreleaseTimer, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.Benchmark, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.Downloader, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.Logger, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.Manifest, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.PlayerAssets, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.Recycler, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.Scheduler, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.UpdateInfo, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.Versions, Assembly-CSharp
+      EditorTypeName: 
+    - DrawnTypeName: xasset.editor.Build, Assembly-CSharp-Editor
+      EditorTypeName: 
+    - DrawnTypeName: xasset.editor.BuildAssetCache, Assembly-CSharp-Editor
+      EditorTypeName: 
+    - DrawnTypeName: xasset.editor.BuildAssets, Assembly-CSharp-Editor
+      EditorTypeName: 
+    - DrawnTypeName: xasset.editor.BuildEntryCache, Assembly-CSharp-Editor
+      EditorTypeName: 
+    - DrawnTypeName: xasset.editor.BuildGroup, Assembly-CSharp-Editor
+      EditorTypeName: 
+    - DrawnTypeName: xasset.editor.BuildRecords, Assembly-CSharp-Editor
+      EditorTypeName: 
+    - DrawnTypeName: xasset.editor.Settings, Assembly-CSharp-Editor
+      EditorTypeName: 
