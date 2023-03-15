@@ -15,13 +15,13 @@ MonoBehaviour:
   data:
   - path: Assets/ZRes/UI
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133233209206866753
+    lastWriteTimeForGroup: 133233435568194266
     assets:
     - path: Assets/ZRes/UI/Prefab/UITest.prefab
       bundle: 
       type: GameObject
       entry: Assets/ZRes/UI
-      lastWriteTime: 133232689390923932
+      lastWriteTime: 133233437220041095
       addressMode: 2
       dependencies:
       - Assets/Pipeline/Test.shader
@@ -31,7 +31,7 @@ MonoBehaviour:
     group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
   - path: Assets/ZRes/Config
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133233209206866753
+    lastWriteTimeForGroup: 133233435568194266
     assets:
     - path: Assets/ZRes/Config/Data_Test.bytes
       bundle: 
