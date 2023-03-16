@@ -31,30 +31,12 @@ namespace HotAssembly
         }
         private void Finish(dynamic param)
         {
-            GameDebug.Log(param);
             AssetManager.Instance.Unload(param);
             if (--configCounter == 0)
             {
-                MainAssembly.ConfigManager.Instance.GetConfigAction = GetConfig;
-                MainAssembly.ConfigManager.Instance.GetUIConfigAction = GetUIConfig;
                 finish?.Invoke();
                 GC.Collect();
             }
-        }
-        private dynamic GetConfig(string name, int id)
-        {
-            var fis = typeof(GameConfigs).GetFields();
-            configCounter = fis.Length;
-            for (int i = 0; i < configCounter; i++)
-            {
-                string temp = fis[i].Name;
-                if (temp == name) return fis[i].GetValue(gameConfigs);
-            }
-            return null;
-        }
-        private dynamic GetUIConfig(int id)
-        {
-            return gameConfigs.Data_UIConfig.GetDataByID(id);
         }
     }
 }

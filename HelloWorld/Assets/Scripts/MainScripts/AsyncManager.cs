@@ -37,7 +37,7 @@ namespace MainAssembly
                 if (temp.mark) item.next = temp.next;
                 else item = temp;
                 if (temp.mark) temp.Reset();
-                if (Time.realtimeSinceStartup - realtimeSinceStartup > GameData.Instance.updateTimeSlice) return;
+                if (Time.realtimeSinceStartup - realtimeSinceStartup > GameSetting.Instance.updateTimeSlice) return;
             }
         }
     }

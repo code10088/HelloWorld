@@ -8,7 +8,7 @@ namespace MainAssembly
 {
     public class ExportUIScript
     {
-        private static string AutoScriptPath = "Assets/Scripts/SubScripts/UIAuto/";
+        private static string AutoScriptPath = "Assets/Scripts/SubScripts/UI/Auto/";
         private static string Head1 = "using UnityEngine;\n";
         private static string TabEmpty = "    ";
 

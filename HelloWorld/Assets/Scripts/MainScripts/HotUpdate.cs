@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using xasset;
 
 namespace MainAssembly
 {
-    public class HotUpdateManager : Singletion<HotUpdateManager>
+    public class HotUpdate : Singletion<HotUpdate>
     {
-        private Action action;
         private Versions versions;
+        private Assembly hotAssembly;
 
-        public void Start(Action action)
+        public void Start()
         {
-            this.action = action;
             CheckUpdateInfo();
         }
         private void CheckUpdateInfo()
         {
             if (Assets.SimulationMode)
             {
-                UpdateFinish();
+                UpdateFinish_LoadHotAssembly();
             }
             else
             {
@@ -80,7 +80,7 @@ namespace MainAssembly
             }
             else
             {
-                UpdateFinish();
+                UpdateFinish_LoadHotAssembly();
             }
         }
         private void Downloading(DownloadRequestBatch download)
@@ -131,11 +131,24 @@ namespace MainAssembly
         {
             Assets.Versions = versions;
             versions.Save(Assets.GetDownloadDataPath(Versions.Filename));
-            UpdateFinish();
+            UpdateFinish_LoadHotAssembly();
         }
-        private void UpdateFinish()
+        private void UpdateFinish_LoadHotAssembly()
         {
-            action?.Invoke();
+#if UNITY_EDITOR
+            HotAssembly.GameStart.Instance.Init();
+#else
+            AssetManager.Instance.Load<TextAsset>("HotAssembly", StartHotAssembly);
+#endif
+        }
+        private void StartHotAssembly(int id, dynamic asset, dynamic param = null)
+        {
+            AssetManager.Instance.Unload(id);
+            hotAssembly = Assembly.Load(asset.bytes);
+            Type t = hotAssembly.GetType("HotAssembly.GameStart");
+            PropertyInfo p = t.BaseType.GetProperty("Instance");
+            dynamic o = p.GetMethod.Invoke(null, null);
+            o.Init();
         }
     }
 }

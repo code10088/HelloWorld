@@ -6,11 +6,12 @@ namespace HotAssembly
     {
         public void Init()
         {
+            UIManager.Instance.Init();
             ConfigManager.Instance.Init(EnterMainScene);
         }
         private void EnterMainScene()
         {
-
+            UIManager.Instance.OpenUI(UIType.UITest);
         }
     }
 }

@@ -58,35 +58,110 @@
     <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\Data_Test.cs">
+      <Link>SubScripts\Config\Auto\Data_Test.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\Data_UIConfig.cs">
+      <Link>SubScripts\Config\Auto\Data_UIConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\GameConfigs.cs">
+      <Link>SubScripts\Config\Auto\GameConfigs.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\ConfigManager.cs">
+      <Link>SubScripts\Config\ConfigManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\GameConfigs.cs">
+      <Link>SubScripts\Config\GameConfigs.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Event\EventManager.cs">
+      <Link>SubScripts\Event\EventManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Event\EventType.cs">
+      <Link>SubScripts\Event\EventType.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\GameStart.cs">
+      <Link>SubScripts\GameStart.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIBase.cs">
+      <Link>SubScripts\UI\Base\UIBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIManager.cs">
+      <Link>SubScripts\UI\Base\UIManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIType.cs">
+      <Link>SubScripts\UI\Base\UIType.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\UITest.cs">
+      <Link>SubScripts\UI\UITest.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SubScripts\ConfigManager.cs" />
-    <Compile Include="SubScripts\ConfigScripts\Data_Test.cs" />
-    <Compile Include="SubScripts\ConfigScripts\Data_UIConfig.cs" />
-    <Compile Include="SubScripts\ConfigScripts\GameConfigs.cs" />
-    <Compile Include="SubScripts\GameConfigs.cs" />
-    <Compile Include="SubScripts\GameEventType.cs" />
-    <Compile Include="SubScripts\GameStart.cs" />
-    <Compile Include="SubScripts\UI\UITest.cs" />
-    <Compile Include="SubScripts\UI\UIType.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="SubScripts\UI\UIAuto\" />
+    <Folder Include="SubScripts\UI\Auto\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SubScripts\ConfigManager.cs.meta" />
-    <None Include="SubScripts\ConfigScripts.meta" />
-    <None Include="SubScripts\ConfigScripts\Data_Test.cs.meta" />
-    <None Include="SubScripts\ConfigScripts\Data_UIConfig.cs.meta" />
-    <None Include="SubScripts\ConfigScripts\GameConfigs.cs.meta" />
-    <None Include="SubScripts\GameConfigs.cs.meta" />
-    <None Include="SubScripts\GameEventType.cs.meta" />
-    <None Include="SubScripts\GameStart.cs.meta" />
-    <None Include="SubScripts\UI.meta" />
-    <None Include="SubScripts\UI\UIAuto.meta" />
-    <None Include="SubScripts\UI\UITest.cs.meta" />
-    <None Include="SubScripts\UI\UIType.cs.meta" />
+    <None Include="..\Assets\Scripts\SubScripts\Config.meta">
+      <Link>SubScripts\Config.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Config\Auto.meta">
+      <Link>SubScripts\Config\Auto.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\Data_Test.cs.meta">
+      <Link>SubScripts\Config\Auto\Data_Test.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\Data_UIConfig.cs.meta">
+      <Link>SubScripts\Config\Auto\Data_UIConfig.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\GameConfigs.cs.meta">
+      <Link>SubScripts\Config\Auto\GameConfigs.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Config\ConfigManager.cs.meta">
+      <Link>SubScripts\Config\ConfigManager.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Config\GameConfigs.cs.meta">
+      <Link>SubScripts\Config\GameConfigs.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Event.meta">
+      <Link>SubScripts\Event.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Event\EventManager.cs.meta">
+      <Link>SubScripts\Event\EventManager.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Event\EventType.cs.meta">
+      <Link>SubScripts\Event\EventType.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\GameStart.cs.meta">
+      <Link>SubScripts\GameStart.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI.meta">
+      <Link>SubScripts\UI.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\Auto.meta">
+      <Link>SubScripts\UI\Auto.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\Base.meta">
+      <Link>SubScripts\UI\Base.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIBase.cs.meta">
+      <Link>SubScripts\UI\Base\UIBase.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIManager.cs.meta">
+      <Link>SubScripts\UI\Base\UIManager.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIType.cs.meta">
+      <Link>SubScripts\UI\Base\UIType.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\UITest.cs.meta">
+      <Link>SubScripts\UI\UITest.cs.meta</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

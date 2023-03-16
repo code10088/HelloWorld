@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using MainAssembly;
 using Object = UnityEngine.Object;
 
-namespace MainAssembly
+namespace HotAssembly
 {
     public class UIManager : Singletion<UIManager>
     {
@@ -26,10 +27,10 @@ namespace MainAssembly
             temp = GameObject.FindWithTag("EventSystem");
             eventSystem = temp.GetComponent<EventSystem>();
         }
-        public void OpenUI(int type, Action open = null, params object[] param)
+        public void OpenUI(UIType type, Action open = null, params object[] param)
         {
-            int from = GetFromUI();
-            if (type == (int)UIType.Max)
+            UIType from = GetFromUI();
+            if (type == UIType.Max)
             {
                 for (int i = 0; i < loadUI.Count; i++) loadUI[i].Release();
                 cacheUI.AddRange(loadUI);
@@ -84,7 +85,7 @@ namespace MainAssembly
                 loadUI.RemoveAt(0);
             }
         }
-        public void CloseUI(int type)
+        public void CloseUI(UIType type)
         {
             int tempIndex = loadUI.FindIndex(a => a.Type == type);
             if (tempIndex >= 0)
@@ -106,7 +107,7 @@ namespace MainAssembly
                 return;
             }
         }
-        public UIBase GetUI(int type)
+        public UIBase GetUI(UIType type)
         {
             for (int i = 0; i < curUI.Count; i++)
             {
@@ -117,10 +118,10 @@ namespace MainAssembly
             }
             return null;
         }
-        private int GetFromUI()
+        private UIType GetFromUI()
         {
             //TODO：获取当前非本身、非提示UI
-            return (int)UIType.None;
+            return UIType.None;
         }
 
         public void SetEventSystemState(bool state)
@@ -131,10 +132,10 @@ namespace MainAssembly
 
         private class UIItem
         {
-            private int type;
-            private int from;
+            private UIType type;
+            private UIType from;
             private int loaderID;
-            private dynamic config;
+            private Data_UIConfig config;
             private UIBase baseUI;
             private GameObject baseObj;
             private Action open = null;
@@ -144,17 +145,17 @@ namespace MainAssembly
             private float releaseTime = 10f;
             private int timerId = -1;
 
-            public int Type => type;
+            public UIType Type => type;
             public UIBase BaseUI => baseUI;
             public bool State1 => state > 0;
             public bool State2 => state < 4;
 
-            public UIItem(int type)
+            public UIItem(UIType type)
             {
                 this.type = type;
-                config = ConfigManager.Instance.GetUIConfig(type);
+                config = ConfigManager.Instance.GameConfigs.Data_UIConfig.GetDataByID((int)type);
             }
-            public void SetParam(int from, Action open = null, params object[] param)
+            public void SetParam(UIType from, Action open = null, params object[] param)
             {
                 this.from = from;
                 this.open = open;
@@ -173,7 +174,7 @@ namespace MainAssembly
                 else
                 {
                     Instance.SetEventSystemState(false);
-                    if (loaderID <= 0) loaderID = AssetManager.Instance.Load<GameObject>(type.ToString(), LoadFinish);
+                    if (loaderID <= 0) loaderID = AssetManager.Instance.Load<GameObject>(config.prefabName, LoadFinish);
                 }
             }
             private void LoadFinish(int id, dynamic asset, dynamic param = null)
@@ -199,9 +200,9 @@ namespace MainAssembly
             {
                 if (state == 1)
                 {
-                    Type t = System.Type.GetType(type.ToString());
+                    Type t = System.Type.GetType("HotAssembly." + type);
                     baseUI = Activator.CreateInstance(t) as UIBase;
-                    baseUI.InitUI(baseObj, type, from, param);
+                    baseUI.InitUI(baseObj, config, from, param);
                     open?.Invoke();
                     state = 3;
                 }

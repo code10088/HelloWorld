@@ -19,6 +19,7 @@ namespace MainAssembly
         {
             AssetItem temp = (AssetItem)cache.next;
             if (temp == null) temp = new AssetItem();
+            else cache.next = temp.next;
             temp.Init<T>(path, action, param);
             total[temp.ItemID] = temp;
             return temp.ItemID;
@@ -52,14 +53,14 @@ namespace MainAssembly
             {
                 Object asset = ar == null ? null : ar.asset;
                 action?.Invoke(ItemID, asset, param);
-                action = null;
-                param = null;
             }
             public void Unload()
             {
                 base.Reset();
-                if (ar != null) ar.Release();
+                ar?.Release();
                 ar = null;
+                action = null;
+                param = null;
                 next = cache.next;
                 cache.next = this;
             }

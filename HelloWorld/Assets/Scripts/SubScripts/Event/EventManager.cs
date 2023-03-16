@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using MainAssembly;
 
-namespace MainAssembly
+namespace HotAssembly
 {
     public class EventManager : Singletion<EventManager>
     {
-        private Dictionary<int, EventItem> eventDic = new Dictionary<int, EventItem>();
+        private Dictionary<EventType, EventItem> eventDic = new Dictionary<EventType, EventItem>();
 
-        public void RegisterEvent(int eventType, Action<object> function)
+        public void RegisterEvent(EventType eventType, Action<object> function)
         {
             if (eventDic.ContainsKey(eventType))
             {
@@ -20,7 +21,7 @@ namespace MainAssembly
                 eventDic.Add(eventType, item);
             }
         }
-        public void UnRegisterEvent(int eventType, Action<object> function)
+        public void UnRegisterEvent(EventType eventType, Action<object> function)
         {
             if (eventDic.ContainsKey(eventType))
             {
@@ -32,7 +33,7 @@ namespace MainAssembly
                 GameDebug.LogError("卸载不存在事件类型");
             }
         }
-        public void FireEvent(int eventType, params object[] obj)
+        public void FireEvent(EventType eventType, params object[] obj)
         {
             if (eventDic.ContainsKey(eventType))
             {
@@ -70,7 +71,7 @@ namespace MainAssembly
             }
             public void Handle()
             {
-                if (eventBindFunction != null) eventBindFunction(parameter);
+                eventBindFunction?.Invoke(parameter);
             }
         }
     }

@@ -5,10 +5,10 @@ namespace HotAssembly
 {
     public class UITest : UIBase
     {
-        public override void InitUI(GameObject UIObj, int type, int from, params object[] param)
+        public override void InitUI(GameObject UIObj, Data_UIConfig config, UIType from, params object[] param)
         {
             GameDebug.Log("UITest InitUI");
-            base.InitUI(UIObj, type, from, param);
+            base.InitUI(UIObj, config, from, param);
         }
         public override void Refresh(params object[] param)
         {

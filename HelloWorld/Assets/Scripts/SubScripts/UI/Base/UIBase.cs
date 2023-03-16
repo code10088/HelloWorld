@@ -1,20 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityExtensions.Tween;
 
-namespace MainAssembly
+namespace HotAssembly
 {
     public class UIBase
     {
         protected GameObject UIObj;
-        protected int type;
-        protected int from;
+        protected Data_UIConfig config;
+        protected UIType from;
         private Dictionary<int, int> layerRecord = new Dictionary<int, int>();
-        public virtual void InitUI(GameObject UIObj, int type, int from, params object[] param)
+        public virtual void InitUI(GameObject UIObj, Data_UIConfig config, UIType from, params object[] param)
         {
             this.UIObj = UIObj;
-            this.type = type;
+            this.config = config;
             this.from = from;
             ResetUILayer();
             PlayInitAni();
@@ -54,7 +53,7 @@ namespace MainAssembly
         }
         protected virtual void OnClose()
         {
-            UIManager.Instance.CloseUI(type);
+            UIManager.Instance.CloseUI((UIType)config.ID);
             UIManager.Instance.OpenUI(from);
         }
     }

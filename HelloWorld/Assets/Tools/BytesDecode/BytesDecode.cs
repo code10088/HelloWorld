@@ -40,13 +40,9 @@ public class BytesDecode
     }
     public static void Deserialize(BytesDecodeInterface bdi, byte[] bytes, Action<dynamic> complete, dynamic param = null)
     {
-        void A()
-        {
-            Deserialize(bdi, bytes);
-            complete?.Invoke(param);
-        }
-        Thread thread = new Thread(A);
-        thread.Start();
+        //TODO£∫∂‡œﬂ≥Ã
+        Deserialize(bdi, bytes);
+        complete?.Invoke(param);
     }
     public static void Deserialize(BytesDecodeInterface bdi, byte[] bytes)
     {

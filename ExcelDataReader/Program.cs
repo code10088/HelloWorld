@@ -10,7 +10,7 @@ namespace MyClass
 {
     class Program
     {
-        static string csPath = Environment.CurrentDirectory + "../../../../HelloWorld/Assets/Scripts/SubScripts/ConfigScripts";
+        static string csPath = Environment.CurrentDirectory + "../../../../HelloWorld/Assets/Scripts/SubScripts/Config/Auto";
         static string bytePath = Environment.CurrentDirectory + "../../../../HelloWorld/Assets/ZRes/Config";
         static string excelPath = Environment.CurrentDirectory + "../../../../Excel";
         static void Main(string[] args)
@@ -63,7 +63,7 @@ namespace MyClass
             }
 
             string gameConfigsCode = "";
-            gameConfigsCode += "namespace SubAssembly\n";
+            gameConfigsCode += "namespace HotAssembly\n";
             gameConfigsCode += "{\n";
             gameConfigsCode += $"    public partial class GameConfigs\n";
             gameConfigsCode += "    {\n";
