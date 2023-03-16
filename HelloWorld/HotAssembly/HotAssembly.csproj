@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3ACA2CC2-7078-42DB-84CA-B1D8716FD910}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>HotAssembly</RootNamespace>
+    <AssemblyName>HotAssembly</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>CS0436</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\Library\ScriptAssemblies\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEditor">
+      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.CoreModule">
+      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEditor.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SubScripts\ConfigManager.cs" />
+    <Compile Include="SubScripts\ConfigScripts\Data_Test.cs" />
+    <Compile Include="SubScripts\ConfigScripts\Data_UIConfig.cs" />
+    <Compile Include="SubScripts\ConfigScripts\GameConfigs.cs" />
+    <Compile Include="SubScripts\GameConfigs.cs" />
+    <Compile Include="SubScripts\GameEventType.cs" />
+    <Compile Include="SubScripts\GameStart.cs" />
+    <Compile Include="SubScripts\UI\UITest.cs" />
+    <Compile Include="SubScripts\UI\UIType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="SubScripts\UI\UIAuto\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SubScripts\ConfigManager.cs.meta" />
+    <None Include="SubScripts\ConfigScripts.meta" />
+    <None Include="SubScripts\ConfigScripts\Data_Test.cs.meta" />
+    <None Include="SubScripts\ConfigScripts\Data_UIConfig.cs.meta" />
+    <None Include="SubScripts\ConfigScripts\GameConfigs.cs.meta" />
+    <None Include="SubScripts\GameConfigs.cs.meta" />
+    <None Include="SubScripts\GameEventType.cs.meta" />
+    <None Include="SubScripts\GameStart.cs.meta" />
+    <None Include="SubScripts\UI.meta" />
+    <None Include="SubScripts\UI\UIAuto.meta" />
+    <None Include="SubScripts\UI\UITest.cs.meta" />
+    <None Include="SubScripts\UI\UIType.cs.meta" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

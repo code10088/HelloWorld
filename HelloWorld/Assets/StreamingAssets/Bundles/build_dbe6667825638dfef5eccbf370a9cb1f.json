@@ -1,0 +1,1 @@
+{"extension":".bundle","saveBundleName":true,"build":"Build","dirs":["Assets/ZRes/UI/Prefab"],"assets":[{"name":"UITest.prefab","bundle":0,"dir":0,"deps":[],"addressMode":2}],"bundles":[{"name":"build/ui_prefab_uitest_prefab.bundle","hash":"fcab918abf8c9bd4d987afea219c4af3","size":27369,"deps":[]}]}

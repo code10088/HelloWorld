@@ -63,8 +63,10 @@ namespace MyClass
             }
 
             string gameConfigsCode = "";
-            gameConfigsCode += $"public partial class GameConfigs\n";
+            gameConfigsCode += "namespace SubAssembly\n";
             gameConfigsCode += "{\n";
+            gameConfigsCode += $"    public partial class GameConfigs\n";
+            gameConfigsCode += "    {\n";
             foreach (FileInfo info in infos)
             {
                 FileStream stream = info.Open(FileMode.Open, FileAccess.Read);
@@ -75,10 +77,11 @@ namespace MyClass
 
                 string fileName = info.Name.Replace(".xls", string.Empty);
                 string className = "Data_" + fileName;
-                gameConfigsCode += $"    public {className}Array {className} = new {className}Array();\n";
+                gameConfigsCode += $"        public {className}Array {className} = new {className}Array();\n";
                 GenerateCode(codePath, className, result.Tables[0]);
                 GenerateBinaryFile(binaryPath, className, result.Tables[0]);
             }
+            gameConfigsCode += "    }\n";
             gameConfigsCode += "}\n";
             string targetPath = codePath + "/GameConfigs.cs";
             File.WriteAllText(targetPath, gameConfigsCode, System.Text.Encoding.UTF8);

@@ -1,43 +1,46 @@
 using System;
 using UnityEngine;
 
-public class UpdateManager : Singletion<UpdateManager>
+namespace MainAssembly
 {
-    private static UpdateItem cache = new UpdateItem();
-    public int StartUpdate(Action action)
+    public class UpdateManager : Singletion<UpdateManager>
     {
-        UpdateItem temp = (UpdateItem)cache.next;
-        if (temp == null) temp = new UpdateItem();
-        temp.Init(action);
-        AsyncManager.Instance.Add(temp);
-        return temp.ItemID;
-    }
-    public void StopUpdate(int id)
-    {
-        AsyncManager.Instance.Remove(id);
-    }
-
-
-    private class UpdateItem : AsyncItem
-    {
-        private Action action;
-
-        public new void Init(Action action)
+        private static UpdateItem cache = new UpdateItem();
+        public int StartUpdate(Action action)
         {
-            base.Init(null);
-            this.action = action;
+            UpdateItem temp = (UpdateItem)cache.next;
+            if (temp == null) temp = new UpdateItem();
+            temp.Init(action);
+            AsyncManager.Instance.Add(temp);
+            return temp.ItemID;
         }
-        public override void Update()
+        public void StopUpdate(int id)
         {
-            action();
+            AsyncManager.Instance.Remove(id);
         }
-        public override void Reset()
-        {
-            base.Reset();
-            action = null;
 
-            next = cache.next;
-            cache.next = this;
+
+        private class UpdateItem : AsyncItem
+        {
+            private Action action;
+
+            public new void Init(Action action)
+            {
+                base.Init(null);
+                this.action = action;
+            }
+            public override void Update()
+            {
+                action();
+            }
+            public override void Reset()
+            {
+                base.Reset();
+                action = null;
+
+                next = cache.next;
+                cache.next = this;
+            }
         }
     }
 }

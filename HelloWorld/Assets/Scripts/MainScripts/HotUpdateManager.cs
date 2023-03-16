@@ -3,136 +3,139 @@ using System.Collections.Generic;
 using UnityEngine;
 using xasset;
 
-public class HotUpdateManager : Singletion<HotUpdateManager>
+namespace MainAssembly
 {
-    private Action action;
-    private Versions versions;
+    public class HotUpdateManager : Singletion<HotUpdateManager>
+    {
+        private Action action;
+        private Versions versions;
 
-    public void Start(Action action)
-    {
-        this.action = action;
-        CheckUpdateInfo();
-    }
-    private void CheckUpdateInfo()
-    {
-        if (Assets.SimulationMode)
+        public void Start(Action action)
         {
-            UpdateFinish();
-        }
-        else
-        {
-            Assets.UpdateInfoURL = "http://127.0.0.1/Bundles/Android/updateinfo.json";
-            Assets.DownloadURL = "http://127.0.0.1/Bundles/Android";
-            var getUpdateInfoAsync = Assets.GetUpdateInfoAsync();
-            getUpdateInfoAsync.completed += CheckUpdateVersion;
-        }
-    }
-    private void CheckUpdateVersion(Request request)
-    {
-        var getUpdateInfoAsync = request as GetUpdateInfoRequest;
-        if (getUpdateInfoAsync.result == Request.Result.Success)
-        {
-            var updateVersion = System.Version.Parse(getUpdateInfoAsync.info.version);
-            var playerVersion = System.Version.Parse(Assets.PlayerAssets.version);
-            if (updateVersion.Minor != playerVersion.Minor)
-            {
-                Application.OpenURL(getUpdateInfoAsync.info.playerDownloadURL);
-                Application.Quit();
-                return;
-            }
-            var getVersionsAsync = Assets.GetVersionsAsync(getUpdateInfoAsync.info);
-            getVersionsAsync.completed += CheckDownloadInfo;
-        }
-        else
-        {
-            //重试按钮
+            this.action = action;
             CheckUpdateInfo();
         }
-    }
-    private void CheckDownloadInfo(Request request)
-    {
-        var getVersionsAsync = request as VersionsRequest;
-        if (getVersionsAsync.result == Request.Result.Success)
+        private void CheckUpdateInfo()
         {
-            versions = getVersionsAsync.versions;
-            var getDownloadSizeAsync = Assets.GetDownloadSizeAsync(versions);
-            getDownloadSizeAsync.completed += StartDownload;
-        }
-        else
-        {
-            //重试按钮
-            CheckUpdateInfo();
-        }
-    }
-    private void StartDownload(Request request)
-    {
-        var getDownloadSizeAsync = request as GetDownloadSizeRequest;
-        if (getDownloadSizeAsync.downloadSize > 0)
-        {
-            var downloadSize = Utility.FormatBytes(getDownloadSizeAsync.downloadSize);
-            //确定下载
-            var downloadAsync = getDownloadSizeAsync.DownloadAsync();
-            var downloadRequestBatch = downloadAsync as DownloadRequestBatch;
-            downloadRequestBatch.updated = Downloading;
-            downloadRequestBatch.completed += RemoveUnusedFile;
-        }
-        else
-        {
-            UpdateFinish();
-        }
-    }
-    private void Downloading(DownloadRequestBatch download)
-    {
-        var downloadedBytes = Utility.FormatBytes(download.downloadedBytes);
-        var downloadSize = Utility.FormatBytes(download.downloadSize);
-        var bandwidth = Utility.FormatBytes(download.bandwidth);
-
-    }
-    private void RemoveUnusedFile(DownloadRequestBatch download)
-    {
-        if (download.result == DownloadRequestBase.Result.Success)
-        {
-            var bundles = new HashSet<string>();
-            foreach (var item in versions.data)
+            if (Assets.SimulationMode)
             {
-                bundles.Add(item.file);
-                foreach (var bundle in item.manifest.bundles)
-                    bundles.Add(bundle.file);
+                UpdateFinish();
             }
-
-            var files = new List<string>();
-            foreach (var item in Assets.Versions.data)
+            else
             {
-                if (!bundles.Contains(item.file))
-                    files.Add(item.file);
-                foreach (var bundle in item.manifest.bundles)
-                    if (!bundles.Contains(bundle.file))
+                Assets.UpdateInfoURL = "http://127.0.0.1/Bundles/Android/updateinfo.json";
+                Assets.DownloadURL = "http://127.0.0.1/Bundles/Android";
+                var getUpdateInfoAsync = Assets.GetUpdateInfoAsync();
+                getUpdateInfoAsync.completed += CheckUpdateVersion;
+            }
+        }
+        private void CheckUpdateVersion(Request request)
+        {
+            var getUpdateInfoAsync = request as GetUpdateInfoRequest;
+            if (getUpdateInfoAsync.result == Request.Result.Success)
+            {
+                var updateVersion = System.Version.Parse(getUpdateInfoAsync.info.version);
+                var playerVersion = System.Version.Parse(Assets.PlayerAssets.version);
+                if (updateVersion.Minor != playerVersion.Minor)
+                {
+                    Application.OpenURL(getUpdateInfoAsync.info.playerDownloadURL);
+                    Application.Quit();
+                    return;
+                }
+                var getVersionsAsync = Assets.GetVersionsAsync(getUpdateInfoAsync.info);
+                getVersionsAsync.completed += CheckDownloadInfo;
+            }
+            else
+            {
+                //重试按钮
+                CheckUpdateInfo();
+            }
+        }
+        private void CheckDownloadInfo(Request request)
+        {
+            var getVersionsAsync = request as VersionsRequest;
+            if (getVersionsAsync.result == Request.Result.Success)
+            {
+                versions = getVersionsAsync.versions;
+                var getDownloadSizeAsync = Assets.GetDownloadSizeAsync(versions);
+                getDownloadSizeAsync.completed += StartDownload;
+            }
+            else
+            {
+                //重试按钮
+                CheckUpdateInfo();
+            }
+        }
+        private void StartDownload(Request request)
+        {
+            var getDownloadSizeAsync = request as GetDownloadSizeRequest;
+            if (getDownloadSizeAsync.downloadSize > 0)
+            {
+                var downloadSize = Utility.FormatBytes(getDownloadSizeAsync.downloadSize);
+                //确定下载
+                var downloadAsync = getDownloadSizeAsync.DownloadAsync();
+                var downloadRequestBatch = downloadAsync as DownloadRequestBatch;
+                downloadRequestBatch.updated = Downloading;
+                downloadRequestBatch.completed += RemoveUnusedFile;
+            }
+            else
+            {
+                UpdateFinish();
+            }
+        }
+        private void Downloading(DownloadRequestBatch download)
+        {
+            var downloadedBytes = Utility.FormatBytes(download.downloadedBytes);
+            var downloadSize = Utility.FormatBytes(download.downloadSize);
+            var bandwidth = Utility.FormatBytes(download.bandwidth);
+
+        }
+        private void RemoveUnusedFile(DownloadRequestBatch download)
+        {
+            if (download.result == DownloadRequestBase.Result.Success)
+            {
+                var bundles = new HashSet<string>();
+                foreach (var item in versions.data)
+                {
+                    bundles.Add(item.file);
+                    foreach (var bundle in item.manifest.bundles)
+                        bundles.Add(bundle.file);
+                }
+
+                var files = new List<string>();
+                foreach (var item in Assets.Versions.data)
+                {
+                    if (!bundles.Contains(item.file))
                         files.Add(item.file);
-            }
+                    foreach (var bundle in item.manifest.bundles)
+                        if (!bundles.Contains(bundle.file))
+                            files.Add(item.file);
+                }
 
-            var removeAsync = new RemoveRequest();
-            foreach (var file in files)
-            {
-                var path = Assets.GetDownloadDataPath(file);
-                removeAsync.files.Add(path);
+                var removeAsync = new RemoveRequest();
+                foreach (var file in files)
+                {
+                    var path = Assets.GetDownloadDataPath(file);
+                    removeAsync.files.Add(path);
+                }
+                removeAsync.completed += SaveVersion;
+                removeAsync.SendRequest();
             }
-            removeAsync.completed += SaveVersion;
-            removeAsync.SendRequest();
+            else
+            {
+                //重试按钮
+                download.Retry();
+            }
         }
-        else
+        private void SaveVersion(Request request)
         {
-            //重试按钮
-            download.Retry();
+            Assets.Versions = versions;
+            versions.Save(Assets.GetDownloadDataPath(Versions.Filename));
+            UpdateFinish();
         }
-    }
-    private void SaveVersion(Request request)
-    {
-        Assets.Versions = versions;
-        versions.Save(Assets.GetDownloadDataPath(Versions.Filename));
-        UpdateFinish();
-    }
-    private void UpdateFinish()
-    {
-        action?.Invoke();
+        private void UpdateFinish()
+        {
+            action?.Invoke();
+        }
     }
 }

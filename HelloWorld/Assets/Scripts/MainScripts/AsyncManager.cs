@@ -1,76 +1,79 @@
 using System;
 using UnityEngine;
 
-public class AsyncManager : Singletion<AsyncManager>
+namespace MainAssembly
 {
-    private AsyncItem first = new AsyncItem();
-    private float realtimeSinceStartup = 0;
+    public class AsyncManager : Singletion<AsyncManager>
+    {
+        private AsyncItem first = new AsyncItem();
+        private float realtimeSinceStartup = 0;
 
-    public void Add(AsyncItem item)
-    {
-        item.next = first.next;
-        first.next = item;
-    }
-    public void Remove(int id)
-    {
-        AsyncItem item = first;
-        while (item != null)
+        public void Add(AsyncItem item)
         {
-            AsyncItem temp = item.next;
-            if (temp == null) return;
-            if (temp.ItemID == id) temp.mark = true;
-            if (temp.mark) return;
-            else item = temp;
+            item.next = first.next;
+            first.next = item;
+        }
+        public void Remove(int id)
+        {
+            AsyncItem item = first;
+            while (item != null)
+            {
+                AsyncItem temp = item.next;
+                if (temp == null) return;
+                if (temp.ItemID == id) temp.mark = true;
+                if (temp.mark) return;
+                else item = temp;
+            }
+        }
+        public void Update()
+        {
+            realtimeSinceStartup = Time.realtimeSinceStartup;
+            AsyncItem item = first;
+            while (item != null)
+            {
+                AsyncItem temp = item.next;
+                if (temp == null) return;
+                temp.Update();
+                if (temp.mark) item.next = temp.next;
+                else item = temp;
+                if (temp.mark) temp.Reset();
+                if (Time.realtimeSinceStartup - realtimeSinceStartup > GameData.Instance.updateTimeSlice) return;
+            }
         }
     }
-	public void Update()
+    public class AsyncItem
     {
-        realtimeSinceStartup = Time.realtimeSinceStartup;
-        AsyncItem item = first;
-        while (item != null)
+        private static int uniqueId = 0;
+        private int itemId = -1;
+        public bool mark = false;
+        public AsyncItem next;
+        private Action finish;
+
+        public int ItemID => itemId;
+
+        public virtual void Init(Action finish)
         {
-            AsyncItem temp = item.next;
-            if (temp == null) return;
-            temp.Update();
-            if (temp.mark) item.next = temp.next;
-            else item = temp;
-            if (temp.mark) temp.Reset();
-            if (Time.realtimeSinceStartup - realtimeSinceStartup > GameData.Instance.updateTimeSlice) return;
+            itemId = ++uniqueId;
+            this.finish = finish;
         }
-    }
-}
-public class AsyncItem
-{
-    private static int uniqueId = 0;
-    private int itemId = -1;
-    public bool mark = false;
-    public AsyncItem next;
-    private Action finish;
 
-    public int ItemID => itemId;
+        public virtual void Update()
+        {
 
-    public virtual void Init(Action finish)
-    {
-        itemId = ++uniqueId;
-        this.finish = finish;
-    }
+        }
 
-    public virtual void Update()
-    {
+        protected virtual void Finish()
+        {
+            mark = true;
+            finish?.Invoke();
+        }
 
-    }
-
-    protected virtual void Finish()
-    {
-        mark = true;
-        finish?.Invoke();
-    }
-
-    public virtual void Reset()
-    {
-        itemId = -1;
-        mark = false;
-        next = null;
-        finish = null;
+        public virtual void Reset()
+        {
+            itemId = -1;
+            mark = false;
+            next = null;
+            finish = null;
+        }
     }
 }

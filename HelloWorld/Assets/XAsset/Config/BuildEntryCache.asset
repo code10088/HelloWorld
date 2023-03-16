@@ -15,13 +15,13 @@ MonoBehaviour:
   data:
   - path: Assets/ZRes/UI
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133233435568194266
+    lastWriteTimeForGroup: 133234257696149261
     assets:
     - path: Assets/ZRes/UI/Prefab/UITest.prefab
       bundle: 
       type: GameObject
       entry: Assets/ZRes/UI
-      lastWriteTime: 133233437220041095
+      lastWriteTime: 133234238802406005
       addressMode: 2
       dependencies:
       - Assets/Pipeline/Test.shader
@@ -31,7 +31,7 @@ MonoBehaviour:
     group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
   - path: Assets/ZRes/Config
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133233435568194266
+    lastWriteTimeForGroup: 133234257696149261
     assets:
     - path: Assets/ZRes/Config/Data_Test.bytes
       bundle: 
@@ -46,6 +46,32 @@ MonoBehaviour:
       type: TextAsset
       entry: Assets/ZRes/Config
       lastWriteTime: 0
+      addressMode: 2
+      dependencies: []
+      group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
+    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
+  - path: Assets/Scripts/SubScripts
+    lastWriteTime: 0
+    lastWriteTimeForGroup: 133234257696149261
+    assets:
+    - path: Assets/Scripts/SubScripts/HotAssembly.bytes
+      bundle: 
+      type: TextAsset
+      entry: Assets/Scripts/SubScripts
+      lastWriteTime: 0
+      addressMode: 2
+      dependencies: []
+      group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
+    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
+  - path: Assets/Scripts/SubScripts/HotAssembly.dll
+    lastWriteTime: 133234216542305485
+    lastWriteTimeForGroup: 133234215941936892
+    assets:
+    - path: Assets/Scripts/SubScripts/HotAssembly.dll
+      bundle: 
+      type: DefaultAsset
+      entry: Assets/Scripts/SubScripts/HotAssembly.dll
+      lastWriteTime: 133234216542305485
       addressMode: 2
       dependencies: []
       group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
