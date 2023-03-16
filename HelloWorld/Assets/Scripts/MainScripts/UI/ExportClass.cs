@@ -1,10 +1,7 @@
 ﻿#if UNITY_EDITOR
 using UnityEngine;
-namespace MainAssembly
+public class ExportClass : MonoBehaviour
 {
-    public class ExportClass : MonoBehaviour
-    {
-        public string className;
-    }
+    public string className;
 }
 #endif

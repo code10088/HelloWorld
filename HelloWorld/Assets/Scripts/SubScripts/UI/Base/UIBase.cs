@@ -7,13 +7,13 @@ namespace HotAssembly
     public class UIBase
     {
         protected GameObject UIObj;
-        protected Data_UIConfig config;
+        protected UIType type;
         protected UIType from;
         private Dictionary<int, int> layerRecord = new Dictionary<int, int>();
-        public virtual void InitUI(GameObject UIObj, Data_UIConfig config, UIType from, params object[] param)
+        public virtual void InitUI(GameObject UIObj, UIType type, UIType from, params object[] param)
         {
             this.UIObj = UIObj;
-            this.config = config;
+            this.type = type;
             this.from = from;
             ResetUILayer();
             PlayInitAni();
@@ -53,7 +53,7 @@ namespace HotAssembly
         }
         protected virtual void OnClose()
         {
-            UIManager.Instance.CloseUI((UIType)config.ID);
+            UIManager.Instance.CloseUI(type);
             UIManager.Instance.OpenUI(from);
         }
     }

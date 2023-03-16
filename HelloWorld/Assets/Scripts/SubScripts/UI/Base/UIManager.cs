@@ -202,7 +202,7 @@ namespace HotAssembly
                 {
                     Type t = System.Type.GetType("HotAssembly." + type);
                     baseUI = Activator.CreateInstance(t) as UIBase;
-                    baseUI.InitUI(baseObj, config, from, param);
+                    baseUI.InitUI(baseObj, type, from, param);
                     open?.Invoke();
                     state = 3;
                 }

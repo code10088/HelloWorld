@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-namespace MainAssembly
+
+public class ExportComponent : MonoBehaviour
 {
-    public class ExportComponent : MonoBehaviour
-    {
-        public MonoBehaviour[] exportComponent;
-    }
+    public MonoBehaviour[] exportComponent;
 }

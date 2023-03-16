@@ -90,6 +90,9 @@
     <Compile Include="..\Assets\Scripts\SubScripts\GameStart.cs">
       <Link>SubScripts\GameStart.cs</Link>
     </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UITestComponent.cs">
+      <Link>SubScripts\UI\Auto\UITestComponent.cs</Link>
+    </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIBase.cs">
       <Link>SubScripts\UI\Base\UIBase.cs</Link>
     </Compile>
@@ -104,9 +107,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SubScripts\UI\Auto\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="..\Assets\Scripts\SubScripts\Config.meta">
       <Link>SubScripts\Config.meta</Link>
@@ -146,6 +147,9 @@
     </None>
     <None Include="..\Assets\Scripts\SubScripts\UI\Auto.meta">
       <Link>SubScripts\UI\Auto.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\Auto\UITestComponent.cs.meta">
+      <Link>SubScripts\UI\Auto\UITestComponent.cs.meta</Link>
     </None>
     <None Include="..\Assets\Scripts\SubScripts\UI\Base.meta">
       <Link>SubScripts\UI\Base.meta</Link>

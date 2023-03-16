@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 9013157646965593078}
   - component: {fileID: 439251197655552881}
   - component: {fileID: 5149010856302671980}
+  - component: {fileID: 3158111280949475706}
   m_Layer: 5
   m_Name: UITest
   m_TagString: Untagged
@@ -100,6 +101,19 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 55
+--- !u!114 &3158111280949475706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8764031000229441226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  className: UITestComponent
 --- !u!1 &9151740983148388995
 GameObject:
   m_ObjectHideFlags: 0
@@ -112,6 +126,7 @@ GameObject:
   - component: {fileID: 6313423681600986281}
   - component: {fileID: 3922434743743645914}
   - component: {fileID: 3031640561253938232}
+  - component: {fileID: 8643312101581221943}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -220,3 +235,17 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8643312101581221943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9151740983148388995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exportComponent:
+  - {fileID: 3031640561253938232}
