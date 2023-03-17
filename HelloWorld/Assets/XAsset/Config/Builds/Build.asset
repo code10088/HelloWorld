@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parameters:
     buildNumber: 0
-    optimizeDependentAssets: 1
+    optimizeDependentAssets: 0
     forceRebuild: 0
     options: 256
     groups:

@@ -32,7 +32,8 @@ namespace HotAssembly
 
         private void OnClickClose()
         {
-            UIManager.Instance.CloseUI(type);
+            GameDebug.LogError(1);
+            //UIManager.Instance.CloseUI(type);
         }
     }
 }

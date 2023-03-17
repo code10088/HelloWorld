@@ -79,8 +79,10 @@
     <type fullname="UnityEngine.MonoBehaviour" preserve="all" />
     <type fullname="UnityEngine.Object" preserve="all" />
     <type fullname="UnityEngine.Quaternion" preserve="all" />
+    <type fullname="UnityEngine.RectTransform" preserve="all" />
     <type fullname="UnityEngine.TextAsset" preserve="all" />
     <type fullname="UnityEngine.Transform" preserve="all" />
+    <type fullname="UnityEngine.Vector2" preserve="all" />
     <type fullname="UnityEngine.Vector3" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.UI">

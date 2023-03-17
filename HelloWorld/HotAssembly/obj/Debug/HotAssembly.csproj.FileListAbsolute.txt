@@ -145,3 +145,4 @@ D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\UnityEngine.InputModule.xml
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.csproj.CopyComplete
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.dll
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.pdb
+D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.csproj.AssemblyReference.cache

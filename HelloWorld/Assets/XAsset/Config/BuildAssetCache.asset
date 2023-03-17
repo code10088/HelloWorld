@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data:
   - path: Assets/ZRes/UI/Prefab/UITest.prefab
-    bundle: 
+    bundle: build/ui_prefab_uitest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI
-    lastWriteTime: 133234435499274722
+    lastWriteTime: 133234998046911536
     addressMode: 2
     dependencies:
     - Assets/Pipeline/Test.shader
@@ -25,7 +25,7 @@ MonoBehaviour:
     - Packages/com.unity.collab-proxy/Editor/PlasticSCM/Assets/Images/buttonssosigningoogle.png
     group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
   - path: Assets/ZRes/Config/Data_Test.bytes
-    bundle: 
+    bundle: build/config_data_test_bytes.bundle
     type: TextAsset
     entry: Assets/ZRes/Config
     lastWriteTime: 0
@@ -33,7 +33,7 @@ MonoBehaviour:
     dependencies: []
     group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
   - path: Assets/ZRes/Config/Data_UIConfig.bytes
-    bundle: 
+    bundle: build/config_data_uiconfig_bytes.bundle
     type: TextAsset
     entry: Assets/ZRes/Config
     lastWriteTime: 0
@@ -60,6 +60,14 @@ MonoBehaviour:
     bundle: 
     type: TextAsset
     entry: Assets/Scripts/SubScripts
+    lastWriteTime: 0
+    addressMode: 2
+    dependencies: []
+    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
+  - path: Assets/ZRes/Assembly/HotAssembly.bytes
+    bundle: build/assembly_hotassembly_bytes.bundle
+    type: TextAsset
+    entry: Assets/ZRes/Assembly
     lastWriteTime: 0
     addressMode: 2
     dependencies: []

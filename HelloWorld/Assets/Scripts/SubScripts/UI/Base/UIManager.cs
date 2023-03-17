@@ -191,6 +191,11 @@ namespace HotAssembly
                     baseObj.transform.localPosition = Vector3.zero;
                     baseObj.transform.localRotation = Quaternion.identity;
                     baseObj.transform.localScale = Vector3.one;
+                    RectTransform rt = baseObj.GetComponent<RectTransform>();
+                    rt.anchoredPosition3D = Vector3.zero;
+                    rt.anchorMin = Vector2.zero;
+                    rt.anchorMax = Vector2.one;
+                    rt.sizeDelta = Vector2.zero;
                 }
                 releaseTime = Mathf.Lerp(releaseTime, 120f, 0.2f);
                 Instance.SetEventSystemState(true);

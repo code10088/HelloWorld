@@ -23,8 +23,7 @@ namespace MainAssembly
             }
             else
             {
-                Assets.UpdateInfoURL = "http://127.0.0.1/Bundles/Android/updateinfo.json";
-                Assets.DownloadURL = "http://127.0.0.1/Bundles/Android";
+                Assets.UpdateInfoURL = "http://192.168.101.51/BundlesCache/Android/updateinfo.json";
                 var getUpdateInfoAsync = Assets.GetUpdateInfoAsync();
                 getUpdateInfoAsync.completed += CheckUpdateVersion;
             }
@@ -135,7 +134,7 @@ namespace MainAssembly
         }
         private void UpdateFinish_LoadHotAssembly()
         {
-#if UNITY_EDITOR
+#if !UNITY_EDITOR
             HotAssembly.GameStart.Instance.Init();
 #else
             AssetManager.Instance.Load<TextAsset>("HotAssembly", StartHotAssembly);
