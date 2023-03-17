@@ -36,19 +36,16 @@ namespace MainAssembly
                 this.loop = loop;
                 this.action = action;
             }
-            public override void Update()
+            public override bool Update()
             {
-                if (mark) return;
+                if (mark) return true;
                 _time += Time.deltaTime;
                 if (loop > 0 && _time > _loop)
                 {
                     _loop += loop;
                     action(_time);
                 }
-                if (time > 0 && _time > time)
-                {
-                    Finish();
-                }
+                return time > 0 && _time > time;
             }
             public override void Reset()
             {

@@ -33,7 +33,7 @@ namespace MainAssembly
             {
                 AsyncItem temp = item.next;
                 if (temp == null) return;
-                temp.Update();
+                if (temp.Update()) temp.Finish();
                 if (temp.mark) item.next = temp.next;
                 else item = temp;
                 if (temp.mark) temp.Reset();
@@ -57,12 +57,12 @@ namespace MainAssembly
             this.finish = finish;
         }
 
-        public virtual void Update()
+        public virtual bool Update()
         {
-
+            return true;
         }
 
-        protected virtual void Finish()
+        public virtual void Finish()
         {
             mark = true;
             finish?.Invoke();

@@ -29,9 +29,11 @@ namespace MainAssembly
                 base.Init(null);
                 this.action = action;
             }
-            public override void Update()
+            public override bool Update()
             {
+                if (mark) return true;
                 action();
+                return false;
             }
             public override void Reset()
             {
