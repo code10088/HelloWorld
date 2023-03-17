@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using xasset;
+using Object = UnityEngine.Object;
 
 namespace MainAssembly
 {
@@ -134,20 +135,22 @@ namespace MainAssembly
         }
         private void UpdateFinish_LoadHotAssembly()
         {
-#if !UNITY_EDITOR
+#if UNITY_EDITOR
             HotAssembly.GameStart.Instance.Init();
 #else
             AssetManager.Instance.Load<TextAsset>("HotAssembly", StartHotAssembly);
 #endif
         }
-        private void StartHotAssembly(int id, dynamic asset, dynamic param = null)
+        private void StartHotAssembly(int id, Object asset, object param = null)
         {
             AssetManager.Instance.Unload(id);
-            hotAssembly = Assembly.Load(asset.bytes);
+            TextAsset ta = asset as TextAsset;
+            hotAssembly = Assembly.Load(ta.bytes);
             Type t = hotAssembly.GetType("HotAssembly.GameStart");
             PropertyInfo p = t.BaseType.GetProperty("Instance");
-            dynamic o = p.GetMethod.Invoke(null, null);
-            o.Init();
+            object o = p.GetMethod.Invoke(null, null);
+            MethodInfo m = t.GetMethod("Init");
+            m.Invoke(o, null);
         }
     }
 }

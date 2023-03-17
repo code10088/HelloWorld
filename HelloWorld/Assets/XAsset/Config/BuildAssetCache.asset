@@ -17,7 +17,7 @@ MonoBehaviour:
     bundle: build/ui_prefab_uitest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI
-    lastWriteTime: 133234998046911536
+    lastWriteTime: 133235243203247884
     addressMode: 2
     dependencies:
     - Assets/Pipeline/Test.shader

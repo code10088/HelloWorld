@@ -11,12 +11,6 @@
     <type fullname="MainAssembly.TimeManager" preserve="all" />
     <type fullname="UnityExtensions.Tween.TweenPlayer" preserve="all" />
   </assembly>
-  <assembly fullname="Microsoft.CSharp">
-    <type fullname="Microsoft.CSharp.RuntimeBinder.Binder" preserve="all" />
-    <type fullname="Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" preserve="all" />
-    <type fullname="Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfoFlags" preserve="all" />
-    <type fullname="Microsoft.CSharp.RuntimeBinder.CSharpBinderFlags" preserve="all" />
-  </assembly>
   <assembly fullname="mscorlib">
     <type fullname="System.Action" preserve="all" />
     <type fullname="System.Action`1" preserve="all" />
@@ -34,8 +28,6 @@
     <type fullname="System.Enum" preserve="all" />
     <type fullname="System.Exception" preserve="all" />
     <type fullname="System.Func`1" preserve="all" />
-    <type fullname="System.Func`3" preserve="all" />
-    <type fullname="System.Func`4" preserve="all" />
     <type fullname="System.GC" preserve="all" />
     <type fullname="System.Int32" preserve="all" />
     <type fullname="System.Object" preserve="all" />
@@ -61,13 +53,6 @@
     <type fullname="System.String" preserve="all" />
     <type fullname="System.Threading.Interlocked" preserve="all" />
     <type fullname="System.Type" preserve="all" />
-  </assembly>
-  <assembly fullname="System.Core">
-    <type fullname="System.Linq.Expressions.ExpressionType" preserve="all" />
-    <type fullname="System.Runtime.CompilerServices.CallSite" preserve="all" />
-    <type fullname="System.Runtime.CompilerServices.CallSite`1" preserve="all" />
-    <type fullname="System.Runtime.CompilerServices.CallSiteBinder" preserve="all" />
-    <type fullname="System.Runtime.CompilerServices.DynamicAttribute" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.CoreModule">
     <type fullname="UnityEngine.Behaviour" preserve="all" />

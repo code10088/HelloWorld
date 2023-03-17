@@ -38,7 +38,7 @@ public class BytesDecode
         bd.bytes = null;
         bd.result = null;
     }
-    public static void Deserialize(BytesDecodeInterface bdi, byte[] bytes, Action<dynamic> complete, dynamic param = null)
+    public static void Deserialize(BytesDecodeInterface bdi, byte[] bytes, Action<object> complete, object param = null)
     {
         //TODO£∫∂‡œﬂ≥Ã
         Deserialize(bdi, bytes);

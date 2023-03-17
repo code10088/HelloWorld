@@ -10,12 +10,12 @@ namespace MainAssembly
         private static Dictionary<int, AssetItem> total = new Dictionary<int, AssetItem>();
         private static AssetItem cache = new AssetItem();
 
-        public void Init(Action<dynamic> action)
+        public void Init(Action<object> action)
         {
             Assets.InitializeAsync(action);
         }
 
-        public int Load<T>(string path, Action<int, dynamic, dynamic> action = null, dynamic param = null) where T : Object
+        public int Load<T>(string path, Action<int, Object, object> action = null, object param = null) where T : Object
         {
             AssetItem temp = (AssetItem)cache.next;
             if (temp == null) temp = new AssetItem();
@@ -36,11 +36,11 @@ namespace MainAssembly
 
         private class AssetItem : AsyncItem
         {
-            private dynamic action;
-            private dynamic param;
+            private Action<int, Object, object> action;
+            private object param;
             private AssetRequest ar;
 
-            public void Init<T>(string path, Action<int, dynamic, dynamic> action, dynamic param) where T : Object
+            public void Init<T>(string path, Action<int, Object, object> action, object param) where T : Object
             {
                 base.Init(null);
                 this.action = action;

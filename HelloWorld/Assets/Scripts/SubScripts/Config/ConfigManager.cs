@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using MainAssembly;
+using Object = UnityEngine.Object;
 
 namespace HotAssembly
 {
@@ -25,13 +26,14 @@ namespace HotAssembly
                 AssetManager.Instance.Load<TextAsset>(tempPath, Deserialize, v);
             }
         }
-        private void Deserialize(int id, dynamic obj, dynamic param)
+        private void Deserialize(int id, Object obj, object param)
         {
-            BytesDecode.Deserialize((BytesDecodeInterface)param, (byte[])obj.bytes, Finish, id);
+            TextAsset ta = obj as TextAsset;
+            BytesDecode.Deserialize((BytesDecodeInterface)param, ta.bytes, Finish, id);
         }
-        private void Finish(dynamic param)
+        private void Finish(object param)
         {
-            AssetManager.Instance.Unload(param);
+            AssetManager.Instance.Unload((int)param);
             if (--configCounter == 0)
             {
                 finish?.Invoke();

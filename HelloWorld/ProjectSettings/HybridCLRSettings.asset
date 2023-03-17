@@ -22,7 +22,7 @@ MonoBehaviour:
   preserveHotUpdateAssemblies: []
   hotUpdateDllCompileOutputRootDir: HybridCLRData/HotUpdateDlls
   externalHotUpdateAssembliyDirs:
-  - D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug
+  - HotAssembly/obj/Debug
   strippedAOTDllOutputRootDir: HybridCLRData/AssembliesPostIl2CppStrip
   patchAOTAssemblies: []
   outputLinkFile: HybridCLRData/Generated/link.xml
