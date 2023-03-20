@@ -9,10 +9,16 @@ namespace MainAssembly
     {
         private static Dictionary<int, AssetItem> total = new Dictionary<int, AssetItem>();
         private static AssetItem cache = new AssetItem();
+        private Action initFinish;
 
-        public void Init(Action<object> action)
+        public void Init(Action action)
         {
-            Assets.InitializeAsync(action);
+            initFinish = action;
+            Assets.InitializeAsync(InitFinish);
+        }
+        private void InitFinish(Request completed)
+        {
+            initFinish?.Invoke();
         }
 
         public int Load<T>(string path, Action<int, Object, object> action = null, object param = null) where T : Object

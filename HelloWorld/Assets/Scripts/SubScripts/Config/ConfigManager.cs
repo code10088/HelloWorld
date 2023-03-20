@@ -26,10 +26,12 @@ namespace HotAssembly
                 AssetManager.Instance.Load<TextAsset>(tempPath, Deserialize, v);
             }
         }
-        private void Deserialize(int id, Object obj, object param)
+        private void Deserialize(int id, Object asset, object param)
         {
-            TextAsset ta = obj as TextAsset;
-            BytesDecode.Deserialize((BytesDecodeInterface)param, ta.bytes, Finish, id);
+            if (asset == null) return;
+            byte[] bytes = ((TextAsset)asset).bytes;
+            if (bytes == null) return;
+            BytesDecode.Deserialize((BytesDecodeInterface)param, bytes, Finish, id);
         }
         private void Finish(object param)
         {

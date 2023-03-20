@@ -144,8 +144,10 @@ namespace MainAssembly
         private void StartHotAssembly(int id, Object asset, object param = null)
         {
             AssetManager.Instance.Unload(id);
-            TextAsset ta = asset as TextAsset;
-            hotAssembly = Assembly.Load(ta.bytes);
+            if (asset == null) return;
+            byte[] bytes = ((TextAsset)asset).bytes;
+            if (bytes == null) return;
+            hotAssembly = Assembly.Load(bytes);
             Type t = hotAssembly.GetType("HotAssembly.GameStart");
             PropertyInfo p = t.BaseType.GetProperty("Instance");
             object o = p.GetMethod.Invoke(null, null);

@@ -15,7 +15,7 @@ namespace MainAssembly
         {
             AssetManager.Instance.Init(HotUpdate);
         }
-        private void HotUpdate(object param)
+        private void HotUpdate()
         {
             MainAssembly.HotUpdate.Instance.Start();
         }
