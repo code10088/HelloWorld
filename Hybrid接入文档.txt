@@ -1,2 +1,3 @@
 注意事项
 	macos系统下编译libil2cpp.a时，执行bash ./build_libil2cpp.sh报错，直接拖到cmd运行不报错
+	
