@@ -177,7 +177,7 @@ namespace HotAssembly
                     if (loaderID <= 0) loaderID = AssetManager.Instance.Load<GameObject>(config.prefabName, LoadFinish);
                 }
             }
-            private void LoadFinish(int id, Object asset, object param = null)
+            private void LoadFinish(int id, Object asset)
             {
                 if (asset == null)
                 {

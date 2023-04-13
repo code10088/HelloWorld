@@ -4,5 +4,6 @@ namespace MainAssembly
     {
         public int targetFrame = 60;
         public float updateTimeSlice = 1.0f / 60;
+        public int threadLimit = 6;
     }
 }

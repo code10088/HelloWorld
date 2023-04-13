@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Threading;
+using MainAssembly;
 
 public class BytesDecode
 {
@@ -38,11 +38,9 @@ public class BytesDecode
         bd.bytes = null;
         bd.result = null;
     }
-    public static void Deserialize(BytesDecodeInterface bdi, byte[] bytes, Action<object> complete, object param = null)
+    public static void Deserialize(BytesDecodeInterface bdi, byte[] bytes, Action complete)
     {
-        //TODO£º¶àÏß³Ì
-        Deserialize(bdi, bytes);
-        complete?.Invoke(param);
+        ThreadManager.Instance.StartThread(a => Deserialize(bdi, bytes), complete);
     }
     public static void Deserialize(BytesDecodeInterface bdi, byte[] bytes)
     {

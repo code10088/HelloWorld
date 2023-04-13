@@ -21,12 +21,12 @@ namespace MainAssembly
             initFinish?.Invoke();
         }
 
-        public int Load<T>(string path, Action<int, Object, object> action = null, object param = null) where T : Object
+        public int Load<T>(string path, Action<int, Object> action = null) where T : Object
         {
             AssetItem temp = (AssetItem)cache.next;
             if (temp == null) temp = new AssetItem();
             else cache.next = temp.next;
-            temp.Init<T>(path, action, param);
+            temp.Init<T>(path, action);
             total[temp.ItemID] = temp;
             return temp.ItemID;
         }
@@ -42,15 +42,13 @@ namespace MainAssembly
 
         private class AssetItem : AsyncItem
         {
-            private Action<int, Object, object> action;
-            private object param;
+            private Action<int, Object> action;
             private AssetRequest ar;
 
-            public void Init<T>(string path, Action<int, Object, object> action, object param) where T : Object
+            public void Init<T>(string path, Action<int, Object> action) where T : Object
             {
                 base.Init(null);
                 this.action = action;
-                this.param = param;
                 ar = Asset.LoadAsync(path, typeof(T));
                 if (ar == null) Finish();
                 else ar.completed += Finish;
@@ -58,7 +56,7 @@ namespace MainAssembly
             private void Finish(Request request)
             {
                 Object asset = ar == null ? null : ar.asset;
-                action?.Invoke(ItemID, asset, param);
+                action?.Invoke(ItemID, asset);
             }
             public void Unload()
             {
@@ -66,7 +64,6 @@ namespace MainAssembly
                 ar?.Release();
                 ar = null;
                 action = null;
-                param = null;
                 next = cache.next;
                 cache.next = this;
             }

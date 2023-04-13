@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a764f4aad4f646c4b59cfad907af36c9, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
-  updateInfoURL: http://192.168.101.51/
-  downloadURL: http://192.168.101.51/
-  playerDownloadURL: http://192.168.101.51/
+  updateInfoURL: http://192.168.6.2/
+  downloadURL: http://192.168.6.2/
+  playerDownloadURL: http://192.168.6.2/
   playerAssetsSplitMode: 2
   offlineMode: 0
   simulationMode: 0
