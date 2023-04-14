@@ -41,31 +41,19 @@ public class Data_UIConfig : BytesDecodeInterface
 [SerializeField]
 #endif
     private string _prefabName;
-#if UNITY_EDITOR
-[SerializeField]
-#endif
-    private UILayer _UILayer;
     public int ID { get => _ID; }
     public string name { get => _name; }
     public string prefabName { get => _prefabName; }
-    public UILayer UILayer { get => _UILayer; }
     public void Deserialize(BytesDecode bd)
     {
         _ID = bd.ToInt();
         _name = bd.ToStr();
         _prefabName = bd.ToStr();
-        _UILayer = (UILayer)bd.ToInt();
     }
     public void Serialize(BytesDecode bd)
     {
         bd.ToBytes(_ID);
         bd.ToBytes(_name);
         bd.ToBytes(_prefabName);
-        bd.ToBytes((int)_UILayer);
     }
-}
-public enum UILayer
-{
-    Normal,
-    Top,
 }

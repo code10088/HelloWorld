@@ -9,12 +9,14 @@ namespace HotAssembly
         protected GameObject UIObj;
         protected UIType type;
         protected UIType from;
+        protected Data_UIConfig config;
         private Dictionary<int, int> layerRecord = new Dictionary<int, int>();
-        public virtual void InitUI(GameObject UIObj, UIType type, UIType from, params object[] param)
+        public virtual void InitUI(GameObject UIObj, UIType type, UIType from, Data_UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;
             this.type = type;
             this.from = from;
+            this.config = config;
             ResetUILayer();
             PlayInitAni();
         }
@@ -40,6 +42,11 @@ namespace HotAssembly
                     UIManager.layer += tempLayer;
                     canvas[i].sortingOrder = UIManager.layer;
                 }
+            }
+            UIParticle[] particles = UIObj.GetComponentsInChildren<UIParticle>(true);
+            for (int i = 0; i < particles.Length; i++)
+            {
+                particles[i].Refresh();
             }
         }
         public virtual void PlayInitAni()

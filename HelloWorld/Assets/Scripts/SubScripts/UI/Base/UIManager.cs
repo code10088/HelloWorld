@@ -207,7 +207,7 @@ namespace HotAssembly
                 {
                     Type t = System.Type.GetType("HotAssembly." + type);
                     baseUI = Activator.CreateInstance(t) as UIBase;
-                    baseUI.InitUI(baseObj, type, from, param);
+                    baseUI.InitUI(baseObj, type, from, config, param);
                     open?.Invoke();
                     state = 3;
                 }
@@ -228,8 +228,9 @@ namespace HotAssembly
                 if (baseUI != null) baseUI.OnDestroy();
                 if (baseObj != null) GameObject.Destroy(baseObj);
                 AssetManager.Instance.Unload(loaderID);
-                baseObj = null;
+                config = null;
                 baseUI = null;
+                baseObj = null;
                 timerId = -1;
                 state = 0;
             }

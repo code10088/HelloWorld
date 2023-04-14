@@ -6,10 +6,10 @@ namespace HotAssembly
     public class UITest : UIBase
     {
         private UITestComponent component = new UITestComponent();
-        public override void InitUI(GameObject UIObj, UIType type, UIType from, params object[] param)
+        public override void InitUI(GameObject UIObj, UIType type, UIType from, Data_UIConfig config, params object[] param)
         {
             GameDebug.Log("UITest InitUI");
-            base.InitUI(UIObj, type, from, param);
+            base.InitUI(UIObj, type, from, config, param);
             component.Init(UIObj);
 
             component.buttonButton.onClick.AddListener(OnClickClose);
