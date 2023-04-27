@@ -1,10 +1,13 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using MainAssembly;
 
-namespace MainAssembly
+namespace HotAssembly
 {
     public class SocketObject
     {
@@ -12,7 +15,7 @@ namespace MainAssembly
         private ushort port;
         private Socket socket;
         private Thread thread;
-        private Queue<NetMessageBase> sendPool = new Queue<NetMessageBase>();
+        private Queue<NetSendItem> sendPool = new Queue<NetSendItem>();
         private Queue<byte[]> receivePool = new Queue<byte[]>();
 
         private int connectTimer;
@@ -22,11 +25,11 @@ namespace MainAssembly
         private bool receiveMark = false;
         private bool disconnectMark = false;
         private byte[] receiveBuffer = new byte[1024];
-        private byte[] headBuffer = new byte[6];
+        private byte[] headBuffer = new byte[4];
         private byte[] bodyBuffer;
         private int headPos = 0;
         private int bodyPos = 0;
-        private int headLength = 6;
+        private int headLength = 4;
         private int bodyLength = 0;
 
         public void Init(string ip, ushort port)
@@ -107,21 +110,17 @@ namespace MainAssembly
                     }
                     lock (sendPool)
                     {
-                        NetMessageBase nmb = sendPool.Dequeue();
+                        NetSendItem nmb = sendPool.Dequeue();
                         nmb.Send(this);
                     }
                 }
-                while (receiveMark)
-                {
-                    BeginReceive();
-                }
+                BeginReceive();
                 while (receivePool.Count > 0)
                 {
                     lock (receivePool)
                     {
                         byte[] bytes = receivePool.Dequeue();
-                        //TODO protobuf Deserialize
-
+                        Deserialize(bytes);
                     }
                 }
                 Thread.Sleep(GameSetting.Instance.updateTimeSliceMS);
@@ -129,15 +128,15 @@ namespace MainAssembly
         }
 
         #region 发送
-        public void BeginSend(byte[] bytes, AsyncCallback callback)
+        private void BeginSend(byte[] bytes, AsyncCallback callback)
         {
             socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, callback, null);
         }
-        public int EndSend(IAsyncResult ar)
+        private int EndSend(IAsyncResult ar)
         {
             return socket.EndSend(ar);
         }
-        public void Send(bool result, NetMessageBase nmb)
+        private void Send(bool result, NetSendItem nmb)
         {
             if (result)
             {
@@ -146,15 +145,16 @@ namespace MainAssembly
             else if (sendFailCount < 3)
             {
                 sendFailCount++;
-                Send(nmb);
+                lock (sendPool) sendPool.Enqueue(nmb);
             }
             else
             {
                 Reconect();
             }
         }
-        public void Send(NetMessageBase nmb)
+        public void Send(ushort id, IExtensible msg)
         {
+            NetSendItem nmb = new NetSendItem(id, msg);
             lock (sendPool) sendPool.Enqueue(nmb);
         }
         #endregion
@@ -162,15 +162,21 @@ namespace MainAssembly
         #region 接收
         private void BeginReceive()
         {
-            receiveMark = false;
-            socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback, null);
-            receiveTimer = TimeManager.Instance.StartTimer(10, finish: () => ReceiveCallback(0));
+            if (receiveMark)
+            {
+                receiveMark = false;
+                socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback, null);
+                receiveTimer = TimeManager.Instance.StartTimer(10, finish: () => ReceiveCallback(0));
+            }
         }
         private void ReceiveCallback(IAsyncResult ar)
         {
-            TimeManager.Instance.StopTimer(receiveTimer);
-            int receiveLength = socket.EndReceive(ar);
-            ReceiveCallback(receiveLength);
+            if (!receiveMark)
+            {
+                TimeManager.Instance.StopTimer(receiveTimer);
+                int receiveLength = socket.EndReceive(ar);
+                ReceiveCallback(receiveLength);
+            }
         }
         private void ReceiveCallback(int receiveLength)
         {
@@ -222,6 +228,77 @@ namespace MainAssembly
                 }
             }
         }
+        private void Deserialize(byte[] bytes)
+        {
+            using (MemoryStream ms = new MemoryStream(bytes, 2, bytes.Length - 2))
+            {
+                ushort id = BitConverter.ToUInt16(bytes, 0);
+                NetManager.Instance.Dispatch(id, ms);
+            }
+        }
         #endregion
+
+        class NetSendItem
+        {
+            private SocketObject so;
+            private int sendTimer;
+            private int retryTime;
+            private ushort id;
+            private IExtensible msg;
+            public NetSendItem(ushort id, IExtensible msg)
+            {
+                this.id = id;
+                this.msg = msg;
+            }
+            public void Send(SocketObject so)
+            {
+                this.so = so;
+                so.BeginSend(Serialize(msg), SendCallback);
+                sendTimer = TimeManager.Instance.StartTimer(10, finish: () => SendCallback(false));
+            }
+            private byte[] Serialize(IExtensible msg)
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    Serializer.Serialize(ms, msg);
+                    byte[] source = ms.ToArray();
+                    int l = source.Length;
+                    byte[] result = new byte[6 + l];
+                    //消息长度
+                    byte[] temp = BitConverter.GetBytes(l);
+                    Buffer.BlockCopy(temp, 0, result, 0, 4);
+                    //消息ID
+                    temp = BitConverter.GetBytes(id);
+                    Buffer.BlockCopy(temp, 0, result, 4, 2);
+                    //消息内容
+                    Buffer.BlockCopy(source, 0, result, 6, l);
+                    return result;
+                }
+            }
+            private void SendCallback(IAsyncResult ar)
+            {
+                TimeManager.Instance.StopTimer(sendTimer);
+                int sendLength = so.EndSend(ar);
+                SendCallback(sendLength > 0);
+            }
+            private void SendCallback(bool result)
+            {
+                if (result)
+                {
+                    retryTime = 0;
+                    so.Send(true, this);
+                }
+                else if (retryTime < 3)
+                {
+                    retryTime++;
+                    so.Send(false, this);
+                }
+                else
+                {
+                    retryTime = 0;
+                    GameDebug.LogError("消息发送失败:" + this);
+                }
+            }
+        }
     }
 }

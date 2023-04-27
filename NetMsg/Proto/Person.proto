@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+//指定命名空间（可选参数）如果没有，则使用C#代码的命名空间。
+option csharp_namespace = "ProtoTest";
+message Person
+{
+    string name = 1;
+    int32 id = 2;
+
+    enum Sex
+    {
+       male = 0;
+       female = 1;
+    }
+
+    Sex sex = 3;
+
+    repeated string friends = 4;
+}

@@ -6,3 +6,5 @@ ECS+Job+Brust
 	ECS提高cpu缓存命中率对代码设计要求极高，主要性能提升得益于Job多线程，Job多线程有些类似于computeShader
 	适用于部分功能
 	
+protobuf-net
+	最新编译使用vs2022可以编译通过
