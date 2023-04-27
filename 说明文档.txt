@@ -7,4 +7,4 @@ ECS+Job+Brust
 	适用于部分功能
 	
 protobuf-net
-	最新编译使用vs2022可以编译通过
+	github下载最新版，使用vs2022编译(如果编译失败尝试更新vs)
