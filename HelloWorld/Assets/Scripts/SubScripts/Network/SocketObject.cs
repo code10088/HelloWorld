@@ -23,7 +23,7 @@ namespace HotAssembly
         private int sendFailCount = 0;
         private int receiveFailCount = 0;
         private bool receiveMark = false;
-        private bool disconnectMark = false;
+        private bool connectMark = false;
         private byte[] receiveBuffer = new byte[1024];
         private byte[] headBuffer = new byte[4];
         private byte[] bodyBuffer;
@@ -46,7 +46,7 @@ namespace HotAssembly
             IPEndPoint endPoint = new IPEndPoint(address, port);
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             socket.BeginConnect(endPoint, ConnectCallback, null);
-            connectTimer = TimeManager.Instance.StartTimer(10, finish: ConnectFail);
+            connectTimer = TimeManager.Instance.StartTimer(10, finish: Reconect);
         }
         private void ConnectCallback(IAsyncResult ar)
         {
@@ -55,18 +55,14 @@ namespace HotAssembly
             if (ar.IsCompleted)
             {
                 receiveMark = true;
+                connectMark = true;
                 thread = new Thread(Handle);
                 thread.Start();
             }
             else
             {
-                ConnectFail();
+                Reconect();
             }
-        }
-        private void ConnectFail()
-        {
-            thread?.Abort();
-            Reconect();
         }
         /// <summary>
         /// 断线重连
@@ -78,11 +74,11 @@ namespace HotAssembly
         }
         public void Disconnect()
         {
+            connectMark = false;//会影响线程中断
+            thread?.Join();
             socket.Disconnect(false);
             socket.Close();
             socket = null;
-
-            thread?.Abort();
             sendPool.Clear();
             receivePool.Clear();
             TimeManager.Instance.StopTimer(connectTimer);
@@ -90,7 +86,6 @@ namespace HotAssembly
             sendFailCount = 0;
             receiveFailCount = 0;
             receiveMark = false;
-            disconnectMark = true;
             bodyBuffer = null;
             headPos = 0;
             bodyPos = 0;
@@ -102,11 +97,12 @@ namespace HotAssembly
         {
             while (true)
             {
+                if (!connectMark) return;
                 while (sendPool.Count > 0)
                 {
-                    if (disconnectMark)
+                    if (!connectMark)
                     {
-                        break;
+                        return;
                     }
                     lock (sendPool)
                     {
@@ -117,12 +113,17 @@ namespace HotAssembly
                 BeginReceive();
                 while (receivePool.Count > 0)
                 {
+                    if (!connectMark)
+                    {
+                        return;
+                    }
                     lock (receivePool)
                     {
                         byte[] bytes = receivePool.Dequeue();
                         Deserialize(bytes);
                     }
                 }
+                if (!connectMark) return;
                 Thread.Sleep(GameSetting.Instance.updateTimeSliceMS);
             }
         }
