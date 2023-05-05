@@ -13,15 +13,16 @@ namespace MainAssembly
             item.next = first.next;
             first.next = item;
         }
-        public void Remove(int id)
+        public void Remove(int id, bool execMark)
         {
             AsyncItem item = first;
             while (item != null)
             {
                 AsyncItem temp = item.next;
                 if (temp == null) return;
-                if (temp.ItemID == id) temp.mark = true;
-                if (temp.mark) return;
+                if (temp.ItemID == id) temp.endMark = true;
+                if (temp.endMark) temp.execMark = execMark;
+                if (temp.endMark) return;
                 else item = temp;
             }
         }
@@ -34,9 +35,9 @@ namespace MainAssembly
                 AsyncItem temp = item.next;
                 if (temp == null) return;
                 if (temp.Update()) temp.Finish();
-                if (temp.mark) item.next = temp.next;
+                if (temp.endMark) item.next = temp.next;
                 else item = temp;
-                if (temp.mark) temp.Reset();
+                if (temp.endMark) temp.Reset();
                 if (Time.realtimeSinceStartup - realtimeSinceStartup > GameSetting.Instance.updateTimeSliceS) return;
             }
         }
@@ -45,8 +46,9 @@ namespace MainAssembly
     {
         private static int uniqueId = 0;
         private int itemId = -1;
-        public bool mark = false;
         public AsyncItem next;
+        public bool endMark = false;
+        public bool execMark = true;
         private Action finish;
 
         public int ItemID => itemId;
@@ -64,15 +66,16 @@ namespace MainAssembly
 
         public virtual void Finish()
         {
-            mark = true;
-            finish?.Invoke();
+            endMark = true;
+            if (execMark) finish?.Invoke();
         }
 
         public virtual void Reset()
         {
             itemId = -1;
-            mark = false;
             next = null;
+            endMark = false;
+            execMark = true;
             finish = null;
         }
     }

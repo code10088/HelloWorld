@@ -26,9 +26,9 @@ namespace MainAssembly
             AsyncManager.Instance.Add(temp);
             return temp.ItemID;
         }
-        public void StopTimer(int id)
+        public void StopTimer(int id, bool execMark = true)
         {
-            AsyncManager.Instance.Remove(id);
+            AsyncManager.Instance.Remove(id, execMark);
         }
 
 
@@ -50,7 +50,7 @@ namespace MainAssembly
             }
             public override bool Update()
             {
-                if (mark) return true;
+                if (endMark) return true;
                 _time += Time.deltaTime;
                 if (loop > 0 && _time > _loop)
                 {

@@ -65,7 +65,7 @@ namespace MainAssembly
                         }
                         else
                         {
-                            return tempClass.className + "类中变量名重复" + tempClass.className;
+                            return tempClass.className + "类中变量名重复" + tempComponent.name;
                         }
                     }
                 }

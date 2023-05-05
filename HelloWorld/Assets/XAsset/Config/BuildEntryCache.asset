@@ -15,24 +15,44 @@ MonoBehaviour:
   data:
   - path: Assets/ZRes/UI
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133237680269874332
+    lastWriteTimeForGroup: 133277489219900966
     assets:
+    - path: Assets/ZRes/UI/Prefab/UIMessageBox.prefab
+      bundle: build/ui_prefab_uimessagebox_prefab.bundle
+      type: GameObject
+      entry: Assets/ZRes/UI
+      lastWriteTime: 133277492469981367
+      addressMode: 2
+      dependencies:
+      - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
+      - Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
+      - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Text Component
+        Icon.psd
+      - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
+      - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
+      - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
+      group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
     - path: Assets/ZRes/UI/Prefab/UITest.prefab
       bundle: build/ui_prefab_uitest_prefab.bundle
       type: GameObject
       entry: Assets/ZRes/UI
-      lastWriteTime: 133237653755816670
+      lastWriteTime: 133277492480980930
       addressMode: 2
-      dependencies:
-      - Assets/Pipeline/Test.shader
-      - Assets/Pipeline/Test.mat
-      - Packages/com.unity.collab-proxy/Editor/PlasticSCM/Assets/Images/buttonssosigningoogle.png
+      dependencies: []
       group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
     group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
   - path: Assets/ZRes/Config
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133237680269874332
+    lastWriteTimeForGroup: 133277489219900966
     assets:
+    - path: Assets/ZRes/Config/Data_DeviceInfo.bytes
+      bundle: build/config_data_deviceinfo_bytes.bundle
+      type: TextAsset
+      entry: Assets/ZRes/Config
+      lastWriteTime: 0
+      addressMode: 2
+      dependencies: []
+      group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
     - path: Assets/ZRes/Config/Data_Test.bytes
       bundle: build/config_data_test_bytes.bundle
       type: TextAsset
@@ -70,7 +90,7 @@ MonoBehaviour:
     group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
   - path: Assets/ZRes/Assembly
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133237680269874332
+    lastWriteTimeForGroup: 133277489219900966
     assets:
     - path: Assets/ZRes/Assembly/HotAssembly.bytes
       bundle: build/assembly_hotassembly_bytes.bundle

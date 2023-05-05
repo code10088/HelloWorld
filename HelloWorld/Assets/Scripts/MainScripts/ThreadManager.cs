@@ -33,9 +33,9 @@ namespace MainAssembly
                 AsyncManager.Instance.Add(temp);
             }
         }
-        public void StopThread(int id)
+        public void StopThread(int id, bool execMark = true)
         {
-            AsyncManager.Instance.Remove(id);
+            AsyncManager.Instance.Remove(id, execMark);
         }
 
 
@@ -70,15 +70,15 @@ namespace MainAssembly
                 {
 
                 }
-                mark = true;
+                endMark = true;
             }
             private void Timeout()
             {
-                mark = true;
+                endMark = true;
             }
             public override bool Update()
             {
-                return mark;
+                return endMark;
             }
             public override void Reset()
             {

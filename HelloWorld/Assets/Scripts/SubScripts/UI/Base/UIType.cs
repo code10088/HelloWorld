@@ -5,6 +5,7 @@ namespace HotAssembly
         None,
         MainUI,
         UITest,
+        UIMessageBox,
 
         Max,
     }

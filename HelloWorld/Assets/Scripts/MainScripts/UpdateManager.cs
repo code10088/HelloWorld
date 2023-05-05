@@ -14,9 +14,9 @@ namespace MainAssembly
             AsyncManager.Instance.Add(temp);
             return temp.ItemID;
         }
-        public void StopUpdate(int id)
+        public void StopUpdate(int id, bool execMark = true)
         {
-            AsyncManager.Instance.Remove(id);
+            AsyncManager.Instance.Remove(id, execMark);
         }
 
 
@@ -31,7 +31,7 @@ namespace MainAssembly
             }
             public override bool Update()
             {
-                if (mark) return true;
+                if (endMark) return true;
                 action();
                 return false;
             }

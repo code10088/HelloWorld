@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace HotAssembly
 {
-    public class UIManager : Singletion<UIManager>
+    public partial class UIManager : Singletion<UIManager>
     {
         public GameObject UIRoot;
         public Transform tUIRoot;
@@ -123,6 +123,24 @@ namespace HotAssembly
             //TODO：获取当前非本身、非提示UI
             return UIType.None;
         }
+        public bool HasOpen(UIType type)
+        {
+            for (int i = 0; i < loadUI.Count; i++)
+            {
+                if (loadUI[i].Type == type)
+                {
+                    return true;
+                }
+            }
+            for (int i = 0; i < curUI.Count; i++)
+            {
+                if (curUI[i].Type == type)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         public void SetEventSystemState(bool state)
         {
@@ -213,12 +231,14 @@ namespace HotAssembly
                 }
                 else if (state == 3)
                 {
+                    baseObj.SetActive(true);
                     baseUI.Refresh(param);
                     open?.Invoke();
                 }
             }
             public void Release(bool immediate = false)
             {
+                baseObj?.SetActive(false);
                 if (immediate) _Release();
                 else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);
                 state |= 4;
@@ -228,7 +248,7 @@ namespace HotAssembly
                 if (baseUI != null) baseUI.OnDestroy();
                 if (baseObj != null) GameObject.Destroy(baseObj);
                 AssetManager.Instance.Unload(loaderID);
-                config = null;
+                loaderID = -1;
                 baseUI = null;
                 baseObj = null;
                 timerId = -1;
@@ -236,7 +256,7 @@ namespace HotAssembly
             }
             private void Recycle()
             {
-                TimeManager.Instance.StopTimer(timerId);
+                TimeManager.Instance.StopTimer(timerId, false);
                 timerId = -1;
                 state &= 3;
             }

@@ -61,6 +61,10 @@ namespace HotAssembly
         protected virtual void OnClose()
         {
             UIManager.Instance.CloseUI(type);
+        }
+        protected virtual void OnReture()
+        {
+            OnClose();
             UIManager.Instance.OpenUI(from);
         }
     }
