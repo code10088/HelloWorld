@@ -8,7 +8,12 @@ namespace HotAssembly
         {
             UIManager.Instance.Init();
             NetManager.Instance.Init();
-            ConfigManager.Instance.Init(EnterMainScene);
+            ConfigManager.Instance.Init(InitSetting);
+        }
+        private void InitSetting() 
+        { 
+            DevicePerformanceUtil.Init();
+            EnterMainScene();
         }
         private void EnterMainScene()
         {
