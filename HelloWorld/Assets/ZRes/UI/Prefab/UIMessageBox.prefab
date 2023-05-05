@@ -603,6 +603,8 @@ GameObject:
   - component: {fileID: 7099576482128294023}
   - component: {fileID: 5423519126653984439}
   - component: {fileID: 8536625213140298274}
+  - component: {fileID: 527446440269412572}
+  - component: {fileID: 787921943325592899}
   m_Layer: 5
   m_Name: UIMessageBox
   m_TagString: Untagged
@@ -708,6 +710,127 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   className: UIMessageBoxComponent
+--- !u!114 &527446440269412572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6141825163329895830}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fdc95d9dfe9cf54398eecb6868b0335, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _updateMode: 0
+  _foldoutControl: 1
+  _foldoutEvents: 0
+  _duration: 0.2
+  timeMode: 1
+  wrapMode: 0
+  arrivedAction: 3
+  sampleOnAwake: 0
+  _onForwardArrived:
+    m_PersistentCalls:
+      m_Calls: []
+  _onBackArrived:
+    m_PersistentCalls:
+      m_Calls: []
+  _animations:
+  - id: 0
+  - id: 1
+  - id: 2
+  config: {fileID: 0}
+  tweenGrid: 0
+  tweenGridInterval: 0
+  tweenGridDir: 1
+  itemDurationRecord: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: TweenCanvasGroupAlpha, ns: UnityExtensions.Tween, asm: Assembly-CSharp}
+      data:
+        enabled: 1
+        _minNormalizedTime: 0
+        _maxNormalizedTime: 1
+        _holdBeforeStart: 1
+        _holdAfterEnd: 1
+        _interpolator:
+          type: 0
+          strength: 0
+          customCurve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        _foldout: 1
+        _comment: 
+        from: 0
+        to: 1
+        target: {fileID: 787921943325592899}
+    00000001:
+      type: {class: TweenTransformPosition, ns: UnityExtensions.Tween, asm: Assembly-CSharp}
+      data:
+        enabled: 1
+        _minNormalizedTime: 0
+        _maxNormalizedTime: 1
+        _holdBeforeStart: 1
+        _holdAfterEnd: 1
+        _interpolator:
+          type: 0
+          strength: 0
+          customCurve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        _foldout: 1
+        _comment: 
+        from: {x: 1000, y: 0, z: -100}
+        to: {x: 0, y: 0, z: 0}
+        target: {fileID: 4032161765252897351}
+        toggle:
+          x: 1
+          y: 0
+          z: 1
+        space: 1
+    00000002:
+      type: {class: TweenTransformRotation, ns: UnityExtensions.Tween, asm: Assembly-CSharp}
+      data:
+        enabled: 1
+        _minNormalizedTime: 0
+        _maxNormalizedTime: 1
+        _holdBeforeStart: 1
+        _holdAfterEnd: 1
+        _interpolator:
+          type: 0
+          strength: 0
+          customCurve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        _foldout: 1
+        _comment: 
+        from: {x: -0.033782665, y: -0.25660482, z: 0.12607862, w: 0.9576622}
+        to: {x: 0, y: 0, z: 0, w: 1}
+        target: {fileID: 4032161765252897351}
+        space: 1
+--- !u!225 &787921943325592899
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6141825163329895830}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6792526953736900417
 GameObject:
   m_ObjectHideFlags: 0

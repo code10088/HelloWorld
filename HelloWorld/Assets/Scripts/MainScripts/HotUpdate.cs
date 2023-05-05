@@ -24,7 +24,7 @@ namespace MainAssembly
             }
             else
             {
-                Assets.UpdateInfoURL = "http://192.168.6.2/BundlesCache/Android/updateinfo.json";
+                Assets.UpdateInfoURL = "http://192.168.6.2/BundlesCache/Windows/updateinfo.json";
                 var getUpdateInfoAsync = Assets.GetUpdateInfoAsync();
                 getUpdateInfoAsync.completed += CheckUpdateVersion;
             }

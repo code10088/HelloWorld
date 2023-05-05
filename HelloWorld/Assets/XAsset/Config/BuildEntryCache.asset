@@ -15,13 +15,29 @@ MonoBehaviour:
   data:
   - path: Assets/ZRes/UI
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133277489219900966
+    lastWriteTimeForGroup: 133277611769138259
     assets:
     - path: Assets/ZRes/UI/Prefab/UIMessageBox.prefab
       bundle: build/ui_prefab_uimessagebox_prefab.bundle
       type: GameObject
       entry: Assets/ZRes/UI
-      lastWriteTime: 133277492469981367
+      lastWriteTime: 133277618559014536
+      addressMode: 2
+      dependencies:
+      - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
+      - Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
+      - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Text Component
+        Icon.psd
+      - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
+      - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
+      - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
+      - Assets/Tools/UITween/Unity Extensions/Tween/Runtime/EditorOnly/EditorResources/Tween.png
+      group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
+    - path: Assets/ZRes/UI/Prefab/UITest.prefab
+      bundle: build/ui_prefab_uitest_prefab.bundle
+      type: GameObject
+      entry: Assets/ZRes/UI
+      lastWriteTime: 133277618232534084
       addressMode: 2
       dependencies:
       - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -32,18 +48,10 @@ MonoBehaviour:
       - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
       - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
       group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
-    - path: Assets/ZRes/UI/Prefab/UITest.prefab
-      bundle: build/ui_prefab_uitest_prefab.bundle
-      type: GameObject
-      entry: Assets/ZRes/UI
-      lastWriteTime: 133277492480980930
-      addressMode: 2
-      dependencies: []
-      group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
     group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
   - path: Assets/ZRes/Config
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133277489219900966
+    lastWriteTimeForGroup: 133277611769138259
     assets:
     - path: Assets/ZRes/Config/Data_DeviceInfo.bytes
       bundle: build/config_data_deviceinfo_bytes.bundle
@@ -90,7 +98,7 @@ MonoBehaviour:
     group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
   - path: Assets/ZRes/Assembly
     lastWriteTime: 0
-    lastWriteTimeForGroup: 133277489219900966
+    lastWriteTimeForGroup: 133277611769138259
     assets:
     - path: Assets/ZRes/Assembly/HotAssembly.bytes
       bundle: build/assembly_hotassembly_bytes.bundle
