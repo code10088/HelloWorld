@@ -18,11 +18,11 @@ namespace HotAssembly
             this.from = from;
             this.config = config;
             ResetUILayer();
-            PlayInitAni();
         }
         public virtual void Refresh(params object[] param)
         {
             ResetUILayer();
+            PlayInitAni();
         }
         private void ResetUILayer()
         {

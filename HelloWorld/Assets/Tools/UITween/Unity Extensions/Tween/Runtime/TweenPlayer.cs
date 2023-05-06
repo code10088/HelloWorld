@@ -133,6 +133,7 @@ namespace UnityExtensions.Tween
         public void SetForwardDirectionAndEnabled()
         {
             direction = PlayDirection.Forward;
+            normalizedTime = 0f;
             enabled = true;
         }
 
@@ -140,6 +141,7 @@ namespace UnityExtensions.Tween
         public void SetBackDirectionAndEnabled()
         {
             direction = PlayDirection.Back;
+            normalizedTime = 0f;
             enabled = true;
         }
 

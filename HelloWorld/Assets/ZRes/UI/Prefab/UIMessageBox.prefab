@@ -717,7 +717,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6141825163329895830}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0fdc95d9dfe9cf54398eecb6868b0335, type: 3}
   m_Name: 
@@ -729,7 +729,7 @@ MonoBehaviour:
   timeMode: 1
   wrapMode: 0
   arrivedAction: 3
-  sampleOnAwake: 0
+  sampleOnAwake: 1
   _onForwardArrived:
     m_PersistentCalls:
       m_Calls: []
