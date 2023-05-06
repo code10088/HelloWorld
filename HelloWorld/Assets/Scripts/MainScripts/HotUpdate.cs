@@ -11,10 +11,17 @@ namespace MainAssembly
     {
         private Versions versions;
         private Assembly hotAssembly;
+        private int updateId = -1;
+        private Request request;
 
         public void Start()
         {
+            updateId = UpdateManager.Instance.StartUpdate(Update);
             CheckUpdateInfo();
+        }
+        public void Update()
+        {
+            if (request != null) UIHotUpdate.Instance.SetSlider(request.progress);
         }
         private void CheckUpdateInfo()
         {
@@ -27,6 +34,9 @@ namespace MainAssembly
                 Assets.UpdateInfoURL = "http://192.168.6.2/BundlesCache/Windows/updateinfo.json";
                 var getUpdateInfoAsync = Assets.GetUpdateInfoAsync();
                 getUpdateInfoAsync.completed += CheckUpdateVersion;
+
+                UIHotUpdate.Instance.SetText("UpdateInfo");
+                request = getUpdateInfoAsync;
             }
         }
         private void CheckUpdateVersion(Request request)
@@ -44,11 +54,13 @@ namespace MainAssembly
                 }
                 var getVersionsAsync = Assets.GetVersionsAsync(getUpdateInfoAsync.info);
                 getVersionsAsync.completed += CheckDownloadInfo;
+
+                UIHotUpdate.Instance.SetText("Versions");
+                this.request = getVersionsAsync;
             }
             else
             {
-                //重试按钮
-                CheckUpdateInfo();
+                UIHotUpdate.Instance.OpenMessageBox("Tips", "Retry", CheckUpdateInfo);
             }
         }
         private void CheckDownloadInfo(Request request)
@@ -59,11 +71,13 @@ namespace MainAssembly
                 versions = getVersionsAsync.versions;
                 var getDownloadSizeAsync = Assets.GetDownloadSizeAsync(versions);
                 getDownloadSizeAsync.completed += StartDownload;
+
+                UIHotUpdate.Instance.SetText("DownloadInfo");
+                this.request = getDownloadSizeAsync;
             }
             else
             {
-                //重试按钮
-                CheckUpdateInfo();
+                UIHotUpdate.Instance.OpenMessageBox("Tips", "Retry", CheckUpdateInfo);
             }
         }
         private void StartDownload(Request request)
@@ -72,16 +86,21 @@ namespace MainAssembly
             if (getDownloadSizeAsync.downloadSize > 0)
             {
                 var downloadSize = Utility.FormatBytes(getDownloadSizeAsync.downloadSize);
-                //确定下载
-                var downloadAsync = getDownloadSizeAsync.DownloadAsync();
-                var downloadRequestBatch = downloadAsync as DownloadRequestBatch;
-                downloadRequestBatch.updated = Downloading;
-                downloadRequestBatch.completed += RemoveUnusedFile;
+                UIHotUpdate.Instance.OpenMessageBox("Tips", downloadSize, StartDownload);
             }
             else
             {
                 UpdateFinish_LoadHotAssembly();
             }
+        }
+        private void StartDownload()
+        {
+            var getDownloadSizeAsync = request as GetDownloadSizeRequest;
+            var downloadAsync = getDownloadSizeAsync.DownloadAsync();
+            var downloadRequestBatch = downloadAsync as DownloadRequestBatch;
+            downloadRequestBatch.updated = Downloading;
+            downloadRequestBatch.completed += RemoveUnusedFile;
+            request = null;
         }
         private void Downloading(DownloadRequestBatch download)
         {
@@ -89,6 +108,8 @@ namespace MainAssembly
             var downloadSize = Utility.FormatBytes(download.downloadSize);
             var bandwidth = Utility.FormatBytes(download.bandwidth);
 
+            UIHotUpdate.Instance.SetText($"Download：{downloadedBytes}/{downloadSize} {bandwidth}/s");
+            UIHotUpdate.Instance.SetSlider(download.progress);
         }
         private void RemoveUnusedFile(DownloadRequestBatch download)
         {
@@ -120,11 +141,13 @@ namespace MainAssembly
                 }
                 removeAsync.completed += SaveVersion;
                 removeAsync.SendRequest();
+
+                UIHotUpdate.Instance.SetText("清理资源");
+                request = removeAsync;
             }
             else
             {
-                //重试按钮
-                download.Retry();
+                UIHotUpdate.Instance.OpenMessageBox("Tips", "Retry", download.Retry);
             }
         }
         private void SaveVersion(Request request)
@@ -135,6 +158,8 @@ namespace MainAssembly
         }
         private void UpdateFinish_LoadHotAssembly()
         {
+            UpdateManager.Instance.StopUpdate(updateId);
+            UIHotUpdate.Instance.Finish();
 #if UNITY_EDITOR
             HotAssembly.GameStart.Instance.Init();
 #else

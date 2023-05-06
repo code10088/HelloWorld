@@ -2,14 +2,15 @@
 
 namespace MainAssembly
 {
-    public class GameStart : MonoSingletion<GameStart>
+    public class GameStart : MonoBehaviour
     {
-        //xasset RuntimeInitializeOnLoad之后
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void Game()
+        public static GameStart Instance;
+
+        private void Awake()
         {
             Application.runInBackground = true;
-            GameStart.Instance.Init();
+            Instance = this;
+            Init();
         }
         private void Init()
         {
@@ -19,7 +20,6 @@ namespace MainAssembly
         {
             MainAssembly.HotUpdate.Instance.Start();
         }
-
         private void Update()
         {
             AsyncManager.Instance.Update();

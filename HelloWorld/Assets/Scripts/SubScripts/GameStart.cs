@@ -2,7 +2,7 @@
 
 namespace HotAssembly
 {
-    public class GameStart : MonoSingletion<GameStart>
+    public class GameStart : Singletion<GameStart>
     {
         public void Init()
         {
