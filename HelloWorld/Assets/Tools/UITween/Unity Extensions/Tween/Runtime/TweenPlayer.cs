@@ -141,7 +141,7 @@ namespace UnityExtensions.Tween
         public void SetBackDirectionAndEnabled()
         {
             direction = PlayDirection.Back;
-            normalizedTime = 0f;
+            normalizedTime = 1f;
             enabled = true;
         }
 
