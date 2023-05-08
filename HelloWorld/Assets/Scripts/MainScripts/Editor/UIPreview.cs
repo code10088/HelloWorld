@@ -10,8 +10,13 @@ public class UIPreview : ObjectPreview
     private float rate1 = 1280f / 720f;
     private float rate2 = 720f / 1280f;
     private Rect rect2, rect3;
-    private void GetAssetPreview(GameObject obj)
+    private void GetAssetPreview(Rect r, GameObject obj)
     {
+        if (rect2 == r) return;
+        if (r.width / r.height > rate1) rect3 = new Rect(r.x + r.width / 2 - r.height * rate1 / 2, r.y, r.height * rate1, r.height);
+        else rect3 = new Rect(r.x, r.y + r.height / 2 - r.width * rate2 / 2, r.width, r.width * rate2);
+        rect2 = r;
+
         int temp = target.GetInstanceID();
         if (temp == id) return;
         id = temp;
@@ -34,18 +39,13 @@ public class UIPreview : ObjectPreview
     }
     public override bool HasPreviewGUI()
     {
-        return true;
+        var t = PrefabUtility.GetPrefabAssetType(target);
+        return t == PrefabAssetType.Regular;
     }
     public override void OnPreviewGUI(Rect r, GUIStyle background)
     {
         base.OnPreviewGUI(r, background);
-        GetAssetPreview((GameObject)target);
-        if (rect2 != r)
-        {
-            rect2 = r;
-            if (r.width / r.height > rate1) rect3 = new Rect(r.x + r.width / 2 - r.height * rate1 / 2, r.y, r.height * rate1, r.height);
-            else rect3 = new Rect(r.x, r.y + r.height / 2 - r.width * rate2 / 2, r.width, r.width * rate2);
-        }
+        GetAssetPreview(r, (GameObject)target);
         GUI.DrawTexture(rect3, texture);
     }
 }
