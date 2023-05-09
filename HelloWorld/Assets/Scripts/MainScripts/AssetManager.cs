@@ -3,70 +3,67 @@ using System.Collections.Generic;
 using xasset;
 using Object = UnityEngine.Object;
 
-namespace MainAssembly
+public class AssetManager : Singletion<AssetManager>
 {
-    public class AssetManager : Singletion<AssetManager>
+    private static Dictionary<int, AssetItem> total = new Dictionary<int, AssetItem>();
+    private static AssetItem cache = new AssetItem();
+    private Action initFinish;
+
+    public void Init(Action action)
     {
-        private static Dictionary<int, AssetItem> total = new Dictionary<int, AssetItem>();
-        private static AssetItem cache = new AssetItem();
-        private Action initFinish;
+        initFinish = action;
+        Assets.InitializeAsync(InitFinish);
+    }
+    private void InitFinish(Request completed)
+    {
+        initFinish?.Invoke();
+    }
 
-        public void Init(Action action)
+    public int Load<T>(string path, Action<int, Object> action = null) where T : Object
+    {
+        AssetItem temp = (AssetItem)cache.next;
+        if (temp == null) temp = new AssetItem();
+        else cache.next = temp.next;
+        temp.Init<T>(path, action);
+        total[temp.ItemID] = temp;
+        return temp.ItemID;
+    }
+    public void Unload(int id)
+    {
+        if (total.TryGetValue(id, out AssetItem item))
         {
-            initFinish = action;
-            Assets.InitializeAsync(InitFinish);
+            item.Unload();
+            total.Remove(id);
         }
-        private void InitFinish(Request completed)
+    }
+
+
+    private class AssetItem : AsyncItem
+    {
+        private Action<int, Object> action;
+        private AssetRequest ar;
+
+        public void Init<T>(string path, Action<int, Object> action) where T : Object
         {
-            initFinish?.Invoke();
+            base.Init(null);
+            this.action = action;
+            ar = Asset.LoadAsync(path, typeof(T));
+            if (ar == null) Finish();
+            else ar.completed += Finish;
         }
-
-        public int Load<T>(string path, Action<int, Object> action = null) where T : Object
+        private void Finish(Request request)
         {
-            AssetItem temp = (AssetItem)cache.next;
-            if (temp == null) temp = new AssetItem();
-            else cache.next = temp.next;
-            temp.Init<T>(path, action);
-            total[temp.ItemID] = temp;
-            return temp.ItemID;
+            Object asset = ar == null ? null : ar.asset;
+            action?.Invoke(ItemID, asset);
         }
-        public void Unload(int id)
+        public void Unload()
         {
-            if (total.TryGetValue(id, out AssetItem item))
-            {
-                item.Unload();
-                total.Remove(id);
-            }
-        }
-
-
-        private class AssetItem : AsyncItem
-        {
-            private Action<int, Object> action;
-            private AssetRequest ar;
-
-            public void Init<T>(string path, Action<int, Object> action) where T : Object
-            {
-                base.Init(null);
-                this.action = action;
-                ar = Asset.LoadAsync(path, typeof(T));
-                if (ar == null) Finish();
-                else ar.completed += Finish;
-            }
-            private void Finish(Request request)
-            {
-                Object asset = ar == null ? null : ar.asset;
-                action?.Invoke(ItemID, asset);
-            }
-            public void Unload()
-            {
-                base.Reset();
-                ar?.Release();
-                ar = null;
-                action = null;
-                next = cache.next;
-                cache.next = this;
-            }
+            base.Reset();
+            ar?.Release();
+            ar = null;
+            action = null;
+            next = cache.next;
+            cache.next = this;
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using MainAssembly;
-
-namespace HotAssembly
+﻿namespace HotAssembly
 {
     public class GameStart : Singletion<GameStart>
     {

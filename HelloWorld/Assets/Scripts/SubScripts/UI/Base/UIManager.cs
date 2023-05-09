@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using MainAssembly;
 using Object = UnityEngine.Object;
 
 namespace HotAssembly

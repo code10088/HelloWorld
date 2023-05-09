@@ -1,5 +1,4 @@
-﻿using MainAssembly;
-using System.IO;
+﻿using System.IO;
 
 namespace HotAssembly
 {

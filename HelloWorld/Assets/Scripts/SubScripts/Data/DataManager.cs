@@ -1,5 +1,3 @@
-using MainAssembly;
-
 namespace HotAssembly
 {
     public class DataManager : Singletion<DataManager>

@@ -1,6 +1,5 @@
 ﻿using ProtoBuf;
 using System.Collections.Generic;
-using MainAssembly;
 
 namespace HotAssembly
 {

@@ -1,5 +1,4 @@
 using UnityEngine;
-using MainAssembly;
 
 namespace HotAssembly
 {

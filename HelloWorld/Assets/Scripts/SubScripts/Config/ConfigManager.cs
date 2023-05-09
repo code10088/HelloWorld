@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using MainAssembly;
 using Object = UnityEngine.Object;
 using System.Reflection;
 

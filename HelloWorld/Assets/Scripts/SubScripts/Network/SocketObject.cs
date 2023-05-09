@@ -5,7 +5,6 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using MainAssembly;
 
 namespace HotAssembly
 {

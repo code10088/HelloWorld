@@ -8,3 +8,6 @@ ECS+Job+Brust
 	
 protobuf-net
 	github下载最新版，使用vs2022编译(如果编译失败尝试更新vs)
+	
+newtonjson
+	release13.0.3 bin/.net45/dll

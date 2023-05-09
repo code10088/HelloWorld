@@ -1,0 +1,10 @@
+{
+    "app": {
+        "version": "2013.5.9",
+        "url": "http://192.168.6.2/Version.txt"
+    },
+    "res": {
+        "version": "2013.5.9",
+        "url": "http://192.168.6.2/Version.txt"
+    }
+}

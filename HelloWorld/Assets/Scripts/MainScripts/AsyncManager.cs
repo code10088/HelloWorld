@@ -1,8 +1,6 @@
 using System;
 using UnityEngine;
 
-namespace MainAssembly
-{
     public class AsyncManager : Singletion<AsyncManager>
     {
         private AsyncItem first = new AsyncItem();
@@ -42,41 +40,40 @@ namespace MainAssembly
             }
         }
     }
-    public class AsyncItem
+public class AsyncItem
+{
+    private static int uniqueId = 0;
+    private int itemId = -1;
+    public AsyncItem next;
+    public bool endMark = false;
+    public bool execMark = true;
+    private Action finish;
+
+    public int ItemID => itemId;
+
+    public virtual void Init(Action finish)
     {
-        private static int uniqueId = 0;
-        private int itemId = -1;
-        public AsyncItem next;
-        public bool endMark = false;
-        public bool execMark = true;
-        private Action finish;
+        itemId = ++uniqueId;
+        this.finish = finish;
+    }
 
-        public int ItemID => itemId;
+    public virtual bool Update()
+    {
+        return true;
+    }
 
-        public virtual void Init(Action finish)
-        {
-            itemId = ++uniqueId;
-            this.finish = finish;
-        }
+    public virtual void Finish()
+    {
+        endMark = true;
+        if (execMark) finish?.Invoke();
+    }
 
-        public virtual bool Update()
-        {
-            return true;
-        }
-
-        public virtual void Finish()
-        {
-            endMark = true;
-            if (execMark) finish?.Invoke();
-        }
-
-        public virtual void Reset()
-        {
-            itemId = -1;
-            next = null;
-            endMark = false;
-            execMark = true;
-            finish = null;
-        }
+    public virtual void Reset()
+    {
+        itemId = -1;
+        next = null;
+        endMark = false;
+        execMark = true;
+        finish = null;
     }
 }

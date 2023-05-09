@@ -1,17 +1,12 @@
-using UnityEngine;
-
-namespace MainAssembly
+public abstract class Singletion<T> where T : new()
 {
-    public abstract class Singletion<T> where T : new()
+    private static T instance;
+    public static T Instance
     {
-        private static T instance;
-        public static T Instance
+        get
         {
-            get
-            {
-                if (instance == null) instance = new T();
-                return instance;
-            }
+            if (instance == null) instance = new T();
+            return instance;
         }
     }
 }
