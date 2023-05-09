@@ -5,12 +5,13 @@
         public void Init()
         {
             UIManager.Instance.Init();
-            NetManager.Instance.Init();
             ConfigManager.Instance.Init(InitSetting);
         }
         private void InitSetting() 
         { 
             DevicePerformanceUtil.Init();
+            NetMsgDispatch.Instance.Init();
+            SocketManager.Instance.Init(NetMsgDispatch.Instance.Deserialize);
             EnterMainScene();
         }
         private void EnterMainScene()

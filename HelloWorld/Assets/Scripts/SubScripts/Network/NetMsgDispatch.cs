@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace HotAssembly
 {
-    public partial class NetMsgDispatch
+    public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
     {
         class NetMsgItem
         {
-            public NetMsgId id;
+            public ushort id;
             public IExtensible msg;
         }
 
@@ -32,7 +32,7 @@ namespace HotAssembly
         {
             switch (msg.id)
             {
-                case NetMsgId.Test:; break;
+                case NetMsgId.Min:; break;
             }
         }
     }

@@ -23,7 +23,7 @@ public class ThreadManager : Singletion<ThreadManager>
     }
     private void CheckThreadQueue()
     {
-        if (count < GameSetting.Instance.threadLimit && wait.Count > 0)
+        if (count < GameSetting.threadLimit && wait.Count > 0)
         {
             ThreadItem temp = wait.Dequeue();
             temp.Start();

@@ -1,9 +1,8 @@
-﻿using System;
-
-namespace HotAssembly
+﻿namespace HotAssembly
 {
-    public enum NetMsgId
+    public class NetMsgId
     {
-        Test,
+        public const ushort Min = 1000;
+        public const ushort Max = 5000;
     }
 }

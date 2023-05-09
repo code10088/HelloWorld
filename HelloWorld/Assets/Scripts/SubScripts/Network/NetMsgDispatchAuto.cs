@@ -8,12 +8,12 @@ namespace HotAssembly
         public void Deserialize(ushort id, MemoryStream ms)
         {
             IExtensible msg = null;
-            switch ((NetMsgId)id)
+            switch (id)
             {
-                case NetMsgId.Test: msg = Serializer.Deserialize<ProtoTest.Person>(ms); break;
+                case NetMsgId.Min: msg = Serializer.Deserialize<ProtoTest.Person>(ms); break;
             }
             var item = new NetMsgItem();
-            item.id = (NetMsgId)id;
+            item.id = id;
             item.msg = msg;
             lock (msgPool) msgPool.Enqueue(item);
         }
