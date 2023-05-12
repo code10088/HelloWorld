@@ -4,12 +4,9 @@ namespace MainAssembly
 {
     public class GameStart : MonoBehaviour
     {
-        public static GameStart Instance;
-
         private void Awake()
         {
             Application.runInBackground = true;
-            Instance = this;
             Init();
         }
         private void Init()

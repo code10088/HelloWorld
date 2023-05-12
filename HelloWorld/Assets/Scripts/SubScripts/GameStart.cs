@@ -19,7 +19,7 @@
             DataManager.Instance.HotUpdateResData.StartUpdate(InitSetting);
         }
         private void InitSetting() 
-        { 
+        {
             DevicePerformanceUtil.Init();
             SocketManager.Instance.Init(NetMsgDispatch.Instance.Deserialize);
             EnterMainScene();

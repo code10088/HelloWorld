@@ -7,12 +7,12 @@ namespace HotAssembly
 {
     public class HotUpdateResData : Database
     {
+        private UIHotUpdateRes hotUpdateRes;
+        private Action hotUpdateResFinish;
         private Versions versions;
         private int updateId = -1;
         private Request request;
 
-        private UIHotUpdateRes hotUpdateRes;
-        private Action hotUpdateResFinish;
 
         public void StartUpdate(Action finish)
         {
@@ -184,6 +184,7 @@ namespace HotAssembly
         }
         private void UpdateFinish()
         {
+            UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             Updater.Instance.StopUpdate(updateId);
             hotUpdateResFinish?.Invoke();
         }
