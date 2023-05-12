@@ -4,13 +4,23 @@
     {
         public void Init()
         {
-            UIManager.Instance.Init();
-            ConfigManager.Instance.Init(InitSetting);
+            AssetManager.Instance.Init(InitUIConfig);
+        }
+        private void InitUIConfig()
+        {
+            ConfigManager.Instance.InitSpecial("Data_UIConfig", OpenUIHotUpdateRes);
+        }
+        private void OpenUIHotUpdateRes()
+        {
+            UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, StartHotUpdateRes);
+        }
+        private void StartHotUpdateRes()
+        {
+            DataManager.Instance.HotUpdateResData.StartUpdate(InitSetting);
         }
         private void InitSetting() 
         { 
             DevicePerformanceUtil.Init();
-            NetMsgDispatch.Instance.Init();
             SocketManager.Instance.Init(NetMsgDispatch.Instance.Deserialize);
             EnterMainScene();
         }

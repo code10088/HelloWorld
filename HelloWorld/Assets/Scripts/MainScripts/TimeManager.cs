@@ -4,6 +4,7 @@ using UnityEngine;
 public class TimeManager : Singletion<TimeManager>
 {
     private static TimeItem cache = new TimeItem();
+
     /// <summary>
     /// loop>0
     ///     loop£ºÑ­»·Ê±¼ä

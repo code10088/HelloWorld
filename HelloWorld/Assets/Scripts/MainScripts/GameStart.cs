@@ -14,11 +14,11 @@ namespace MainAssembly
         }
         private void Init()
         {
-            AssetManager.Instance.Init(HotUpdate);
+            GameVersion.Instance.Init(HotUpdate);
         }
         private void HotUpdate()
         {
-            MainAssembly.HotUpdate.Instance.Start();
+            HotUpdateCode.Instance.Start();
         }
         private void Update()
         {

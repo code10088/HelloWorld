@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 
 namespace HotAssembly
 {
-    public partial class UIManager : Singletion<UIManager>
+    public partial class UIManager : Singletion<UIManager>, SingletionInterface
     {
         public GameObject UIRoot;
         public Transform tUIRoot;

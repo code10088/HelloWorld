@@ -7,7 +7,7 @@ using UnityEditor;
 public class ExportUIScript
 {
     private static string AutoScriptPath = "Assets/Scripts/SubScripts/UI/Auto/";
-    private static string Head1 = "using UnityEngine;\n";
+    private static string Head1 = "using UnityEngine;\nnamespace HotAssembly\n{\n";
     private static string TabEmpty = "    ";
 
 
@@ -86,54 +86,9 @@ public class ExportUIScript
         for (int i = 0; i < classInfoList.Count; i++)
         {
             ClassInfo ci = classInfoList[i];
-            WriteString(fs, 0, "public partial class " + ci.className + "\n");
-            WriteString(fs, 0, "{\n");
-            WriteString(fs, 1, "public GameObject obj;\n");
-            for (int j = 0; j < ci.component.Count; j++)
-            {
-                ExportComponent tempComponent = ci.component[j];
-                Dictionary<string, int> tempNameDic = new Dictionary<string, int>();
-                for (int k = 0; k < tempComponent.exportComponent.Length; k++)
-                {
-                    MonoBehaviour tempBehaviour = tempComponent.exportComponent[k];
-                    if (tempBehaviour == null)
-                    {
-                        string tempName = tempComponent.name + "Obj";
-                        if (tempNameDic.ContainsKey(tempName))
-                        {
-                            tempNameDic[tempName]++;
-                            tempName += tempNameDic[tempName];
-                        }
-                        else
-                        {
-                            tempNameDic.Add(tempName, 0);
-                        }
-                        tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        WriteString(fs, 1, "public GameObject " + tempName + " = null;\n");
-                    }
-                    else
-                    {
-                        string tempStr = tempBehaviour.GetType().ToString();
-                        string tempName = tempStr.Substring(tempStr.LastIndexOf(".") + 1);
-                        tempName = tempComponent.name + tempName;
-                        if (tempNameDic.ContainsKey(tempName))
-                        {
-                            tempNameDic[tempName]++;
-                            tempName += tempNameDic[tempName];
-                        }
-                        else
-                        {
-                            tempNameDic.Add(tempName, 0);
-                        }
-                        tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        WriteString(fs, 1, "public " + tempStr + " " + tempName + " = null;\n");
-                    }
-                }
-            }
-            WriteString(fs, 1, "public void Init(GameObject obj)\n");
+            WriteString(fs, 1, "public partial class " + ci.className + "\n");
             WriteString(fs, 1, "{\n");
-            WriteString(fs, 2, "this.obj = obj;\n");
-            WriteString(fs, 2, "ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);\n");
+            WriteString(fs, 2, "public GameObject obj;\n");
             for (int j = 0; j < ci.component.Count; j++)
             {
                 ExportComponent tempComponent = ci.component[j];
@@ -154,7 +109,7 @@ public class ExportUIScript
                             tempNameDic.Add(tempName, 0);
                         }
                         tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        WriteString(fs, 2, tempName + " = allData[" + ci.componentIndex[j] + "].gameObject;\n");
+                        WriteString(fs, 2, "public GameObject " + tempName + " = null;\n");
                     }
                     else
                     {
@@ -171,10 +126,56 @@ public class ExportUIScript
                             tempNameDic.Add(tempName, 0);
                         }
                         tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        WriteString(fs, 2, tempName + " = allData[" + ci.componentIndex[j] + "].exportComponent[" + k + "] as " + tempStr + ";\n");
+                        WriteString(fs, 2, "public " + tempStr + " " + tempName + " = null;\n");
                     }
                 }
             }
+            WriteString(fs, 2, "public void Init(GameObject obj)\n");
+            WriteString(fs, 2, "{\n");
+            WriteString(fs, 3, "this.obj = obj;\n");
+            WriteString(fs, 3, "ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);\n");
+            for (int j = 0; j < ci.component.Count; j++)
+            {
+                ExportComponent tempComponent = ci.component[j];
+                Dictionary<string, int> tempNameDic = new Dictionary<string, int>();
+                for (int k = 0; k < tempComponent.exportComponent.Length; k++)
+                {
+                    MonoBehaviour tempBehaviour = tempComponent.exportComponent[k];
+                    if (tempBehaviour == null)
+                    {
+                        string tempName = tempComponent.name + "Obj";
+                        if (tempNameDic.ContainsKey(tempName))
+                        {
+                            tempNameDic[tempName]++;
+                            tempName += tempNameDic[tempName];
+                        }
+                        else
+                        {
+                            tempNameDic.Add(tempName, 0);
+                        }
+                        tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
+                        WriteString(fs, 3, tempName + " = allData[" + ci.componentIndex[j] + "].gameObject;\n");
+                    }
+                    else
+                    {
+                        string tempStr = tempBehaviour.GetType().ToString();
+                        string tempName = tempStr.Substring(tempStr.LastIndexOf(".") + 1);
+                        tempName = tempComponent.name + tempName;
+                        if (tempNameDic.ContainsKey(tempName))
+                        {
+                            tempNameDic[tempName]++;
+                            tempName += tempNameDic[tempName];
+                        }
+                        else
+                        {
+                            tempNameDic.Add(tempName, 0);
+                        }
+                        tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
+                        WriteString(fs, 3, tempName + " = allData[" + ci.componentIndex[j] + "].exportComponent[" + k + "] as " + tempStr + ";\n");
+                    }
+                }
+            }
+            WriteString(fs, 2, "}\n");
             WriteString(fs, 1, "}\n");
             WriteString(fs, 0, "}\n");
         }

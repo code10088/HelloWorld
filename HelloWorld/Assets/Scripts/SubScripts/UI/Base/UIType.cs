@@ -6,6 +6,7 @@ namespace HotAssembly
         MainUI,
         UITest,
         UIMessageBox,
+        UIHotUpdateRes,
 
         Max,
     }

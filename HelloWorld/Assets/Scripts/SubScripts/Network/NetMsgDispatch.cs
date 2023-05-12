@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HotAssembly
 {
-    public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
+    public partial class NetMsgDispatch : Singletion<NetMsgDispatch>, SingletionInterface
     {
         class NetMsgItem
         {
@@ -15,7 +15,7 @@ namespace HotAssembly
 
         public void Init()
         {
-            UpdateManager.Instance.StartUpdate(Update);
+            Updater.Instance.StartUpdate(Update);
         }
         private void Update()
         {

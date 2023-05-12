@@ -5,8 +5,16 @@ public abstract class Singletion<T> where T : new()
     {
         get
         {
-            if (instance == null) instance = new T();
+            if (instance == null)
+            {
+                instance = new T();
+                if (instance is SingletionInterface) ((SingletionInterface)instance).Init();
+            }
             return instance;
         }
     }
+}
+public interface SingletionInterface
+{
+    public void Init();
 }

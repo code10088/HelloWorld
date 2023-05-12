@@ -329,7 +329,7 @@ GameObject:
   - component: {fileID: 208097517}
   - component: {fileID: 208097521}
   m_Layer: 5
-  m_Name: HotUpdate
+  m_Name: UIHotUpdateCode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  className: UIHotUpdateComponent
+  className: UIHotUpdateCodeComponent
 --- !u!114 &208097518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,7 +441,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 208097515}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6d9d89f06e1edc14fb2530ba83de041d, type: 3}
+  m_Script: {fileID: 11500000, guid: b545150268a8d8848825dd84db727414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &439518325

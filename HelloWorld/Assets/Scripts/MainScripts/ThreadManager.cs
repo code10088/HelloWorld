@@ -5,14 +5,21 @@ using System.Threading;
 public class ThreadManager : Singletion<ThreadManager>
 {
     private int count = 0;
-    private Queue<ThreadItem> wait = new Queue<ThreadItem>();
+    private List<ThreadItem> wait = new List<ThreadItem>();
     private static ThreadItem cache = new ThreadItem();
-    public int StartThread(Action<object> action, Action finish, object param = null, float time = 0)
+
+    /// <summary>
+    /// priority=0/1，值越小优先级越高，更高优先级单独开线程
+    /// 这里线程不保证立刻执行
+    /// </summary>
+    public int StartThread(Action<object> action, Action finish, object param = null, float time = 0, int priority = 1)
     {
         ThreadItem temp = (ThreadItem)cache.next;
         if (temp == null) temp = new ThreadItem();
-        temp.Init(action, finish, param, time);
-        wait.Enqueue(temp);
+        temp.Init(action, finish, param, time, priority);
+        int index = wait.FindIndex(a => a.priority > priority);
+        if (index >= 0) wait.Insert(index, temp);
+        else wait.Add(temp);
         CheckThreadQueue();
         return temp.ItemID;
     }
@@ -25,7 +32,8 @@ public class ThreadManager : Singletion<ThreadManager>
     {
         if (count < GameSetting.threadLimit && wait.Count > 0)
         {
-            ThreadItem temp = wait.Dequeue();
+            ThreadItem temp = wait[0];
+            wait.RemoveAt(0);
             temp.Start();
             count++;
             AsyncManager.Instance.Add(temp);
@@ -43,13 +51,15 @@ public class ThreadManager : Singletion<ThreadManager>
         private Action<object> action;
         private object param;
         private float time;
+        public int priority;
 
-        public void Init(Action<object> action, Action finish, object param = null, float time = 0)
+        public void Init(Action<object> action, Action finish, object param, float time, int priority)
         {
             base.Init(finish);
             this.action = action;
             this.param = param;
             this.time = time;
+            this.priority = priority;
         }
         public void Start()
         {
@@ -85,6 +95,7 @@ public class ThreadManager : Singletion<ThreadManager>
             thread = null;
             action = null;
             param = null;
+            priority = -1;
 
             next = cache.next;
             cache.next = this;

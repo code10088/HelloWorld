@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
 
-    public enum DevicePerformanceLevel
-    {
-        Null = 0,
-        Low,
-        Mid,
-        High
-    }
+public enum DevicePerformanceLevel
+{
+    Null = 0,
+    Low,
+    Mid,
+    High
+}
 public class DevicePerformanceUtil
 {
     public delegate DevicePerformanceLevel CustomPerformance();
