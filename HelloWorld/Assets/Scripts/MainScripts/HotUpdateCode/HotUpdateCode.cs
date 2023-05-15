@@ -1,100 +1,115 @@
 ﻿using System;
-using System.Reflection;
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using UnityEngine;
+using xasset;
 
 namespace MainAssembly
 {
     public class HotUpdateCode : Singletion<HotUpdateCode>
     {
-        private Assembly hotAssembly;
-        private AppVersionData latestVersion;
+        private Action hotUpdateCodeFinish;
+        private Versions latestVersion;
 
-        public void Start()
+        public void StartUpdate(Action finish)
         {
-            CheckUpdateInfo();
+            hotUpdateCodeFinish = finish;
+            if (Assets.SimulationMode) UpdateFinish();
+            else CheckUpdateInfo();
         }
         private void CheckUpdateInfo()
         {
-#if UNITY_EDITOR
-            UpdateFinish_LoadHotAssembly();
-#else
-            Downloader.Instance.Download("Version.txt", string.Empty, CompareVersion, UpdateProgress);
-            UIHotUpdateCode.Instance.SetText("Update Game Version");
-#endif
+            Assets.UpdateInfoURL = "http://192.168.6.2/BundlesCache/Windows/updateinfo.json";
+            var getUpdateInfoAsync = Assets.GetUpdateInfoAsync();
+            getUpdateInfoAsync.completed += CheckUpdateVersion;
+
+            UIHotUpdateCode.Instance.SetText("CheckUpdateInfo");
         }
-        private void UpdateProgress(string url, float downloaded, float total)
+        private void CheckUpdateVersion(Request request)
         {
-            UIHotUpdateCode.Instance.SetText($"Download {downloaded / 1024}k/{total / 1024}k");
-            UIHotUpdateCode.Instance.SetSlider(downloaded / total);
-        }
-        private void CompareVersion(string url, byte[] bytes)
-        {
-            if (bytes == null || bytes.Length == 0)
+            var getUpdateInfoAsync = request as GetUpdateInfoRequest;
+            if (getUpdateInfoAsync.result == Request.Result.Success)
+            {
+                var updateVersion = System.Version.Parse(getUpdateInfoAsync.info.version);
+                var playerVersion = System.Version.Parse(Assets.PlayerAssets.version);
+                if (updateVersion.Minor == playerVersion.Minor)
+                {
+                    var getVersionsAsync = Assets.GetVersionsAsync(getUpdateInfoAsync.info);
+                    getVersionsAsync.completed += CheckDownloadInfo;
+
+                    UIHotUpdateCode.Instance.SetText("CheckUpdateVersion");
+                }
+                else
+                {
+                    Application.OpenURL(getUpdateInfoAsync.info.playerDownloadURL);
+                    Application.Quit();
+                }
+            }
+            else
             {
                 UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", CheckUpdateInfo);
             }
-            else
+        }
+        private void CheckDownloadInfo(Request request)
+        {
+            var getVersionsAsync = request as VersionsRequest;
+            if (getVersionsAsync.result == Request.Result.Success)
             {
-                string str = System.Text.Encoding.Default.GetString(bytes);
-                latestVersion = JsonConvert.DeserializeObject<AppVersionData>(str);
-                if (!FileUtils.Instance.CheckDownloaded(latestVersion.app_hotupdate)) DownloadRes();
-                else if (!FileUtils.Instance.CheckDownloaded(latestVersion.app_hotupdateres.ToArray())) DownloadRes();
-                else if (!latestVersion.app_version.Equals(GameVersion.Instance.Version.app_version)) DownloadRes();
-                else UpdateFinish_LoadHotAssembly();
-            }
-        }
-        private void DownloadRes()
-        {
-            string[] url = new string[latestVersion.app_hotupdateres.Count];
-            for (int i = 0; i < url.Length; i++) url[i] = latestVersion.app_url + latestVersion.app_hotupdateres[i];
-            Downloader.Instance.Download(url, latestVersion.app_hotupdateres.ToArray(), DownloadResFinish_DownloadDll, UpdateProgress);            
-            UIHotUpdateCode.Instance.SetText("Download Resources");
-        }
-        private void UpdateProgress(int downloaded, int total)
-        {
-            UIHotUpdateCode.Instance.SetSlider(downloaded / (float)total);
-        }
-        private void DownloadResFinish_DownloadDll(string[] fail)
-        {
-            if (fail.Length == 0)
-            {
-                string url = latestVersion.app_url + latestVersion.app_hotupdate;
-                Downloader.Instance.Download(url, latestVersion.app_hotupdate, DownloadDllFinish_SaveVersion, UpdateProgress);
-                UIHotUpdateCode.Instance.SetText("Download Resources");
+                latestVersion = getVersionsAsync.versions;
+                //下载代码和更新界面资源
+                UpdateFinish();
             }
             else
             {
-                UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", DownloadRes);
+                UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", CheckUpdateInfo);
             }
         }
-        private void DownloadDllFinish_SaveVersion(string url, byte[] bytes)
+        private void RemoveUnusedFile(DownloadRequestBatch download)
         {
-            if (bytes == null || bytes.Length == 0)
+            if (download.result == DownloadRequestBase.Result.Success)
             {
-                UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", DownloadRes);
+                var bundles = new HashSet<string>();
+                foreach (var item in latestVersion.data)
+                {
+                    bundles.Add(item.file);
+                    foreach (var bundle in item.manifest.bundles)
+                        bundles.Add(bundle.file);
+                }
+
+                var files = new List<string>();
+                foreach (var item in Assets.Versions.data)
+                {
+                    if (!bundles.Contains(item.file))
+                        files.Add(item.file);
+                    foreach (var bundle in item.manifest.bundles)
+                        if (!bundles.Contains(bundle.file))
+                            files.Add(item.file);
+                }
+
+                var removeAsync = new RemoveRequest();
+                foreach (var file in files)
+                {
+                    var path = Assets.GetDownloadDataPath(file);
+                    removeAsync.files.Add(path);
+                }
+                removeAsync.completed += SaveVersion;
+                removeAsync.SendRequest();
             }
             else
             {
-                GameVersion.Instance.SetNewVersion(latestVersion, UpdateFinish_LoadHotAssembly);
+                UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", download.Retry);
             }
         }
-        private void UpdateFinish_LoadHotAssembly()
+        private void SaveVersion(Request request)
+        {
+            string tempPath = Assets.GetDownloadDataPath(Versions.Filename);
+            latestVersion.Save(tempPath);
+            Assets.Versions = latestVersion;
+            UpdateFinish();
+        }
+        private void UpdateFinish()
         {
             UIHotUpdateCode.Instance.Finish();
-#if UNITY_EDITOR
-            HotAssembly.GameStart.Instance.Init();
-#else
-            FileUtils.Instance.Read(GameVersion.Instance.Version.app_hotupdate, StartHotAssembly);
-#endif
-        }
-        private void StartHotAssembly(byte[] bytes)
-        {
-            hotAssembly = Assembly.Load(bytes);
-            Type t = hotAssembly.GetType("HotAssembly.GameStart");
-            PropertyInfo p = t.BaseType.GetProperty("Instance");
-            object o = p.GetMethod.Invoke(null, null);
-            MethodInfo m = t.GetMethod("Init");
-            m.Invoke(o, null);
+            hotUpdateCodeFinish?.Invoke();
         }
     }
 }

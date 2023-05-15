@@ -17,8 +17,7 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
     }
     public void Download(string url, string path, Action<string, byte[]> finish, Action<string, float, float> update = null, int timeout = 5)
     {
-        HttpItem item = new HttpItem(url, path, finish, update, timeout);
-        all.Add(item);
+        all.Add(new HttpItem(url, path, finish, update, timeout));
         CheckHttpQueue();
     }
     public void Download(string[] url, string[] path, Action<string[]> finish, Action<int, int> update = null)

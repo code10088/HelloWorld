@@ -4,19 +4,15 @@
     {
         public void Init()
         {
-            AssetManager.Instance.Init(InitUIConfig);
-        }
-        private void InitUIConfig()
-        {
-            ConfigManager.Instance.InitSpecial("Data_UIConfig", OpenUIHotUpdateRes);
-        }
-        private void OpenUIHotUpdateRes()
-        {
-            UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, StartHotUpdateRes);
+            ConfigManager.Instance.InitSpecial("Data_UIConfig", StartHotUpdateRes);
         }
         private void StartHotUpdateRes()
         {
-            DataManager.Instance.HotUpdateResData.StartUpdate(InitSetting);
+            DataManager.Instance.HotUpdateResData.StartUpdate(InitConfig);
+        }
+        private void InitConfig()
+        {
+            ConfigManager.Instance.Init(InitSetting);
         }
         private void InitSetting() 
         {
