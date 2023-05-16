@@ -1,29 +1,32 @@
 public class AOTGenericReferences : UnityEngine.MonoBehaviour
 {
 
+	// {{ AOT assemblies
+	// Assembly-CSharp.dll
+	// UnityEngine.CoreModule.dll
+	// mscorlib.dll
+	// }}
+
 	// {{ constraint implement type
 	// }} 
 
-	// {{ AOT generic type
-	//MainAssembly.MonoSingletion`1<System.Object>
-	//MainAssembly.Singletion`1<System.Object>
-	//System.Action`1<System.Object>
-	//System.Action`3<System.Int32,System.Object,System.Object>
-	//System.Collections.Generic.Dictionary`2<HotAssembly.EventType,System.Object>
-	//System.Collections.Generic.Dictionary`2<System.Int32,System.Int32>
-	//System.Collections.Generic.List`1<System.Object>
-	//System.Func`1<System.Object>
-	//System.Predicate`1<System.Object>
+	// {{ AOT generic types
+	// System.Action<object>
+	// System.Action<int,object,object>
+	// System.Collections.Generic.Dictionary<HotAssembly.EventType,object>
+	// System.Collections.Generic.Dictionary<int,int>
+	// System.Collections.Generic.List<object>
+	// System.Func<object>
+	// System.Predicate<object>
 	// }}
 
 	public void RefMethods()
 	{
-		// System.Object[] BytesDecode::ToBDIArray<System.Object>(System.Func`1<System.Object>)
-		// System.Void BytesDecode::ToBytes<System.Object>(System.Object[])
-		// System.Int32 MainAssembly.AssetManager::Load<System.Object>(System.String,System.Action`3<System.Int32,UnityEngine.Object,System.Object>,System.Object)
-		// System.Object[] System.Array::Empty<System.Object>()
-		// System.Object System.Threading.Interlocked::CompareExchange<System.Object>(System.Object&,System.Object,System.Object)
-		// System.Object UnityEngine.GameObject::GetComponent<System.Object>()
-		// System.Object[] UnityEngine.GameObject::GetComponentsInChildren<System.Object>(System.Boolean)
+		// object[] BytesDecode.ToBDIArray<object>(System.Func<object>)
+		// System.Void BytesDecode.ToBytes<object>(object[])
+		// object[] System.Array.Empty<object>()
+		// object System.Threading.Interlocked.CompareExchange<object>(object&,object,object)
+		// object UnityEngine.GameObject.GetComponent<object>()
+		// object[] UnityEngine.GameObject.GetComponentsInChildren<object>(bool)
 	}
 }

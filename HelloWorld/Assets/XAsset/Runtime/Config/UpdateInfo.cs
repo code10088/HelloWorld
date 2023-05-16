@@ -8,8 +8,9 @@ namespace xasset
         public string file;
         public string hash;
         public ulong size;
+        public long timestamp;
         public string version;
-        public string downloadURL;
-        public string playerDownloadURL;
+        public string downloadURL; 
+        public string playerURL;
     }
 }

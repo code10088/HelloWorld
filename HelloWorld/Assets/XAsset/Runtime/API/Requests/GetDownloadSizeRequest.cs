@@ -23,7 +23,7 @@ namespace xasset
 
         protected override void OnStart()
         {
-            if (Assets.SimulationMode || Assets.OfflineMode)
+            if (!Assets.Updatable)
             {
                 SetResult(Result.Success);
                 return;

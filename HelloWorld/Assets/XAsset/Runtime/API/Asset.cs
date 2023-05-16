@@ -65,7 +65,8 @@ namespace xasset
         /// <param name="parent">父节点</param>
         /// <param name="worldPositionStays">是否保留世界坐标</param>
         /// <returns></returns>
-        public static InstantiateRequest InstantiateAsync(string path, Transform parent = null, bool worldPositionStays = false)
+        public static InstantiateRequest InstantiateAsync(string path, Transform parent = null,
+            bool worldPositionStays = false)
         {
             return InstantiateRequest.InstantiateAsync(path, parent, worldPositionStays);
         }

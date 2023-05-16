@@ -1,6 +1,5 @@
 using System.IO;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace xasset.editor
@@ -8,11 +7,19 @@ namespace xasset.editor
     public static class MenuItems
     {
         private const string kSimulationMode = "xasset/Simulation Mode";
+        private const string kUpdatable = "xasset/Updatable";
+
 
         [MenuItem("xasset/About xasset", false, 1)]
         public static void OpenAbout()
         {
             Application.OpenURL("https://xasset.cc");
+        }
+
+        [MenuItem("xasset/Check for Updates", false, 1)]
+        public static void CheckForUpdates()
+        {
+            Application.OpenURL("https://xasset.cc/docs/change-log");
         }
 
         [MenuItem("xasset/Get Unity Online Services", false, 1)]
@@ -21,25 +28,7 @@ namespace xasset.editor
             Application.OpenURL("https://uos.unity.cn");
         }
 
-
-        [MenuItem(kSimulationMode, false, 50)]
-        public static void SwitchSimulationMode()
-        {
-            var settings = Settings.GetDefaultSettings();
-            settings.simulationMode = !settings.simulationMode;
-            EditorUtility.SetDirty(settings);
-            AssetDatabase.SaveAssets();
-        }
-
-        [MenuItem(kSimulationMode, true, 50)]
-        public static bool RefreshSimulationMode()
-        {
-            var settings = Settings.GetDefaultSettings();
-            Menu.SetChecked(kSimulationMode, settings.simulationMode);
-            return true;
-        }
-
-        [MenuItem("xasset/Open/Settings")]
+        [MenuItem("xasset/Settings", false, 80)]
         public static void PingSettings()
         {
             Selection.activeObject = Settings.GetDefaultSettings();
@@ -47,16 +36,38 @@ namespace xasset.editor
             EditorUtility.FocusProjectWindow();
         }
 
-        [MenuItem("xasset/Open/Startup Scene")]
-        public static void OpenStartupScene()
+        [MenuItem(kSimulationMode, false, 80)]
+        public static void SwitchSimulationMode()
         {
-            EditorSceneManager.OpenScene("Assets/xasset/Samples/Startup.unity");
+            var settings = Settings.GetDefaultSettings();
+            settings.player.simulationMode = !settings.player.simulationMode;
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
         }
 
-        [MenuItem("xasset/Open/Download Data Path")]
-        public static void OpenDownloadBundles()
+        [MenuItem(kSimulationMode, true, 80)]
+        public static bool RefreshSimulationMode()
         {
-            EditorUtility.OpenWithDefaultApp(Assets.DownloadDataPath);
+            var settings = Settings.GetDefaultSettings();
+            Menu.SetChecked(kSimulationMode, settings.player.simulationMode);
+            return true;
+        }
+
+        [MenuItem(kUpdatable, false, 80)]
+        public static void SwitchUpdateEnabled()
+        {
+            var settings = Settings.GetDefaultSettings();
+            settings.player.updatable = !settings.player.updatable;
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+        }
+
+        [MenuItem(kUpdatable, true, 80)]
+        public static bool RefreshUpdateEnabled()
+        {
+            var settings = Settings.GetDefaultSettings();
+            Menu.SetChecked(kUpdatable, settings.player.updatable);
+            return true;
         }
 
         [MenuItem("xasset/Build Bundles", false, 100)]
@@ -81,7 +92,7 @@ namespace xasset.editor
         public static void BuildPlayerAssetsWithSelection()
         {
             var path = EditorUtility.OpenFilePanelWithFilters("Select", Settings.PlatformDataPath,
-                new[] {"versions", "json"});
+                new[] { "versions", "json" });
             if (string.IsNullOrEmpty(path)) return;
             var versions = Utility.LoadFromFile<Versions>(path);
             BuildPlayerAssets.CustomBuilder = null;
@@ -92,7 +103,7 @@ namespace xasset.editor
         public static void BuildUpdateInfo()
         {
             var path = EditorUtility.OpenFilePanelWithFilters("Select", Settings.PlatformDataPath,
-                new[] {"versions", "json"});
+                new[] { "versions", "json" });
             if (string.IsNullOrEmpty(path)) return;
 
             var versions = Utility.LoadFromFile<Versions>(path);
@@ -101,50 +112,53 @@ namespace xasset.editor
             Builder.BuildUpdateInfo(versions, hash, file.Length);
         }
 
+        [MenuItem("xasset/Print Changes with Selection", false, 150)]
+        public static void PrintChangesFromSelection()
+        {
+            var path = EditorUtility.OpenFilePanelWithFilters("Select", Settings.PlatformDataPath,
+                new[] { "versions", "json" });
+            if (string.IsNullOrEmpty(path)) return;
+            var versions = Utility.LoadFromFile<Versions>(path);
+            var filename = versions.GetFilename();
+            var records = Utility.LoadFromFile<Changes>(Settings.GetCachePath(Changes.Filename));
+            if (records.TryGetValue(filename, out var value)) Builder.GetChanges(value.changes, filename);
+        }
+
         [MenuItem("xasset/Clear Download", false, 200)]
         public static void ClearDownload()
         {
             var directory = Application.persistentDataPath;
             if (Directory.Exists(directory))
                 Directory.Delete(directory, true);
+            PlayerPrefs.SetString(Assets.kBundlesVersions, string.Empty);
+            PlayerPrefs.Save();
         }
 
         [MenuItem("xasset/Clear Bundles", false, 200)]
         public static void ClearBundles()
         {
-            var dirs = new[]
-            {
-                Settings.PlatformDataPath,
-                Settings.PlatformCachePath,
-            };
-
-            foreach (var dir in dirs)
-                if (Directory.Exists(dir))
-                    Directory.Delete(dir, true);
+            var directories = new[] { Settings.PlatformDataPath, Settings.PlatformCachePath };
+            foreach (var directory in directories)
+                if (Directory.Exists(directory))
+                    Directory.Delete(directory, true);
         }
 
         [MenuItem("xasset/Clear History", false, 200)]
         public static void ClearHistory()
         {
-            editor.ClearHistory.Start();
+            ClearBuildHistory.Start();
         }
 
-        [MenuItem("xasset/Check for Updates", false, 300)]
-        public static void CheckForUpdates()
+        [MenuItem("xasset/Open/Download Data Path", false, 300)]
+        public static void OpenDownloadBundles()
         {
-            Application.OpenURL("https://xasset.cc/docs/next/change-log");
+            EditorUtility.OpenWithDefaultApp(Assets.DownloadDataPath);
         }
 
-        [MenuItem("xasset/Print Changes", false, 300)]
-        public static void PrintChanges()
+        [MenuItem("xasset/Open/Temp Data Path", false, 300)]
+        public static void OpenTempDataPath()
         {
-            var path = EditorUtility.OpenFilePanelWithFilters("Select", Settings.PlatformDataPath,
-                new[] {"versions", "json"});
-            if (string.IsNullOrEmpty(path)) return;
-            var versions = Utility.LoadFromFile<Versions>(path);
-            var filename = versions.GetFilename();
-            var records = Utility.LoadFromFile<BuildRecords>(Settings.GetCachePath(BuildRecords.Filename));
-            if (records.TryGetValue(filename, out var value)) Builder.GetChanges(value.changes, filename);
+            EditorUtility.OpenWithDefaultApp(Application.temporaryCachePath);
         }
 
         [MenuItem("Assets/To Json")]

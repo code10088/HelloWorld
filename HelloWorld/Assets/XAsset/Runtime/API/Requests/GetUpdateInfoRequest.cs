@@ -10,7 +10,7 @@ namespace xasset
 
         protected override void OnStart()
         {
-            if (Assets.SimulationMode || Assets.OfflineMode)
+            if (!Assets.Updatable)
             {
                 SetResult(Result.Failed);
                 return;
@@ -34,6 +34,13 @@ namespace xasset
                 // Web GL 直接读取 PlayerDataPath
                 if (Assets.IsWebGLPlatform && !Application.isEditor)
                     Assets.DownloadURL = info.downloadURL;
+
+                // 版本文件未发生更新
+                if (info.timestamp <= Assets.Versions.timestamp)
+                {
+                    SetResult(Result.Failed, "Nothing to update.");
+                    return;
+                }
 
                 SetResult(Result.Success);
                 return;

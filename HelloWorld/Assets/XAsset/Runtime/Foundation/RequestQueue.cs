@@ -34,6 +34,7 @@ namespace xasset
                 item.Complete();
                 if (Scheduler.Busy) return false;
             }
+
             return true;
         }
     }

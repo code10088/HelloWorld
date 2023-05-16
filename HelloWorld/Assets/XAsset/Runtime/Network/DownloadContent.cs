@@ -27,7 +27,7 @@ namespace xasset
         public ulong GetDownloadedBytes()
         {
             var file = new FileInfo(savePath);
-            downloadedBytes = (ulong) (file.Exists ? file.Length : 0);
+            downloadedBytes = (ulong)(file.Exists ? file.Length : 0);
             return downloadedBytes;
         }
 

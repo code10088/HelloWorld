@@ -59,7 +59,7 @@ namespace xasset
 
         private void StartDownload()
         {
-            if (Downloader.SimulationMode)
+            if (Assets.SimulationMode)
             {
                 // 本地仿真的时候不支持断点续传。
                 _request.downloadedBytes = 0;

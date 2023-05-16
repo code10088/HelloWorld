@@ -13,91 +13,307 @@ MonoBehaviour:
   m_Name: BuildAssetCache
   m_EditorClassIdentifier: 
   data:
-  - path: Assets/ZRes/UI/Prefab/UITest.prefab
-    bundle: build/ui_prefab_uitest_prefab.bundle
+  - path: Assets/xasset/Samples/Prefabs/Copyright.prefab
+    bundle: arts/prefabs.bundle
     type: GameObject
-    entry: Assets/ZRes/UI
-    lastWriteTime: 133278205881014556
+    entry: Assets/xasset/Samples/Prefabs
+    lastWriteTime: 133286805366409927
+    addressMode: 2
+    dependencies: []
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/xasset/Samples/Prefabs/CycleReferences1.prefab
+    bundle: arts/prefabs.bundle
+    type: GameObject
+    entry: Assets/xasset/Samples/Prefabs
+    lastWriteTime: 133286805366389982
     addressMode: 2
     dependencies:
-    - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
-    - Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
-    - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Text Component
-      Icon.psd
-    - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
-    - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
-    - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
-    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
-  - path: Assets/ZRes/Config/Data_Test.bytes
-    bundle: build/config_data_test_bytes.bundle
-    type: TextAsset
-    entry: Assets/ZRes/Config
-    lastWriteTime: 0
-    addressMode: 2
-    dependencies: []
-    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
-  - path: Assets/ZRes/Config/Data_UIConfig.bytes
-    bundle: build/config_data_uiconfig_bytes.bundle
-    type: TextAsset
-    entry: Assets/ZRes/Config
-    lastWriteTime: 0
-    addressMode: 2
-    dependencies: []
-    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
-  - path: Assets/Scripts/SubScripts/HotAssembly.pdb
-    bundle: 
-    type: DefaultAsset
-    entry: Assets/Scripts/SubScripts
-    lastWriteTime: 133234215471188185
-    addressMode: 2
-    dependencies: []
-    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
-  - path: Assets/Scripts/SubScripts/HotAssembly.dll
-    bundle: 
-    type: DefaultAsset
-    entry: Assets/Scripts/SubScripts/HotAssembly.dll
-    lastWriteTime: 133234216542305485
-    addressMode: 2
-    dependencies: []
-    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
-  - path: Assets/Scripts/SubScripts/HotAssembly.bytes
-    bundle: 
-    type: TextAsset
-    entry: Assets/Scripts/SubScripts
-    lastWriteTime: 0
-    addressMode: 2
-    dependencies: []
-    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
-  - path: Assets/ZRes/Assembly/HotAssembly.bytes
-    bundle: build/assembly_hotassembly_bytes.bundle
-    type: TextAsset
-    entry: Assets/ZRes/Assembly
-    lastWriteTime: 0
-    addressMode: 2
-    dependencies: []
-    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
-  - path: Assets/ZRes/UI/Prefab/UIMessageBox.prefab
-    bundle: build/ui_prefab_uimessagebox_prefab.bundle
+    - Assets/xasset/Samples/Prefabs/CycleReferences2.prefab
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/xasset/Samples/Prefabs/CycleReferences2.prefab
+    bundle: arts/prefabs.bundle
     type: GameObject
-    entry: Assets/ZRes/UI
-    lastWriteTime: 133278233290729968
+    entry: Assets/xasset/Samples/Prefabs
+    lastWriteTime: 133286805366399953
     addressMode: 2
     dependencies:
-    - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
-    - Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
-    - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Text Component
-      Icon.psd
-    - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
-    - Packages/com.unity.collab-proxy/Editor/PlasticSCM/Assets/Images/buttonssosigningoogle.png
-    - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
-    - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
-    - Assets/Tools/UITween/Unity Extensions/Tween/Runtime/EditorOnly/EditorResources/Tween.png
-    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
-  - path: Assets/ZRes/Config/Data_DeviceInfo.bytes
-    bundle: build/config_data_deviceinfo_bytes.bundle
-    type: TextAsset
-    entry: Assets/ZRes/Config
-    lastWriteTime: 0
+    - Assets/xasset/Samples/Prefabs/CycleReferences1.prefab
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/xasset/Samples/Prefabs/LoadingScreen.prefab
+    bundle: arts/prefabs.bundle
+    type: GameObject
+    entry: Assets/xasset/Samples/Prefabs
+    lastWriteTime: 133286805366409927
     addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Filled 10px.png
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke 4px.png
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/xasset/Samples/Prefabs/MessageBox.prefab
+    bundle: arts/prefabs.bundle
+    type: GameObject
+    entry: Assets/xasset/Samples/Prefabs
+    lastWriteTime: 133286805366399953
+    addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Filled 10px.png
+    - Assets/xasset/Samples/Shaders/UIBlur.mat
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke 10px.png
+    - Assets/xasset/Samples/Shaders/SimpleGrabPassBlur.shader
+    - Assets/xasset/Samples/Prefabs/Animations/MessageBox.controller
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke 8px.png
+    - Assets/xasset/Samples/Prefabs/Animations/MessageBox.anim
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/xasset/Samples/Scenes/Additive.unity
+    bundle: arts/scenes_additive_unity.bundle
+    type: SceneAsset
+    entry: Assets/xasset/Samples/Scenes
+    lastWriteTime: 133286820090767044
+    addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Shaders/Plane.mat
+    - Assets/xasset/Samples/Textures/hypergryph.png
+    group: {fileID: 11400000, guid: b51da1dfcce8de146a1dd352542344fa, type: 2}
+  - path: Assets/xasset/Samples/Scenes/CheckForUpdates.unity
+    bundle: arts/scenes_checkforupdates_unity.bundle
+    type: SceneAsset
+    entry: Assets/xasset/Samples/Scenes
+    lastWriteTime: 133286820160437501
+    addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Textures/biubiux2.png
+    - Assets/xasset/Samples/Textures/PPJT.png
+    - Assets/xasset/Samples/Textures/hypergryph.png
+    - Assets/xasset/Samples/Prefabs/Animations/Blink.anim
+    - Assets/xasset/Samples/Textures/igg.png
+    - Assets/xasset/Samples/Textures/unity-logo-white.png
+    - Assets/xasset/Samples/Prefabs/Animations/Blink.controller
+    - Assets/xasset/Samples/Textures/jb_beam.png
+    group: {fileID: 11400000, guid: b51da1dfcce8de146a1dd352542344fa, type: 2}
+  - path: Assets/xasset/Samples/Scenes/Download.unity
+    bundle: arts/scenes_download_unity.bundle
+    type: SceneAsset
+    entry: Assets/xasset/Samples/Scenes
+    lastWriteTime: 133286820090847114
+    addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Filled 10px.png
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke 4px.png
+    group: {fileID: 11400000, guid: b51da1dfcce8de146a1dd352542344fa, type: 2}
+  - path: Assets/xasset/Samples/Scenes/LoadAdditiveScene.unity
+    bundle: arts/scenes_loadadditivescene_unity.bundle
+    type: SceneAsset
+    entry: Assets/xasset/Samples/Scenes
+    lastWriteTime: 133286820090866774
+    addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Filled 10px.png
+    group: {fileID: 11400000, guid: b51da1dfcce8de146a1dd352542344fa, type: 2}
+  - path: Assets/xasset/Samples/Scenes/LoadAsset.unity
+    bundle: arts/scenes_loadasset_unity.bundle
+    type: SceneAsset
+    entry: Assets/xasset/Samples/Scenes
+    lastWriteTime: 133286820090896694
+    addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Filled 10px.png
+    group: {fileID: 11400000, guid: b51da1dfcce8de146a1dd352542344fa, type: 2}
+  - path: Assets/xasset/Samples/Scenes/Menu.unity
+    bundle: arts/scenes_menu_unity.bundle
+    type: SceneAsset
+    entry: Assets/xasset/Samples/Scenes
+    lastWriteTime: 133286820176680093
+    addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Filled 10px.png
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke 4px.png
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke 8px.png
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke 5px.png
+    group: {fileID: 11400000, guid: b51da1dfcce8de146a1dd352542344fa, type: 2}
+  - path: Assets/xasset/Samples/Scenes/OpeningDialog.unity
+    bundle: arts/scenes_openingdialog_unity.bundle
+    type: SceneAsset
+    entry: Assets/xasset/Samples/Scenes
+    lastWriteTime: 133286820850684120
+    addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Textures/Borders/Basic/Basic Filled 10px.png
+    group: {fileID: 11400000, guid: b51da1dfcce8de146a1dd352542344fa, type: 2}
+  - path: Assets/xasset/Samples/Scenes/Splash.unity
+    bundle: arts/scenes_splash_unity.bundle
+    type: SceneAsset
+    entry: Assets/xasset/Samples/Scenes
+    lastWriteTime: 133286820850704069
+    addressMode: 2
+    dependencies:
+    - Assets/xasset/Samples/Textures/Logo.png
+    group: {fileID: 11400000, guid: b51da1dfcce8de146a1dd352542344fa, type: 2}
+  - path: Assets/xasset/Samples/Shaders/SimpleGrabPassBlur.shader
+    bundle: arts/shaders.bundle
+    type: Shader
+    entry: Assets/xasset/Samples/Shaders
+    lastWriteTime: 133286781973023261
+    addressMode: 0
     dependencies: []
-    group: {fileID: 11400000, guid: 5ca542f1f088e6e4f8c423b26771e6fa, type: 2}
+    group: {fileID: 11400000, guid: 7c6a82dfff178744f96c710bbbf2ffd7, type: 2}
+  - path: Assets/xasset/Samples/Textures/Bgs/Grids.jpg
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/biubiux2.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Filled 10px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke
+      4px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke
+      5px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke
+      8px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke
+      10px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke
+      12px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke
+      14px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke
+      16px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke
+      18px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Basic/Basic Outline 10px - Stroke
+      20px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Borders/Circle Outline 64px - Stroke 5px.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/hypergryph.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/igg.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/jb_beam.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/Logo.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/PPJT.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}
+  - path: Assets/xasset/Samples/Textures/unity-logo-white.png
+    bundle: arts/textures.bundle
+    type: Texture2D
+    entry: Assets/xasset/Samples/Textures
+    lastWriteTime: 0
+    addressMode: 0
+    dependencies: []
+    group: {fileID: 11400000, guid: eac0c270ed20542beb4a61325e0a8bfd, type: 2}

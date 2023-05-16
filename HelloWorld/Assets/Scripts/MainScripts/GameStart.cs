@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace MainAssembly
 {
@@ -23,9 +24,11 @@ namespace MainAssembly
             AssetManager.Instance.Load<TextAsset>("HotAssembly", StartHotAssembly);
 #endif
         }
-        private void StartHotAssembly(byte[] bytes)
+        private void StartHotAssembly(int id, Object asset)
         {
-            var hotAssembly = Assembly.Load(bytes);
+            AssetManager.Instance.Unload(id);
+            TextAsset ta = asset as TextAsset;
+            var hotAssembly = Assembly.Load(ta.bytes);
             Type t = hotAssembly.GetType("HotAssembly.GameStart");
             PropertyInfo p = t.BaseType.GetProperty("Instance");
             object o = p.GetMethod.Invoke(null, null);

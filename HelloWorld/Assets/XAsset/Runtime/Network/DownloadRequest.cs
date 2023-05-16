@@ -87,6 +87,8 @@ namespace xasset
 
             if (content.size != 0 && file.Length != (long)content.size)
             {
+                if (file.Length > (long)content.size)
+                    file.Delete();
                 SetResult(Result.Failed, string.Format(DownloadErrors.DownloadSizeMismatch, file.Length, content.size));
                 return;
             }
@@ -106,6 +108,7 @@ namespace xasset
                 return;
             }
 
+            file.Delete();
             SetResult(Result.Failed,
                 string.Format(DownloadErrors.DownloadHashMismatch, computeHash, content.hash));
         }

@@ -8,9 +8,9 @@ namespace xasset
 {
     public static class Utility
     {
-        private static readonly double[] byteUnits = {1073741824.0, 1048576.0, 1024.0, 1};
+        private static readonly double[] byteUnits = { 1073741824.0, 1048576.0, 1024.0, 1 };
 
-        private static readonly string[] byteUnitsNames = {"GB", "MB", "KB", "B"};
+        private static readonly string[] byteUnitsNames = { "GB", "MB", "KB", "B" };
 
         public static string FormatBytes(ulong bytes)
         {

@@ -2,28 +2,58 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace xasset
 {
     public static class Assets
     {
+        public const string kBundlesVersions = "kBundlesVersions";
         public const string Bundles = "Bundles";
-        public static readonly System.Version APIVersion = new System.Version(2023, 0, 0);
+        public static readonly System.Version APIVersion = new System.Version(2023, 1, 0);
         public static string UpdateInfoURL { get; set; }
         public static string DownloadURL { get; set; }
         public static Versions Versions { get; set; } = ScriptableObject.CreateInstance<Versions>();
         public static PlayerAssets PlayerAssets { get; set; } = ScriptableObject.CreateInstance<PlayerAssets>();
         public static bool SimulationMode { get; set; }
-        public static bool OfflineMode { get; set; } = true;
+        public static bool Updatable { get; set; } = true;
         public static Platform Platform { get; set; } = Utility.GetPlatform();
         public static bool IsWebGLPlatform => Platform == Platform.WebGL;
         public static string Protocol { get; } = Utility.GetProtocol();
         public static string PlayerDataPath { get; set; } = $"{Application.streamingAssetsPath}/{Bundles}";
         public static string DownloadDataPath { get; set; } = $"{Application.persistentDataPath}/{Bundles}";
 
+        public static Func<string, bool> ContainsFunc { get; set; } = ContainsRuntime;
+
+        private static bool ContainsRuntime(string path)
+        {
+            return Versions.data.Exists(version => version.manifest.ContainsAsset(path));
+        }
+
         public static InitializeRequest InitializeAsync(Action<Request> completed = null)
         {
             return InitializeRequest.InitializeAsync(completed);
+        }
+
+        [RuntimeInitializeOnLoadMethod]
+        private static void Initialize()
+        {
+            Manifest.OnReadAsset = OnReadAsset;
+            const string name = "xasset";
+            var go = new GameObject(name,
+                typeof(Scheduler),
+                typeof(Downloader),
+                typeof(Recycler)
+            );
+            Object.DontDestroyOnLoad(go);
+        }
+
+        private static void OnReadAsset(ManifestAsset asset)
+        {
+            if (asset.addressMode == AddressMode.LoadByName)
+                SetAddress(asset.path, asset.name);
+            else if (asset.addressMode == AddressMode.LoadByNameWithoutExtension)
+                SetAddress(asset.path, Path.GetFileNameWithoutExtension(asset.name));
         }
 
         public static GetUpdateInfoRequest GetUpdateInfoAsync()
@@ -35,14 +65,14 @@ namespace xasset
 
         public static VersionsRequest GetVersionsAsync(UpdateInfo info)
         {
-            var request = new VersionsRequest {url = GetDownloadURL(info.file), hash = info.hash, size = info.size};
+            var request = new VersionsRequest { url = GetDownloadURL(info.file), hash = info.hash, size = info.size };
             request.SendRequest();
             return request;
         }
 
         public static GetDownloadSizeRequest GetDownloadSizeAsync(Versions versions)
         {
-            var request = new GetDownloadSizeRequest {versions = versions};
+            var request = new GetDownloadSizeRequest { versions = versions };
             request.SendRequest();
             return request;
         }
@@ -65,12 +95,7 @@ namespace xasset
 
         public static bool Contains(string path)
         {
-            if (SimulationMode)
-            {
-                return File.Exists(path);
-            }
-
-            return Versions.data.Exists(version => version.manifest.ContainsAsset(path));
+            return ContainsFunc.Invoke(path);
         }
 
         public static bool IsDownloaded(string path)
@@ -89,16 +114,16 @@ namespace xasset
             return true;
         }
 
-        public static bool IsDownloaded(Downloadable item)
+        public static bool IsDownloaded(Downloadable item, bool checkPlayerAssets = true)
         {
+            if (checkPlayerAssets && IsPlayerAsset(item.hash)) return true;
             var path = GetDownloadDataPath(item.file);
             var file = new FileInfo(path);
-            return file.Exists && file.Length == (long) item.size;
+            return file.Exists && file.Length == (long)item.size;
         }
 
         public static bool IsPlayerAsset(string key)
         {
-            if (OfflineMode) return true;
             return PlayerAssets != null && PlayerAssets.Contains(key);
         }
 
@@ -143,7 +168,8 @@ namespace xasset
             {
                 if (assetPath != value)
                 {
-                    Logger.W($"Failed to set address for {assetPath}, because the address {address} already mapping to {value}");
+                    Logger.W(
+                        $"Failed to set address for {assetPath}, because the address {address} already mapping to {value}");
                 }
             }
         }
@@ -158,27 +184,40 @@ namespace xasset
 
         public static bool TryGetAsset(ref string path, out ManifestAsset asset)
         {
-            GetActualPath(ref path);
+            GetActualPath(ref path); 
+            if (!SimulationMode || Updatable)
+                return Versions.TryGetAsset(path, out asset); 
+            asset = null; 
+            return File.Exists(path);
+        }
 
+        public static ReloadRequest ReloadAsync(Versions versions)
+        {
+            var request = new ReloadRequest { versions = versions };
+            request.SendRequest();
+            return request;
+        }
+
+        public static void LoadPlayerAssets(PlayerAssets settings)
+        {
             if (!SimulationMode)
             {
-                if (Versions.TryGetAsset(path, out asset))
-                {
-                    return true;
-                }
-
-                Logger.E($"File not found:{path}.");
-                return false;
+                UpdateInfoURL = settings.updateInfoURL;
+                DownloadURL = settings.downloadURL;
             }
 
-            asset = null;
-            if (File.Exists(path))
-            {
-                return true;
-            }
-
-            Logger.E($"File not found:{path}.");
-            return false;
+            Updatable = settings.updatable;
+            MaxRetryTimes = settings.maxRetryTimes;
+            MaxDownloads = settings.maxDownloads;
+            Scheduler.MaxRequests = settings.maxRequests;
+            Scheduler.AutoSlicing = settings.autoSlicing;
+            Scheduler.AutoSliceTimestep = settings.autoSliceTimestep;
+            Recycler.AutoRecycleTimestep = settings.autoRecycleTimestep;
+            Logger.LogLevel = settings.logLevel;
+            PlayerAssets = settings;
         }
+
+        public static byte MaxDownloads { get; set; } = 5;
+        public static byte MaxRetryTimes { get; set; } = 2;
     }
 }

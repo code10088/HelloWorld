@@ -104,12 +104,11 @@ namespace xasset
             var elapsed = GetRealtimeSinceBeganSample();
             if (elapsed > 1000) BeganSample();
             if (elapsed > 0 && _lastDownloadedBytes > 0)
-                bandwidth = (ulong) (_lastDownloadedBytes / elapsed) * 1000;
+                bandwidth = (ulong)(_lastDownloadedBytes / elapsed) * 1000;
         }
 
         public virtual void Retry()
         {
-            
         }
     }
 }

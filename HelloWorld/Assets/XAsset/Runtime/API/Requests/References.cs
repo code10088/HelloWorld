@@ -15,11 +15,13 @@ namespace xasset
         /// <summary>
         ///     是否开启对资源的引用计数，编辑器下开启后可以及时释放被 AssetDatabase 加载的资源，运行时如果资源打包粒度不合理，也可以开启这个选项提前释放 AssetBundle 里面加载的资源，打包粒度合理的化，关闭这个可以优化性能。
         /// </summary>
-        public static bool Enabled { get; set; } = true;
+        public static bool Enabled { get; set; } = false;
 
         private static string[] RuntimeGet(string path)
         {
-            return Assets.TryGetAsset(ref path, out var asset) ? Array.ConvertAll(asset.deps, input => asset.manifest.assets[input].path) : Array.Empty<string>();
+            return Assets.TryGetAsset(ref path, out var asset)
+                ? Array.ConvertAll(asset.deps, input => asset.manifest.assets[input].path)
+                : Array.Empty<string>();
         }
 
         private static string[] Get(string path)

@@ -45,7 +45,7 @@ namespace xasset
             foreach (var manifest in Assets.Versions.data)
             foreach (var asset in manifest.manifest.assets)
                 if (asset.addressMode != AddressMode.LoadByDependencies)
-                    _assets.Add(new Record {name = asset.path});
+                    _assets.Add(new Record { name = asset.path });
             UpdateSelection();
         }
 
@@ -83,7 +83,7 @@ namespace xasset
             using (new GUILayout.HorizontalScope())
             {
                 GUILayout.Label($"页{_page + 1}/{max + 1}", GUILayout.Width(64));
-                _page = (int) GUILayout.HorizontalSlider(_page, 0, max);
+                _page = (int)GUILayout.HorizontalSlider(_page, 0, max);
             }
 
             using (var s = new GUILayout.ScrollViewScope(_scrollPosition))

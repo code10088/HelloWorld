@@ -15,6 +15,11 @@ namespace xasset
         {
             return $"{name.ToLower()}_{hash}.json";
         }
+
+        public void Load(string path)
+        {
+            manifest = Utility.LoadFromFile<Manifest>(path);
+        }
     }
 
     public class Versions : ScriptableObject, ISerializationCallbackReceiver
@@ -118,6 +123,18 @@ namespace xasset
 
             asset = null;
             return false;
+        }
+
+        public ManifestBundle GetBundle(string bundle)
+        {
+            foreach (var version in data)
+            {
+                var result = version.manifest.GetBundle(bundle);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
         }
     }
 }

@@ -3,12 +3,13 @@ using UnityEngine;
 
 namespace xasset
 {
-    public class Dependencies
+    internal class Dependencies : IReloadable
     {
-        private static readonly Dictionary<string, Dependencies> Loaded = new Dictionary<string, Dependencies>();
+        internal static readonly Dictionary<string, Dependencies> Loaded = new Dictionary<string, Dependencies>();
+        private static readonly Queue<Dependencies> Unused = new Queue<Dependencies>();
         private readonly List<BundleRequest> _bundles = new List<BundleRequest>();
         private readonly List<BundleRequest> _loading = new List<BundleRequest>();
-        public ManifestAsset asset { get; private set; }
+        public ManifestAsset asset { get; set; }
         private BundleRequest _bundleRequest;
         private int _refCount;
         public bool isDone => _loading.Count == 0;
@@ -26,14 +27,19 @@ namespace xasset
         {
             if (_refCount == 0)
             {
-                var bundles = asset.manifest.bundles;
-                var bundle = bundles[asset.bundle];
-                _bundleRequest = Load(bundle);
-                foreach (var dep in bundle.deps)
-                    Load(bundles[dep]);
+                LoadAll();
             }
 
             _refCount++;
+        }
+
+        private void LoadAll()
+        {
+            var bundles = asset.manifest.bundles;
+            var bundle = bundles[asset.bundle];
+            _bundleRequest = Load(bundle);
+            foreach (var dep in bundle.deps)
+                Load(bundles[dep]);
         }
 
         public bool CheckResult(LoadRequest request, out AssetBundle assetBundle)
@@ -68,6 +74,15 @@ namespace xasset
             _refCount--;
             if (_refCount != 0) return;
 
+            ClearAll();
+
+            Loaded.Remove(asset.path);
+            Unused.Enqueue(this);
+            _bundleRequest = null;
+        }
+
+        private void ClearAll()
+        {
             foreach (var request in _bundles) request.Release();
 
             _bundles.Clear();
@@ -77,7 +92,8 @@ namespace xasset
         {
             if (!Loaded.TryGetValue(asset.path, out var value))
             {
-                value = new Dependencies {asset = asset};
+                value = Unused.Count > 0 ? Unused.Dequeue() : new Dependencies();
+                value.asset = asset;
                 Loaded[asset.path] = value;
             }
 
@@ -95,6 +111,22 @@ namespace xasset
                 _loading.RemoveAt(index);
                 index--;
             }
+        }
+
+        public void ReloadAsync()
+        {
+            ClearAll();
+            LoadAll();
+        }
+
+        public void OnReloaded()
+        {
+        }
+
+        public bool IsReloaded()
+        {
+            Update();
+            return isDone;
         }
     }
 }

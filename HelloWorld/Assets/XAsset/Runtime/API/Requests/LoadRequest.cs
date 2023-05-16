@@ -2,7 +2,7 @@ namespace xasset
 {
     public abstract class LoadRequest : Request, IRecyclable
     {
-        private int _refCount;
+        protected int refCount { get; private set; }
         public string path { get; set; }
 
         protected override void OnCompleted()
@@ -12,14 +12,14 @@ namespace xasset
 
         public void Release()
         {
-            if (_refCount == 0)
+            if (refCount == 0)
             {
-                Logger.E($"Release {GetType().Name} {path} too many times {_refCount}.");
+                Logger.E($"Release {GetType().Name} {path} too many times {refCount}.");
                 return;
-            } 
+            }
 
-            _refCount--;
-            if (_refCount > 0) return;
+            refCount--;
+            if (refCount > 0) return;
 
             Recycler.RecycleAsync(this);
         }
@@ -41,7 +41,7 @@ namespace xasset
 
         protected void LoadAsync()
         {
-            if (_refCount > 0)
+            if (refCount > 0)
             {
                 if (isDone) ActionRequest.CallAsync(Complete);
             }
@@ -50,7 +50,8 @@ namespace xasset
                 SendRequest();
                 Recycler.CancelRecycle(this);
             }
-            _refCount++;
+
+            refCount++;
         }
 
         #region IRecyclable

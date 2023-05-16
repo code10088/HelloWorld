@@ -11,11 +11,10 @@ namespace xasset
         private static readonly List<DownloadRequest> Progressing = new List<DownloadRequest>();
         private static readonly Queue<DownloadRequest> Unused = new Queue<DownloadRequest>();
 
-        public static Func<DownloadRequest, IDownloadHandler> CreateHandler { get; set; } = request => new DownloadHandlerUWR(request);
-        public static byte MaxDownloads { get; set; } = 5;
-        public static byte MaxRetryTimes { get; set; } = 2;
+        public static Func<DownloadRequest, IDownloadHandler> CreateHandler { get; set; } =
+            request => new DownloadHandlerUWR(request);
+
         public static bool IsDownloading => Queue.Count > 0 || Progressing.Count > 0;
-        public static bool SimulationMode { get; set; }
         public static bool Paused { get; private set; }
 
         private void Update()
@@ -69,7 +68,7 @@ namespace xasset
         {
             if (Paused) return;
 
-            while (Queue.Count > 0 && (Progressing.Count < MaxDownloads || MaxDownloads == 0))
+            while (Queue.Count > 0 && (Progressing.Count < Assets.MaxDownloads || Assets.MaxDownloads == 0))
             {
                 var item = Queue.Dequeue();
                 if (item.status == DownloadRequestBase.Status.Wait) item.Start();

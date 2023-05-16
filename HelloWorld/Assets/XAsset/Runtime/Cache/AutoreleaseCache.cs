@@ -42,12 +42,12 @@ namespace xasset
         {
             foreach (var request in _requests)
                 request.Release();
-            
+
             _requests.Clear();
-            
-            foreach (var assets in _queueCaches) 
+
+            foreach (var assets in _queueCaches)
                 assets.Clear();
-            
+
             _queueCaches.Clear();
         }
 
