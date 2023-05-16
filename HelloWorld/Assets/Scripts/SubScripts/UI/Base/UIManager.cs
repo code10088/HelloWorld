@@ -26,7 +26,7 @@ namespace HotAssembly
             temp = GameObject.FindWithTag("EventSystem");
             eventSystem = temp.GetComponent<EventSystem>();
         }
-        public void OpenUI(UIType type, Action open = null, params object[] param)
+        public void OpenUI(UIType type, Action<UIBase> open = null, params object[] param)
         {
             UIType from = GetFromUI();
             if (type == UIType.Max)
@@ -155,7 +155,7 @@ namespace HotAssembly
             private Data_UIConfig config;
             private UIBase baseUI;
             private GameObject baseObj;
-            private Action open = null;
+            private Action<UIBase> open = null;
             private object[] param = null;
 
             private int state = 0;//7：二进制111：分别表示release init load
@@ -172,7 +172,7 @@ namespace HotAssembly
                 this.type = type;
                 config = ConfigManager.Instance.GameConfigs.Data_UIConfig.GetDataByID((int)type);
             }
-            public void SetParam(UIType from, Action open = null, params object[] param)
+            public void SetParam(UIType from, Action<UIBase> open = null, params object[] param)
             {
                 this.from = from;
                 this.open = open;
@@ -225,14 +225,14 @@ namespace HotAssembly
                     Type t = System.Type.GetType("HotAssembly." + type);
                     baseUI = Activator.CreateInstance(t) as UIBase;
                     baseUI.InitUI(baseObj, type, from, config, param);
-                    open?.Invoke();
+                    open?.Invoke(baseUI);
                     state = 3;
                 }
                 else if (state == 3)
                 {
                     baseObj.SetActive(true);
                     baseUI.Refresh(param);
-                    open?.Invoke();
+                    open?.Invoke(baseUI);
                 }
             }
             public void Release(bool immediate = false)

@@ -18,7 +18,6 @@ namespace MainAssembly
         }
         private void CheckUpdateInfo()
         {
-            Assets.UpdateInfoURL = "http://192.168.6.2/BundlesCache/Windows/updateinfo.json";
             var getUpdateInfoAsync = Assets.GetUpdateInfoAsync();
             getUpdateInfoAsync.completed += CheckUpdateVersion;
 
@@ -40,9 +39,13 @@ namespace MainAssembly
                 }
                 else
                 {
-                    Application.OpenURL(getUpdateInfoAsync.info.playerDownloadURL);
+                    Application.OpenURL(getUpdateInfoAsync.info.playerURL);
                     Application.Quit();
                 }
+            }
+            else if (getUpdateInfoAsync.error.Contains("Nothing"))
+            {
+                UpdateFinish();
             }
             else
             {

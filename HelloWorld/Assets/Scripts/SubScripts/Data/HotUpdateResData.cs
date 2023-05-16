@@ -15,12 +15,12 @@ namespace HotAssembly
             if (Assets.SimulationMode) UpdateFinish();
             else UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, CheckUpdateInfo);
         }
-        private void CheckUpdateInfo()
+        private void CheckUpdateInfo(UIBase ui)
         {
             var getDownloadSizeAsync = Assets.GetDownloadSizeAsync(Assets.Versions);
             getDownloadSizeAsync.completed += StartDownload;
 
-            var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
+            var hotUpdateRes = ui as UIHotUpdateRes;
             hotUpdateRes.SetText("DownloadInfo");
         }
         private void StartDownload(Request request)
