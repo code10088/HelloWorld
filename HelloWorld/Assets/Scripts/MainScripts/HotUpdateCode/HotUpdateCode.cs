@@ -58,8 +58,8 @@ namespace MainAssembly
             if (getVersionsAsync.result == Request.Result.Success)
             {
                 latestVersion = getVersionsAsync.versions;
-                string[] exclude = new string[] { "HotAssembly.bytes", "Data_UIConfig.bytes", "UIHotUpdateRes.prefab", "UIMessageBox.prefab" };
-                var getDownloadSizeAsync = Assets.GetDownloadSizeAsync(Assets.Versions, exclude);
+                string[] include = new string[] { "HotAssembly.bytes", "Data_UIConfig.bytes", "UIHotUpdateRes.prefab", "UIMessageBox.prefab" };
+                var getDownloadSizeAsync = Assets.GetDownloadSizeAsync(Assets.Versions, include);
                 getDownloadSizeAsync.completed += StartDownload;
 
                 UIHotUpdateCode.Instance.SetText("CheckUpdateVersion");

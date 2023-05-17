@@ -12,7 +12,7 @@ namespace xasset
 
         public Versions versions { get; set; }
         public ulong downloadSize { get; private set; }
-        public string[] exclude { get; set; }
+        public string[] include { get; set; }
 
         public DownloadRequestBase DownloadAsync()
         {
@@ -34,7 +34,7 @@ namespace xasset
 
             foreach (var version in versions.data)
             {
-                if (exclude == null)
+                if (include == null)
                 {
                     var bundles = version.manifest.bundles;
                     _bundles.AddRange(bundles);
@@ -45,7 +45,7 @@ namespace xasset
                     var assets = version.manifest.assets;
                     for (int i = 0; i < assets.Length; i++)
                     {
-                        if (exclude.Contains(assets[i].name)) Exclude(i, assets, result);
+                        if (include.Contains(assets[i].name)) Exclude(i, assets, result);
                     }
                     for (int i = 0; i < result.Count; i++)
                     {
