@@ -377,7 +377,7 @@
     </member>
     <member name="P:UnityEngine.GUI.color">
       <summary>
-        <para>Global tinting color for the GUI.</para>
+        <para>Applies a global tint to the GUI. The tint affects backgrounds and text colors.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.GUI.contentColor">
@@ -3883,7 +3883,7 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
 See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight,
 GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       <returns>
-        <para>The rectanlge to put your control in.</para>
+        <para>The rectangle to put your control in.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.GUILayoutUtility.GetRect(System.Single,System.Single,UnityEngine.GUIStyle)">
@@ -3897,7 +3897,7 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
 See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight,
 GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       <returns>
-        <para>The rectanlge to put your control in.</para>
+        <para>The rectangle to put your control in.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.GUILayoutUtility.GetRect(System.Single,System.Single,UnityEngine.GUILayoutOption[])">
@@ -3911,7 +3911,7 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
 See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight,
 GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       <returns>
-        <para>The rectanlge to put your control in.</para>
+        <para>The rectangle to put your control in.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.GUILayoutUtility.GetRect(System.Single,System.Single,UnityEngine.GUIStyle,UnityEngine.GUILayoutOption[])">
@@ -3925,7 +3925,7 @@ GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
 See Also: GUILayout.Width, GUILayout.Height, GUILayout.MinWidth, GUILayout.MaxWidth, GUILayout.MinHeight,
 GUILayout.MaxHeight, GUILayout.ExpandWidth, GUILayout.ExpandHeight.</param>
       <returns>
-        <para>The rectanlge to put your control in.</para>
+        <para>The rectangle to put your control in.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.GUILayoutUtility.GetRect(System.Single,System.Single,System.Single,System.Single)">

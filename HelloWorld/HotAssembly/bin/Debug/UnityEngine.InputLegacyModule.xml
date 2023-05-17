@@ -473,7 +473,7 @@ Only usable on Android, Windows Phone or Windows Tablets.</para>
     </member>
     <member name="P:UnityEngine.LocationInfo.longitude">
       <summary>
-        <para>Geographical device location latitude.</para>
+        <para>Geographical device location longitude.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.LocationInfo.timestamp">

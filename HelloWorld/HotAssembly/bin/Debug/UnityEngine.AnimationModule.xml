@@ -102,7 +102,7 @@
     </member>
     <member name="M:UnityEngine.Animation.CrossFade(System.String)">
       <summary>
-        <para>Fades the animation with name animation in over a period of time seconds and fades other animations out.</para>
+        <para>Fades in the animation with the name animation over a period of time defined by fadeLength.</para>
       </summary>
       <param name="animation"></param>
       <param name="fadeLength"></param>
@@ -110,7 +110,7 @@
     </member>
     <member name="M:UnityEngine.Animation.CrossFade(System.String,System.Single)">
       <summary>
-        <para>Fades the animation with name animation in over a period of time seconds and fades other animations out.</para>
+        <para>Fades in the animation with the name animation over a period of time defined by fadeLength.</para>
       </summary>
       <param name="animation"></param>
       <param name="fadeLength"></param>
@@ -118,7 +118,7 @@
     </member>
     <member name="M:UnityEngine.Animation.CrossFade(System.String,System.Single,UnityEngine.PlayMode)">
       <summary>
-        <para>Fades the animation with name animation in over a period of time seconds and fades other animations out.</para>
+        <para>Fades in the animation with the name animation over a period of time defined by fadeLength.</para>
       </summary>
       <param name="animation"></param>
       <param name="fadeLength"></param>
@@ -943,12 +943,13 @@
         <para>An implementation of IPlayable that controls an animation layer mixer.</para>
       </summary>
     </member>
-    <member name="M:UnityEngine.Animations.AnimationLayerMixerPlayable.Create(UnityEngine.Playables.PlayableGraph,System.Int32)">
+    <member name="M:UnityEngine.Animations.AnimationLayerMixerPlayable.Create(UnityEngine.Playables.PlayableGraph,System.Int32,System.Boolean)">
       <summary>
         <para>Creates an AnimationLayerMixerPlayable in the PlayableGraph.</para>
       </summary>
       <param name="graph">The PlayableGraph that will contain the new AnimationLayerMixerPlayable.</param>
       <param name="inputCount">The number of layers.</param>
+      <param name="singleLayerOptimization">This optimization automatically sets the weight of the first animation layer to 1. Set to true If your layer mixer has a single animation layer and you want to bypass unnecessary weight calculations. This optimization is automatically set to false if your layer mixer has multiple animation layers.</param>
       <returns>
         <para>A new AnimationLayerMixerPlayable linked to the PlayableGraph.</para>
       </returns>
@@ -986,15 +987,25 @@
         <para>An implementation of IPlayable that controls an animation mixer.</para>
       </summary>
     </member>
+    <member name="M:UnityEngine.Animations.AnimationMixerPlayable.Create(UnityEngine.Playables.PlayableGraph,System.Int32)">
+      <summary>
+        <para>Creates an AnimationMixerPlayable in the PlayableGraph.</para>
+      </summary>
+      <param name="graph">The PlayableGraph that will contain the new AnimationMixerPlayable.</param>
+      <param name="inputCount">The number of inputs that the mixer will update.</param>
+      <returns>
+        <para>Returns a new AnimationMixerPlayable linked to the PlayableGraph.</para>
+      </returns>
+    </member>
     <member name="M:UnityEngine.Animations.AnimationMixerPlayable.Create(UnityEngine.Playables.PlayableGraph,System.Int32,System.Boolean)">
       <summary>
         <para>Creates an AnimationMixerPlayable in the PlayableGraph.</para>
       </summary>
       <param name="graph">The PlayableGraph that will contain the new AnimationMixerPlayable.</param>
       <param name="inputCount">The number of inputs that the mixer will update.</param>
-      <param name="normalizeWeights">True to force a weight normalization of the inputs.</param>
+      <param name="normalizeWeights">NormalizeWeights is obsolete. It has no effect and will be removed.</param>
       <returns>
-        <para>A new AnimationMixerPlayable linked to the PlayableGraph.</para>
+        <para>Returns a new AnimationMixerPlayable linked to the PlayableGraph.</para>
       </returns>
     </member>
     <member name="P:UnityEngine.Animations.AnimationMixerPlayable.Null">
@@ -1756,6 +1767,18 @@
       </summary>
       <param name="animator">The Animator instance that calls this method.</param>
     </member>
+    <member name="M:UnityEngine.Animations.AnimatorJobExtensions.UnbindAllSceneHandles(UnityEngine.Animator)">
+      <summary>
+        <para>Removes all PropertySceneHandles and TransformSceneHandles associated with the Animator instance. Use this method to manage the lifecycle of scene handles when the animated hierarchy changes.</para>
+      </summary>
+      <param name="animator">The Animator instance that calls this method.</param>
+    </member>
+    <member name="M:UnityEngine.Animations.AnimatorJobExtensions.UnbindAllStreamHandles(UnityEngine.Animator)">
+      <summary>
+        <para>Removes all PropertyStreamHandles and TransformStreamHandles associated with the Animator instance. Use this method to manage the lifecycle of stream handles when the animated hierarchy changes.</para>
+      </summary>
+      <param name="animator">The Animator instance that calls this method.</param>
+    </member>
     <member name="T:UnityEngine.Animations.Axis">
       <summary>
         <para>Represents the axes used in 3D space.</para>
@@ -1814,6 +1837,16 @@
     <member name="F:UnityEngine.Animations.CustomStreamPropertyType.Int">
       <summary>
         <para>An integer value.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.Animations.DiscreteEvaluationAttribute">
+      <summary>
+        <para>Use this attribute to indicate that a property will be evaluated as a discrete value during animation playback.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Animations.DiscreteEvaluationAttribute.#ctor">
+      <summary>
+        <para>Use this attribute to indicate that a property will be evaluated as a discrete value during animation playback.</para>
       </summary>
     </member>
     <member name="?:UnityEngine.Animations.IAnimationJob">
@@ -3180,6 +3213,11 @@
         <para>Controls the behaviour of the Animator component when a GameObject is disabled.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Animator.keepAnimatorStateOnDisable">
+      <summary>
+        <para>Controls the behaviour of the Animator component when a GameObject is disabled.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.Animator.layerCount">
       <summary>
         <para>Returns the number of layers in the controller.</para>
@@ -3295,6 +3333,11 @@
         <para>Gets the avatar velocity  for the last evaluated frame.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Animator.writeDefaultValuesOnDisable">
+      <summary>
+        <para>Specifies whether playable graph values are reset or preserved when the Animator is disabled.</para>
+      </summary>
+    </member>
     <member name="M:UnityEngine.Animator.ApplyBuiltinRootMotion">
       <summary>
         <para>Apply the default Root Motion.</para>
@@ -3365,7 +3408,7 @@
     </member>
     <member name="M:UnityEngine.Animator.GetBoneTransform(UnityEngine.HumanBodyBones)">
       <summary>
-        <para>Returns Transform mapped to this human bone id.</para>
+        <para>Returns Transform mapped to this human bone id. Returns null if the animator is disabled, if it does not have a human description, or if the bone id is invalid.</para>
       </summary>
       <param name="humanBoneId">The human bone that is queried, see enum HumanBodyBones for a list of possible values.</param>
     </member>
@@ -3877,7 +3920,7 @@
       <param name="bodyWeight">(0-1) determines how much the body is involved in the LookAt.</param>
       <param name="headWeight">(0-1) determines how much the head is involved in the LookAt.</param>
       <param name="eyesWeight">(0-1) determines how much the eyes are involved in the LookAt.</param>
-      <param name="clampWeight">(0-1) 0.0 means the character is completely unrestrained in motion, 1.0 means he's completely clamped (look at becomes impossible), and 0.5 means he'll be able to move on half of the possible range (180 degrees).</param>
+      <param name="clampWeight">(0-1) 0.0 means the character is unrestrained in motion. 1.0 means the character is clamped (look at becomes impossible). 0.5 means the character is able to move on half of the possible range (180 degrees).</param>
     </member>
     <member name="M:UnityEngine.Animator.SetLookAtWeight(System.Single,System.Single)">
       <summary>
@@ -3887,7 +3930,7 @@
       <param name="bodyWeight">(0-1) determines how much the body is involved in the LookAt.</param>
       <param name="headWeight">(0-1) determines how much the head is involved in the LookAt.</param>
       <param name="eyesWeight">(0-1) determines how much the eyes are involved in the LookAt.</param>
-      <param name="clampWeight">(0-1) 0.0 means the character is completely unrestrained in motion, 1.0 means he's completely clamped (look at becomes impossible), and 0.5 means he'll be able to move on half of the possible range (180 degrees).</param>
+      <param name="clampWeight">(0-1) 0.0 means the character is unrestrained in motion. 1.0 means the character is clamped (look at becomes impossible). 0.5 means the character is able to move on half of the possible range (180 degrees).</param>
     </member>
     <member name="M:UnityEngine.Animator.SetLookAtWeight(System.Single,System.Single,System.Single)">
       <summary>
@@ -3897,7 +3940,7 @@
       <param name="bodyWeight">(0-1) determines how much the body is involved in the LookAt.</param>
       <param name="headWeight">(0-1) determines how much the head is involved in the LookAt.</param>
       <param name="eyesWeight">(0-1) determines how much the eyes are involved in the LookAt.</param>
-      <param name="clampWeight">(0-1) 0.0 means the character is completely unrestrained in motion, 1.0 means he's completely clamped (look at becomes impossible), and 0.5 means he'll be able to move on half of the possible range (180 degrees).</param>
+      <param name="clampWeight">(0-1) 0.0 means the character is unrestrained in motion. 1.0 means the character is clamped (look at becomes impossible). 0.5 means the character is able to move on half of the possible range (180 degrees).</param>
     </member>
     <member name="M:UnityEngine.Animator.SetLookAtWeight(System.Single,System.Single,System.Single,System.Single)">
       <summary>
@@ -3907,7 +3950,7 @@
       <param name="bodyWeight">(0-1) determines how much the body is involved in the LookAt.</param>
       <param name="headWeight">(0-1) determines how much the head is involved in the LookAt.</param>
       <param name="eyesWeight">(0-1) determines how much the eyes are involved in the LookAt.</param>
-      <param name="clampWeight">(0-1) 0.0 means the character is completely unrestrained in motion, 1.0 means he's completely clamped (look at becomes impossible), and 0.5 means he'll be able to move on half of the possible range (180 degrees).</param>
+      <param name="clampWeight">(0-1) 0.0 means the character is unrestrained in motion. 1.0 means the character is clamped (look at becomes impossible). 0.5 means the character is able to move on half of the possible range (180 degrees).</param>
     </member>
     <member name="M:UnityEngine.Animator.SetLookAtWeight(System.Single,System.Single,System.Single,System.Single,System.Single)">
       <summary>
@@ -3917,7 +3960,7 @@
       <param name="bodyWeight">(0-1) determines how much the body is involved in the LookAt.</param>
       <param name="headWeight">(0-1) determines how much the head is involved in the LookAt.</param>
       <param name="eyesWeight">(0-1) determines how much the eyes are involved in the LookAt.</param>
-      <param name="clampWeight">(0-1) 0.0 means the character is completely unrestrained in motion, 1.0 means he's completely clamped (look at becomes impossible), and 0.5 means he'll be able to move on half of the possible range (180 degrees).</param>
+      <param name="clampWeight">(0-1) 0.0 means the character is unrestrained in motion. 1.0 means the character is clamped (look at becomes impossible). 0.5 means the character is able to move on half of the possible range (180 degrees).</param>
     </member>
     <member name="M:UnityEngine.Animator.SetQuaternion(System.String,UnityEngine.Quaternion)">
       <summary>
@@ -4321,7 +4364,7 @@
     </member>
     <member name="M:UnityEngine.AnimatorUtility.OptimizeTransformHierarchy(UnityEngine.GameObject,System.String[])">
       <summary>
-        <para>This function will remove all transform hierarchy under GameObject, the animator will write directly transform matrices into the skin mesh matrices saving alot of CPU cycles.</para>
+        <para>This function will remove all transform hierarchy under GameObject, the animator will write directly transform matrices into the skin mesh matrices saving many CPU cycles.</para>
       </summary>
       <param name="go">GameObject to Optimize.</param>
       <param name="exposedTransforms">List of transform name to expose.</param>
@@ -5698,7 +5741,7 @@ Each joint local transform is represented by 3 floats for the translation and 4 
     </member>
     <member name="T:UnityEngine.SharedBetweenAnimatorsAttribute">
       <summary>
-        <para>SharedBetweenAnimatorsAttribute is an attribute that specify that this StateMachineBehaviour should be instantiate only once and shared among all Animator instance. This attribute reduce the memory footprint for each controller instance.</para>
+        <para>The SharedBetweenAnimatorsAttribute specifies that this StateMachineBehaviour is instantiated only once and shared by all Animator instances. This attribute reduces the memory footprint for each controller instance.</para>
       </summary>
     </member>
     <member name="T:UnityEngine.SkeletonBone">

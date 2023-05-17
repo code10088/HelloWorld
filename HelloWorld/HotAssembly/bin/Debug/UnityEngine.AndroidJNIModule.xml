@@ -311,6 +311,16 @@ The default value is null.</param>
         <para>The Generic category includes all other Android devices.</para>
       </summary>
     </member>
+    <member name="T:UnityEngine.Android.DiagnosticsReporting">
+      <summary>
+        <para>Class with options for reporting diagnostics information to the Android system.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.Android.DiagnosticsReporting.CallReportFullyDrawn">
+      <summary>
+        <para>Calls &lt;a href="https:developer.android.comreferenceandroidappActivity#reportFullyDrawn()"&gt;reportFullyDrawn()&lt;/a&gt; on the main Activity in the Android application, which is used for diagnostic and optimization purposes in Android.</para>
+      </summary>
+    </member>
     <member name="T:UnityEngine.Android.DownloadAssetPackAsyncOperation">
       <summary>
         <para>Represents an asynchronous Android asset pack download operation. AndroidAssetPacks.DownloadAssetPackAsync returns an instance of this class.</para>
@@ -451,9 +461,11 @@ The default value is null.</param>
     </member>
     <member name="?:UnityEngine.Android.PermissionCallbacks.PermissionDeniedAndDontAskAgain(System.Action`1&lt;System.String&gt;)">
       <summary>
-        <para>Executed when user chooses Deny And Don't Ask Again when requesting permission.</para>
+        <para>Executed when user chooses Deny And Don't Ask Again (on newer Android versions it is expressed by Denying for the second time) when requesting permission or the operating system determines that it should not be requested again.
+If this event is not subscribed to, PermissionCallbacks.PermissionDenied will be fired as a fallback.
+Unreliable on newer Android versions, recommended to only connect to PermissionCallbacks.PermissionDenied.</para>
       </summary>
-      <param name="value"></param>
+      <param name="value">Permission name.</param>
     </member>
     <member name="?:UnityEngine.Android.PermissionCallbacks.PermissionGranted(System.Action`1&lt;System.String&gt;)">
       <summary>
@@ -524,6 +536,14 @@ The default value is null.</param>
       </summary>
       <param name="methodName">Specifies which method to call.</param>
       <param name="args">An array of parameters passed to the method.</param>
+    </member>
+    <member name="M:UnityEngine.AndroidJavaObject.CloneReference">
+      <summary>
+        <para>Creates a clone of the C# object that references the same Java object.</para>
+      </summary>
+      <returns>
+        <para>A new C# object which references the same Java object as the original instance.</para>
+      </returns>
     </member>
     <member name="M:UnityEngine.AndroidJavaObject.#ctor(System.String,System.Object[])">
       <summary>
@@ -626,7 +646,7 @@ Note: Using raw JNI functions requires advanced knowledge of the Android Java Na
     </member>
     <member name="M:UnityEngine.AndroidJavaProxy.Invoke(System.String,System.Object[])">
       <summary>
-        <para>Called by the java vm whenever a method is invoked on the java proxy interface. You can override this to run special code on method invokation, or you can leave the implementation as is, and leave the default behavior which is to look for c# methods matching the signature of the java method.</para>
+        <para>Called by the java vm whenever a method is invoked on the java proxy interface. You can override this to run special code on method invocation, or you can leave the implementation as is, and leave the default behavior which is to look for c# methods matching the signature of the java method.</para>
       </summary>
       <param name="methodName">Name of the invoked java method.</param>
       <param name="args">Arguments passed from the java vm - converted into AndroidJavaObject, AndroidJavaClass or a primitive.</param>
@@ -634,7 +654,7 @@ Note: Using raw JNI functions requires advanced knowledge of the Android Java Na
     </member>
     <member name="M:UnityEngine.AndroidJavaProxy.Invoke(System.String,UnityEngine.AndroidJavaObject[])">
       <summary>
-        <para>Called by the java vm whenever a method is invoked on the java proxy interface. You can override this to run special code on method invokation, or you can leave the implementation as is, and leave the default behavior which is to look for c# methods matching the signature of the java method.</para>
+        <para>Called by the java vm whenever a method is invoked on the java proxy interface. You can override this to run special code on method invocation, or you can leave the implementation as is, and leave the default behavior which is to look for c# methods matching the signature of the java method.</para>
       </summary>
       <param name="methodName">Name of the invoked java method.</param>
       <param name="args">Arguments passed from the java vm - converted into AndroidJavaObject, AndroidJavaClass or a primitive.</param>

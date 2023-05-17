@@ -204,6 +204,11 @@
         <para>The density of the collider used to calculate its mass (when auto mass is enabled).</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Collider2D.errorState">
+      <summary>
+        <para>The error state that indicates the state of the physics shapes the 2D Collider tried to create. (Read Only)</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.Collider2D.friction">
       <summary>
         <para>Get the friction used by the collider.</para>
@@ -221,7 +226,7 @@
     </member>
     <member name="P:UnityEngine.Collider2D.shapeCount">
       <summary>
-        <para>The number of separate shaped regions in the collider.</para>
+        <para>The number of active PhysicsShape2D the Collider2D is currently using.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Collider2D.sharedMaterial">
@@ -389,6 +394,26 @@
         <para>A hash value that uniquely identifies the configured geometry of the Collider2D.</para>
       </returns>
     </member>
+    <member name="M:UnityEngine.Collider2D.GetShapes(UnityEngine.PhysicsShapeGroup2D)">
+      <summary>
+        <para>Gets all the PhysicsShape2D used by the Collider2D.</para>
+      </summary>
+      <param name="physicsShapeGroup">The PhysicsShapeGroup2D to store the retrieved PhysicsShape2D in.</param>
+      <returns>
+        <para>Returns the number of PhysicsShape2D retrieved from the Collider2D.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Collider2D.GetShapes(UnityEngine.PhysicsShapeGroup2D,System.Int32,System.Int32)">
+      <summary>
+        <para>Gets the specified range of the PhysicsShape2D used by the Collider2D.</para>
+      </summary>
+      <param name="physicsShapeGroup">The PhysicsShapeGroup2D to store the retrieved PhysicsShape2D in.</param>
+      <param name="shapeIndex">The index of the first shape to retrieve. This should be in the range of 0 to Collider2D.shapeCount-1.</param>
+      <param name="shapeCount">The number of shapes to retrieve. The shapeIndex + shapeCount must be less than or equal to Collider2D.shapeCount.</param>
+      <returns>
+        <para>Returns the number of PhysicsShape2D retrieved from the Collider2D. In all cases this should be the same number as shapeCount .</para>
+      </returns>
+    </member>
     <member name="M:UnityEngine.Collider2D.IsTouching(UnityEngine.Collider2D)">
       <summary>
         <para>Check whether this collider is touching the collider or not.</para>
@@ -530,6 +555,26 @@
     <member name="P:UnityEngine.ColliderDistance2D.pointB">
       <summary>
         <para>A point on a Collider2D that is a specific distance away from pointA.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.ColliderErrorState2D">
+      <summary>
+        <para>Indicates what (if any) error was encountered when creating a 2D Collider.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ColliderErrorState2D.None">
+      <summary>
+        <para>Indicates that no error was encountered, therefore the 2D Collider was created successfully.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ColliderErrorState2D.NoShapes">
+      <summary>
+        <para>Indicates that no physics shapes were created by the 2D Collider because the state of 2D Collider resulted in vertices too close or an area that is too small for the physics engine to handle.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ColliderErrorState2D.RemovedShapes">
+      <summary>
+        <para>Indicates that some physics shapes were not created by the 2D Collider because the state of 2D Collider resulted in vertices too close or an area that is too small for the physics engine to handle.</para>
       </summary>
     </member>
     <member name="T:UnityEngine.Collision2D">
@@ -701,12 +746,12 @@
     </member>
     <member name="F:UnityEngine.CompositeCollider2D.GeometryType.Outlines">
       <summary>
-        <para>Sets the Composite Collider to generate closed outlines for the merged Collider geometry consisting of only edges.</para>
+        <para>Sets the Composite Collider 2D to generate closed outlines for the merged collider geometry consisting of only edges.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.CompositeCollider2D.GeometryType.Polygons">
       <summary>
-        <para>Sets the Composite Collider to generate closed outlines for the merged Collider geometry consisting of convex polygon shapes.</para>
+        <para>Sets the Composite Collider 2D to generate closed outlines for the merged collider geometry consisting of convex polygon shapes.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.CompositeCollider2D.GetPath(System.Int32,UnityEngine.Vector2[])">
@@ -970,6 +1015,93 @@
       <summary>
         <para>Gets the impulse applied at the contact point which is perpendicular to the ContactPoint2D.normal.</para>
       </summary>
+    </member>
+    <member name="T:UnityEngine.CustomCollider2D">
+      <summary>
+        <para>Represents a Collider2D that is configured by assigning PhysicsShape2D geometry to it via a PhysicsShapeGroup2D.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.CustomCollider2D.customShapeCount">
+      <summary>
+        <para>The total number of custom PhysicsShape2D assigned to the Collider. (Read Only)</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.CustomCollider2D.customVertexCount">
+      <summary>
+        <para>The total number of Vector2|vertices used by the Collider. (Read Only)</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.CustomCollider2D.ClearCustomShapes">
+      <summary>
+        <para>Deletes all the shapes and associated vertices for those shapes from the Collider.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.CustomCollider2D.ClearCustomShapes(System.Int32,System.Int32)">
+      <summary>
+        <para>Deletes a specific number of shapes defined by shapeCount starting at shapeIndex along with all associated vertices those shapes use.</para>
+      </summary>
+      <param name="shapeIndex">The index of the shape stored in the Collider.</param>
+      <param name="shapeCount">The number of shapes to delete starting at the specified index.</param>
+    </member>
+    <member name="M:UnityEngine.CustomCollider2D.GetCustomShapes(UnityEngine.PhysicsShapeGroup2D)">
+      <summary>
+        <para>Gets all the physics shapes and vertices in the Collider and places them in the specified PhysicsShapeGroup2D.</para>
+      </summary>
+      <param name="physicsShapeGroup">The physics shape group that will receive all the PhysicsShape2D|physics shapes and Vector2|vertices from the Collider.</param>
+      <returns>
+        <para>Returns the total number of PhysicsShape2D|physics shapes placed in the specified physicsShapeGroup.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.CustomCollider2D.GetCustomShapes(UnityEngine.PhysicsShapeGroup2D,System.Int32,System.Int32)">
+      <summary>
+        <para>Gets a specified number of physics shapes defined byshapeCount starting at shapeIndex along with all associated vertices those shapes use and places them in the specified PhysicsShapeGroup2D.</para>
+      </summary>
+      <param name="physicsShapeGroup">The physics shape group that will receive the PhysicsShape2D|physics shapes and Vector2|vertices from the Collider.</param>
+      <param name="shapeIndex">The shape index within the Collider to start retrieving shapes from.</param>
+      <param name="shapeCount">The total number of shapes starting at the shapeIndex to retrieve.</param>
+      <returns>
+        <para>The total number of PhysicsShape2D|physics shapes placed in the specified physicsShapeGroup.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.CustomCollider2D.GetCustomShapes(Unity.Collections.NativeArray`1&lt;UnityEngine.PhysicsShape2D&gt;,Unity.Collections.NativeArray`1&lt;UnityEngine.Vector2&gt;)">
+      <summary>
+        <para>Gets all the physics shapes and vertices in the Collider and places them in the specified arrays.</para>
+      </summary>
+      <param name="shapes">The array that will be populated with a copy of all the shapes in the PhysicsShapeGroup2D.</param>
+      <param name="vertices">The array that will be populated with a copy of all the vertices in the PhysicsShapeGroup2D.</param>
+      <returns>
+        <para>Returns the total number of PhysicsShape2D|physics shapes placed in the specified arrays.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.CustomCollider2D.SetCustomShape(UnityEngine.PhysicsShapeGroup2D,System.Int32,System.Int32)">
+      <summary>
+        <para>Sets a single shape and all associated shape vertices from the specified physicsShapeGroup into the Collider.</para>
+      </summary>
+      <param name="physicsShapeGroup">The PhysicsShapeGroup2D to use as the source of shapes and vertices.</param>
+      <param name="srcShapeIndex">The source shape index within the physicsShapeGroup used to assign to the Collider.</param>
+      <param name="dstShapeIndex">The destination shape index within the Collider to copy the source shape to.</param>
+    </member>
+    <member name="M:UnityEngine.CustomCollider2D.SetCustomShape(Unity.Collections.NativeArray`1&lt;UnityEngine.PhysicsShape2D&gt;,Unity.Collections.NativeArray`1&lt;UnityEngine.Vector2&gt;,System.Int32,System.Int32)">
+      <summary>
+        <para>Sets a single shape and all associated shape vertices from the specified shape and vertices arrays into the Collider.</para>
+      </summary>
+      <param name="shapes">The array to use as the source of shapes.</param>
+      <param name="vertices">The array to use as the source of vertices.</param>
+      <param name="srcShapeIndex">The source shape index within the shapes array used to assign to the Collider.</param>
+      <param name="dstShapeIndex">The destination shape index within the Collider to copy the source shape to.</param>
+    </member>
+    <member name="M:UnityEngine.CustomCollider2D.SetCustomShapes(UnityEngine.PhysicsShapeGroup2D)">
+      <summary>
+        <para>Sets all the shapes and vertices in the Collider to those represented by the specified PhysicsShapeGroup2D.</para>
+      </summary>
+      <param name="physicsShapeGroup">The PhysicsShapeGroup2D to use as the source of shapes and vertices.</param>
+    </member>
+    <member name="M:UnityEngine.CustomCollider2D.SetCustomShapes(Unity.Collections.NativeArray`1&lt;UnityEngine.PhysicsShape2D&gt;,Unity.Collections.NativeArray`1&lt;UnityEngine.Vector2&gt;)">
+      <summary>
+        <para>Sets all the shapes and vertices in the Collider to those represented by the specified arrays.</para>
+      </summary>
+      <param name="shapes">The array containing all the shapes used to assign to the Collider.</param>
+      <param name="vertices">The array containing all the vertices used to assign to the Collider.</param>
     </member>
     <member name="T:UnityEngine.DistanceJoint2D">
       <summary>
@@ -2230,6 +2362,11 @@
       <returns>
         <para>Returns the number of results placed in the results array.</para>
       </returns>
+    </member>
+    <member name="F:UnityEngine.Physics2D.MaxPolygonShapeVertices">
+      <summary>
+        <para>The maximum number of vertices allowed per primitive polygon shape type (PhysicsShapeType2D.Polygon). (Read Only)</para>
+      </summary>
     </member>
     <member name="M:UnityEngine.Physics2D.OverlapArea(UnityEngine.Vector2,UnityEngine.Vector2,System.Int32,System.Single,System.Single)">
       <summary>
@@ -3562,6 +3699,251 @@
         <para>The 2D physics Scene used by the Scene.</para>
       </returns>
     </member>
+    <member name="T:UnityEngine.PhysicsShape2D">
+      <summary>
+        <para>Represents an efficient low-level physics shape used by the physics engine.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShape2D.adjacentEnd">
+      <summary>
+        <para>Defines the position of a virtual point adjacent to the end vertex of an edge shape.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShape2D.adjacentStart">
+      <summary>
+        <para>Defines the position of a virtual point adjacent to the start vertex of an edge shape.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShape2D.radius">
+      <summary>
+        <para>The radius of the shape.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShape2D.shapeType">
+      <summary>
+        <para>The shape type determines how the vertices and radius are used by this PhysicsShape2D.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShape2D.useAdjacentEnd">
+      <summary>
+        <para>When the value is true, then the shape will use the PhysicsShape2D.adjacentEnd|adjacentEnd feature. When the value is false, then the shape will not use the PhysicsShape2D.adjacentEnd|adjacentEnd feature.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShape2D.useAdjacentStart">
+      <summary>
+        <para>When the value is true, then the shape will use the PhysicsShape2D.adjacentStart|adjacentStart feature. When the value is false, then the shape will not use the PhysicsShape2D.adjacentEnd|adjacentStart feature.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShape2D.vertexCount">
+      <summary>
+        <para>The total number of vertices used to represent the PhysicsShape2D.shapeType|shape type.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShape2D.vertexStartIndex">
+      <summary>
+        <para>The start index for the geometry of this shape within the PhysicsShapeGroup2D.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.PhysicsShapeGroup2D">
+      <summary>
+        <para>Represents a group of PhysicsShape2D and their geometry.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShapeGroup2D.localToWorldMatrix">
+      <summary>
+        <para>Gets or sets a matrix that transforms the PhysicsShapeGroup2D vertices from local space into world space.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShapeGroup2D.shapeCount">
+      <summary>
+        <para>The total number of  PhysicsShape2D in the shape group. (Read Only)</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.PhysicsShapeGroup2D.vertexCount">
+      <summary>
+        <para>The total number of vertices in the shape group used to represent all PhysicsShape2D within it. (Read Only)</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.Add(UnityEngine.PhysicsShapeGroup2D)">
+      <summary>
+        <para>Adds a copy of all the PhysicsShape2D and their geometry from the specified physicsShapeGroup into this shape group. The specified physicsShapeGroup is not modified.</para>
+      </summary>
+      <param name="physicsShapeGroup">The PhysicsShapeGroup2D to add to this shape group. (Read Only)</param>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.AddBox(UnityEngine.Vector2,UnityEngine.Vector2,System.Single,System.Single)">
+      <summary>
+        <para>Adds a box shape (PhysicsShapeType2D.Polygon) to the shape group.</para>
+      </summary>
+      <param name="center">The center point of the box shape. This is analogous to Collider2D.offset.</param>
+      <param name="size">The size of the box. This is identical to BoxCollider2D.size.</param>
+      <param name="angle">The angle in degrees the box should be rotated around the center.</param>
+      <param name="edgeRadius">The radius extending around the edges of the box. This is identical to BoxCollider2D.edgeRadius.</param>
+      <returns>
+        <para>Returns the shape index the shape was added to in the PhysicsShapeGroup2D. This index is used as the main reference when retrieving a shape.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.AddCapsule(UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
+      <summary>
+        <para>Adds a capsule shape (PhysicsShapeType2D.Capsule) to the shape group.</para>
+      </summary>
+      <param name="vertex0">The position of one end of a capsule shape. This point represents the center point of a logical circle at the end of a capsule.</param>
+      <param name="vertex1">The position of the opposite end of a capsule shape. This point represents the  center point of a logical circle at the opposite end of a capsule.</param>
+      <param name="radius">The radius of the capsule defining a radius around the vertex0 and vertex1 and the area between them.</param>
+      <returns>
+        <para>Returns the shape index the shape was added to in the PhysicsShapeGroup2D. This index is used as the main reference when retrieving a shape.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.AddCircle(UnityEngine.Vector2,System.Single)">
+      <summary>
+        <para>Adds a circle shape (PhysicsShapeType2D.Circle) to the shape group.</para>
+      </summary>
+      <param name="center">The center point of the circle shape. This is analogous to Collider2D.offset.</param>
+      <param name="radius">The radius of the circle defining a radius around the center. This is identical to CircleCollider2D.radius.</param>
+      <returns>
+        <para>Returns the shape index the shape was added to in the PhysicsShapeGroup2D. This index is used as the main reference when retrieving a shape.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.AddEdges(System.Collections.Generic.List`1&lt;UnityEngine.Vector2&gt;,System.Single)">
+      <summary>
+        <para>Adds an edges shape (PhysicsShapeType2D.Edges) to the shape group.</para>
+      </summary>
+      <param name="vertices">A list of vertices that represent a continuous set of edges with each vertex connecting to the following vertex to form each edge.</param>
+      <param name="edgeRadius">The radius extending around each edge. This is identical to EdgeCollider2D.edgeRadius.</param>
+      <returns>
+        <para>Returns the shape index the shape was added to in the PhysicsShapeGroup2D. This index is used as the main reference when retrieving a shape.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.AddEdges(System.Collections.Generic.List`1&lt;UnityEngine.Vector2&gt;,System.Boolean,System.Boolean,UnityEngine.Vector2,UnityEngine.Vector2,System.Single)">
+      <summary>
+        <para>Adds an edge shape (PhysicsShapeType2D.Edges) to the shape group supporting adjacent start and end vertices.</para>
+      </summary>
+      <param name="vertices">A list of vertices that represent a continuous set of edges with each vertex connecting to the following vertex to form each edge.</param>
+      <param name="edgeRadius">The radius extending around each edge. This is identical to EdgeCollider2D.edgeRadius.</param>
+      <param name="useAdjacentStart">When the value is true, the adjacentStart argument is used. When the value is false, the adjacentStart argument is not used.</param>
+      <param name="useAdjacentEnd">When the value is true, the adjacentEnd argument is used. When the value is false, the adjacentEnd argument is not used.</param>
+      <param name="adjacentStart">Defines the position of a virtual point adjacent to the start vertex of an edge shape.</param>
+      <param name="adjacentEnd">Defines the position of a virtual point adjacent to the end vertex of an edge shape.</param>
+      <returns>
+        <para>Returns the shape index the shape was added to in the PhysicsShapeGroup2D. This index is used as the main reference when retrieving a shape.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.AddPolygon(System.Collections.Generic.List`1&lt;UnityEngine.Vector2&gt;)">
+      <summary>
+        <para>Adds a polygon shape (PhysicsShapeType2D.Polygon) to the shape group.</para>
+      </summary>
+      <param name="vertices">A list of vertices that represent a continuous set of edges of a convex polygon with each vertex connecting to the following vertex to form each edge. The final vertex implicitly connects to the first vertex. The maximum allowed list length is defined by Physics2D.MaxPolygonShapeVertices.</param>
+      <returns>
+        <para>Returns the shape index the shape was added to in the PhysicsShapeGroup2D. This index is used as the main reference when retrieving a shape.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.Clear">
+      <summary>
+        <para>Clears all the vertices and shapes from the PhysicsShapeGroup.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.#ctor(System.Int32,System.Int32)">
+      <summary>
+        <para>Initializes and returns an instance of PhysicsShapeGroup2D. The shape group will be empty and ready for use by Collider2D.GetShapes, Rigidbody2D.GetShapes or manually adding shapes.</para>
+      </summary>
+      <param name="shapeCapacity">The initial capacity of the PhysicsShape2D list used to contain the shapes.</param>
+      <param name="vertexCapacity">The initial capacity of the Vector2|vertices list used to contain the shape geometry.</param>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.DeleteShape(System.Int32)">
+      <summary>
+        <para>When destroying a shape at the specified shapeIndex, all other shapes that exist above the specified shapeIndex will have their shape indices updated appropriately.</para>
+      </summary>
+      <param name="shapeIndex">The index of the shape stored the PhysicsShapeGroup2D.</param>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.GetShape(System.Int32)">
+      <summary>
+        <para>Gets the PhysicsShape2D stored at the specified shapeIndex.</para>
+      </summary>
+      <param name="shapeIndex">The index of the shape stored the PhysicsShapeGroup2D. The shape index is zero-based with the shape group having a quantity of shapes specified by PhysicsShapeGroup2D.shapeCount|shapeCount.</param>
+      <returns>
+        <para>Returns the shape stored at the specified shapeIndex.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.GetShapeData(System.Collections.Generic.List`1&lt;UnityEngine.PhysicsShape2D&gt;,System.Collections.Generic.List`1&lt;UnityEngine.Vector2&gt;)">
+      <summary>
+        <para>Gets a copy of both the shapes and vertices in the PhysicsShapeGroup2D.</para>
+      </summary>
+      <param name="shapes">A list that will be populated with a copy of all the shapes in the PhysicsShapeGroup2D.</param>
+      <param name="vertices">A list that will be populated with a copy of all the vertices in the PhysicsShapeGroup2D.</param>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.GetShapeData(Unity.Collections.NativeArray`1&lt;UnityEngine.PhysicsShape2D&gt;,Unity.Collections.NativeArray`1&lt;UnityEngine.Vector2&gt;)">
+      <summary>
+        <para>Gets a copy of both the shapes and vertices in the PhysicsShapeGroup2D.</para>
+      </summary>
+      <param name="shapes">A NativeArray that will be populated with a copy of all the shapes in the PhysicsShapeGroup2D.</param>
+      <param name="vertices">A NativeArray that will be populated with a copy of all the vertices in the PhysicsShapeGroup2D.</param>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.GetShapeVertex(System.Int32,System.Int32)">
+      <summary>
+        <para>Gets a single vertex of a shape. The vertex index is zero-based with the shape having a quantity of vertex specified by PhysicsShape2D.vertexCount.</para>
+      </summary>
+      <param name="shapeIndex">The index of the shape stored in the PhysicsShapeGroup2D. The shape index is zero-based with the shape group having a quantity of shapes specified by PhysicsShapeGroup2D.shapeCount|shapeCount.</param>
+      <param name="vertexIndex">The index of the shape vertex stored in the PhysicsShapeGroup2D. The vertex index is zero-based with the shape having a quantity of vertex specified by PhysicsShape2D.vertexCount.</param>
+      <returns>
+        <para>Returns the specified shape vertex.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.GetShapeVertices(System.Int32,System.Collections.Generic.List`1&lt;UnityEngine.Vector2&gt;)">
+      <summary>
+        <para>Gets a copy of the shape vertices in the PhysicsShapeGroup2D.</para>
+      </summary>
+      <param name="shapeIndex">The index of the shape stored in the PhysicsShapeGroup2D. The shape index is zero-based with the shape group having a quantity of shapes specified by PhysicsShapeGroup2D.shapeCount|shapeCount.</param>
+      <param name="vertices">A list that will be populated with a copy of all the shape vertices in the PhysicsShapeGroup2D.</param>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.SetShapeAdjacentVertices(System.Int32,System.Boolean,System.Boolean,UnityEngine.Vector2,UnityEngine.Vector2)">
+      <summary>
+        <para>Sets the adjacent vertices of a shape.</para>
+      </summary>
+      <param name="shapeIndex">The index of the shape to be modified that is stored the PhysicsShapeGroup2D.</param>
+      <param name="useAdjacentStart">Sets the PhysicsShape2D.useAdjacentStart property of the selected shape.</param>
+      <param name="useAdjacentEnd">Sets the PhysicsShape2D.useAdjacentEnd property of the selected shape.</param>
+      <param name="adjacentStart">Sets the PhysicsShape2D.adjacentStart property of the selected shape.</param>
+      <param name="adjacentEnd">Sets the PhysicsShape2D.adjacentEnd property of the selected shape.</param>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.SetShapeRadius(System.Int32,System.Single)">
+      <summary>
+        <para>Sets the radius of a shape.</para>
+      </summary>
+      <param name="shapeIndex">The index of the shape stored in the PhysicsShapeGroup2D. The shape index is zero-based with the shape group having a quantity of shapes specified by PhysicsShapeGroup2D.shapeCount|shapeCount.</param>
+      <param name="radius">The value to set the shape radius to.</param>
+    </member>
+    <member name="M:UnityEngine.PhysicsShapeGroup2D.SetShapeVertex(System.Int32,System.Int32,UnityEngine.Vector2)">
+      <summary>
+        <para>Sets a single vertex of a shape.</para>
+      </summary>
+      <param name="shapeIndex">The index of the shape stored in the PhysicsShapeGroup2D. The shape index is zero-based with the shape group having a quantity of shapes specified by PhysicsShapeGroup2D.shapeCount|shapeCount.</param>
+      <param name="vertexIndex">The index of the shape vertex stored in the PhysicsShapeGroup2D. The vertex index is zero-based with the shape having a quantity of vertex specified by PhysicsShape2D.vertexCount.</param>
+      <param name="vertex">The value to set the shape vertex to.</param>
+    </member>
+    <member name="T:UnityEngine.PhysicsShapeType2D">
+      <summary>
+        <para>Options for indicate which primitive shape type is used to interpret geometry contained within a PhysicsShape2D object.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.PhysicsShapeType2D.Capsule">
+      <summary>
+        <para>Use a capsule shape to interpret the PhysicsShape2D geometry.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.PhysicsShapeType2D.Circle">
+      <summary>
+        <para>Use a circle shape to interpret the PhysicsShape2D geometry.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.PhysicsShapeType2D.Edges">
+      <summary>
+        <para>Use multiple edges to interpret the PhysicsShape2D geometry.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.PhysicsShapeType2D.Polygon">
+      <summary>
+        <para>Use a convex polygon shape to interpret the PhysicsShape2D geometry.</para>
+      </summary>
+    </member>
     <member name="T:UnityEngine.PhysicsUpdateBehaviour2D">
       <summary>
         <para>A base type for 2D physics components that required a callback during FixedUpdate.</para>
@@ -4164,6 +4546,15 @@
         <para>Get a global space vector given the vector relativeVector in rigidBody local space.</para>
       </summary>
       <param name="relativeVector">The local space vector to transform into a global space vector.</param>
+    </member>
+    <member name="M:UnityEngine.Rigidbody2D.GetShapes(UnityEngine.PhysicsShapeGroup2D)">
+      <summary>
+        <para>Gets all the PhysicsShape2D used by all Collider2D attached to the Rigidbody2D.</para>
+      </summary>
+      <param name="physicsShapeGroup">The PhysicsShapeGroup2D to store the retrieved PhysicsShape2D in.</param>
+      <returns>
+        <para>Returns the number of PhysicsShape2D retrieved from the Rigidbody2D.</para>
+      </returns>
     </member>
     <member name="M:UnityEngine.Rigidbody2D.GetVector(UnityEngine.Vector2)">
       <summary>

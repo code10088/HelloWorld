@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HotAssembly</RootNamespace>
     <AssemblyName>HotAssembly</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,37 +36,72 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\Library\ScriptAssemblies\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\Assets\Plugins\Protobuf-net\net462\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net.Core">
+      <HintPath>..\Assets\Plugins\Protobuf-net\net462\protobuf-net.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assets\Plugins\Protobuf-net\net462\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Collections.Immutable, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assets\Plugins\Protobuf-net\net462\System.Collections.Immutable.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assets\Plugins\Protobuf-net\net462\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assets\Plugins\Protobuf-net\net462\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Assets\Plugins\Protobuf-net\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEditor.dll</HintPath>
+      <HintPath>C:\Program Files\Unity2021.3.25\Editor\Data\Managed\UnityEngine\UnityEditor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.CoreModule">
-      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEditor.CoreModule.dll</HintPath>
+      <HintPath>C:\Program Files\Unity2021.3.25\Editor\Data\Managed\UnityEngine\UnityEditor.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
+      <HintPath>C:\Program Files\Unity2021.3.25\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>C:\Program Files\Unity2021.3.25\Editor\Data\Managed\UnityEngine\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>C:\Program Files\Unity2021.3.25\Editor\Data\Managed\UnityEngine\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>..\Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule">
-      <HintPath>C:\Program Files\Unity2020.3.33\Editor\Data\Managed\UnityEngine\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>C:\Program Files\Unity2021.3.25\Editor\Data\Managed\UnityEngine\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="xasset">
+      <HintPath>..\Library\ScriptAssemblies\xasset.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\Data_DeviceInfo.cs">
+      <Link>SubScripts\Config\Auto\Data_DeviceInfo.cs</Link>
+    </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\Data_Test.cs">
       <Link>SubScripts\Config\Auto\Data_Test.cs</Link>
     </Compile>
@@ -81,14 +117,38 @@
     <Compile Include="..\Assets\Scripts\SubScripts\Config\GameConfigs.cs">
       <Link>SubScripts\Config\GameConfigs.cs</Link>
     </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Event\EventManager.cs">
-      <Link>SubScripts\Event\EventManager.cs</Link>
+    <Compile Include="..\Assets\Scripts\SubScripts\Data\DataManager.cs">
+      <Link>SubScripts\Data\DataManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Data\HotUpdateResData.cs">
+      <Link>SubScripts\Data\HotUpdateResData.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Data\TestData.cs">
+      <Link>SubScripts\Data\TestData.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Event\EventType.cs">
       <Link>SubScripts\Event\EventType.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\GameStart.cs">
       <Link>SubScripts\GameStart.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Network\Message\NetMsgId.cs">
+      <Link>SubScripts\Network\Message\NetMsgId.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Network\Message\Person.cs">
+      <Link>SubScripts\Network\Message\Person.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatch.cs">
+      <Link>SubScripts\Network\NetMsgDispatch.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatchAuto.cs">
+      <Link>SubScripts\Network\NetMsgDispatchAuto.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UIHotUpdateResComponent.cs">
+      <Link>SubScripts\UI\Auto\UIHotUpdateResComponent.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UIMessageBoxComponent.cs">
+      <Link>SubScripts\UI\Auto\UIMessageBoxComponent.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UITestComponent.cs">
       <Link>SubScripts\UI\Auto\UITestComponent.cs</Link>
@@ -99,21 +159,32 @@
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIManager.cs">
       <Link>SubScripts\UI\Base\UIManager.cs</Link>
     </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIManagerTips.cs">
+      <Link>SubScripts\UI\Base\UIManagerTips.cs</Link>
+    </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIType.cs">
       <Link>SubScripts\UI\Base\UIType.cs</Link>
     </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\UI\UITest.cs">
-      <Link>SubScripts\UI\UITest.cs</Link>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\UIHotUpdateRes\UIHotUpdateRes.cs">
+      <Link>SubScripts\UI\UIHotUpdateRes\UIHotUpdateRes.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\UITest\UITest.cs">
+      <Link>SubScripts\UI\UITest\UITest.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\UITips\UIMessageBox.cs">
+      <Link>SubScripts\UI\UITips\UIMessageBox.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="..\Assets\Scripts\SubScripts\Config.meta">
       <Link>SubScripts\Config.meta</Link>
     </None>
     <None Include="..\Assets\Scripts\SubScripts\Config\Auto.meta">
       <Link>SubScripts\Config\Auto.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\Data_DeviceInfo.cs.meta">
+      <Link>SubScripts\Config\Auto\Data_DeviceInfo.cs.meta</Link>
     </None>
     <None Include="..\Assets\Scripts\SubScripts\Config\Auto\Data_Test.cs.meta">
       <Link>SubScripts\Config\Auto\Data_Test.cs.meta</Link>
@@ -130,11 +201,20 @@
     <None Include="..\Assets\Scripts\SubScripts\Config\GameConfigs.cs.meta">
       <Link>SubScripts\Config\GameConfigs.cs.meta</Link>
     </None>
+    <None Include="..\Assets\Scripts\SubScripts\Data.meta">
+      <Link>SubScripts\Data.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Data\DataManager.cs.meta">
+      <Link>SubScripts\Data\DataManager.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Data\HotUpdateResData.cs.meta">
+      <Link>SubScripts\Data\HotUpdateResData.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Data\TestData.cs.meta">
+      <Link>SubScripts\Data\TestData.cs.meta</Link>
+    </None>
     <None Include="..\Assets\Scripts\SubScripts\Event.meta">
       <Link>SubScripts\Event.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Event\EventManager.cs.meta">
-      <Link>SubScripts\Event\EventManager.cs.meta</Link>
     </None>
     <None Include="..\Assets\Scripts\SubScripts\Event\EventType.cs.meta">
       <Link>SubScripts\Event\EventType.cs.meta</Link>
@@ -142,11 +222,35 @@
     <None Include="..\Assets\Scripts\SubScripts\GameStart.cs.meta">
       <Link>SubScripts\GameStart.cs.meta</Link>
     </None>
+    <None Include="..\Assets\Scripts\SubScripts\Network.meta">
+      <Link>SubScripts\Network.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Network\Message.meta">
+      <Link>SubScripts\Network\Message.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Network\Message\NetMsgId.cs.meta">
+      <Link>SubScripts\Network\Message\NetMsgId.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Network\Message\Person.cs.meta">
+      <Link>SubScripts\Network\Message\Person.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatch.cs.meta">
+      <Link>SubScripts\Network\NetMsgDispatch.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatchAuto.cs.meta">
+      <Link>SubScripts\Network\NetMsgDispatchAuto.cs.meta</Link>
+    </None>
     <None Include="..\Assets\Scripts\SubScripts\UI.meta">
       <Link>SubScripts\UI.meta</Link>
     </None>
     <None Include="..\Assets\Scripts\SubScripts\UI\Auto.meta">
       <Link>SubScripts\UI\Auto.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\Auto\UIHotUpdateResComponent.cs.meta">
+      <Link>SubScripts\UI\Auto\UIHotUpdateResComponent.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\Auto\UIMessageBoxComponent.cs.meta">
+      <Link>SubScripts\UI\Auto\UIMessageBoxComponent.cs.meta</Link>
     </None>
     <None Include="..\Assets\Scripts\SubScripts\UI\Auto\UITestComponent.cs.meta">
       <Link>SubScripts\UI\Auto\UITestComponent.cs.meta</Link>
@@ -160,11 +264,29 @@
     <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIManager.cs.meta">
       <Link>SubScripts\UI\Base\UIManager.cs.meta</Link>
     </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIManagerTips.cs.meta">
+      <Link>SubScripts\UI\Base\UIManagerTips.cs.meta</Link>
+    </None>
     <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIType.cs.meta">
       <Link>SubScripts\UI\Base\UIType.cs.meta</Link>
     </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\UITest.cs.meta">
-      <Link>SubScripts\UI\UITest.cs.meta</Link>
+    <None Include="..\Assets\Scripts\SubScripts\UI\UIHotUpdateRes.meta">
+      <Link>SubScripts\UI\UIHotUpdateRes.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\UIHotUpdateRes\UIHotUpdateRes.cs.meta">
+      <Link>SubScripts\UI\UIHotUpdateRes\UIHotUpdateRes.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\UITest.meta">
+      <Link>SubScripts\UI\UITest.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\UITest\UITest.cs.meta">
+      <Link>SubScripts\UI\UITest\UITest.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\UITips.meta">
+      <Link>SubScripts\UI\UITips.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\UI\UITips\UIMessageBox.cs.meta">
+      <Link>SubScripts\UI\UITips\UIMessageBox.cs.meta</Link>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

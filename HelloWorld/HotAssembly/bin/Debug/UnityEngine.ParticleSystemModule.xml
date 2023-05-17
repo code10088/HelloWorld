@@ -39,13 +39,27 @@
         <para>Method extension for Physics in Particle System.</para>
       </summary>
     </member>
+    <member name="M:UnityEngine.ParticlePhysicsExtensions.GetCollisionEvents(UnityEngine.ParticleSystem,UnityEngine.GameObject,System.Collections.Generic.List`1&lt;UnityEngine.ParticleCollisionEvent&gt;)">
+      <summary>
+        <para>Get the particle collision events for a GameObject. Returns the number of events written to the array.</para>
+      </summary>
+      <param name="go">The GameObject for which to retrieve collision events.</param>
+      <param name="collisionEvents">Array to write collision events to.</param>
+      <param name="ps">The Particle System that owns the potentially colliding particles.</param>
+      <returns>
+        <para>The number of collision events.</para>
+      </returns>
+    </member>
     <member name="M:UnityEngine.ParticlePhysicsExtensions.GetCollisionEvents(UnityEngine.ParticleSystem,UnityEngine.GameObject,UnityEngine.ParticleCollisionEvent[])">
       <summary>
         <para>Get the particle collision events for a GameObject. Returns the number of events written to the array.</para>
       </summary>
       <param name="go">The GameObject for which to retrieve collision events.</param>
       <param name="collisionEvents">Array to write collision events to.</param>
-      <param name="ps"></param>
+      <param name="ps">The Particle System that owns the potentially colliding particles.</param>
+      <returns>
+        <para>The number of collision events.</para>
+      </returns>
     </member>
     <member name="M:UnityEngine.ParticlePhysicsExtensions.GetSafeCollisionEventSize(UnityEngine.ParticleSystem)">
       <summary>
@@ -221,7 +235,7 @@
     </member>
     <member name="P:UnityEngine.ParticleSystem.particleCount">
       <summary>
-        <para>The current number of particles (Read Only).</para>
+        <para>The current number of particles (Read Only). The number doesn't include particles of child Particle Systems</para>
       </summary>
     </member>
     <member name="P:UnityEngine.ParticleSystem.playbackSpeed">
@@ -498,7 +512,7 @@
     </member>
     <member name="T:UnityEngine.ParticleSystem.CollisionModule">
       <summary>
-        <para>Script interface for the CollisionMmodule of a Particle System.</para>
+        <para>Script interface for the CollisionModule of a Particle System.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.ParticleSystem.CollisionModule.bounce">
@@ -1498,6 +1512,11 @@ See Also: Trails, SetTrails, GetPlaybackState.</para>
         <para>The duration of the Particle System in seconds.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.ParticleSystem.MainModule.emitterVelocity">
+      <summary>
+        <para>The current Particle System velocity.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.ParticleSystem.MainModule.emitterVelocityMode">
       <summary>
         <para>Control how the Particle System calculates its velocity, when moving in the world.</para>
@@ -1695,7 +1714,7 @@ See Also: Trails, SetTrails, GetPlaybackState.</para>
     </member>
     <member name="P:UnityEngine.ParticleSystem.MainModule.stopAction">
       <summary>
-        <para>Select whether to Disable or Destroy the GameObject, or to call the OnParticleSystemStopped script Callback, when the Particle System stops and all particles have died.</para>
+        <para>Select whether to Disable or Destroy the GameObject, or to call the MonoBehaviour.OnParticleSystemStopped script Callback, when the Particle System stops and all particles have died.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.ParticleSystem.MainModule.useUnscaledTime">
@@ -2126,7 +2145,7 @@ See Also: Trails, SetTrails, GetPlaybackState.</para>
     </member>
     <member name="P:UnityEngine.ParticleSystem.Particle.velocity">
       <summary>
-        <para>The velocity of the particle.</para>
+        <para>The velocity of the particle, measured in units per second.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.ParticleSystem.Particle.GetCurrentColor(UnityEngine.ParticleSystem)">
@@ -3661,6 +3680,11 @@ See Also: Trails, SetTrails, GetPlaybackState.</para>
         <para>Control how a Particle System calculates its velocity.</para>
       </summary>
     </member>
+    <member name="F:UnityEngine.ParticleSystemEmitterVelocityMode.Custom">
+      <summary>
+        <para>When the Particle System calculates its velocity, it instead uses the custom value set in ParticleSystem.MainModule.emitterVelocity.</para>
+      </summary>
+    </member>
     <member name="F:UnityEngine.ParticleSystemEmitterVelocityMode.Rigidbody">
       <summary>
         <para>Calculate the Particle System velocity by using a Rigidbody or Rigidbody2D component, if one exists on the GameObject.</para>
@@ -4012,6 +4036,21 @@ See Also: Trails, SetTrails, GetPlaybackState.</para>
         <para>The z-axis value for each particle.</para>
       </summary>
     </member>
+    <member name="T:UnityEngine.ParticleSystemMeshDistribution">
+      <summary>
+        <para>Sets which method Unity uses to randomly assign Meshes to particles.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ParticleSystemMeshDistribution.NonUniformRandom">
+      <summary>
+        <para>Use per-Mesh weights to make some Meshes appear more often than others. A higher weight value increases the chance of choosing the associated Mesh.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ParticleSystemMeshDistribution.UniformRandom">
+      <summary>
+        <para>Use a uniform random value to give each Mesh an equal chance to appear.</para>
+      </summary>
+    </member>
     <member name="T:UnityEngine.ParticleSystemMeshShapeType">
       <summary>
         <para>The mesh emission type.</para>
@@ -4135,6 +4174,11 @@ See Also: Trails, SetTrails, GetPlaybackState.</para>
     <member name="P:UnityEngine.ParticleSystemRenderer.meshCount">
       <summary>
         <para>The number of Meshes the system uses for particle rendering.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.ParticleSystemRenderer.meshDistribution">
+      <summary>
+        <para>Specifies how the system randomly assigns meshes to particles.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.ParticleSystemRenderer.minParticleSize">
@@ -4280,13 +4324,13 @@ The position stream is always enabled, and any attempts to remove it are ignored
     </member>
     <member name="M:UnityEngine.ParticleSystemRenderer.GetActiveVertexStreams(System.Collections.Generic.List`1&lt;UnityEngine.ParticleSystemVertexStream&gt;)">
       <summary>
-        <para>Query which Vertex Shader streams are enabled on the ParticleSystemRenderer.</para>
+        <para>Queries which Vertex Shader streams are enabled on the ParticleSystemRenderer.</para>
       </summary>
       <param name="streams">The array of streams to populate.</param>
     </member>
     <member name="M:UnityEngine.ParticleSystemRenderer.GetEnabledVertexStreams(UnityEngine.ParticleSystemVertexStreams)">
       <summary>
-        <para>Query whether the Particle System renderer uses a particular set of vertex streams.</para>
+        <para>Queries whether the Particle System renderer uses a particular set of vertex streams.</para>
       </summary>
       <param name="streams">Streams to query.</param>
       <returns>
@@ -4295,11 +4339,20 @@ The position stream is always enabled, and any attempts to remove it are ignored
     </member>
     <member name="M:UnityEngine.ParticleSystemRenderer.GetMeshes(UnityEngine.Mesh[])">
       <summary>
-        <para>Get the array of Meshes to be used as particles.</para>
+        <para>Gets the array of Meshes to use when selecting particle meshes.</para>
       </summary>
-      <param name="meshes">This array is populated with the list of Meshes being used for particle rendering.</param>
+      <param name="meshes">An array this function populates with the list of Meshes the ParticleSystemRenderer uses for particle Mesh selection. If the array is smaller than the number of Meshes, this function cannot populate it with every Mesh. If the array is larger than the number of Meshes, this function ignores indices greater than the number of Meshes. Use ParticleSystemRenderer.meshCount to get the number of Meshes the ParticleSystemRenderer has.</param>
       <returns>
-        <para>The number of Meshes actually written to the destination array.</para>
+        <para>The number of Meshes this function wrote to the destination array.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ParticleSystemRenderer.GetMeshWeightings(System.Single[])">
+      <summary>
+        <para>Gets the array of Mesh weightings to use when randomly selecting particle meshes.</para>
+      </summary>
+      <param name="weightings">An array this function populates with the list of Mesh weightings the ParticleSystemRenderer uses for particle Mesh selection. If the array is smaller than the number of weights, this function cannot populate it with every weight. If the array is larger than the number of weights, this function ignores indices greater than the number of weights. Use ParticleSystemRenderer.meshCount to get the number of Meshes, and thus weights, the ParticleSystemRenderer has.</param>
+      <returns>
+        <para>The number of weights this function wrote to the destination array.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.ParticleSystemRenderer.SetActiveVertexStreams(System.Collections.Generic.List`1&lt;UnityEngine.ParticleSystemVertexStream&gt;)">
@@ -4310,17 +4363,31 @@ The position stream is always enabled, and any attempts to remove it are ignored
     </member>
     <member name="M:UnityEngine.ParticleSystemRenderer.SetMeshes(UnityEngine.Mesh[])">
       <summary>
-        <para>Set an array of Meshes to use as particles when the ParticleSystemRenderer.renderMode is set to ParticleSystemRenderMode.Mesh.</para>
+        <para>Sets the Meshes that the ParticleSystemRenderer uses to display particles when the ParticleSystemRenderer.renderMode is set to ParticleSystemRenderMode.Mesh.</para>
       </summary>
-      <param name="meshes">Array of Meshes to use.</param>
-      <param name="size">Number of elements from the Mesh array to apply.</param>
+      <param name="meshes">The array of Meshes to use.</param>
+      <param name="size">The number of elements from the Mesh array to apply.</param>
     </member>
     <member name="M:UnityEngine.ParticleSystemRenderer.SetMeshes(UnityEngine.Mesh[],System.Int32)">
       <summary>
-        <para>Set an array of Meshes to use as particles when the ParticleSystemRenderer.renderMode is set to ParticleSystemRenderMode.Mesh.</para>
+        <para>Sets the Meshes that the ParticleSystemRenderer uses to display particles when the ParticleSystemRenderer.renderMode is set to ParticleSystemRenderMode.Mesh.</para>
       </summary>
-      <param name="meshes">Array of Meshes to use.</param>
-      <param name="size">Number of elements from the Mesh array to apply.</param>
+      <param name="meshes">The array of Meshes to use.</param>
+      <param name="size">The number of elements from the Mesh array to apply.</param>
+    </member>
+    <member name="M:UnityEngine.ParticleSystemRenderer.SetMeshWeightings(System.Single[],System.Int32)">
+      <summary>
+        <para>Sets the weights that the ParticleSystemRenderer uses to assign Meshes to particles.</para>
+      </summary>
+      <param name="weightings">The array of weights to use.</param>
+      <param name="size">The number of elements from the weighting array to apply.</param>
+    </member>
+    <member name="M:UnityEngine.ParticleSystemRenderer.SetMeshWeightings(System.Single[])">
+      <summary>
+        <para>Sets the weights that the ParticleSystemRenderer uses to assign Meshes to particles.</para>
+      </summary>
+      <param name="weightings">The array of weights to use.</param>
+      <param name="size">The number of elements from the weighting array to apply.</param>
     </member>
     <member name="T:UnityEngine.ParticleSystemRenderMode">
       <summary>
@@ -4646,7 +4713,7 @@ The position stream is always enabled, and any attempts to remove it are ignored
     </member>
     <member name="F:UnityEngine.ParticleSystemStopAction.Callback">
       <summary>
-        <para>Call OnParticleSystemStopped on the ParticleSystem script.</para>
+        <para>Call MonoBehaviour.OnParticleSystemStopped on all scripts attached to the same GameObject.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.ParticleSystemStopAction.Destroy">

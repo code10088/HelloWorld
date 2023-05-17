@@ -878,7 +878,7 @@ The newly built NavMeshData, or null if the NavMeshData was empty or an error oc
     </member>
     <member name="F:UnityEngine.AI.NavMeshBuildSourceShape.Mesh">
       <summary>
-        <para>Describes a Mesh source for use with NavMeshBuildSource.</para>
+        <para>Describes a Mesh source for use with NavMeshBuildSource. Mesh sources must be positioned within 100,000 units of the origin and must not exceed 100,000 units in any axis-aligned dimension.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.AI.NavMeshBuildSourceShape.ModifierBox">
@@ -1437,7 +1437,7 @@ Failure if the query's NavMeshWorld or any of the received parameters are no lon
       </summary>
       <param name="world">NavMeshWorld object used as an entry point to the collection of NavMesh objects. This object that can be used by query operations.</param>
       <param name="allocator">Label indicating the desired life time of the object. (Known issue: Currently allocator has no effect).</param>
-      <param name="pathNodePoolSize">The number of nodes that can be temporarily stored in the query during search operations. This value defaults to 0 if no other value is specified.</param>
+      <param name="pathNodePoolSize">The number of nodes temporarily stored in the query during search operations. The maximum number of nodes is 65,535. By default, if unspecified, the number of nodes is set to 0.</param>
     </member>
     <member name="M:UnityEngine.Experimental.AI.NavMeshQuery.Dispose">
       <summary>

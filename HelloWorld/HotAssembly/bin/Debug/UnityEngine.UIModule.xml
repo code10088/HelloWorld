@@ -158,7 +158,7 @@
     </member>
     <member name="P:UnityEngine.Canvas.worldCamera">
       <summary>
-        <para>Camera used for sizing the Canvas when in Screen Space - Camera. Also used as the Camera that events will be sent through for a World Space [[Canvas].</para>
+        <para>Camera used for sizing the Canvas when in Screen Space - Camera. Also used as the Camera that events will be sent through for a World Space Canvas.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.Canvas.ForceUpdateCanvases">
@@ -285,7 +285,7 @@ See Also: CanvasRenderer.EnableRectClipping, CanvasRenderer.DisableRectClipping.
     </member>
     <member name="M:UnityEngine.CanvasRenderer.AddUIVertexStream">
       <summary>
-        <para>Take the Vertex steam and split it corrisponding arrays (positions, colors, uv0s, uv1s, normals and tangents).</para>
+        <para>Take the Vertex stream and split it corrisponding arrays (positions, colors, uv0s, uv1s, normals and tangents).</para>
       </summary>
       <param name="verts">The UIVertex list to split.</param>
       <param name="positions">The destination list for the verts positions.</param>

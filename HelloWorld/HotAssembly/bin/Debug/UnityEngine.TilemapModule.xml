@@ -271,7 +271,7 @@ Only one class at any one time should set defaultBrush to true.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
-        <para>Color of the at the XY coordinate.</para>
+        <para>Color of the Tile at the XYZ coordinate.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.ITilemap.GetComponent">
@@ -288,16 +288,16 @@ Only one class at any one time should set defaultBrush to true.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
-        <para>Sprite at the XY coordinate.</para>
+        <para>Sprite at the XYZ coordinate.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.ITilemap.GetTile(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the Tile at the given XYZ coordinates of a cell in the|Tilemap.</para>
+        <para>Gets the Tile at the given XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
-        <para> placed at the cell.</para>
+        <para>Tile placed at the cell.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.ITilemap.GetTile(UnityEngine.Vector3Int)">
@@ -306,7 +306,7 @@ Only one class at any one time should set defaultBrush to true.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
-        <para> placed at the cell.</para>
+        <para>Tile of type T placed at the cell.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.ITilemap.GetTileFlags(UnityEngine.Vector3Int)">
@@ -459,6 +459,31 @@ Only one class at any one time should set defaultBrush to true.</para>
         <para>Whether the call was successful.</para>
       </returns>
     </member>
+    <member name="T:UnityEngine.Tilemaps.TileChangeData">
+      <summary>
+        <para>Represents the position and Tile information to change in a Tilemap.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Tilemaps.TileChangeData.color">
+      <summary>
+        <para>The color to set the Tile to.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Tilemaps.TileChangeData.position">
+      <summary>
+        <para>The position to change Tile properties at.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Tilemaps.TileChangeData.tile">
+      <summary>
+        <para>The Tile to set on the Tilemap.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Tilemaps.TileChangeData.transform">
+      <summary>
+        <para>The transform matrix to set the Tile to.</para>
+      </summary>
+    </member>
     <member name="T:UnityEngine.Tilemaps.TileData">
       <summary>
         <para>A Struct for the required data for rendering a Tile.</para>
@@ -496,7 +521,12 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="F:UnityEngine.Tilemaps.TileFlags.InstantiateGameObjectRuntimeOnly">
       <summary>
-        <para>TileBase does not instantiate its associated GameObject in editor mode and instantiates it only during play mode.</para>
+        <para>TileBase does not instantiate its associated GameObject in editor mode and instantiates it only during Play mode.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.Tilemaps.TileFlags.KeepGameObjectRuntimeOnly">
+      <summary>
+        <para>Keeps the TileBase's associated GameObject in Play mode when replaced with another TileBase or erased</para>
       </summary>
     </member>
     <member name="F:UnityEngine.Tilemaps.TileFlags.LockAll">
@@ -521,12 +551,12 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="T:UnityEngine.Tilemaps.Tilemap">
       <summary>
-        <para>The tile map stores component.</para>
+        <para>The Tilemap stores Sprites in a layout marked by a Grid component.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.animationFrameRate">
       <summary>
-        <para>The frame rate for all tile animations in the tile map.</para>
+        <para>The frame rate for all Tile animations in the Tilemap.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.cellBounds">
@@ -536,27 +566,27 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.color">
       <summary>
-        <para>The color of the tile map layer.</para>
+        <para>The color of the Tilemap layer.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.editorPreviewOrigin">
       <summary>
-        <para>The origin of the Tilemap in cell position inclusive of editor preview tiles.</para>
+        <para>The origin of the Tilemap in cell position inclusive of editor preview Tiles.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.editorPreviewSize">
       <summary>
-        <para>The size of the Tilemap in cells inclusive of editor preview tiles.</para>
+        <para>The size of the Tilemap in cells inclusive of editor preview Tiles.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.layoutGrid">
       <summary>
-        <para>Gets the Grid associated with this tile map.</para>
+        <para>Gets the Grid associated with this Tilemap.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.layoutGrid">
       <summary>
-        <para>Gets the Grid associated with this tile map.</para>
+        <para>Gets the Grid associated with this Tilemap.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.localBounds">
@@ -566,12 +596,12 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.orientation">
       <summary>
-        <para>Orientation of the tiles in the Tilemap.</para>
+        <para>Orientation of the Tiles in the Tilemap.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.orientationMatrix">
       <summary>
-        <para>Orientation Matrix of the orientation of the tiles in the Tilemap.</para>
+        <para>Orientation Matrix of the orientation of the Tiles in the Tilemap.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.origin">
@@ -586,7 +616,7 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="P:UnityEngine.Tilemaps.Tilemap.tileAnchor">
       <summary>
-        <para>Gets the anchor point of tiles in the Tilemap.</para>
+        <para>Gets the anchor point of Tiles in the Tilemap.</para>
       </summary>
     </member>
     <member name="?:UnityEngine.Tilemaps.Tilemap.tilemapTileChanged(System.Action`2&lt;UnityEngine.Tilemaps.Tilemap,UnityEngine.Tilemaps.Tilemap/SyncTile[]&gt;)">
@@ -604,10 +634,10 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.BoxFill(UnityEngine.Vector3Int,UnityEngine.Tilemaps.TileBase,System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>
-        <para>Does a box fill with the given. Starts from given coordinates and fills the limits from start to end (inclusive).</para>
+        <para>Does a box fill with the given Tile on the Tilemap. Starts from given coordinates and fills the limits from start to end (inclusive).</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
-      <param name="tile"> to place.</param>
+      <param name="tile">Tile to place.</param>
       <param name="startX">The minimum X coordinate limit to fill to.</param>
       <param name="startY">The minimum Y coordinate limit to fill to.</param>
       <param name="endX">The maximum X coordinate limit to fill to.</param>
@@ -615,26 +645,26 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.ClearAllEditorPreviewTiles">
       <summary>
-        <para>Clears all editor preview tiles that are placed in the Tilemap.</para>
+        <para>Clears all editor preview Tiles that are placed in the Tilemap.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.ClearAllTiles">
       <summary>
-        <para>Clears all tiles that are placed in the Tilemap.</para>
+        <para>Clears all Tiles that are placed in the Tilemap.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.CompressBounds">
       <summary>
-        <para>Compresses the origin and size of the Tilemap to bounds where tiles exist.</para>
+        <para>Compresses the origin and size of the Tilemap to bounds where Tiles exist.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.ContainsTile(UnityEngine.Tilemaps.TileBase)">
       <summary>
-        <para>Returns true if the Tilemap contains the given. Returns false if not.</para>
+        <para>Returns true if the Tilemap contains the given Tile. Returns false if not.</para>
       </summary>
       <param name="tileAsset">Tile to check.</param>
       <returns>
-        <para>Whether the Tilemap contains the tile.</para>
+        <para>Whether the Tilemap contains the Tile.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.DeleteCells(UnityEngine.Vector3Int,UnityEngine.Vector3Int)">
@@ -655,10 +685,10 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.EditorPreviewBoxFill(UnityEngine.Vector3Int,UnityEngine.Object,System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>
-        <para>Does an editor preview of a box fill with the given. Starts from given coordinates and fills the limits from start to end (inclusive).</para>
+        <para>Does an editor preview of a box fill with the given Tile on the Tilemap. Starts from given coordinates and fills the limits from start to end (inclusive).</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
-      <param name="tile"> to place.</param>
+      <param name="tile">Tile to place.</param>
       <param name="startX">The start X coordinate limit to fill to.</param>
       <param name="startY">The start Y coordinate limit to fill to.</param>
       <param name="endX">The ending X coordinate limit to fill to.</param>
@@ -666,88 +696,115 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.EditorPreviewFloodFill(UnityEngine.Vector3Int,UnityEngine.Tilemaps.TileBase)">
       <summary>
-        <para>Does an editor preview of a flood fill with the given starting from the given coordinates.</para>
+        <para>Does an editor preview of a flood fill with the given Tile to place. on the Tilemap starting from the given coordinates.</para>
       </summary>
       <param name="position">Start position of the flood fill on the Tilemap.</param>
       <param name="tile">TileBase to place.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.FloodFill(UnityEngine.Vector3Int,UnityEngine.Tilemaps.TileBase)">
       <summary>
-        <para>Does a flood fill with the given starting from the given coordinates.</para>
+        <para>Does a flood fill with the given Tile to place. on the Tilemap starting from the given coordinates.</para>
       </summary>
       <param name="position">Start position of the flood fill on the Tilemap.</param>
-      <param name="tile"> to place.</param>
+      <param name="tile">Tile to place.</param>
     </member>
-    <member name="M:UnityEngine.Tilemaps.Tilemap.GetCellCenterLocal(UnityEngine.Vector3Int)">
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetAnimationFrame(UnityEngine.Vector3Int)">
       <summary>
-        <para>Get the logical center coordinate of a grid cell in local space.</para>
+        <para>Retrieves the current animation frame for a Tile at the given position.</para>
       </summary>
       <param name="position">Grid cell position.</param>
       <returns>
-        <para>Center of the cell transformed into local space coordinates.</para>
+        <para>Returns the current animation frame. Returns -1 when there is no animation for the Tile at the given position.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetAnimationFrameCount(UnityEngine.Vector3Int)">
+      <summary>
+        <para>Retrieves the number of animation frames for a Tile at the given position.</para>
+      </summary>
+      <param name="position">Grid cell position.</param>
+      <returns>
+        <para>Returns the number of animation frames. Returns 0 when there is no animation for the Tile at the given position.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetAnimationTime(UnityEngine.Vector3Int)">
+      <summary>
+        <para>Retrieves the current running animation time for a Tile at the given position.</para>
+      </summary>
+      <param name="position">Grid cell position.</param>
+      <returns>
+        <para>Returns the running animation time in seconds.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetCellCenterLocal(UnityEngine.Vector3Int)">
+      <summary>
+        <para>Gets the logical center coordinate of a Grid cell in local space. The logical center for a cell of the Tilemap is defined by the Tile Anchor of the Tilemap.</para>
+      </summary>
+      <param name="position">Grid cell position.</param>
+      <returns>
+        <para>Returns the center of the cell transformed into local space coordinates.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetCellCenterWorld(UnityEngine.Vector3Int)">
       <summary>
-        <para>Get the logical center coordinate of a grid cell in world space.</para>
+        <para>Gets the logical center coordinate of a Grid cell in world space. The logical center for a cell of the Tilemap is defined by the Tile Anchor of the Tilemap.</para>
       </summary>
       <param name="position">Grid cell position.</param>
       <returns>
-        <para>Center of the cell transformed into world space coordinates.</para>
+        <para>Returns the center of the cell transformed into world space coordinates.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetColliderType(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the collider type of a.</para>
+        <para>Gets the Collider type of a Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
-        <para>Collider type of the at the XY coordinate.</para>
+        <para>Collider type of the Tile at the XYZ coordinate.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetColor(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the color of a.</para>
+        <para>Gets the Color of a Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
-        <para>Color of the at the XY coordinate.</para>
+        <para>Color of the Tile at the XYZ coordinate.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetEditorPreviewColor(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the Color of an editor preview.</para>
+        <para>Gets the Color of an editor preview Tile given the XYZ coordinates of a cell in the  Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
-        <para>Color of the editor preview at the XY coordinate.</para>
+        <para>Color of the editor preview Tile at the XYZ coordinate.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetEditorPreviewSprite(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the.</para>
+        <para>Gets the Sprite used in an editor preview Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the editor preview Tile on the Tilemap.</param>
       <returns>
-        <para>Sprite at the XY coordinate.</para>
+        <para>Sprite at the XYZ coordinate.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetEditorPreviewTile(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the editor preview.</para>
+        <para>Gets the editor preview Tile at the given XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the editor preview Tile on the Tilemap.</param>
       <returns>
-        <para>The editor preview placed at the cell.</para>
+        <para>The editor preview Tile placed at the cell.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetEditorPreviewTile(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the editor preview.</para>
+        <para>Gets the editor preview Tile at the given XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the editor preview Tile on the Tilemap.</param>
       <returns>
-        <para>The editor preview placed at the cell.</para>
+        <para>The editor preview Tile placed at the cell.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetEditorPreviewTileFlags(UnityEngine.Vector3Int)">
@@ -761,7 +818,7 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetEditorPreviewTransformMatrix(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the transform matrix of an editor preview.</para>
+        <para>Gets the transform matrix of an editor preview Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the editor preview Tile on the Tilemap.</param>
       <returns>
@@ -770,7 +827,7 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetInstantiatedObject(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the.</para>
+        <para>Gets the GameObject instantiated by a Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
@@ -779,7 +836,7 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetObjectToInstantiate(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the.</para>
+        <para>Gets the GameObject which will be instantiated by a Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">The position of the Tile on the Tilemap.</param>
       <returns>
@@ -788,16 +845,16 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetSprite(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the.</para>
+        <para>Gets the Sprite used in a Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
-        <para>Sprite at the XY coordinate.</para>
+        <para>Sprite at the XYZ coordinate.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetTile(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the.</para>
+        <para>Gets the Tile at the given XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
@@ -806,7 +863,7 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetTile(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the.</para>
+        <para>Gets the Tile of type T at the given XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
@@ -824,42 +881,91 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetTilesBlock(UnityEngine.BoundsInt)">
       <summary>
-        <para>Retrieves an array of tiles with the given bounds.</para>
+        <para>Retrieves an array of Tiles with the given bounds.</para>
       </summary>
-      <param name="bounds">Bounds to retrieve from.</param>
+      <param name="bounds">The bounds to retrieve from.</param>
       <returns>
-        <para>An array of at the given bounds.</para>
+        <para>The array of Tiles at the given bounds.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetTilesBlockNonAlloc(UnityEngine.BoundsInt,UnityEngine.Tilemaps.TileBase[])">
+      <summary>
+        <para>Retrieves an array of Tiles with the given bounds.</para>
+      </summary>
+      <param name="bounds">The bounds to retrieve from.</param>
+      <param name="tiles">The array of Tiles to contain the Tiles at the given bounds.</param>
+      <returns>
+        <para>Returns the number of Tiles retrieved, including null entries.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetTilesRangeCount(UnityEngine.Vector3Int,UnityEngine.Vector3Int)">
+      <summary>
+        <para>Retrieves the number of Tiles within the given range, inclusive of the Cells at both the starting position and the ending positions. This method begins at the given starting position and iterates through all available Z Positions, then iterates through the X and Y positions until it reaches the ending position.</para>
+      </summary>
+      <param name="startPosition">The starting position of the range to retrieve Tiles from.</param>
+      <param name="endPosition">The ending position of the range to retrieve Tiles from.</param>
+      <returns>
+        <para>Returns the number of Tiles within the given range.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetTilesRangeNonAlloc(UnityEngine.Vector3Int,UnityEngine.Vector3Int,UnityEngine.Vector3Int[],UnityEngine.Tilemaps.TileBase[])">
+      <summary>
+        <para>Retrieves an array of Tiles within the given range, inclusive of the Cells at both the starting position and the ending positions. This method begins at the given starting position and iterates through all available Z Positions, then iterates through the X and Y positions until it reaches the ending position.</para>
+      </summary>
+      <param name="startPosition">The starting position of the range to retrieve Tiles from.</param>
+      <param name="endPosition">The ending position of the range to retrieve Tiles from.</param>
+      <param name="positions">The positions of Tiles within the given range.</param>
+      <param name="tiles">The Tiles within the given range.</param>
+      <returns>
+        <para>Returns the number of positions and Tiles retrieved.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetTransformMatrix(UnityEngine.Vector3Int)">
       <summary>
-        <para>Gets the transform matrix of a.</para>
+        <para>Gets the transform matrix of a Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <returns>
         <para>The transform matrix.</para>
       </returns>
     </member>
-    <member name="M:UnityEngine.Tilemaps.Tilemap.GetUsedTilesCount">
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetUsedSpritesCount">
       <summary>
-        <para>Get the total number of different.</para>
+        <para>Gets the total number of different Sprites used in the Tilemap.</para>
       </summary>
       <returns>
-        <para>The total number of different.</para>
+        <para>The total number of different Sprites used in the Tilemap.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetUsedSpritesNonAlloc(UnityEngine.Sprite[])">
+      <summary>
+        <para>Fills the given array with the total number of different Sprites used in the Tilemap and returns the number of Sprites filled.</para>
+      </summary>
+      <param name="usedSprites">The array to be filled.</param>
+      <returns>
+        <para>The number of Sprites filled.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.GetUsedTilesCount">
+      <summary>
+        <para>Gets the total number of different Tiles used in the Tilemap.</para>
+      </summary>
+      <returns>
+        <para>The total number of different Tiles used in the Tilemap.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.GetUsedTilesNonAlloc(UnityEngine.Tilemaps.TileBase[])">
       <summary>
-        <para>Fills the given array with the total number of different and returns the number of tiles filled.</para>
+        <para>Fills the given array with the total number of different Tiles used in the Tilemap and returns the number of Tiles filled.</para>
       </summary>
       <param name="usedTiles">The array to be filled.</param>
       <returns>
-        <para>The number of tiles filled.</para>
+        <para>The number of Tiles filled.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.HasEditorPreviewTile(UnityEngine.Vector3Int)">
       <summary>
-        <para>Returns whether there is an editor preview tile at the position.</para>
+        <para>Returns whether there is an editor preview Tile at the position.</para>
       </summary>
       <param name="position">Position to check.</param>
       <returns>
@@ -868,7 +974,7 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.HasTile(UnityEngine.Vector3Int)">
       <summary>
-        <para>Returns whether there is a tile at the position.</para>
+        <para>Returns whether there is a Tile at the position.</para>
       </summary>
       <param name="position">Position to check.</param>
       <returns>
@@ -893,7 +999,7 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="T:UnityEngine.Tilemaps.Tilemap.Orientation">
       <summary>
-        <para>Determines the orientation of.</para>
+        <para>Determines the orientation of Tiles in the Tilemap.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.Tilemaps.Tilemap.Orientation.Custom">
@@ -903,42 +1009,42 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="F:UnityEngine.Tilemaps.Tilemap.Orientation.XY">
       <summary>
-        <para>Orients tiles in the XY plane.</para>
+        <para>Orients Tiles in the XY plane.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.Tilemaps.Tilemap.Orientation.XZ">
       <summary>
-        <para>Orients tiles in the XZ plane.</para>
+        <para>Orients Tiles in the XZ plane.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.Tilemaps.Tilemap.Orientation.YX">
       <summary>
-        <para>Orients tiles in the YX plane.</para>
+        <para>Orients Tiles in the YX plane.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.Tilemaps.Tilemap.Orientation.YZ">
       <summary>
-        <para>Orients tiles in the YZ plane.</para>
+        <para>Orients Tiles in the YZ plane.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.Tilemaps.Tilemap.Orientation.ZX">
       <summary>
-        <para>Orients tiles in the ZX plane.</para>
+        <para>Orients Tiles in the ZX plane.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.Tilemaps.Tilemap.Orientation.ZY">
       <summary>
-        <para>Orients tiles in the ZY plane.</para>
+        <para>Orients Tiles in the ZY plane.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.RefreshAllTiles">
       <summary>
-        <para>Refreshes all. The tile map will retrieve the rendering data, animation data and other data for all tiles and update all relevant components.</para>
+        <para>Refreshes all Tiles in the Tilemap. The Tilemap will retrieve the rendering data, animation data and other data for all tiles and update all relevant components.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.RefreshTile(UnityEngine.Vector3Int)">
       <summary>
-        <para>Refreshes a.</para>
+        <para>Refreshes a Tile at the given XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
     </member>
@@ -951,50 +1057,71 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.ResizeBounds">
       <summary>
-        <para>Resizes tiles in the Tilemap to bounds defined by origin and size.</para>
+        <para>Resizes Tiles in the Tilemap to bounds defined by origin and size.</para>
       </summary>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.SetAnimationFrame(UnityEngine.Vector3Int,System.Int32)">
+      <summary>
+        <para>Sets the current animation frame for a Tile at the given position.</para>
+      </summary>
+      <param name="position">The grid cell position.</param>
+      <param name="frame">The animation frame to set to.</param>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.SetAnimationTime(UnityEngine.Vector3Int,System.Single)">
+      <summary>
+        <para>Sets the running animation time for a Tile at the given position.</para>
+      </summary>
+      <param name="position">The grid cell position.</param>
+      <param name="time">The running animation time in seconds.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetColliderType(UnityEngine.Vector3Int,UnityEngine.Tilemaps.Tile/ColliderType)">
       <summary>
-        <para>Sets the collider type of a.</para>
+        <para>Sets the Collider type of a Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
-      <param name="colliderType">Collider type to set the to at the XYZ coordinate.</param>
+      <param name="colliderType">Collider type to set the Tile to at the XYZ coordinate.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetColor(UnityEngine.Vector3Int,UnityEngine.Color)">
       <summary>
-        <para>Sets the color of a.</para>
+        <para>Sets the color of a Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
-      <param name="color">Color to set the to at the XY coordinate.</param>
+      <param name="color">Color to set the Tile to at the XYZ coordinate.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetEditorPreviewColor(UnityEngine.Vector3Int,UnityEngine.Color)">
       <summary>
-        <para>Sets the color of an editor preview.</para>
+        <para>Sets the color of an editor preview Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the editor preview Tile on the Tilemap.</param>
-      <param name="color">Color to set the editor preview to at the XY coordinate.</param>
+      <param name="color">Color to set the editor preview Tile to at the XYZ coordinate.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetEditorPreviewTile(UnityEngine.Vector3Int,UnityEngine.Tilemaps.TileBase)">
       <summary>
-        <para>Sets an editor preview.</para>
+        <para>Sets an editor preview Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the editor preview Tile on the Tilemap.</param>
-      <param name="tile">The editor preview to be placed the cell.</param>
+      <param name="tile">The editor preview Tile to be placed the cell.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetEditorPreviewTransformMatrix(UnityEngine.Vector3Int,UnityEngine.Matrix4x4)">
       <summary>
-        <para>Sets the transform matrix of an editor preview tile given the XYZ coordinates of a cell in the.</para>
+        <para>Sets the transform matrix of an editor preview Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the editor preview Tile on the Tilemap.</param>
       <param name="transform">The transform matrix.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetTile(UnityEngine.Vector3Int,UnityEngine.Tilemaps.TileBase)">
       <summary>
-        <para>Sets a.</para>
+        <para>Sets a Tile at the given XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
-      <param name="tile"> to be placed the cell.</param>
+      <param name="tile">The Tile to be placed in the cell.</param>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.SetTile(UnityEngine.Tilemaps.TileChangeData,System.Boolean)">
+      <summary>
+        <para>Sets a Tile with additional properties at the given XYZ coordinates of a cell in the Tilemap.</para>
+      </summary>
+      <param name="tileChangeData">The Tile with additional properties to be placed in the cell.</param>
+      <param name="ignoreLockFlags">Whether to ignore Lock Flags set in the Tile's TileFlags when applying Color and Transform changes from TileChangeData.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetTileFlags(UnityEngine.Vector3Int,UnityEngine.Tilemaps.TileFlags)">
       <summary>
@@ -1005,28 +1132,35 @@ Only one class at any one time should set defaultBrush to true.</para>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetTiles(UnityEngine.Vector3Int[],UnityEngine.Tilemaps.TileBase[])">
       <summary>
-        <para>Sets an array of.</para>
+        <para>Sets an array of Tiles at the given XYZ coordinates of the corresponding cells in the Tilemap.</para>
       </summary>
       <param name="positionArray">An array of positions of Tiles on the Tilemap.</param>
-      <param name="tileArray">An array of to be placed.</param>
+      <param name="tileArray">An array of Tiles to be placed.</param>
+    </member>
+    <member name="M:UnityEngine.Tilemaps.Tilemap.SetTiles(UnityEngine.Tilemaps.TileChangeData[],System.Boolean)">
+      <summary>
+        <para>Sets an array of Tiles with additonal properties at the given XYZ coordinates of the corresponding cells in the Tilemap. The Color and Transform of the TileChangeData will take precedence over the values from the Tile.</para>
+      </summary>
+      <param name="tileChangeDataArray">The array of Tiles with additional properties to place.</param>
+      <param name="ignoreLockFlags">Whether to ignore Lock Flags set in the Tile's TileFlags when applying Color and Transform changes from TileChangeData.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetTilesBlock(UnityEngine.BoundsInt,UnityEngine.Tilemaps.TileBase[])">
       <summary>
-        <para>Fills bounds with array of tiles.</para>
+        <para>Fills bounds with array of Tiles.</para>
       </summary>
       <param name="position">Bounds to be filled.</param>
-      <param name="tileArray">An array of to be placed.</param>
+      <param name="tileArray">An array of Tiles to be placed.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SetTransformMatrix(UnityEngine.Vector3Int,UnityEngine.Matrix4x4)">
       <summary>
-        <para>Sets the transform matrix of a tile given the XYZ coordinates of a cell in the.</para>
+        <para>Sets the transform matrix of a Tile given the XYZ coordinates of a cell in the Tilemap.</para>
       </summary>
       <param name="position">Position of the Tile on the Tilemap.</param>
       <param name="transform">The transform matrix.</param>
     </member>
     <member name="M:UnityEngine.Tilemaps.Tilemap.SwapTile(UnityEngine.Tilemaps.TileBase,UnityEngine.Tilemaps.TileBase)">
       <summary>
-        <para>Swaps all existing tiles of changeTile to newTile and refreshes all the swapped tiles.</para>
+        <para>Swaps all existing Tiles of changeTile to newTile and refreshes all the swapped Tiles.</para>
       </summary>
       <param name="changeTile">Tile to swap.</param>
       <param name="newTile">Tile to swap to.</param>

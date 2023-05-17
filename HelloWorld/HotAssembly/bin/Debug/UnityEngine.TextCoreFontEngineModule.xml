@@ -2,7 +2,7 @@
 <doc>
   <members>
     <assembly>
-      <name>UnityEngine.TextCoreModule</name>
+      <name>UnityEngine.TextCoreFontEngineModule</name>
     </assembly>
     <member name="T:UnityEngine.TextCore.FaceInfo">
       <summary>
@@ -123,6 +123,11 @@
         <para>The index of the atlas texture that contains this glyph.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.TextCore.Glyph.classDefinitionType">
+      <summary>
+        <para>Glyph class definition type.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.TextCore.Glyph.glyphRect">
       <summary>
         <para>A rectangle that defines the position of a glyph within an atlas texture.</para>
@@ -195,6 +200,36 @@
       <param name="glyphRect">The GlyphRect defining the position of the glyph in the atlas texture.</param>
       <param name="scale">The relative scale of the glyph.</param>
       <param name="atlasIndex">The index of the atlas texture that contains the glyph.</param>
+    </member>
+    <member name="T:UnityEngine.TextCore.GlyphClassDefinitionType">
+      <summary>
+        <para>Options to specify the glyph class definition type.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TextCore.GlyphClassDefinitionType.Base">
+      <summary>
+        <para>Defines the glyph as a Base glyph.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TextCore.GlyphClassDefinitionType.Component">
+      <summary>
+        <para>Defines the glyph as a Component glyph.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TextCore.GlyphClassDefinitionType.Ligature">
+      <summary>
+        <para>Defines the glyph as a Ligature.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TextCore.GlyphClassDefinitionType.Mark">
+      <summary>
+        <para>Defines the glyph as a Mark glyph.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TextCore.GlyphClassDefinitionType.Undefined">
+      <summary>
+        <para>Defines the glyph as Undefined.</para>
+      </summary>
     </member>
     <member name="T:UnityEngine.TextCore.GlyphMetrics">
       <summary>
@@ -321,10 +356,10 @@ The FontEngine is also used to raster the visual representation of characters kn
     </member>
     <member name="M:UnityEngine.TextCore.LowLevel.FontEngine.GetSystemFontNames">
       <summary>
-        <para>Gets the family names and styles of the system fonts.</para>
+        <para>Gets the family and style names of the system fonts.</para>
       </summary>
       <returns>
-        <para>The names and styles of the system fonts.</para>
+        <para>String array that contains the family and style names of the system fonts.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.TextCore.LowLevel.FontEngine.InitializeFontEngine">
@@ -622,6 +657,11 @@ The FontEngine is also used to raster the visual representation of characters kn
         <para>Error code indicating failure to load one of the tables of the font file.</para>
       </summary>
     </member>
+    <member name="F:UnityEngine.TextCore.LowLevel.FontEngineError.OpenTypeLayoutLookup_Mismatch">
+      <summary>
+        <para>OpenType Layout related errors.</para>
+      </summary>
+    </member>
     <member name="F:UnityEngine.TextCore.LowLevel.FontEngineError.Success">
       <summary>
         <para>Error code returned when the function was successfully executed.</para>
@@ -657,6 +697,11 @@ The FontEngine is also used to raster the visual representation of characters kn
     <member name="F:UnityEngine.TextCore.LowLevel.GlyphLoadFlags.LOAD_BITMAP_METRICS_ONLY">
       <summary>
         <para>Load glyph metrics without allocating and loading the bitmap data.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TextCore.LowLevel.GlyphLoadFlags.LOAD_COLOR">
+      <summary>
+        <para>Load glyph metrics and render using color bitmaps.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.TextCore.LowLevel.GlyphLoadFlags.LOAD_COMPUTE_METRICS">
@@ -759,6 +804,16 @@ The FontEngine is also used to raster the visual representation of characters kn
     <member name="T:UnityEngine.TextCore.LowLevel.GlyphRenderMode">
       <summary>
         <para>The rendering modes used by the Font Engine to render glyphs.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TextCore.LowLevel.GlyphRenderMode.COLOR">
+      <summary>
+        <para>Renders a color bitmap image representation of the glyph no hinting.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.TextCore.LowLevel.GlyphRenderMode.COLOR_HINTED">
+      <summary>
+        <para>Renders a color bitmap image representation of the glyph with hinting.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.TextCore.LowLevel.GlyphRenderMode.RASTER">

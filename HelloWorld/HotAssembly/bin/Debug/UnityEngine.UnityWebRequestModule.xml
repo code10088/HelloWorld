@@ -43,6 +43,11 @@
         <para>Returns true if this DownloadHandler has been informed by its parent UnityWebRequest that all data has been received, and this DownloadHandler has completed any necessary post-download processing. (Read Only)</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Networking.DownloadHandler.nativeData">
+      <summary>
+        <para>Provides direct access to downloaded data.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.Networking.DownloadHandler.text">
       <summary>
         <para>Convenience property. Returns the bytes from data interpreted as a UTF8 string. (Read Only)</para>
@@ -64,6 +69,14 @@
       </summary>
       <returns>
         <para>Byte array to return as the value of the data property.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.Networking.DownloadHandler.GetNativeData">
+      <summary>
+        <para>Provides allocation-free access to the downloaded data as a NativeArray.</para>
+      </summary>
+      <returns>
+        <para>NativeArray providing access to downloaded data.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.Networking.DownloadHandler.GetProgress">
@@ -121,14 +134,6 @@
       <param name="www">A finished UnityWebRequest object with DownloadHandlerBuffer attached.</param>
       <returns>
         <para>The same as DownloadHandlerBuffer.text</para>
-      </returns>
-    </member>
-    <member name="M:UnityEngine.Networking.DownloadHandlerBuffer.GetData">
-      <summary>
-        <para>Returns a copy of the contents of the native-memory data buffer as a byte array.</para>
-      </summary>
-      <returns>
-        <para>A copy of the data which has been downloaded.</para>
       </returns>
     </member>
     <member name="T:UnityEngine.Networking.DownloadHandlerFile">
@@ -994,6 +999,19 @@ You can yield until it continues, register an event handler with AsyncOperation.
         <para>General constructor. Contents of the input argument are copied into a native buffer.</para>
       </summary>
       <param name="data">Raw data to transmit to the remote server.</param>
+    </member>
+    <member name="M:UnityEngine.Networking.UploadHandlerRaw.#ctor(Unity.Collections.NativeArray`1&lt;System.Byte&gt;,System.Boolean)">
+      <summary>
+        <para>Creates an upload handler using NativeArray.</para>
+      </summary>
+      <param name="data">The raw data to transmit to the remote server.</param>
+      <param name="transferOwnership">When true, the upload handler takes ownership of the passed NativeArray. This means the upload handler will dispose of the NativeArray when the upload handler itself is disposed of. When false, NativeArray is owned by the caller and you must ensure it remains valid until the upload is complete.</param>
+    </member>
+    <member name="M:UnityEngine.Networking.UploadHandlerRaw.#ctor(Unity.Collections.NativeArray`1/ReadOnly&lt;System.Byte&gt;)">
+      <summary>
+        <para>Creates an upload handler using a read-only NativeArray. The passed array is owned by the caller and you must ensure it remains valid until the upload is complete.</para>
+      </summary>
+      <param name="data">The raw data to transmit to the remote server.</param>
     </member>
     <member name="A:UnityEngine.UnityWebRequestModule">
       <summary>

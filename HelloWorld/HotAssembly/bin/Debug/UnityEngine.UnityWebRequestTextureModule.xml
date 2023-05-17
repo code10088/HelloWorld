@@ -34,14 +34,6 @@
         <para>The same as DownloadHandlerTexture.texture</para>
       </returns>
     </member>
-    <member name="M:UnityEngine.Networking.DownloadHandlerTexture.GetData">
-      <summary>
-        <para>Called by DownloadHandler.data. Returns a copy of the downloaded image data as raw bytes.</para>
-      </summary>
-      <returns>
-        <para>A copy of the downloaded data.</para>
-      </returns>
-    </member>
     <member name="T:UnityEngine.Networking.UnityWebRequestTexture">
       <summary>
         <para>Helpers for downloading image files into Textures using UnityWebRequest.</para>

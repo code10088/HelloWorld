@@ -80,6 +80,11 @@
         <para>Use this field to add this template to the list of default templates in the New scene dialog.</para>
       </summary>
     </member>
+    <member name="F:UnityEditor.SceneTemplate.SceneTemplateAsset.badge">
+      <summary>
+        <para>Badge that will be displayed in an overlay over a Scene Template screenshot. Allows to specify 3D or 2D mode for various templates.</para>
+      </summary>
+    </member>
     <member name="F:UnityEditor.SceneTemplate.SceneTemplateAsset.dependencies">
       <summary>
         <para>Lists Scene dependencies, and specifies whether to clone or reference each one.</para>

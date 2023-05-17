@@ -29,6 +29,26 @@
         <para>The Camera's normal buffer.</para>
       </summary>
     </member>
+    <member name="T:UnityEngine.VFX.VFXCameraXRSettings">
+      <summary>
+        <para>Represents settings that specify how the Visual Effect Graph should handle an XR Camera.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.VFX.VFXCameraXRSettings.viewCount">
+      <summary>
+        <para>The number of views to render in the pass. In Unity, there are different methods of rendering a Camera in XR. For multiple pass rendering, viewTotal is 2 and viewCount will be 1. For other XR rendering methods, both viewTotal and viewCount are 2.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.VFX.VFXCameraXRSettings.viewOffset">
+      <summary>
+        <para>Indicates where to start rendering views in this pass. Currently, the Visual Effect Graph uses this for multiple pass XR rendering. In this case, the first pass value is 0 and the second pass is 1. For other XR rendering methods, this is 0.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.VFX.VFXCameraXRSettings.viewTotal">
+      <summary>
+        <para>The number of views the camera has in total. For a normal Camera, this is 1. For a Camera in XR, this is 2.</para>
+      </summary>
+    </member>
     <member name="T:UnityEngine.VFX.VFXEventAttribute">
       <summary>
         <para>This class handles the properties that you transmit to a system using a VFX.VisualEffect.SendEvent.</para>
@@ -663,6 +683,14 @@
         <para>Use this method to prepare per-Camera VFX commands for this frame.</para>
       </summary>
       <param name="cam">The Camera to prepare for processing VFX commands.</param>
+      <param name="camXRSettings">The XR settings that the Visual Effect Graph uses to prepare the Camera.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VFXManager.PrepareCamera(UnityEngine.Camera,UnityEngine.VFX.VFXCameraXRSettings)">
+      <summary>
+        <para>Use this method to prepare per-Camera VFX commands for this frame.</para>
+      </summary>
+      <param name="cam">The Camera to prepare for processing VFX commands.</param>
+      <param name="camXRSettings">The XR settings that the Visual Effect Graph uses to prepare the Camera.</param>
     </member>
     <member name="M:UnityEngine.VFX.VFXManager.ProcessCamera(UnityEngine.Camera)">
       <summary>
@@ -676,6 +704,15 @@
       </summary>
       <param name="cam">The Camera to process the VFX commands for.</param>
       <param name="cmd">The CommandBuffer to push commands to (can be null).</param>
+      <param name="camXRSettings">The XR settings that the Visual Effect Graph uses to process the Camera commands.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VFXManager.ProcessCameraCommand(UnityEngine.Camera,UnityEngine.Rendering.CommandBuffer,UnityEngine.VFX.VFXCameraXRSettings)">
+      <summary>
+        <para>Use this method to process per-Camera VFX commands for the current frame.</para>
+      </summary>
+      <param name="cam">The Camera to process the VFX commands for.</param>
+      <param name="cmd">The CommandBuffer to push commands to (can be null).</param>
+      <param name="camXRSettings">The XR settings that the Visual Effect Graph uses to process the Camera commands.</param>
     </member>
     <member name="M:UnityEngine.VFX.VFXManager.SetCameraBuffer(UnityEngine.Camera,UnityEngine.VFX.VFXCameraBufferTypes,UnityEngine.Texture,System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>
@@ -920,27 +957,27 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetAnimationCurve(System.Int32)">
       <summary>
-        <para>Gets the value of a named animation curve property</para>
+        <para>Gets the value of a named Animation Curve property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
       <returns>
-        <para>The value for the animation curve you specify. Returns an empty animation curve if VFX.VisualEffect.HasAnimationCurve returns false.</para>
+        <para>The value for the Animation Curve you specify. Returns an empty Animation Curve if VFX.VisualEffect.HasAnimationCurve returns false.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetAnimationCurve(System.String)">
       <summary>
-        <para>Gets the value of a named animation curve property</para>
+        <para>Gets the value of a named Animation Curve property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
       <returns>
-        <para>The value for the animation curve you specify. Returns an empty animation curve if VFX.VisualEffect.HasAnimationCurve returns false.</para>
+        <para>The value for the Animation Curve you specify. Returns an empty Animation Curve if VFX.VisualEffect.HasAnimationCurve returns false.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetBool(System.Int32)">
       <summary>
-        <para>Gets the value of a named bool property</para>
+        <para>Gets the value of a named bool property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -950,7 +987,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetBool(System.String)">
       <summary>
-        <para>Gets the value of a named bool property</para>
+        <para>Gets the value of a named bool property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -960,7 +997,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetFloat(System.Int32)">
       <summary>
-        <para>Gets the value of a named float property</para>
+        <para>Gets the value of a named float property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -970,7 +1007,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetFloat(System.String)">
       <summary>
-        <para>Gets the value of a named float property</para>
+        <para>Gets the value of a named float property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -980,22 +1017,22 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetGradient(System.Int32)">
       <summary>
-        <para>Gets the value of a named gradient property</para>
+        <para>Gets the value of a named Gradient property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
       <returns>
-        <para>The value for the gradient you specify. Returns an empty gradient if VFX.VisualEffect.HasGradient returns false.</para>
+        <para>The value for the Gradient you specify. Returns an empty Gradient if VFX.VisualEffect.HasGradient returns false.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetGradient(System.String)">
       <summary>
-        <para>Gets the value of a named gradient property</para>
+        <para>Gets the value of a named Gradient property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
       <returns>
-        <para>The value for the gradient you specify. Returns an empty gradient if VFX.VisualEffect.HasGradient returns false.</para>
+        <para>The value for the Gradient you specify. Returns an empty Gradient if VFX.VisualEffect.HasGradient returns false.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetInt(System.Int32)">
@@ -1020,7 +1057,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetMatrix4x4(System.Int32)">
       <summary>
-        <para>Gets the value of a named Matrix4x4 property</para>
+        <para>Gets the value of a named Matrix4x4 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1030,7 +1067,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetMatrix4x4(System.String)">
       <summary>
-        <para>Gets the value of a named Matrix4x4 property</para>
+        <para>Gets the value of a named Matrix4x4 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1040,22 +1077,22 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetMesh(System.Int32)">
       <summary>
-        <para>Gets the value of a named mesh property</para>
+        <para>Gets the value of a named Mesh property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
       <returns>
-        <para>The value for the mesh you specify. Returns null if VFX.VisualEffect.HasMesh returns false.</para>
+        <para>The value for the Mesh you specify. Returns null if VFX.VisualEffect.HasMesh returns false.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetMesh(System.String)">
       <summary>
-        <para>Gets the value of a named mesh property</para>
+        <para>Gets the value of a named Mesh property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
       <returns>
-        <para>The value for the mesh you specify. Returns null if VFX.VisualEffect.HasMesh returns false.</para>
+        <para>The value for the Mesh you specify. Returns null if VFX.VisualEffect.HasMesh returns false.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetOutputEventNames(System.Collections.Generic.List`1&lt;System.String&gt;)">
@@ -1090,14 +1127,24 @@
       </summary>
       <param name="names">The List that this function populates with the particle system names.</param>
     </member>
-    <member name="M:UnityEngine.VFX.VisualEffect.GetSpawnSystemInfo(System.Int32)">
+    <member name="M:UnityEngine.VFX.VisualEffect.GetSkinnedMeshRenderer(System.String)">
       <summary>
-        <para>Gets state on a spawn system.</para>
+        <para>Gets the value of a named Skinned Mesh Renderer property.</para>
       </summary>
-      <param name="nameID">The system ID. This is the same ID that Shader.PropertyToID returns.</param>
-      <param name="name">The name of the spawn system.</param>
+      <param name="name">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="nameID">The name of the property.</param>
       <returns>
-        <para>A VFXSpawnerState instance.</para>
+        <para>The value for the Skinned Mesh Renderer you specify. Returns null if VFX.VisualEffect.HasSkinnedMeshRenderer returns false.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.GetSkinnedMeshRenderer(System.Int32)">
+      <summary>
+        <para>Gets the value of a named Skinned Mesh Renderer property.</para>
+      </summary>
+      <param name="name">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="nameID">The name of the property.</param>
+      <returns>
+        <para>The value for the Skinned Mesh Renderer you specify. Returns null if VFX.VisualEffect.HasSkinnedMeshRenderer returns false.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetSpawnSystemInfo(System.String)">
@@ -1105,10 +1152,8 @@
         <para>Gets state on a spawn system.</para>
       </summary>
       <param name="nameID">The system ID. This is the same ID that Shader.PropertyToID returns.</param>
-      <param name="name">The name of the spawn system.</param>
-      <returns>
-        <para>A VFXSpawnerState instance.</para>
-      </returns>
+      <param name="spawnState">A modified  VFXSpawnerState instance.</param>
+      <param name="name"></param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetSpawnSystemInfo(System.Int32,UnityEngine.VFX.VFXSpawnerState)">
       <summary>
@@ -1116,6 +1161,7 @@
       </summary>
       <param name="nameID">The system ID. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="spawnState">A modified  VFXSpawnerState instance.</param>
+      <param name="name"></param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetSpawnSystemNames(System.Collections.Generic.List`1&lt;System.String&gt;)">
       <summary>
@@ -1131,7 +1177,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetTexture(System.Int32)">
       <summary>
-        <para>Gets the value of a named texture property</para>
+        <para>Gets the value of a named texture property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1141,7 +1187,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetTexture(System.String)">
       <summary>
-        <para>Gets the value of a named texture property</para>
+        <para>Gets the value of a named texture property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1165,7 +1211,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetUInt(System.Int32)">
       <summary>
-        <para>Gets the value of a named unsigned integer property</para>
+        <para>Gets the value of a named unsigned integer property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1175,7 +1221,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetUInt(System.String)">
       <summary>
-        <para>Gets the value of a named unsigned integer property</para>
+        <para>Gets the value of a named unsigned integer property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1185,7 +1231,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetVector2(System.Int32)">
       <summary>
-        <para>Gets the value of a named Vector2 property</para>
+        <para>Gets the value of a named Vector2 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1195,7 +1241,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetVector2(System.String)">
       <summary>
-        <para>Gets the value of a named Vector2 property</para>
+        <para>Gets the value of a named Vector2 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1205,7 +1251,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetVector3(System.Int32)">
       <summary>
-        <para>Gets the value of a named Vector3 property</para>
+        <para>Gets the value of a named Vector3 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1215,7 +1261,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetVector3(System.String)">
       <summary>
-        <para>Gets the value of a named Vector3 property</para>
+        <para>Gets the value of a named Vector3 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1225,7 +1271,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetVector4(System.Int32)">
       <summary>
-        <para>Gets the value of a named Vector4 property</para>
+        <para>Gets the value of a named Vector4 or Color property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1235,7 +1281,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.GetVector4(System.String)">
       <summary>
-        <para>Gets the value of a named Vector4 property</para>
+        <para>Gets the value of a named Vector4 or Color property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1245,98 +1291,134 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasAnimationCurve(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override an animation curve with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override an Animation Curve with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasAnimationCurve(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override an animation curve with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override an Animation Curve with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.HasAnySystemAwake">
+      <summary>
+        <para>Checks if any particle system in the effect is awake.</para>
+      </summary>
+      <returns>
+        <para>Returns true if at least one of the particle systems of the effect is awake, otherwise returns false.</para>
+      </returns>
+    </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasBool(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override a bool with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a bool with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasBool(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override a bool with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a bool with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasFloat(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override a float with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a float with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasFloat(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override a float with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a float with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasGradient(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override a gradient with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Gradient with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasGradient(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override a gradient with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Gradient with the name you pass in.</para>
+      </summary>
+      <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="name">The name of the property.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.HasGraphicsBuffer(System.Int32)">
+      <summary>
+        <para>Checks if the Visual Effect can override a GraphicsBuffer with the name you pass in.</para>
+      </summary>
+      <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="name">The name of the property.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.HasGraphicsBuffer(System.String)">
+      <summary>
+        <para>Checks if the Visual Effect can override a GraphicsBuffer with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasInt(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override an integer with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override an integer with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasInt(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override an integer with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override an integer with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasMatrix4x4(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Matrix4x4 with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Matrix4x4 with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasMatrix4x4(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Matrix4x4 with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Matrix4x4 with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasMesh(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Mesh with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Mesh with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasMesh(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Mesh with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Mesh with the name you pass in.</para>
+      </summary>
+      <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="name">The name of the property.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.HasSkinnedMeshRenderer(System.Int32)">
+      <summary>
+        <para>Checks if the Visual Effect can override a Skinned Mesh Renderer with the name you pass in.</para>
+      </summary>
+      <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="name">The name of the property.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.HasSkinnedMeshRenderer(System.String)">
+      <summary>
+        <para>Checks if the Visual Effect can override a Skinned Mesh Renderer with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1363,70 +1445,70 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasTexture(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override a texture with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a texture with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasTexture(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override a texture with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a texture with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasUInt(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override an unsigned integer with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override an unsigned integer with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasUInt(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override an unsigned integer with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override an unsigned integer with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasVector2(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Vector2 with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Vector2 with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasVector2(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Vector2 with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Vector2 with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasVector3(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Vector3 with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Vector3 with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasVector3(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Vector3 with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Vector3 with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasVector4(System.Int32)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Vector4 with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Vector4 or Color with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.HasVector4(System.String)">
       <summary>
-        <para>Use this method to check if the visual effect can override a Vector4 with the name you pass in.</para>
+        <para>Checks if the Visual Effect can override a Vector4 or Color with the name you pass in.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1496,23 +1578,23 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetAnimationCurve(System.Int32,UnityEngine.AnimationCurve)">
       <summary>
-        <para>The new animation curve value.</para>
+        <para>Sets the value of a named Animation Curve property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
-      <param name="c">The new animation curve.</param>
+      <param name="c">The new Animation Curve.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetAnimationCurve(System.String,UnityEngine.AnimationCurve)">
       <summary>
-        <para>The new animation curve value.</para>
+        <para>Sets the value of a named Animation Curve property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
-      <param name="c">The new animation curve.</param>
+      <param name="c">The new Animation Curve.</param>
       <param name="name">The name of the property.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetBool(System.Int32,System.Boolean)">
       <summary>
-        <para>The new bool value.</para>
+        <para>Sets the value of a named bool property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1520,7 +1602,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetBool(System.String,System.Boolean)">
       <summary>
-        <para>The new bool value.</para>
+        <para>Sets the value of a named bool property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1528,7 +1610,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetFloat(System.Int32,System.Single)">
       <summary>
-        <para>The new float value.</para>
+        <para>Sets the value of a named float property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1536,7 +1618,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetFloat(System.String,System.Single)">
       <summary>
-        <para>The new float value.</para>
+        <para>Sets the value of a named float property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1544,23 +1626,39 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetGradient(System.Int32,UnityEngine.Gradient)">
       <summary>
-        <para>The new gradient value.</para>
+        <para>Sets the value of a named Gradient property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
-      <param name="g">The new gradient value.</param>
+      <param name="g">The new Gradient value.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetGradient(System.String,UnityEngine.Gradient)">
       <summary>
-        <para>The new gradient value.</para>
+        <para>Sets the value of a named Gradient property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
-      <param name="g">The new gradient value.</param>
+      <param name="g">The new Gradient value.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.SetGraphicsBuffer(System.Int32,UnityEngine.GraphicsBuffer)">
+      <summary>
+        <para>Sets the value of a named GraphicsBuffer property.</para>
+      </summary>
+      <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="name">The name of the property.</param>
+      <param name="g">The new GraphicsBuffer value.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.SetGraphicsBuffer(System.String,UnityEngine.GraphicsBuffer)">
+      <summary>
+        <para>Sets the value of a named GraphicsBuffer property.</para>
+      </summary>
+      <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="name">The name of the property.</param>
+      <param name="g">The new GraphicsBuffer value.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetInt(System.Int32,System.Int32)">
       <summary>
-        <para>The new integer value.</para>
+        <para>Sets the value of a named integer property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1568,7 +1666,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetInt(System.String,System.Int32)">
       <summary>
-        <para>The new integer value.</para>
+        <para>Sets the value of a named integer property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1576,7 +1674,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetMatrix4x4(System.Int32,UnityEngine.Matrix4x4)">
       <summary>
-        <para>The new Matrix4x4 value.</para>
+        <para>Sets the value of a named Matrix4x4 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1584,7 +1682,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetMatrix4x4(System.String,UnityEngine.Matrix4x4)">
       <summary>
-        <para>The new Matrix4x4 value.</para>
+        <para>Sets the value of a named Matrix4x4 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1592,23 +1690,39 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetMesh(System.Int32,UnityEngine.Mesh)">
       <summary>
-        <para>The new mesh value.</para>
+        <para>Sets the value of a named Mesh property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
-      <param name="m">The new mesh value.</param>
+      <param name="m">The new Mesh value.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetMesh(System.String,UnityEngine.Mesh)">
       <summary>
-        <para>The new mesh value.</para>
+        <para>Sets the value of a named Mesh property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
-      <param name="m">The new mesh value.</param>
+      <param name="m">The new Mesh value.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.SetSkinnedMeshRenderer(System.String,UnityEngine.SkinnedMeshRenderer)">
+      <summary>
+        <para>Sets the value of a named Skinned Mesh Renderer property.</para>
+      </summary>
+      <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="name">The name of the property.</param>
+      <param name="m">The new Skinned Mesh Renderer value.</param>
+    </member>
+    <member name="M:UnityEngine.VFX.VisualEffect.SetSkinnedMeshRenderer(System.Int32,UnityEngine.SkinnedMeshRenderer)">
+      <summary>
+        <para>Sets the value of a named Skinned Mesh Renderer property.</para>
+      </summary>
+      <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
+      <param name="name">The name of the property.</param>
+      <param name="m">The new Skinned Mesh Renderer value.</param>
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetTexture(System.Int32,UnityEngine.Texture)">
       <summary>
-        <para>The new texture value.</para>
+        <para>Sets the value of a named texture property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1616,7 +1730,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetTexture(System.String,UnityEngine.Texture)">
       <summary>
-        <para>The new texture value.</para>
+        <para>Sets the value of a named texture property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1624,7 +1738,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetUInt(System.Int32,System.UInt32)">
       <summary>
-        <para>The new unsigned integer value.</para>
+        <para>Sets the value of a named unsigned integer property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1632,7 +1746,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetUInt(System.String,System.UInt32)">
       <summary>
-        <para>The new unsigned integer value.</para>
+        <para>Sets the value of a named unsigned integer property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1640,7 +1754,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetVector2(System.Int32,UnityEngine.Vector2)">
       <summary>
-        <para>The new Vector2 value.</para>
+        <para>Sets the value of a named Vector2 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1648,7 +1762,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetVector2(System.String,UnityEngine.Vector2)">
       <summary>
-        <para>The new Vector2 value.</para>
+        <para>Sets the value of a named Vector2 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1656,7 +1770,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetVector3(System.Int32,UnityEngine.Vector3)">
       <summary>
-        <para>The new Vector3 value.</para>
+        <para>Sets the value of a named Vector3 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1664,7 +1778,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetVector3(System.String,UnityEngine.Vector3)">
       <summary>
-        <para>The new Vector3 value.</para>
+        <para>Sets the value of a named Vector3 property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1672,7 +1786,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetVector4(System.Int32,UnityEngine.Vector4)">
       <summary>
-        <para>The new Vector4 value.</para>
+        <para>Sets the value of a named Vector4 or Color property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>
@@ -1680,7 +1794,7 @@
     </member>
     <member name="M:UnityEngine.VFX.VisualEffect.SetVector4(System.String,UnityEngine.Vector4)">
       <summary>
-        <para>The new Vector4 value.</para>
+        <para>Sets the value of a named Vector4 or Color property.</para>
       </summary>
       <param name="nameID">The ID of the property. This is the same ID that Shader.PropertyToID returns.</param>
       <param name="name">The name of the property.</param>

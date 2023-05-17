@@ -268,6 +268,15 @@ See Also: UnityWebRequestAssetBundle.GetAssetBundle, DownloadHandlerAssetBundle.
       </summary>
       <param name="unloadAllObjects">Determines whether the current instances of objects loaded from AssetBundles will also be unloaded.</param>
     </member>
+    <member name="M:UnityEngine.AssetBundle.UnloadAsync(System.Boolean)">
+      <summary>
+        <para>Unloads assets in the bundle.</para>
+      </summary>
+      <param name="unloadAllLoadedObjects"></param>
+      <returns>
+        <para>Asynchronous unload request for an AssetBundle.</para>
+      </returns>
+    </member>
     <member name="T:UnityEngine.AssetBundleCreateRequest">
       <summary>
         <para>Asynchronous create request for an AssetBundle.</para>

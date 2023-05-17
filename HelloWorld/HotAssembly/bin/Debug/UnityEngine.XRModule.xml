@@ -989,11 +989,11 @@
       </summary>
       <param name="usageName">The name of the feature usage to query for.</param>
     </member>
-    <member name="?:UnityEngine.XR.InputFeatureUsage_1.op_Explicit(UnityEngine.XR.InputFeatureUsage`1&lt;T&gt;)">
+    <member name="?:UnityEngine.XR.InputFeatureUsage_1.explop_InputFeatureUsage(InputFeatureUsage&lt;T&gt;)(UnityEngine.XR.InputFeatureUsage`1&lt;T&gt;)">
       <summary>
         <para>Converts a generic InputFeatureUsage&lt;T&gt; into an InputFeatureUsage.</para>
       </summary>
-      <param name="self"></param>
+      <param name="self">The generic InputFeatureUsage_1 to conver into an InputFeatureUsage.</param>
     </member>
     <member name="T:UnityEngine.XR.InputTracking">
       <summary>
@@ -1144,6 +1144,21 @@ Gets the rotation of a specific node.</para>
         <para>The mesh has been updated since the last call to XRMeshSubsystem.TryGetMeshInfos.</para>
       </summary>
     </member>
+    <member name="T:UnityEngine.XR.MeshGenerationOptions">
+      <summary>
+        <para>Options for generating meshes.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.XR.MeshGenerationOptions.ConsumeTransform">
+      <summary>
+        <para>Indicates you plan to consume the resulting mesh's transform.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.XR.MeshGenerationOptions.None">
+      <summary>
+        <para>No options are specified.</para>
+      </summary>
+    </member>
     <member name="T:UnityEngine.XR.MeshGenerationResult">
       <summary>
         <para>Contains event information related to a generated mesh.</para>
@@ -1169,9 +1184,29 @@ Gets the rotation of a specific node.</para>
         <para>The MeshId of the tracked mesh that was generated.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.XR.MeshGenerationResult.Position">
+      <summary>
+        <para>The position associated with the generated mesh relative to the session origin.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.XR.MeshGenerationResult.Rotation">
+      <summary>
+        <para>The rotation associated with the generated mesh relative to the session origin.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.XR.MeshGenerationResult.Scale">
+      <summary>
+        <para>The scale associated with the generated mesh relative to the session origin.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.XR.MeshGenerationResult.Status">
       <summary>
         <para>The MeshGenerationStatus of the mesh generation task.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.XR.MeshGenerationResult.Timestamp">
+      <summary>
+        <para>The timestamp associated with the generated mesh.</para>
       </summary>
     </member>
     <member name="T:UnityEngine.XR.MeshGenerationStatus">
@@ -1240,6 +1275,46 @@ Gets the rotation of a specific node.</para>
     <member name="P:UnityEngine.XR.MeshInfo.PriorityHint">
       <summary>
         <para>A hint that can be used to determine when this mesh should be processed.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.XR.MeshTransform">
+      <summary>
+        <para>Contains transform information related to a tracked mesh.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.XR.MeshTransform.#ctor(UnityEngine.XR.MeshId&amp;,System.UInt64,UnityEngine.Vector3&amp;,UnityEngine.Quaternion&amp;,UnityEngine.Vector3&amp;)">
+      <summary>
+        <para>Creates a new MeshTransform.</para>
+      </summary>
+      <param name="meshId">The identifier of the mesh.</param>
+      <param name="timestamp">The timestamp for the mesh's transform. Larger values indicate newer transforms.</param>
+      <param name="position">The position of the mesh relative to the session origin.</param>
+      <param name="rotation">The rotation of the mesh relative to the session origin.</param>
+      <param name="scale">The scale of the mesh relative to the session origin.</param>
+    </member>
+    <member name="P:UnityEngine.XR.MeshTransform.MeshId">
+      <summary>
+        <para>The session-unique identifier of the tracked mesh.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.XR.MeshTransform.Position">
+      <summary>
+        <para>The position of the mesh, relative to the session origin.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.XR.MeshTransform.Rotation">
+      <summary>
+        <para>The rotation of the mesh, relative to the session origin.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.XR.MeshTransform.Scale">
+      <summary>
+        <para>The scale of the mesh, relative to the session origin.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.XR.MeshTransform.Timestamp">
+      <summary>
+        <para>The timestamp associated with this transform.</para>
       </summary>
     </member>
     <member name="T:UnityEngine.XR.MeshVertexAttributes">
@@ -1348,6 +1423,11 @@ Gets the rotation of a specific node.</para>
 
                 Most VR devices are opaque in order to increase the immersive experience, AR devices are transparent to allow for interaction with an augmentation of the current environment.
                 </para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.XR.XRDisplaySubsystem.occlusionMaskScale">
+      <summary>
+        <para>A scale applied to the standard occulsion mask.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.XR.XRDisplaySubsystem.reprojectionMode">
@@ -1485,6 +1565,15 @@ Gets the rotation of a specific node.</para>
       <param name="renderPass">The render pass index to get the render texture for.</param>
       <returns>
         <para>The render texture associated with that render pass, or null if not found.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.XR.XRDisplaySubsystem.GetSharedDepthTextureForRenderPass(System.Int32)">
+      <summary>
+        <para>Given a render pass, return the shared depth buffer RenderTexture instance backing that render pass. If the render pass is invalid, or if the render texture does not exist, return null.</para>
+      </summary>
+      <param name="renderPass">The render pass index to get the shared depth buffer render texture for.</param>
+      <returns>
+        <para>The shared depth buffer render texture associated with that render pass, or null if not found.</para>
       </returns>
     </member>
     <member name="T:UnityEngine.XR.XRDisplaySubsystem.LateLatchNode">
@@ -1928,6 +2017,26 @@ Setting this value does not guarantee an immediate change in the density of any 
       <param name="meshCollider">(Optional) The MeshCollider to populate with physics data. This may be null.</param>
       <param name="attributes">The vertex attributes you'd like to use.</param>
       <param name="onMeshGenerationComplete">The delegate to invoke when the generation completes.</param>
+    </member>
+    <member name="M:UnityEngine.XR.XRMeshSubsystem.GenerateMeshAsync(UnityEngine.XR.MeshId,UnityEngine.Mesh,UnityEngine.MeshCollider,UnityEngine.XR.MeshVertexAttributes,System.Action`1&lt;UnityEngine.XR.MeshGenerationResult&gt;,UnityEngine.XR.MeshGenerationOptions)">
+      <summary>
+        <para>Requests the generation of the Mesh with MeshId meshId. Unity calls onMeshGenerationComplete when generation finishes.</para>
+      </summary>
+      <param name="meshId">The MeshId of the mesh you wish to generate.</param>
+      <param name="mesh">The Mesh to write the results into.</param>
+      <param name="meshCollider">(Optional) The MeshCollider to populate with physics data. This may be null.</param>
+      <param name="attributes">The vertex attributes you'd like to use.</param>
+      <param name="onMeshGenerationComplete">The delegate to invoke when the generation completes.</param>
+      <param name="options">The mesh generation options.</param>
+    </member>
+    <member name="M:UnityEngine.XR.XRMeshSubsystem.GetUpdatedMeshTransforms(Unity.Collections.Allocator)">
+      <summary>
+        <para>Gets the updated mesh transforms.</para>
+      </summary>
+      <param name="allocator">The allocator to use for the returned NativeArray.</param>
+      <returns>
+        <para>A new NativeArray of MeshTransforms.</para>
+      </returns>
     </member>
     <member name="M:UnityEngine.XR.XRMeshSubsystem.SetBoundingVolume(UnityEngine.Vector3,UnityEngine.Vector3)">
       <summary>

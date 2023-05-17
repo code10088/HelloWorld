@@ -1143,7 +1143,7 @@
     </member>
     <member name="M:UnityEngine.AudioSettings.Reset(UnityEngine.AudioConfiguration)">
       <summary>
-        <para>Performs a change of the device configuration. In response to this the AudioSettings.OnAudioConfigurationChanged delegate is invoked with the argument deviceWasChanged=false. It cannot be guaranteed that the exact settings specified can be used, but the an attempt is made to use the closest match supported by the system.</para>
+        <para>Performs a change of the device configuration. In response to this the AudioSettings.OnAudioConfigurationChanged delegate is invoked with the argument deviceWasChanged=false. It cannot be guaranteed that the exact settings specified can be used, but an attempt is made to use the closest match supported by the system.</para>
       </summary>
       <param name="config">The new configuration to be used.</param>
       <returns>
@@ -1782,6 +1782,11 @@
         <para>Gamepad audio output types.</para>
       </summary>
     </member>
+    <member name="F:UnityEngine.GamepadSpeakerOutputType.SecondaryVibration">
+      <summary>
+        <para>Audio output is through a secondary gamepad's vibration device if supported.</para>
+      </summary>
+    </member>
     <member name="F:UnityEngine.GamepadSpeakerOutputType.Speaker">
       <summary>
         <para>Audio output is through the gamepads audio speaker if the gamepad supports playing audio.</para>
@@ -2066,44 +2071,50 @@
     </member>
     <member name="M:UnityEngine.WebCamTexture.GetPixel(System.Int32,System.Int32)">
       <summary>
-        <para>Returns pixel color at coordinates (x, y).</para>
+        <para>Gets the pixel color at coordinates (x, y).</para>
       </summary>
-      <param name="x"></param>
-      <param name="y"></param>
+      <param name="x">The x coordinate of the pixel to get. The range is 0 through the (texture width - 1).</param>
+      <param name="y">The y coordinate of the pixel to get. The range is 0 through the (texture height - 1).</param>
+      <returns>
+        <para>The pixel color.</para>
+      </returns>
     </member>
     <member name="M:UnityEngine.WebCamTexture.GetPixels">
       <summary>
-        <para>Retrieves a copy of the the pixel color data. The colors are represented by Color structs.</para>
+        <para>Gets the pixel color data for a mipmap level as Color structs.</para>
       </summary>
       <returns>
-        <para>An array that contains a copy of the requested pixel colors, represented by Color structs.</para>
+        <para>An array that contains the pixel colors.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.WebCamTexture.GetPixels(System.Int32,System.Int32,System.Int32,System.Int32)">
       <summary>
-        <para>Get a block of pixel colors.</para>
+        <para>Gets the pixel color data for part of the texture as Color structs.</para>
       </summary>
-      <param name="x"></param>
-      <param name="y"></param>
-      <param name="blockWidth"></param>
-      <param name="blockHeight"></param>
+      <param name="x">The starting x position of the section to fetch.</param>
+      <param name="y">The starting y position of the section to fetch.</param>
+      <param name="blockWidth">The width of the section to fetch.</param>
+      <param name="blockHeight">The height of the section to fetch.</param>
+      <returns>
+        <para>An array that contains the pixel colors.</para>
+      </returns>
     </member>
     <member name="M:UnityEngine.WebCamTexture.GetPixels32()">
       <summary>
-        <para>Retrieves a copy of the the pixel color data. The colors are represented by Color32 structs.</para>
+        <para>Gets the pixel color data for a mipmap level as Color32 structs.</para>
       </summary>
-      <param name="colors">Optional array to receive pixel data.</param>
+      <param name="colors">An optional array to write the pixel data to.</param>
       <returns>
-        <para>An array that contains a copy of the requested pixel colors, represented by Color32 structs.</para>
+        <para>An array that contains the pixel colors.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.WebCamTexture.GetPixels32(UnityEngine.Color32[])">
       <summary>
-        <para>Retrieves a copy of the the pixel color data. The colors are represented by Color32 structs.</para>
+        <para>Gets the pixel color data for a mipmap level as Color32 structs.</para>
       </summary>
-      <param name="colors">Optional array to receive pixel data.</param>
+      <param name="colors">An optional array to write the pixel data to.</param>
       <returns>
-        <para>An array that contains a copy of the requested pixel colors, represented by Color32 structs.</para>
+        <para>An array that contains the pixel colors.</para>
       </returns>
     </member>
     <member name="M:UnityEngine.WebCamTexture.Pause">

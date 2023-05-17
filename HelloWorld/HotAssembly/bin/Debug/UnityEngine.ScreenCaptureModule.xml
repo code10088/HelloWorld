@@ -6,24 +6,24 @@
     </assembly>
     <member name="T:UnityEngine.ScreenCapture">
       <summary>
-        <para>Functionality to take Screenshots.</para>
+        <para>Provides methods to take screenshots.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.ScreenCapture.CaptureScreenshot(System.String,System.Int32)">
       <summary>
-        <para>Captures a screenshot at path filename as a PNG file.</para>
+        <para>Captures a screenshot and saves it as a .png file to a specified path.</para>
       </summary>
-      <param name="filename">Pathname to save the screenshot file to.</param>
-      <param name="superSize">Factor by which to increase resolution.</param>
-      <param name="stereoCaptureMode">Specifies the eye texture to capture when stereo rendering is enabled.</param>
+      <param name="filename">The path to save the screenshot file to.</param>
+      <param name="superSize">The factor to increase resolution with.</param>
+      <param name="stereoCaptureMode">The eye texture to capture when stereo rendering is enabled.</param>
     </member>
     <member name="M:UnityEngine.ScreenCapture.CaptureScreenshot(System.String,UnityEngine.ScreenCapture/StereoScreenCaptureMode)">
       <summary>
-        <para>Captures a screenshot at path filename as a PNG file.</para>
+        <para>Captures a screenshot and saves it as a .png file to a specified path.</para>
       </summary>
-      <param name="filename">Pathname to save the screenshot file to.</param>
-      <param name="superSize">Factor by which to increase resolution.</param>
-      <param name="stereoCaptureMode">Specifies the eye texture to capture when stereo rendering is enabled.</param>
+      <param name="filename">The path to save the screenshot file to.</param>
+      <param name="superSize">The factor to increase resolution with.</param>
+      <param name="stereoCaptureMode">The eye texture to capture when stereo rendering is enabled.</param>
     </member>
     <member name="M:UnityEngine.ScreenCapture.CaptureScreenshotAsTexture(System.Int32)">
       <summary>

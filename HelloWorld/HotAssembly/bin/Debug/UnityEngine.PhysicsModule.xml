@@ -124,6 +124,11 @@
         <para>The mass of this articulation body.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.ArticulationBody.matchAnchors">
+      <summary>
+        <para>Whether the parent anchor should be computed automatically or not.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.ArticulationBody.maxAngularVelocity">
       <summary>
         <para>The maximimum angular velocity of the articulation body measured in radians per second.</para>
@@ -216,34 +221,75 @@
     </member>
     <member name="M:UnityEngine.ArticulationBody.AddForce(UnityEngine.Vector3)">
       <summary>
-        <para>Add force to the articulation body.</para>
+        <para>Applies a force to the ArticulationBody.</para>
       </summary>
       <param name="force">The force vector to apply.</param>
+      <param name="mode">The type of force to apply.</param>
+    </member>
+    <member name="M:UnityEngine.ArticulationBody.AddForce(UnityEngine.Vector3,UnityEngine.ForceMode)">
+      <summary>
+        <para>Applies a force to the ArticulationBody.</para>
+      </summary>
+      <param name="force">The force vector to apply.</param>
+      <param name="mode">The type of force to apply.</param>
     </member>
     <member name="M:UnityEngine.ArticulationBody.AddForceAtPosition(UnityEngine.Vector3,UnityEngine.Vector3)">
       <summary>
         <para>Applies a force at a specific position, resulting in applying a torque and force on the object.</para>
       </summary>
-      <param name="force">Force vector in world coordinates.</param>
-      <param name="position">Position in world coordinates.</param>
+      <param name="force">The force vector in world coordinates.</param>
+      <param name="position">A position in world coordinates.</param>
+      <param name="mode">The type of force to apply.</param>
+    </member>
+    <member name="M:UnityEngine.ArticulationBody.AddForceAtPosition(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.ForceMode)">
+      <summary>
+        <para>Applies a force at a specific position, resulting in applying a torque and force on the object.</para>
+      </summary>
+      <param name="force">The force vector in world coordinates.</param>
+      <param name="position">A position in world coordinates.</param>
+      <param name="mode">The type of force to apply.</param>
     </member>
     <member name="M:UnityEngine.ArticulationBody.AddRelativeForce(UnityEngine.Vector3)">
       <summary>
-        <para>Applies a force to the articulation body, relative to its local coordinate system.</para>
+        <para>Applies a force to the Articulation Body, relative to its local coordinate system.</para>
       </summary>
-      <param name="force">Force vector in local coordinates.</param>
+      <param name="force">The force vector in local coordinates.</param>
+      <param name="mode">The type of force to apply.</param>
+    </member>
+    <member name="M:UnityEngine.ArticulationBody.AddRelativeForce(UnityEngine.Vector3,UnityEngine.ForceMode)">
+      <summary>
+        <para>Applies a force to the Articulation Body, relative to its local coordinate system.</para>
+      </summary>
+      <param name="force">The force vector in local coordinates.</param>
+      <param name="mode">The type of force to apply.</param>
     </member>
     <member name="M:UnityEngine.ArticulationBody.AddRelativeTorque(UnityEngine.Vector3)">
       <summary>
         <para>Applies a torque to the articulation body, relative to its local coordinate system.</para>
       </summary>
-      <param name="torque">Torque vector in local coordinates.</param>
+      <param name="torque">The torque vector in local coordinates.</param>
+      <param name="mode">The type of torque to apply.</param>
+    </member>
+    <member name="M:UnityEngine.ArticulationBody.AddRelativeTorque(UnityEngine.Vector3,UnityEngine.ForceMode)">
+      <summary>
+        <para>Applies a torque to the articulation body, relative to its local coordinate system.</para>
+      </summary>
+      <param name="torque">The torque vector in local coordinates.</param>
+      <param name="mode">The type of torque to apply.</param>
     </member>
     <member name="M:UnityEngine.ArticulationBody.AddTorque(UnityEngine.Vector3)">
       <summary>
         <para>Add torque to the articulation body.</para>
       </summary>
       <param name="torque">The torque to apply.</param>
+      <param name="mode">The type of torque to apply.</param>
+    </member>
+    <member name="M:UnityEngine.ArticulationBody.AddTorque(UnityEngine.Vector3,UnityEngine.ForceMode)">
+      <summary>
+        <para>Add torque to the articulation body.</para>
+      </summary>
+      <param name="torque">The torque to apply.</param>
+      <param name="mode">The type of torque to apply.</param>
     </member>
     <member name="M:UnityEngine.ArticulationBody.GetClosestPoint(UnityEngine.Vector3)">
       <summary>
@@ -392,6 +438,11 @@
     <member name="M:UnityEngine.ArticulationBody.Sleep">
       <summary>
         <para>Forces an articulation body to sleep.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.ArticulationBody.SnapAnchorToClosestContact">
+      <summary>
+        <para>Snap the anchor to the closest contact between the connected bodies.</para>
       </summary>
     </member>
     <member name="M:UnityEngine.ArticulationBody.TeleportRoot(UnityEngine.Vector3,UnityEngine.Quaternion)">
@@ -599,17 +650,33 @@
         <para>Rotation of the box.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.BoxcastCommand.physicsScene">
+      <summary>
+        <para>The physics scene this command is run in.</para>
+      </summary>
+    </member>
     <member name="M:UnityEngine.BoxcastCommand.#ctor(UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector3,System.Single,System.Int32)">
       <summary>
         <para>Creates a BoxcastCommand.</para>
       </summary>
       <param name="center">Center of the box.</param>
-      <param name="halfExtend">Half the size of the box in each dimension.</param>
+      <param name="halfExtents">Half the size of the box in each dimension.</param>
       <param name="orientation">Rotation of the box.</param>
       <param name="direction">The direction in which to sweep the box.</param>
       <param name="distance">The maximum length of the cast.</param>
       <param name="layerMask">A that is used to selectively ignore colliders when casting a box.</param>
-      <param name="halfExtents"></param>
+    </member>
+    <member name="M:UnityEngine.BoxcastCommand.#ctor(UnityEngine.PhysicsScene,UnityEngine.Vector3,UnityEngine.Vector3,UnityEngine.Quaternion,UnityEngine.Vector3,System.Single,System.Int32)">
+      <summary>
+        <para>Creates a BoxcastCommand.</para>
+      </summary>
+      <param name="physicsScene">The physics scene to run the command in.</param>
+      <param name="center">Center of the box.</param>
+      <param name="halfExtents">Half the size of the box in each dimension.</param>
+      <param name="orientation">Rotation of the box.</param>
+      <param name="direction">The direction in which to sweep the box.</param>
+      <param name="distance">The maximum length of the cast.</param>
+      <param name="layerMask">A that is used to selectively ignore colliders when casting a box.</param>
     </member>
     <member name="M:UnityEngine.BoxcastCommand.ScheduleBatch(Unity.Collections.NativeArray`1&lt;UnityEngine.BoxcastCommand&gt;,Unity.Collections.NativeArray`1&lt;UnityEngine.RaycastHit&gt;,System.Int32,Unity.Jobs.JobHandle)">
       <summary>
@@ -658,6 +725,11 @@
         <para>A LayerMask that selectively ignores Colliders when casting a capsule.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.CapsulecastCommand.physicsScene">
+      <summary>
+        <para>The physics scene this command is run in.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.CapsulecastCommand.point1">
       <summary>
         <para>The center of the sphere at the start of the capsule.</para>
@@ -680,7 +752,19 @@
       <param name="p1">The center of the sphere at the start of the capsule.</param>
       <param name="p2">The center of the sphere at the end of the capsule.</param>
       <param name="radius">The radius of the capsule.</param>
-      <param name="direction">The direction of the capsule cast</param>
+      <param name="direction">The direction of the capsule cast.</param>
+      <param name="distance">The maximum length of the sweep.</param>
+      <param name="layerMask">The LayerMask that selectively ignores Colliders when casting a capsule.</param>
+    </member>
+    <member name="M:UnityEngine.CapsulecastCommand.#ctor(UnityEngine.PhysicsScene,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,UnityEngine.Vector3,System.Single,System.Int32)">
+      <summary>
+        <para>Creates a CapsulecastCommand.</para>
+      </summary>
+      <param name="physicsScene">The physics scene to run the command in.</param>
+      <param name="p1">The center of the sphere at the start of the capsule.</param>
+      <param name="p2">The center of the sphere at the end of the capsule.</param>
+      <param name="radius">The radius of the capsule.</param>
+      <param name="direction">The direction of the capsule cast.</param>
       <param name="distance">The maximum length of the sweep.</param>
       <param name="layerMask">The LayerMask that selectively ignores Colliders when casting a capsule.</param>
     </member>
@@ -884,9 +968,14 @@
         <para>Enabled Colliders will collide with other Colliders, disabled Colliders won't.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.Collider.hasModifiableContacts">
+      <summary>
+        <para>Specify whether this Collider's contacts are modifiable or not.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.Collider.isTrigger">
       <summary>
-        <para>Is the collider a trigger?</para>
+        <para>Specify if this collider is configured as a trigger.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Collider.material">
@@ -1363,7 +1452,7 @@ Sometimes it is not possible to project (for example when the joints form a cycl
     </member>
     <member name="T:UnityEngine.ForceMode">
       <summary>
-        <para>Use ForceMode to specify how to apply a force using Rigidbody.AddForce.</para>
+        <para>Use ForceMode to specify how to apply a force using Rigidbody.AddForce or ArticulationBody.AddForce.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.ForceMode.Acceleration">
@@ -1708,12 +1797,235 @@ Sometimes it is not possible to project (for example when the joints form a cycl
     </member>
     <member name="F:UnityEngine.MeshColliderCookingOptions.UseFastMidphase">
       <summary>
-        <para>Determines whether to use the fast midphase structure that doesn't require R-trees (only available on Desktop targets).</para>
+        <para>Determines whether to use the fast midphase structure that doesn't require R-trees.</para>
       </summary>
     </member>
     <member name="F:UnityEngine.MeshColliderCookingOptions.WeldColocatedVertices">
       <summary>
         <para>Toggle the removal of equal vertices.</para>
+      </summary>
+    </member>
+    <member name="T:UnityEngine.ModifiableContactPair">
+      <summary>
+        <para>A light-weight proxy that allows to access the contact buffers directly.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.ModifiableContactPair.bodyInstanceID">
+      <summary>
+        <para>Instance ID of the first body in this contact pair.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.ModifiableContactPair.colliderInstanceID">
+      <summary>
+        <para>Instance ID of the first Collider in this contact pair.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.ModifiableContactPair.contactCount">
+      <summary>
+        <para>The amount of the contact points generated for this contact pair.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.ModifiableContactPair.massProperties">
+      <summary>
+        <para>Mass-related properties of this contact pair, such as the mass ratio.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.ModifiableContactPair.otherBodyInstanceID">
+      <summary>
+        <para>Instance ID of the second body in this contact pair.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.ModifiableContactPair.otherColliderInstanceID">
+      <summary>
+        <para>Instance ID of the second collider in this contact pair.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ModifiableContactPair.otherPosition">
+      <summary>
+        <para>World-space position of the second collider in this contact pair as seen by the solver.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ModifiableContactPair.otherRotation">
+      <summary>
+        <para>World-space rotation of the second collider in this contact pair as seen by the solver.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ModifiableContactPair.position">
+      <summary>
+        <para>World-space position of the first collider in this contact pair as seen by the solver.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ModifiableContactPair.rotation">
+      <summary>
+        <para>World-space rotation of the first collider in this contact pair as seen by the solver.</para>
+      </summary>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.GetBounciness(System.Int32)">
+      <summary>
+        <para>Get the restitution value for the specified contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <returns>
+        <para>Bounciness value for the specified contact point.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.GetDynamicFriction(System.Int32)">
+      <summary>
+        <para>Get the value of the dynamic friction for a specified contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <returns>
+        <para>Dynamic friction coefficient.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.GetFaceIndex(System.Int32)">
+      <summary>
+        <para>Get the index of a face a particular contact point belongs to in this contact pair. Use this with Mesh.triangles.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <returns>
+        <para>Index of a face this contact point belongs to.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.GetMaxImpulse(System.Int32)">
+      <summary>
+        <para>Get the maximum impulse that the solver can apply at a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <returns>
+        <para>The maximum impulse that can be applied.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.GetNormal(System.Int32)">
+      <summary>
+        <para>Get the normal at a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <returns>
+        <para>Normal at the contact point.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.GetPoint(System.Int32)">
+      <summary>
+        <para>Get the location of a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <returns>
+        <para>The location of a contact point.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.GetSeparation(System.Int32)">
+      <summary>
+        <para>Get the separation value at a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <returns>
+        <para>The separation at a contact point.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.GetStaticFriction(System.Int32)">
+      <summary>
+        <para>Get the static friction coefficient at a particular point of the contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <returns>
+        <para>The static friction coefficient at a contact point.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.GetTargetVelocity(System.Int32)">
+      <summary>
+        <para>Get the target velocity the solver should aim reaching at a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <returns>
+        <para>The target velocity at a contact point.</para>
+      </returns>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.IgnoreContact(System.Int32)">
+      <summary>
+        <para>Ignore the specified contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.SetBounciness(System.Int32,System.Single)">
+      <summary>
+        <para>Set the restitution value for the specified contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <param name="bounciness">Bounciness value for the specified contact point.</param>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.SetDynamicFriction(System.Int32,System.Single)">
+      <summary>
+        <para>Set the value of the dynamic friction for a specified contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <param name="dynamicFriction">Dynamic friction coefficient.</param>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.SetMaxImpulse(System.Int32,System.Single)">
+      <summary>
+        <para>Set the maximum impulse that the solver can apply at a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <param name="value">The maximum impulse that can be applied.</param>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.SetNormal(System.Int32,UnityEngine.Vector3)">
+      <summary>
+        <para>Set the normal at a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <param name="normal">Normal at the contact point.</param>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.SetPoint(System.Int32,UnityEngine.Vector3)">
+      <summary>
+        <para>Set the location of a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <param name="v">The location of a contact point.</param>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.SetSeparation(System.Int32,System.Single)">
+      <summary>
+        <para>Set the separation value at a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <param name="separation">The separation at a contact point.</param>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.SetStaticFriction(System.Int32,System.Single)">
+      <summary>
+        <para>Set the static friction coefficient at a particular point of the contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <param name="staticFriction">The static friction coefficient at a contact point.</param>
+    </member>
+    <member name="M:UnityEngine.ModifiableContactPair.SetTargetVelocity(System.Int32,UnityEngine.Vector3)">
+      <summary>
+        <para>Set the target velocity the solver should aim reaching at a particular contact point in this contact pair.</para>
+      </summary>
+      <param name="i">Index of the contact point.</param>
+      <param name="velocity">The target velocity at a contact point.</param>
+    </member>
+    <member name="T:UnityEngine.ModifiableMassProperties">
+      <summary>
+        <para>Mass-related modifiable properties of a contact pair.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ModifiableMassProperties.inverseInertiaScale">
+      <summary>
+        <para>The inverse inertia scaling that the solver should apply to the first body of this contact pair.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ModifiableMassProperties.inverseMassScale">
+      <summary>
+        <para>The inverse mass scaling that the solver should apply to the first body of this contact pair.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ModifiableMassProperties.otherInverseInertiaScale">
+      <summary>
+        <para>The inverse inertia scaling that the solver should apply to the second body of this contact pair.</para>
+      </summary>
+    </member>
+    <member name="F:UnityEngine.ModifiableMassProperties.otherInverseMassScale">
+      <summary>
+        <para>The inverse mass scaling that the solver should apply to the second body of this contact pair.</para>
       </summary>
     </member>
     <member name="T:UnityEngine.PhysicMaterial">
@@ -1862,6 +2174,11 @@ Set gravity for all cloth components.</para>
     <member name="P:UnityEngine.Physics.gravity">
       <summary>
         <para>The gravity applied to all rigid bodies in the Scene.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.Physics.improvedPatchFriction">
+      <summary>
+        <para>Enables an improved patch friction mode that guarantees static and dynamic friction do not exceed analytical results.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.Physics.interCollisionDistance">
@@ -2110,6 +2427,18 @@ Set gravity for all cloth components.</para>
       <returns>
         <para>True, if the colliders overlap at the given poses.</para>
       </returns>
+    </member>
+    <member name="?:UnityEngine.Physics.ContactModifyEvent(System.Action`2&lt;UnityEngine.PhysicsScene,Unity.Collections.NativeArray`1&lt;UnityEngine.ModifiableContactPair&gt;&gt;)">
+      <summary>
+        <para>Subscribe to this event to be able to customize the collision response for contact pairs.</para>
+      </summary>
+      <param name="value">A delegate to call.</param>
+    </member>
+    <member name="?:UnityEngine.Physics.ContactModifyEventCCD(System.Action`2&lt;UnityEngine.PhysicsScene,Unity.Collections.NativeArray`1&lt;UnityEngine.ModifiableContactPair&gt;&gt;)">
+      <summary>
+        <para>Subscribe to this event to be able to customize the collision response of CCD generated contact pairs.</para>
+      </summary>
+      <param name="value">A delegate to call.</param>
     </member>
     <member name="F:UnityEngine.Physics.DefaultRaycastLayers">
       <summary>
@@ -2737,10 +3066,26 @@ Note that IgnoreLayerCollision will reset the trigger state of affected collider
         <para>The maximum number of Colliders the ray can hit.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.RaycastCommand.physicsScene">
+      <summary>
+        <para>The physics scene this command is run in.</para>
+      </summary>
+    </member>
     <member name="M:UnityEngine.RaycastCommand.#ctor(UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Int32,System.Int32)">
       <summary>
         <para>Create a RaycastCommand.</para>
       </summary>
+      <param name="from">The starting point of the ray in world coordinates.</param>
+      <param name="direction">The direction of the ray.</param>
+      <param name="distance">The maximum distance the ray should check for collisions.</param>
+      <param name="layerMask">A LayerMask that is used to selectively ignore Colliders when casting a ray.</param>
+      <param name="maxHits">The maximum number of Colliders the ray can hit.</param>
+    </member>
+    <member name="M:UnityEngine.RaycastCommand.#ctor(UnityEngine.PhysicsScene,UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Int32,System.Int32)">
+      <summary>
+        <para>Create a RaycastCommand.</para>
+      </summary>
+      <param name="physicsScene">The physics scene to run the raycast query in.</param>
       <param name="from">The starting point of the ray in world coordinates.</param>
       <param name="direction">The direction of the ray.</param>
       <param name="distance">The maximum distance the ray should check for collisions.</param>
@@ -2777,6 +3122,11 @@ Note that IgnoreLayerCollision will reset the trigger state of affected collider
     <member name="P:UnityEngine.RaycastHit.collider">
       <summary>
         <para>The Collider that was hit.</para>
+      </summary>
+    </member>
+    <member name="P:UnityEngine.RaycastHit.colliderInstanceID">
+      <summary>
+        <para>Instance ID of the Collider that was hit.</para>
       </summary>
     </member>
     <member name="P:UnityEngine.RaycastHit.distance">
@@ -3074,14 +3424,14 @@ Note that IgnoreLayerCollision will reset the trigger state of affected collider
         <para>Adds a torque to the rigidbody relative to its coordinate system.</para>
       </summary>
       <param name="torque">Torque vector in local coordinates.</param>
-      <param name="mode">Type of torque to apply.</param>
+      <param name="mode">Type of force to apply.</param>
     </member>
     <member name="M:UnityEngine.Rigidbody.AddRelativeTorque(UnityEngine.Vector3,UnityEngine.ForceMode)">
       <summary>
         <para>Adds a torque to the rigidbody relative to its coordinate system.</para>
       </summary>
       <param name="torque">Torque vector in local coordinates.</param>
-      <param name="mode">Type of torque to apply.</param>
+      <param name="mode">Type of force to apply.</param>
     </member>
     <member name="M:UnityEngine.Rigidbody.AddRelativeTorque(System.Single,System.Single,System.Single)">
       <summary>
@@ -3090,7 +3440,7 @@ Note that IgnoreLayerCollision will reset the trigger state of affected collider
       <param name="x">Size of torque along the local x-axis.</param>
       <param name="y">Size of torque along the local y-axis.</param>
       <param name="z">Size of torque along the local z-axis.</param>
-      <param name="mode">Type of torque to apply.</param>
+      <param name="mode">Type of force to apply.</param>
     </member>
     <member name="M:UnityEngine.Rigidbody.AddRelativeTorque(System.Single,System.Single,System.Single,UnityEngine.ForceMode)">
       <summary>
@@ -3099,21 +3449,21 @@ Note that IgnoreLayerCollision will reset the trigger state of affected collider
       <param name="x">Size of torque along the local x-axis.</param>
       <param name="y">Size of torque along the local y-axis.</param>
       <param name="z">Size of torque along the local z-axis.</param>
-      <param name="mode">Type of torque to apply.</param>
+      <param name="mode">Type of force to apply.</param>
     </member>
     <member name="M:UnityEngine.Rigidbody.AddTorque(UnityEngine.Vector3)">
       <summary>
         <para>Adds a torque to the rigidbody.</para>
       </summary>
       <param name="torque">Torque vector in world coordinates.</param>
-      <param name="mode">Type of torque to apply.</param>
+      <param name="mode">The type of torque to apply.</param>
     </member>
     <member name="M:UnityEngine.Rigidbody.AddTorque(UnityEngine.Vector3,UnityEngine.ForceMode)">
       <summary>
         <para>Adds a torque to the rigidbody.</para>
       </summary>
       <param name="torque">Torque vector in world coordinates.</param>
-      <param name="mode">Type of torque to apply.</param>
+      <param name="mode">The type of torque to apply.</param>
     </member>
     <member name="M:UnityEngine.Rigidbody.AddTorque(System.Single,System.Single,System.Single)">
       <summary>
@@ -3122,7 +3472,7 @@ Note that IgnoreLayerCollision will reset the trigger state of affected collider
       <param name="x">Size of torque along the world x-axis.</param>
       <param name="y">Size of torque along the world y-axis.</param>
       <param name="z">Size of torque along the world z-axis.</param>
-      <param name="mode">Type of torque to apply.</param>
+      <param name="mode">The type of torque to apply.</param>
     </member>
     <member name="M:UnityEngine.Rigidbody.AddTorque(System.Single,System.Single,System.Single,UnityEngine.ForceMode)">
       <summary>
@@ -3131,7 +3481,7 @@ Note that IgnoreLayerCollision will reset the trigger state of affected collider
       <param name="x">Size of torque along the world x-axis.</param>
       <param name="y">Size of torque along the world y-axis.</param>
       <param name="z">Size of torque along the world z-axis.</param>
-      <param name="mode">Type of torque to apply.</param>
+      <param name="mode">The type of torque to apply.</param>
     </member>
     <member name="M:UnityEngine.Rigidbody.ClosestPointOnBounds(UnityEngine.Vector3)">
       <summary>
@@ -3377,6 +3727,11 @@ Note that IgnoreLayerCollision will reset the trigger state of affected collider
         <para>The starting point of the sphere cast in world coordinates.</para>
       </summary>
     </member>
+    <member name="P:UnityEngine.SpherecastCommand.physicsScene">
+      <summary>
+        <para>The physics scene this command is run in.</para>
+      </summary>
+    </member>
     <member name="P:UnityEngine.SpherecastCommand.radius">
       <summary>
         <para>The radius of the casting sphere.</para>
@@ -3386,6 +3741,17 @@ Note that IgnoreLayerCollision will reset the trigger state of affected collider
       <summary>
         <para>Creates a SpherecastCommand.</para>
       </summary>
+      <param name="origin">The starting point of the sphere cast.</param>
+      <param name="radius">The radius of the casting sphere.</param>
+      <param name="direction">The direction of the sphere cast.</param>
+      <param name="distance">The maximum distance the cast should check for collisions.</param>
+      <param name="layerMask">The LayerMask that selectively ignores Colliders when casting a sphere.</param>
+    </member>
+    <member name="M:UnityEngine.SpherecastCommand.#ctor(UnityEngine.PhysicsScene,UnityEngine.Vector3,System.Single,UnityEngine.Vector3,System.Single,System.Int32)">
+      <summary>
+        <para>Creates a SpherecastCommand.</para>
+      </summary>
+      <param name="physicsScene">The physics scene to run the command in.</param>
       <param name="origin">The starting point of the sphere cast.</param>
       <param name="radius">The radius of the casting sphere.</param>
       <param name="direction">The direction of the sphere cast.</param>

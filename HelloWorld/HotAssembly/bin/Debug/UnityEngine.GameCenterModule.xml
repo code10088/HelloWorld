@@ -31,7 +31,7 @@
     </member>
     <member name="M:UnityEngine.Social.LoadAchievementDescriptions(System.Action`1&lt;UnityEngine.SocialPlatforms.IAchievementDescription[]&gt;)">
       <summary>
-        <para>Loads the achievement descriptions accociated with this application.</para>
+        <para>Loads the achievement descriptions associated with this application.</para>
       </summary>
       <param name="callback"></param>
     </member>
@@ -50,7 +50,7 @@
     </member>
     <member name="M:UnityEngine.Social.LoadUsers(System.String[],System.Action`1&lt;UnityEngine.SocialPlatforms.IUserProfile[]&gt;)">
       <summary>
-        <para>Load the user profiles accociated with the given array of user IDs.</para>
+        <para>Load the user profiles associated with the given array of user IDs.</para>
       </summary>
       <param name="userIDs"></param>
       <param name="callback"></param>

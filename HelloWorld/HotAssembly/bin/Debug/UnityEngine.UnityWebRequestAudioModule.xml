@@ -40,14 +40,6 @@
         <para>The same as DownloadHandlerAudioClip.audioClip</para>
       </returns>
     </member>
-    <member name="M:UnityEngine.Networking.DownloadHandlerAudioClip.GetData">
-      <summary>
-        <para>Called by DownloadHandler.data. Returns a copy of the downloaded clip data as raw bytes.</para>
-      </summary>
-      <returns>
-        <para>A copy of the downloaded data.</para>
-      </returns>
-    </member>
     <member name="T:UnityEngine.Networking.DownloadHandlerMovieTexture">
       <summary>
         <para>MovieTexture has been removed. Use VideoPlayer instead.</para>
