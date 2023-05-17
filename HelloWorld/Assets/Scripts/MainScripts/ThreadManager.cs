@@ -16,6 +16,7 @@ public class ThreadManager : Singletion<ThreadManager>
     {
         ThreadItem temp = (ThreadItem)cache.next;
         if (temp == null) temp = new ThreadItem();
+        else cache.next = temp.next;
         temp.Init(action, finish, param, time, priority);
         int index = wait.FindIndex(a => a.priority > priority);
         if (index >= 0) wait.Insert(index, temp);

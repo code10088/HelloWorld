@@ -21,6 +21,7 @@ public class TimeManager : Singletion<TimeManager>
     {
         TimeItem temp = (TimeItem)cache.next;
         if (temp == null) temp = new TimeItem();
+        else cache.next = temp.next;
         temp.Init(time, loop, action, finish);
         AsyncManager.Instance.Add(temp);
         return temp.ItemID;

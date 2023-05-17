@@ -8,6 +8,7 @@ public class Updater : Singletion<Updater>
     {
         UpdateItem temp = (UpdateItem)cache.next;
         if (temp == null) temp = new UpdateItem();
+        else cache.next = temp.next;
         temp.Init(action);
         AsyncManager.Instance.Add(temp);
         return temp.ItemID;
