@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace xasset
 {
@@ -10,6 +12,7 @@ namespace xasset
 
         public Versions versions { get; set; }
         public ulong downloadSize { get; private set; }
+        public string[] exclude { get; set; }
 
         public DownloadRequestBase DownloadAsync()
         {
@@ -31,11 +34,33 @@ namespace xasset
 
             foreach (var version in versions.data)
             {
-                var bundles = version.manifest.bundles;
-                _bundles.AddRange(bundles);
+                if (exclude == null)
+                {
+                    var bundles = version.manifest.bundles;
+                    _bundles.AddRange(bundles);
+                }
+                else
+                {
+                    List<int> result = new List<int>();
+                    var assets = version.manifest.assets;
+                    for (int i = 0; i < assets.Length; i++)
+                    {
+                        if (exclude.Contains(assets[i].name)) Exclude(i, assets, result);
+                    }
+                    for (int i = 0; i < result.Count; i++)
+                    {
+                        _bundles.Add(version.manifest.bundles[result[i]]);
+                    }
+                }
             }
 
             _max = _bundles.Count;
+        }
+        private void Exclude(int id, ManifestAsset[] asset, List<int> result)
+        {
+            if (result.Contains(asset[id].bundle)) return;
+            result.Add(asset[id].bundle);
+            foreach (var item in asset[id].deps) Exclude(item, asset, result);
         }
 
         protected override void OnUpdated()

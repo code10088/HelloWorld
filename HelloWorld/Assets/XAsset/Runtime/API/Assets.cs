@@ -70,9 +70,9 @@ namespace xasset
             return request;
         }
 
-        public static GetDownloadSizeRequest GetDownloadSizeAsync(Versions versions)
+        public static GetDownloadSizeRequest GetDownloadSizeAsync(Versions versions, string[] exclude = null)
         {
-            var request = new GetDownloadSizeRequest { versions = versions };
+            var request = new GetDownloadSizeRequest { versions = versions, exclude = exclude };
             request.SendRequest();
             return request;
         }
