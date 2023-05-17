@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using xasset;
 
@@ -47,7 +48,7 @@ namespace HotAssembly
             var downloadAsync = getDownloadSizeAsync.DownloadAsync();
             var downloadRequestBatch = downloadAsync as DownloadRequestBatch;
             downloadRequestBatch.updated = Downloading;
-            downloadRequestBatch.completed += a => UpdateFinish();
+            downloadRequestBatch.completed += UpdateFinish;
         }
         private void Downloading(DownloadRequestBatch download)
         {
@@ -58,6 +59,23 @@ namespace HotAssembly
             var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
             hotUpdateRes.SetText($"Download£º{downloadedBytes}/{downloadSize} {bandwidth}/s");
             hotUpdateRes.SetSlider(download.progress);
+        }
+        private void UpdateFinish(DownloadRequestBatch download)
+        {
+            if (download.result == DownloadRequestBase.Result.Success)
+            {
+                UpdateFinish();
+            }
+            else
+            {
+                UIMessageBoxParam param = new UIMessageBoxParam();
+                param.type = UIMessageBoxType.SureAndCancel;
+                param.title = "Tips";
+                param.content = "Retry";
+                param.sure = a => CheckUpdateInfo();
+                param.cancel = a => Application.Quit();
+                UIManager.Instance.OpenMessageBox(param);
+            }
         }
         private void UpdateFinish()
         {

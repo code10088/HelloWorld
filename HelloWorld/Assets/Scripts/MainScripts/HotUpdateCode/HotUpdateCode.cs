@@ -58,13 +58,40 @@ namespace MainAssembly
             if (getVersionsAsync.result == Request.Result.Success)
             {
                 latestVersion = getVersionsAsync.versions;
-                //下载代码和更新界面资源
-                UpdateFinish();
+                string[] exclude = new string[] { "HotAssembly.bytes", "Data_UIConfig.bytes", "UIHotUpdateRes.prefab", "UIMessageBox.prefab" };
+                var getDownloadSizeAsync = Assets.GetDownloadSizeAsync(Assets.Versions, exclude);
+                getDownloadSizeAsync.completed += StartDownload;
+
+                UIHotUpdateCode.Instance.SetText("CheckUpdateVersion");
             }
             else
             {
                 UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", CheckUpdateInfo);
             }
+        }
+        private void StartDownload(Request request)
+        {
+            var getDownloadSizeAsync = request as GetDownloadSizeRequest;
+            if (getDownloadSizeAsync.downloadSize > 0)
+            {
+                var downloadAsync = getDownloadSizeAsync.DownloadAsync();
+                var downloadRequestBatch = downloadAsync as DownloadRequestBatch;
+                downloadRequestBatch.updated = Downloading;
+                downloadRequestBatch.completed += RemoveUnusedFile;
+            }
+            else
+            {
+                UpdateFinish();
+            }
+        }
+        private void Downloading(DownloadRequestBatch download)
+        {
+            var downloadedBytes = Utility.FormatBytes(download.downloadedBytes);
+            var downloadSize = Utility.FormatBytes(download.downloadSize);
+            var bandwidth = Utility.FormatBytes(download.bandwidth);
+
+            UIHotUpdateCode.Instance.SetText($"Download：{downloadedBytes}/{downloadSize} {bandwidth}/s");
+            UIHotUpdateCode.Instance.SetSlider(download.progress);
         }
         private void RemoveUnusedFile(DownloadRequestBatch download)
         {
@@ -99,7 +126,7 @@ namespace MainAssembly
             }
             else
             {
-                UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", download.Retry);
+                UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", CheckUpdateInfo);
             }
         }
         private void SaveVersion(Request request)

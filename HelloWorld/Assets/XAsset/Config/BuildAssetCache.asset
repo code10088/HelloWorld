@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data:
   - path: Assets/ZRes/Assembly/HotAssembly.bytes
-    bundle: build/assembly_hotassembly_bytes.bundle
+    bundle: assembly_hotassembly_bytes.bundle
     type: TextAsset
     entry: Assets/ZRes/Assembly
     lastWriteTime: 0
@@ -22,7 +22,7 @@ MonoBehaviour:
     dependencies: []
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/Config/Data_DeviceInfo.bytes
-    bundle: build/config_data_deviceinfo_bytes.bundle
+    bundle: config_data_deviceinfo_bytes.bundle
     type: TextAsset
     entry: Assets/ZRes/Config
     lastWriteTime: 0
@@ -30,7 +30,7 @@ MonoBehaviour:
     dependencies: []
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/Config/Data_Test.bytes
-    bundle: build/config_data_test_bytes.bundle
+    bundle: config_data_test_bytes.bundle
     type: TextAsset
     entry: Assets/ZRes/Config
     lastWriteTime: 0
@@ -38,7 +38,7 @@ MonoBehaviour:
     dependencies: []
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/Config/Data_UIConfig.bytes
-    bundle: build/config_data_uiconfig_bytes.bundle
+    bundle: config_data_uiconfig_bytes.bundle
     type: TextAsset
     entry: Assets/ZRes/Config
     lastWriteTime: 0
@@ -46,10 +46,10 @@ MonoBehaviour:
     dependencies: []
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/UI/Prefab/UIHotUpdateRes.prefab
-    bundle: build/prefab_uihotupdateres_prefab.bundle
+    bundle: prefab_uihotupdateres_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133287096599983094
+    lastWriteTime: 133287947409795699
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -61,10 +61,10 @@ MonoBehaviour:
     - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/UI/Prefab/UIMessageBox.prefab
-    bundle: build/prefab_uimessagebox_prefab.bundle
+    bundle: prefab_uimessagebox_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133287096599993073
+    lastWriteTime: 133287947461004095
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -78,10 +78,10 @@ MonoBehaviour:
     - Assets/Tools/UITween/Unity Extensions/Tween/Runtime/EditorOnly/EditorResources/Tween.png
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/UI/Prefab/UITest.prefab
-    bundle: build/prefab_uitest_prefab.bundle
+    bundle: prefab_uitest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133287096599993073
+    lastWriteTime: 133287947501483474
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -92,62 +92,3 @@ MonoBehaviour:
     - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
     - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
-  - path: Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset
-      Icon.psd
-    bundle: build/auto_416e3419ed2cc91ab7d0f76ab1eba7c5.bundle
-    type: Texture2D
-    entry: Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset
-      Icon.psd
-    lastWriteTime: 0
-    addressMode: 3
-    dependencies: []
-    group: {fileID: 11400000, guid: 60d8c3e84ec48469cb1ced347922d28a, type: 2}
-  - path: Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
-    bundle: build/shaders.bundle
-    type: Shader
-    entry: Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
-    lastWriteTime: 133287026647032613
-    addressMode: 3
-    dependencies: []
-    group: {fileID: 11400000, guid: 60d8c3e84ec48469cb1ced347922d28a, type: 2}
-  - path: Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Text Component
-      Icon.psd
-    bundle: build/auto_416e3419ed2cc91ab7d0f76ab1eba7c5.bundle
-    type: Texture2D
-    entry: Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Text Component
-      Icon.psd
-    lastWriteTime: 0
-    addressMode: 3
-    dependencies: []
-    group: {fileID: 11400000, guid: 60d8c3e84ec48469cb1ced347922d28a, type: 2}
-  - path: Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
-    bundle: build/auto_416e3419ed2cc91ab7d0f76ab1eba7c5.bundle
-    type: TMP_FontAsset
-    entry: Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
-    lastWriteTime: 133287096649524730
-    addressMode: 3
-    dependencies:
-    - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
-    - Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
-    - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
-    group: {fileID: 11400000, guid: 60d8c3e84ec48469cb1ced347922d28a, type: 2}
-  - path: Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
-    bundle: build/auto_416e3419ed2cc91ab7d0f76ab1eba7c5.bundle
-    type: TMP_FontAsset
-    entry: Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
-    lastWriteTime: 133287096649504760
-    addressMode: 3
-    dependencies:
-    - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
-    - Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
-    - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
-    - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
-    group: {fileID: 11400000, guid: 60d8c3e84ec48469cb1ced347922d28a, type: 2}
-  - path: Assets/TextMesh Pro/Fonts/LiberationSans.ttf
-    bundle: build/auto_416e3419ed2cc91ab7d0f76ab1eba7c5.bundle
-    type: Font
-    entry: Assets/TextMesh Pro/Fonts/LiberationSans.ttf
-    lastWriteTime: 133287027041567043
-    addressMode: 3
-    dependencies: []
-    group: {fileID: 11400000, guid: 60d8c3e84ec48469cb1ced347922d28a, type: 2}

@@ -20,7 +20,7 @@ MonoBehaviour:
     downloadURL: http://192.168.6.2/Bundles
     playerURL: http://192.168.6.2/Build/xasset.apk
     splitMode: 2
-    packed: 1
+    packed: 0
     logLevel: 0
     maxDownloads: 5
     maxRetryTimes: 3
@@ -31,9 +31,9 @@ MonoBehaviour:
   bundle:
     encryption: 1
     checkReference: 1
-    saveBundleName: 1
-    splitBundleNameWithBuild: 1
-    packByFileForAllScenes: 1
+    saveBundleName: 0
+    splitBundleNameWithBuild: 0
+    packByFileForAllScenes: 0
     packTogetherForAllShaders: 1
     buildAssetPackAssets: 0
     forceUseBuiltinPipeline: 0
