@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 using xasset;
 using Object = UnityEngine.Object;
 
@@ -154,7 +155,7 @@ namespace MainAssembly
         {
             AssetManager.Instance.Unload(id);
             TextAsset ta = asset as TextAsset;
-            var config = JsonUtility.FromJson<HotUpdateConfig>(ta.text);
+            var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
             List<string> include = new List<string>();
             include.AddRange(config.Metadata);
             include.AddRange(config.HotUpdateRes);

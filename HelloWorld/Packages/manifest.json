@@ -5,6 +5,7 @@
     "com.unity.ide.visualstudio": "2.0.18",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.memoryprofiler": "0.7.1-preview.1",
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.unity.performance.profile-analyzer": "1.2.2",
     "com.unity.render-pipelines.universal": "12.1.11",
     "com.unity.textmeshpro": "3.0.6",

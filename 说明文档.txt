@@ -16,4 +16,7 @@ protobuf-net
 	
 newtonjson
 	release13.0.3 bin/.net45/dll
-	暂时屏蔽，unityc#.net48版本 newtonjson暂时没有该版本
+	直接使用git工程android端出现不兼容问题，unity(.net48)和newtonjson(.net45) .net版本不一致导致
+	使用packagemanager add packet by name方式添加
+	name:com.unity.nuget.newtonsoft-json
+	version:3.2.1

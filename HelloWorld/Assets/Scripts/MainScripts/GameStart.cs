@@ -1,9 +1,10 @@
-﻿using HybridCLR;
-using System;
+﻿using System;
 using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Newtonsoft.Json;
 using System.IO;
+using HybridCLR;
 
 namespace MainAssembly
 {
@@ -28,7 +29,7 @@ namespace MainAssembly
         {
             AssetManager.Instance.Unload(id);
             TextAsset ta = asset as TextAsset;
-            var config = JsonUtility.FromJson<HotUpdateConfig>(ta.text);
+            var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
             string[] path = new string[config.Metadata.Count];
             for (int i = 0; i < path.Length; i++) path[i] = Path.GetFileNameWithoutExtension(config.Metadata[i]);
             loadId = AssetManager.Instance.Load(path, LoadMetadataForAOTAssembly);
