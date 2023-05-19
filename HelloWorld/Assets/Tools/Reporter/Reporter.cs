@@ -1136,7 +1136,7 @@ public class Reporter : MonoBehaviour
 			show = false;
 			ReporterGUI gui = gameObject.GetComponent<ReporterGUI>();
 			DestroyImmediate(gui);
-			if (thread != null) thread.Abort();
+			thread?.Join();
 
 			try
 			{

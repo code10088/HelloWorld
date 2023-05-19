@@ -144,6 +144,9 @@
     <Compile Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatchAuto.cs">
       <Link>SubScripts\Network\NetMsgDispatchAuto.cs</Link>
     </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Tools\DevicePerformanceUtil.cs">
+      <Link>SubScripts\Tools\DevicePerformanceUtil.cs</Link>
+    </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UIHotUpdateResComponent.cs">
       <Link>SubScripts\UI\Auto\UIHotUpdateResComponent.cs</Link>
     </Compile>
@@ -239,6 +242,12 @@
     </None>
     <None Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatchAuto.cs.meta">
       <Link>SubScripts\Network\NetMsgDispatchAuto.cs.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Tools.meta">
+      <Link>SubScripts\Tools.meta</Link>
+    </None>
+    <None Include="..\Assets\Scripts\SubScripts\Tools\DevicePerformanceUtil.cs.meta">
+      <Link>SubScripts\Tools\DevicePerformanceUtil.cs.meta</Link>
     </None>
     <None Include="..\Assets\Scripts\SubScripts\UI.meta">
       <Link>SubScripts\UI.meta</Link>

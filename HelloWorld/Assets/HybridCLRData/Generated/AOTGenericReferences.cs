@@ -30,6 +30,8 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 		// System.Void BytesDecode.ToBytes<object>(object[])
 		// object ProtoBuf.Serializer.Deserialize<object>(System.IO.Stream)
 		// object[] System.Array.Empty<object>()
+		// int System.Array.FindIndex<object>(object[],System.Predicate<object>)
+		// object System.Threading.Interlocked.CompareExchange<object>(object&,object,object)
 		// object UnityEngine.GameObject.GetComponent<object>()
 		// object[] UnityEngine.GameObject.GetComponentsInChildren<object>(bool)
 	}

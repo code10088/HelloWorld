@@ -6,7 +6,6 @@
     <type fullname="BytesDecodeInterface" preserve="all" />
     <type fullname="ExportComponent" preserve="all" />
     <type fullname="GameDebug" preserve="all" />
-    <type fullname="HotAssembly.DevicePerformanceUtil" preserve="all" />
     <type fullname="Singletion`1" preserve="all" />
     <type fullname="SingletionInterface" preserve="all" />
     <type fullname="SocketManager" preserve="all" />
@@ -21,6 +20,7 @@
     <type fullname="System.Action`2" preserve="all" />
     <type fullname="System.Activator" preserve="all" />
     <type fullname="System.Array" preserve="all" />
+    <type fullname="System.AsyncCallback" preserve="all" />
     <type fullname="System.Collections.Generic.Dictionary`2" preserve="all" />
     <type fullname="System.Collections.Generic.IEnumerable`1" preserve="all" />
     <type fullname="System.Collections.Generic.List`1" preserve="all" />
@@ -32,8 +32,10 @@
     <type fullname="System.Enum" preserve="all" />
     <type fullname="System.Func`1" preserve="all" />
     <type fullname="System.GC" preserve="all" />
+    <type fullname="System.IAsyncResult" preserve="all" />
     <type fullname="System.IO.MemoryStream" preserve="all" />
     <type fullname="System.IO.Stream" preserve="all" />
+    <type fullname="System.MulticastDelegate" preserve="all" />
     <type fullname="System.Object" preserve="all" />
     <type fullname="System.ParamArrayAttribute" preserve="all" />
     <type fullname="System.Predicate`1" preserve="all" />
@@ -56,6 +58,7 @@
     <type fullname="System.RuntimeTypeHandle" preserve="all" />
     <type fullname="System.Single" preserve="all" />
     <type fullname="System.String" preserve="all" />
+    <type fullname="System.Threading.Interlocked" preserve="all" />
     <type fullname="System.Threading.Monitor" preserve="all" />
     <type fullname="System.Type" preserve="all" />
   </assembly>
@@ -89,8 +92,14 @@
     <type fullname="UnityEngine.Mathf" preserve="all" />
     <type fullname="UnityEngine.MonoBehaviour" preserve="all" />
     <type fullname="UnityEngine.Object" preserve="all" />
+    <type fullname="UnityEngine.PlayerPrefs" preserve="all" />
+    <type fullname="UnityEngine.QualitySettings" preserve="all" />
     <type fullname="UnityEngine.Quaternion" preserve="all" />
     <type fullname="UnityEngine.RectTransform" preserve="all" />
+    <type fullname="UnityEngine.Screen" preserve="all" />
+    <type fullname="UnityEngine.Shader" preserve="all" />
+    <type fullname="UnityEngine.ShadowQuality" preserve="all" />
+    <type fullname="UnityEngine.SystemInfo" preserve="all" />
     <type fullname="UnityEngine.TextAsset" preserve="all" />
     <type fullname="UnityEngine.Texture" preserve="all" />
     <type fullname="UnityEngine.Transform" preserve="all" />

@@ -65,7 +65,7 @@ MonoBehaviour:
     bundle: prefab_uihotupdateres_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133289498248325189
+    lastWriteTime: 133289600244260886
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -80,7 +80,7 @@ MonoBehaviour:
     bundle: prefab_uimessagebox_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133289498248404964
+    lastWriteTime: 133289600244340674
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -97,7 +97,7 @@ MonoBehaviour:
     bundle: prefab_uitest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133289498248404964
+    lastWriteTime: 133289600244350928
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
