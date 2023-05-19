@@ -9,9 +9,8 @@ namespace xasset
     {
         private static readonly Queue<AssetRequest> Unused = new Queue<AssetRequest>();
         internal static readonly Dictionary<string, AssetRequest> Loaded = new Dictionary<string, AssetRequest>();
-
         private IAssetHandler handler { get; } = CreateHandler();
-
+        public override int priority => 1;
         public Object asset { get; set; }
         public Object[] assets { get; set; }
         public bool isAll { get; private set; }

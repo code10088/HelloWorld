@@ -9,6 +9,7 @@ namespace xasset
         public string key;
         public byte maxRequests { get; set; } = 10;
         public bool working => processing.Count > 0 || queue.Count > 0;
+        public int priority { get; set; }
 
         public void Enqueue(Request request)
         {

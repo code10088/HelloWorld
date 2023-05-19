@@ -72,7 +72,7 @@ namespace xasset.editor
         /// <summary>
         ///     每个队列最大单帧更新数量。
         /// </summary>
-        [Range(1, 30)] [Tooltip("每个队列最大单帧更新数量")]
+        [Range(0, 30)] [Tooltip("每个队列最大单帧更新数量")]
         public byte maxRequests = 10;
 
         /// <summary>

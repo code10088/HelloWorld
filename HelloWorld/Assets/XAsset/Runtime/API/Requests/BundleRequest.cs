@@ -9,7 +9,7 @@ namespace xasset
         private IBundleHandler handler;
         internal AssetBundle assetBundle { get; private set; }
         public ManifestBundle info { get; private set; }
-
+        public override int priority => 0;
         public static Func<BundleRequest, IBundleHandler> CreateHandler { get; set; }
 
         protected override void OnStart()

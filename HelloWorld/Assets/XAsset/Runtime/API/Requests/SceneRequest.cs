@@ -19,7 +19,8 @@ namespace xasset
         private ISceneHandler handler { get; set; }
         public ManifestAsset info { get; private set; }
         public bool withAdditive { get; private set; }
-
+        public override int priority => 1;
+        
         public bool allowSceneActivation
         {
             get => _allowSceneActivation;
