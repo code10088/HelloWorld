@@ -16,3 +16,4 @@ protobuf-net
 	
 newtonjson
 	release13.0.3 bin/.net45/dll
+	暂时屏蔽，unityc#.net48版本 newtonjson暂时没有该版本
