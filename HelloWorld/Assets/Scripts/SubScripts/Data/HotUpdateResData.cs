@@ -21,7 +21,7 @@ namespace HotAssembly
             getDownloadSizeAsync.completed += StartDownload;
 
             var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
-            hotUpdateRes.SetText("DownloadInfo");
+            hotUpdateRes.SetText("CheckUpdateInfo");
         }
         private void StartDownload(Request request)
         {
