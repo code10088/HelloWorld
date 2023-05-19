@@ -7,7 +7,7 @@
 #else
 #define UNITY_CHANGE3
 #endif
-#if UNITY_2018_3
+#if UNITY_2018_3_OR_NEWER
 #define UNITY_CHANGE4
 #endif
 //use UNITY_CHANGE1 for unity older than "unity 5"
@@ -21,9 +21,6 @@ using System.Collections;
 using System.Collections.Generic;
 #if UNITY_CHANGE3
 using UnityEngine.SceneManagement;
-using UnityEngine.Profiling;
-using System.Threading;
-using System;
 #endif
 #if UNITY_CHANGE4
 using UnityEngine.Networking;
@@ -46,7 +43,9 @@ public class Images
 	public Texture2D infoImage;
     public Texture2D saveLogsImage; 
     public Texture2D searchImage;
-	public Texture2D closeImage;
+    public Texture2D copyImage;
+    public Texture2D copyAllImage;
+    public Texture2D closeImage;
 
 	public Texture2D buildFromImage;
 	public Texture2D systemInfoImage;
@@ -107,7 +106,7 @@ public class Reporter : MonoBehaviour
 		}
 	}
 
-	List<Sample> samples = new List<Sample>(60 * 60 * 60);
+	List<Sample> samples = new List<Sample>();
 
 	public class Log
 	{
@@ -192,8 +191,11 @@ public class Reporter : MonoBehaviour
 	bool showMemButton = true;
 	bool showFpsButton = true;
 	bool showSearchText = true;
+    bool showCopyButton = true;
+    bool showCopyAllButton = true;
+    bool showSaveButton = true;
 
-	string buildDate;
+    string buildDate;
 	string logDate;
 	float logsMemUsage;
 	float graphMemUsage;
@@ -249,7 +251,9 @@ public class Reporter : MonoBehaviour
 	GUIContent infoContent;
     GUIContent saveLogsContent;
 	GUIContent searchContent;
-	GUIContent closeContent;
+    GUIContent copyContent;
+    GUIContent copyAllContent;
+    GUIContent closeContent;
 
 	GUIContent buildFromContent;
 	GUIContent systemInfoContent;
@@ -283,7 +287,7 @@ public class Reporter : MonoBehaviour
 
 	public Vector2 size = new Vector2(32, 32);
 	public float maxSize = 20;
-	public int numOfCircleToShow = 2;
+	public int numOfCircleToShow = 1;
 	static string[] scenes;
 	string currentScene;
 	string filterText = "";
@@ -391,7 +395,9 @@ public class Reporter : MonoBehaviour
 		infoContent = new GUIContent("", images.infoImage, "Information about application");
         saveLogsContent = new GUIContent("", images.saveLogsImage, "Save logs to device");
         searchContent = new GUIContent("", images.searchImage, "Search for logs");
-		closeContent = new GUIContent("", images.closeImage, "Hide logs");
+        copyContent = new GUIContent("", images.copyImage, "Copy log to clipboard");
+        copyAllContent = new GUIContent("", images.copyAllImage, "Copy all logs to clipboard");
+        closeContent = new GUIContent("", images.closeImage, "Hide logs");
 		userContent = new GUIContent("", images.userImage, "User");
 
 		buildFromContent = new GUIContent("", images.buildFromImage, "Build From");
@@ -407,7 +413,7 @@ public class Reporter : MonoBehaviour
 
 
 		currentView = (ReportView)PlayerPrefs.GetInt("Reporter_currentView", 1);
-		//show = (PlayerPrefs.GetInt("Reporter_show") == 1) ? true : false;
+		show = (PlayerPrefs.GetInt("Reporter_show") == 1) ? true : false;
 		collapse = (PlayerPrefs.GetInt("Reporter_collapse") == 1) ? true : false;
 		clearOnNewSceneLoaded = (PlayerPrefs.GetInt("Reporter_clearOnNewSceneLoaded") == 1) ? true : false;
 		showTime = (PlayerPrefs.GetInt("Reporter_showTime") == 1) ? true : false;
@@ -428,9 +434,12 @@ public class Reporter : MonoBehaviour
 		showMemButton = (PlayerPrefs.GetInt("Reporter_showMemButton", 1) == 1) ? true : false;
 		showFpsButton = (PlayerPrefs.GetInt("Reporter_showFpsButton", 1) == 1) ? true : false;
 		showSearchText = (PlayerPrefs.GetInt("Reporter_showSearchText", 1) == 1) ? true : false;
+        showCopyButton = (PlayerPrefs.GetInt("Reporter_showCopyButton", 1) == 1) ? true : false;
+        showCopyAllButton = (PlayerPrefs.GetInt("Reporter_showCopyAllButton", 1) == 1) ? true : false;
+        showSaveButton = (PlayerPrefs.GetInt("Reporter_showSaveButton", 1) == 1) ? true : false;
 
 
-		initializeStyle();
+        initializeStyle();
 
 		Initialized = true;
 
@@ -949,7 +958,19 @@ public class Reporter : MonoBehaviour
 		if (GUILayout.Button(searchContent, (showSearchText) ? buttonActiveStyle : barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2))) {
 			showSearchText = !showSearchText;
 		}
-		tempRect = GUILayoutUtility.GetLastRect();
+        if (GUILayout.Button(copyContent, (showCopyButton) ? buttonActiveStyle : barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+        {
+            showCopyButton = !showCopyButton;
+        }
+        if (GUILayout.Button(copyAllContent, (showCopyAllButton) ? buttonActiveStyle : barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+        {
+            showCopyAllButton = !showCopyAllButton;
+        }
+        if (GUILayout.Button(saveLogsContent, (showSaveButton) ? buttonActiveStyle : barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+        {
+            showSaveButton = !showSaveButton;
+        }
+        tempRect = GUILayoutUtility.GetLastRect();
 		GUI.TextField(tempRect, filterText, searchStyle);
 
 
@@ -1067,13 +1088,43 @@ public class Reporter : MonoBehaviour
 			}
 		}
 
-		if (GUILayout.Button(infoContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2))) {
+        if (showCopyButton)
+        {
+            if (GUILayout.Button(copyContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+            {
+                if (selectedLog == null)
+                    GUIUtility.systemCopyBuffer = "No log selected";
+                else
+                    GUIUtility.systemCopyBuffer = selectedLog.condition + System.Environment.NewLine + System.Environment.NewLine  + selectedLog.stacktrace;
+            }
+        }
+
+        if (showCopyAllButton)
+        {
+            if (GUILayout.Button(copyAllContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+            {
+                string allLogsToClipboard = string.Empty;
+                logs.ForEach(l => allLogsToClipboard += l.condition + System.Environment.NewLine + System.Environment.NewLine + l.stacktrace);
+
+                if(string.IsNullOrWhiteSpace(allLogsToClipboard))
+                    GUIUtility.systemCopyBuffer = "No log selected";
+                else
+                    GUIUtility.systemCopyBuffer = allLogsToClipboard;
+            }
+        }
+
+        if (showSaveButton)
+        {
+            if (GUILayout.Button(saveLogsContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+            {
+                SaveLogsToDevice();
+            }
+        }
+
+        if (GUILayout.Button(infoContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2))) {
 			currentView = ReportView.Info;
 		}
-        if (GUILayout.Button(saveLogsContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
-        {
-            SaveLogsToDevice();
-        }
+       
 
 
         GUILayout.FlexibleSpace();
@@ -1136,10 +1187,8 @@ public class Reporter : MonoBehaviour
 			show = false;
 			ReporterGUI gui = gameObject.GetComponent<ReporterGUI>();
 			DestroyImmediate(gui);
-			thread?.Join();
 
-			try
-			{
+			try {
 				gameObject.SendMessage("OnHideReporter");
 			}
 			catch (System.Exception e) {
@@ -1572,49 +1621,6 @@ public class Reporter : MonoBehaviour
 
 	}
 
-	Thread thread;
-	TimeSpan record;
-	int processorCount = Environment.ProcessorCount;
-	int updateInernal = 1;
-	float cpuUsage = 0;
-	float MB = 1024 * 1024;
-	void CPUUsage()
-	{
-		while (true)
-		{
-			var cpuTime = new TimeSpan(0);
-			var allProcess = System.Diagnostics.Process.GetProcesses();
-			foreach (var item in allProcess) cpuTime += item.TotalProcessorTime;
-			var temp = (cpuTime - record).TotalSeconds;
-			cpuUsage = 100f * (float)temp / updateInernal / processorCount;
-			record = cpuTime;
-			Thread.Sleep(updateInernal * 1000);
-		}
-	}
-	void DrawImportant()
-    {
-		GUIStyle style = new GUIStyle("label") { fontSize = 30 };
-		style.normal.textColor = Color.black;
-
-		Rect rect = new Rect(0, screenRect.height - 35, 500, 50);
-		float total = Profiler.GetTotalReservedMemoryLong() / MB;
-		GUI.Label(rect, $"TotalMemory：{total.ToString("#0.00")}/M", style);
-
-		rect.y -= 35;
-		float used = Profiler.GetTotalAllocatedMemoryLong() / MB;
-		GUI.Label(rect, $"UsedMemory：{used.ToString("#0.00")}/M", style);
-
-		rect.y -= 35;
-		float totalMono = Profiler.GetMonoHeapSizeLong() / MB;
-		GUI.Label(rect, $"TotalMono：{totalMono.ToString("#0.00")}/M", style);
-
-		rect.y -= 35;
-		float usedMono = Profiler.GetMonoUsedSizeLong() / MB;
-		GUI.Label(rect, $"UsedMono：{usedMono.ToString("#0.00")}/M", style);
-
-		rect.y -= 35;
-		GUI.Label(rect, $"CPU：{cpuUsage.ToString("#0.00")}%", style);
-	}
 
 	public void OnGUIDraw()
 	{
@@ -1657,7 +1663,7 @@ public class Reporter : MonoBehaviour
 			DrawLogs();
 		}
 
-		DrawImportant();
+
 	}
 
 	List<Vector2> gestureDetector = new List<Vector2>();
@@ -1840,8 +1846,7 @@ public class Reporter : MonoBehaviour
 		show = true;
 		currentView = ReportView.Logs;
 		gameObject.AddComponent<ReporterGUI>();
-		thread = new Thread(CPUUsage) { IsBackground = true };
-		thread.Start();
+
 
 		try {
 			gameObject.SendMessage("OnShowReporter");
@@ -2085,8 +2090,8 @@ public class Reporter : MonoBehaviour
 	//read build information 
 	IEnumerator readInfo()
 	{
-		string prefFile = "build_info.txt";
-		string url = prefFile;
+		string prefFile = "build_info"; 
+		string url = prefFile; 
 
 		if (prefFile.IndexOf("://") == -1) {
 			string streamingAssetsPath = Application.streamingAssetsPath;
