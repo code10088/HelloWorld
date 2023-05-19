@@ -1,12 +1,16 @@
-﻿using System;
+﻿using HybridCLR;
+using System;
 using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
+using Newtonsoft.Json;
 
 namespace MainAssembly
 {
     public class GameStart : MonoBehaviour
     {
+        private int loadId;
+
         private void Start()
         {
             Application.runInBackground = true;
@@ -14,7 +18,31 @@ namespace MainAssembly
         }
         private void HotUpdate()
         {
-            HotUpdateCode.Instance.StartUpdate(StartHotAssembly);
+            HotUpdateCode.Instance.StartUpdate(LoadHotUpdateConfig);
+        }
+        private void LoadHotUpdateConfig()
+        {
+            AssetManager.Instance.Load<TextAsset>("HotUpdateConfig", LoadMetadataRes);
+        }
+        private void LoadMetadataRes(int id, Object asset)
+        {
+            AssetManager.Instance.Unload(id);
+            TextAsset ta = asset as TextAsset;
+            var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
+            loadId = AssetManager.Instance.Load(config.Metadata.ToArray(), LoadMetadataForAOTAssembly);
+        }
+        private void LoadMetadataForAOTAssembly(string[] path, Object[] assets)
+        {
+            for (int i = 0; i < assets.Length; i++)
+            {
+                if (assets[i] != null)
+                {
+                    var ta = assets[i] as TextAsset;
+                    RuntimeApi.LoadMetadataForAOTAssembly(ta.bytes, HomologousImageMode.SuperSet);
+                }
+            }
+            AssetManager.Instance.Unload(loadId);
+            StartHotAssembly();
         }
         private void StartHotAssembly()
         {

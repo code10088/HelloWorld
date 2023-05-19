@@ -1,6 +1,7 @@
 
 HybridCLR
 	macos系统下编译libil2cpp.a时，执行bash ./build_libil2cpp.sh报错，直接拖到cmd运行不报错
+	自己编译dll，添加热更新dlls列表，只是为了生成补充元数据文件AOTGenericReferences，原则上不需要添加热更新dlls编译
 	
 XAsset
 	更新时需要对比示例更新流程和当前更新流程，看是否有遗漏

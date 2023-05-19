@@ -1,0 +1,4 @@
+{
+	"Metadata": ["mscorlib.bytes", "protobuf-net.bytes"],
+	"HotUpdateRes": ["HotAssembly.bytes", "Data_UIConfig.bytes", "UIHotUpdateRes.prefab", "UIMessageBox.prefab"]
+}

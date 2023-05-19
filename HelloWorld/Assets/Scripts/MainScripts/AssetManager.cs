@@ -5,6 +5,7 @@ using Object = UnityEngine.Object;
 
 public class AssetManager : Singletion<AssetManager>
 {
+    private static Dictionary<int, AssetItemGroup> group = new Dictionary<int, AssetItemGroup>();
     private static Dictionary<int, AssetItem> total = new Dictionary<int, AssetItem>();
     private static AssetItem cache = new AssetItem();
     private Action initFinish;
@@ -28,16 +29,60 @@ public class AssetManager : Singletion<AssetManager>
         total[temp.ItemID] = temp;
         return temp.ItemID;
     }
+    public int Load(string[] path, Action<string[], Object[]> action = null)
+    {
+        AssetItemGroup temp = new AssetItemGroup();
+        temp.Init(path, action);
+        return temp.ItemID;
+    }
     public void Unload(int id)
     {
-        if (total.TryGetValue(id, out AssetItem item))
+        if (group.TryGetValue(id, out AssetItemGroup a))
         {
-            item.Unload();
+            a.Unload();
+            group.Remove(id);
+        }
+        else if (total.TryGetValue(id, out AssetItem b))
+        {
+            b.Unload();
             total.Remove(id);
         }
     }
 
 
+    private class AssetItemGroup : AsyncItem
+    {
+        private Action<string[], Object[]> action;
+        private string[] path;
+        private int[] ids;
+        private Object[] assets;
+        private int complete;
+
+        public void Init(string[] path, Action<string[], Object[]> action)
+        {
+            base.Init(null);
+            this.path = path;
+            this.action = action;
+            ids = new int[path.Length];
+            assets = new Object[path.Length];
+            for (int i = 0; i < path.Length; i++) ids[i] = Instance.Load<Object>(path[i], Finish);
+        }
+        private void Finish(int id, Object asset)
+        {
+            int index = Array.FindIndex(ids, a => a == id);
+            assets[index] = asset;
+            if (++complete == ids.Length) action?.Invoke(path, assets);
+        }
+        public void Unload()
+        {
+            base.Reset();
+            for (int i = 0; i < ids.Length; i++) Instance.Unload(ids[i]);
+            action = null;
+            path = null;
+            ids = null;
+            assets = null;
+        }
+    }
     private class AssetItem : AsyncItem
     {
         private Action<int, Object> action;

@@ -80,6 +80,7 @@ namespace HotAssembly
         {
             UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             hotUpdateResFinish?.Invoke();
+            hotUpdateResFinish = null;
         }
     }
 }
