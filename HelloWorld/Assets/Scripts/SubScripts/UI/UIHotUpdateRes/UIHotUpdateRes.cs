@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -9,9 +8,8 @@ namespace HotAssembly
         public UIHotUpdateResComponent component = new UIHotUpdateResComponent();
         private int loadId = -1;
 
-        public override void InitUI(GameObject UIObj, UIType type, UIType from, Data_UIConfig config, params object[] param)
+        protected override void InitComponent()
         {
-            base.InitUI(UIObj, type, from, config, param);
             component.Init(UIObj);
         }
         public override void OnDestroy()

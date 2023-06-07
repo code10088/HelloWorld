@@ -1,4 +1,3 @@
-using UnityEngine;
 using System;
 
 namespace HotAssembly
@@ -7,18 +6,17 @@ namespace HotAssembly
     {
         private UIMessageBoxComponent component = new UIMessageBoxComponent();
         private UIMessageBoxParam messageBoxParam;
-        public override void InitUI(GameObject UIObj, UIType type, UIType from, Data_UIConfig config, params object[] param)
+
+        protected override void InitComponent()
         {
-            base.InitUI(UIObj, type, from, config, param);
             component.Init(UIObj);
             component.sure1Button.onClick.AddListener(OnClickSure1);
             component.sure2Button.onClick.AddListener(OnClickSure2);
             component.cancelButton.onClick.AddListener(OnClickCancel);
-            Refresh(param);
         }
-        public override void Refresh(params object[] param)
+        public override void OnEnable(params object[] param)
         {
-            base.Refresh(param);
+            base.OnEnable(param);
             messageBoxParam = param[0] as UIMessageBoxParam;
             component.titleTextMeshProUGUI.text = messageBoxParam.title;
             component.contentTextMeshProUGUI.text = messageBoxParam.content;
@@ -34,14 +32,6 @@ namespace HotAssembly
                 component.sure2Button.gameObject.SetActive(true);
                 component.cancelButton.gameObject.SetActive(true);
             }
-        }
-        public override void PlayInitAni()
-        {
-            base.PlayInitAni();
-        }
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
         }
         private void OnClickSure1()
         {

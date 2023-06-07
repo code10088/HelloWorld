@@ -230,7 +230,7 @@ namespace HotAssembly
                 else if (state == 3)
                 {
                     baseObj.SetActive(true);
-                    baseUI.Refresh(param);
+                    baseUI.OnEnable(param);
                     Instance.curUI.Add(this);
                     open?.Invoke();
                 }
@@ -238,6 +238,7 @@ namespace HotAssembly
             public void Release(bool immediate = false)
             {
                 baseObj?.SetActive(false);
+                baseUI?.OnDisable();
                 if (immediate) _Release();
                 else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);
                 state |= 4;

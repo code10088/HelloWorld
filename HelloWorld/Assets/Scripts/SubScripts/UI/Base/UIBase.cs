@@ -17,9 +17,14 @@ namespace HotAssembly
             this.type = type;
             this.from = from;
             this.config = config;
-            ResetUILayer();
+            InitComponent();
+            OnEnable(param);
         }
-        public virtual void Refresh(params object[] param)
+        protected virtual void InitComponent()
+        {
+
+        }
+        public virtual void OnEnable(params object[] param)
         {
             ResetUILayer();
             PlayInitAni();
@@ -49,10 +54,14 @@ namespace HotAssembly
                 particles[i].Refresh();
             }
         }
-        public virtual void PlayInitAni()
+        protected virtual void PlayInitAni()
         {
             TweenPlayer tp = UIObj.GetComponent<TweenPlayer>();
             if (tp) tp.SetForwardDirectionAndEnabled();
+        }
+        public virtual void OnDisable()
+        {
+
         }
         public virtual void OnDestroy()
         {
