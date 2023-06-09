@@ -5,6 +5,7 @@ namespace HotAssembly
     public class UITest : UIBase
     {
         private UITestComponent component = new UITestComponent();
+        private CustomLoopScrollSource<TestItem> clss = new CustomLoopScrollSource<TestItem>();
 
         protected override void InitComponent()
         {
@@ -15,6 +16,7 @@ namespace HotAssembly
         {
             base.OnEnable(param);
             GameDebug.Log("UITest OnEnable");
+            InitLoopScrollRect();
         }
         protected override void PlayInitAni()
         {
@@ -41,6 +43,26 @@ namespace HotAssembly
             param.content = "Content";
             param.sure = a => OnClickClose();
             UIManager.Instance.OpenMessageBox(param);
+        }
+
+        private void InitLoopScrollRect()
+        {
+            clss.Init(component.loopLoopVerticalScrollRect, component.itemObj, DataManager.Instance.TestData.testItemDatas.Count);
+        }
+        private class TestItem : UIItemBase
+        {
+            public TestData.TestItemData data;
+            public UITestItem component = new UITestItem();
+            public override void Init(GameObject _obj)
+            {
+                base.Init(_obj);
+                component.Init(obj);
+            }
+            public override void SetData(int idx)
+            {
+                data = DataManager.Instance.TestData.testItemDatas[idx];
+                component.itemTextTextMeshProUGUI.text = data.name;
+            }
         }
     }
 }

@@ -9,7 +9,36 @@ public class ExportUIScript
     private static string AutoScriptPath = "Assets/Scripts/SubScripts/UI/Auto/";
     private static string Head1 = "using UnityEngine;\nnamespace HotAssembly\n{\n";
     private static string TabEmpty = "    ";
+    private static Texture2D texture;
 
+    [ExecuteInEditMode,InitializeOnLoadMethod]
+    public static void Init()
+    {
+        if (texture == null) texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Scripts/MainScripts/UI/Editor/1.png");
+        EditorApplication.hierarchyWindowItemOnGUI -= DrawItemGUI;
+        EditorApplication.hierarchyWindowItemOnGUI += DrawItemGUI;
+        EditorApplication.playModeStateChanged -= Hide;
+        EditorApplication.playModeStateChanged += Hide;
+    }
+    private static void Hide(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.EnteredEditMode)
+        {
+            EditorApplication.hierarchyWindowItemOnGUI -= DrawItemGUI;
+            EditorApplication.hierarchyWindowItemOnGUI += DrawItemGUI;
+        }
+        else if (state == PlayModeStateChange.EnteredPlayMode)
+        {
+            EditorApplication.hierarchyWindowItemOnGUI -= DrawItemGUI;
+        }
+    }
+    private static void DrawItemGUI(int instanceID, Rect selectionRect)
+    {
+        var obj = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+        if (obj == null) return;
+        var ec = obj.GetComponent<ExportComponent>();
+        if (ec) GUI.DrawTexture(new Rect(selectionRect.x - (obj.transform.childCount > 0 ? 20 : 8), selectionRect.y + 6, 6, 6), texture);
+    }
 
     [MenuItem("GameObject/UI/ExportScript", false, 1)]
     public static void ExportScript()
@@ -52,7 +81,7 @@ public class ExportUIScript
             for (int j = 0; j < tempComponentArray.Length; j++)
             {
                 ExportComponent tempComponent = tempComponentArray[j];
-                ExportClass tempParentClass = tempComponent.transform.parent.GetComponentInParent<ExportClass>();
+                ExportClass tempParentClass = tempComponent.transform.parent.GetComponentInParent<ExportClass>(true);
                 if (tempParentClass == tempClass)
                 {
                     ExportComponent b = tempComponentList.Find(a => a.name == tempComponent.name);
@@ -177,8 +206,8 @@ public class ExportUIScript
             }
             WriteString(fs, 2, "}\n");
             WriteString(fs, 1, "}\n");
-            WriteString(fs, 0, "}\n");
         }
+        WriteString(fs, 0, "}\n");
 
         fs.Flush();
         fs.Close();
