@@ -31,3 +31,9 @@ LoopScrollRect调整
 	添加CustomLoopScrollSource并修改对应接口
 	LoopScrollMultiDataSource改成LoopScrollDataSource
 	修改报错
+
+Occlusion Culling
+	消耗部分CPU去掉不可见物体，降低GPU的负载
+LOD
+	消耗内存换性能
+GPU地形大世界地形解决方案

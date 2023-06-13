@@ -4,9 +4,8 @@ using System.IO;
 using System.Text;
 using UnityEditor;
 
-public class ExportUIScript
+public class ExportComponentScript
 {
-    private static string AutoScriptPath = "Assets/Scripts/SubScripts/UI/Auto/";
     private static string Head1 = "using UnityEngine;\nnamespace HotAssembly\n{\n";
     private static string TabEmpty = "    ";
     private static Texture2D texture;
@@ -14,7 +13,7 @@ public class ExportUIScript
     [ExecuteInEditMode,InitializeOnLoadMethod]
     public static void Init()
     {
-        if (texture == null) texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Scripts/MainScripts/UI/Editor/1.png");
+        if (texture == null) texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Scripts/MainScripts/ExportComponent/Editor/1.png");
         EditorApplication.hierarchyWindowItemOnGUI -= DrawItemGUI;
         EditorApplication.hierarchyWindowItemOnGUI += DrawItemGUI;
         EditorApplication.playModeStateChanged -= Hide;
@@ -40,7 +39,7 @@ public class ExportUIScript
         if (ec) GUI.DrawTexture(new Rect(selectionRect.x - (obj.transform.childCount > 0 ? 20 : 8), selectionRect.y + 6, 6, 6), texture);
     }
 
-    [MenuItem("GameObject/UI/ExportScript", false, 1)]
+    [MenuItem("GameObject/Tools/ExportScript", false, 1)]
     public static void ExportScript()
     {
         string result = BeginExportScript();
@@ -57,6 +56,7 @@ public class ExportUIScript
 
     private class ClassInfo
     {
+        public string path;
         public string className;
         public List<int> componentIndex;
         public List<ExportComponent> component;
@@ -99,6 +99,7 @@ public class ExportUIScript
             if (tempComponentList.Count > 0)
             {
                 ClassInfo classInfo = new ClassInfo();
+                classInfo.path = tempClass.path;
                 classInfo.className = tempClass.className;
                 classInfo.componentIndex = tempComponentIdList;
                 classInfo.component = tempComponentList;
@@ -108,8 +109,8 @@ public class ExportUIScript
         if (classInfoList.Count == 0) return "沒有可用的变量名";
 
         //导出
-        if (!Directory.Exists(AutoScriptPath)) Directory.CreateDirectory(AutoScriptPath);
-        string scriptName = AutoScriptPath + classInfoList[0].className + ".cs";
+        if (!Directory.Exists(classInfoList[0].path)) Directory.CreateDirectory(classInfoList[0].path);
+        string scriptName = classInfoList[0].path + classInfoList[0].className + ".cs";
         FileStream fs = File.Open(scriptName, FileMode.Create);
         WriteString(fs, 0, Head1);
         for (int i = 0; i < classInfoList.Count; i++)
