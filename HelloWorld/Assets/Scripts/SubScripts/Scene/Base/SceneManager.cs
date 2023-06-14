@@ -45,7 +45,7 @@ namespace HotAssembly
         }
         public void CloseScene(int id)
         {
-            int tempIndex = loadScene.FindIndex(a => a.ConfigID == id);
+            int tempIndex = loadScene.FindIndex(a => a.ID == id);
             if (tempIndex >= 0)
             {
                 SceneItem item = loadScene[tempIndex];
@@ -56,7 +56,7 @@ namespace HotAssembly
                 return;
             }
 
-            tempIndex = curScene.FindIndex(a => a.ConfigID == id);
+            tempIndex = curScene.FindIndex(a => a.ID == id);
             if (tempIndex >= 0)
             {
                 SceneItem item = curScene[tempIndex];

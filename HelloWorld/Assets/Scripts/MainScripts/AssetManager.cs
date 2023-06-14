@@ -48,6 +48,13 @@ public class AssetManager : Singletion<AssetManager>
             total.Remove(id);
         }
     }
+    public float GetProgerss(int id)
+    {
+        float progress = 0;
+        if (group.TryGetValue(id, out AssetItemGroup a)) progress = a.Progress;
+        else if (total.TryGetValue(id, out AssetItem b)) progress = b.Progress;
+        return progress;
+    }
 
 
     private class AssetItemGroup : AsyncItem
@@ -57,6 +64,7 @@ public class AssetManager : Singletion<AssetManager>
         private int[] ids;
         private Object[] assets;
         private int complete;
+        public float Progress => (float)complete / ids.Length;
 
         public void Init(string[] path, Action<string[], Object[]> action)
         {
@@ -87,6 +95,7 @@ public class AssetManager : Singletion<AssetManager>
     {
         private Action<int, Object> action;
         private AssetRequest ar;
+        public float Progress => ar == null ? 0 : ar.progress;
 
         public void Init<T>(string path, Action<int, Object> action) where T : Object
         {
