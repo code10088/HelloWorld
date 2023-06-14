@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AsyncManager : Singletion<AsyncManager>
 {
-    private List<AsyncItem> list1 = new(100);//不切片列表
+    private List<AsyncItem> list1 = new(50);//不切片列表
     private List<AsyncItem> list2 = new(1000);//切片列表
     private float gcTimer = 0;
     private int idxMark = 0;
