@@ -141,7 +141,7 @@ namespace HotAssembly
                 }
                 else if (state == 0)
                 {
-                    state |= 1;
+                    state = 1;
                     baseObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, Instance.tSceneRoot) as GameObject;
                     baseObj.SetActive(false);
                 }

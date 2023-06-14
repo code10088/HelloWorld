@@ -202,7 +202,7 @@ namespace HotAssembly
                 }
                 else if (state == 0)
                 {
-                    state |= 1;
+                    state = 1;
                     baseObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, Instance.tUIRoot) as GameObject;
                     RectTransform rt = baseObj.GetComponent<RectTransform>();
                     rt.anchoredPosition3D = Vector3.zero;
