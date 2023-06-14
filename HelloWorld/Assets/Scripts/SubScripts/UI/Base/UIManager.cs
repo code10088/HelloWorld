@@ -26,7 +26,7 @@ namespace HotAssembly
             temp = GameObject.FindWithTag("EventSystem");
             eventSystem = temp.GetComponent<EventSystem>();
         }
-        public void OpenUI(UIType type, Action open = null, params object[] param)
+        public void OpenUI(UIType type, Action<bool> open = null, params object[] param)
         {
             UIType from = GetFromUI();
             if (type == UIType.Max)
@@ -90,6 +90,7 @@ namespace HotAssembly
             {
                 UIItem item = loadUI[tempIndex];
                 item.Release();
+                item.OpenActionInvoke(false);
                 loadUI.RemoveAt(tempIndex);
                 cacheUI.Add(item);
                 return;
@@ -154,7 +155,7 @@ namespace HotAssembly
             private Data_UIConfig config;
             private UIBase baseUI;
             private GameObject baseObj;
-            private Action open = null;
+            private Action<bool> open = null;
             private object[] param = null;
 
             private int state = 0;//7：二进制111：分别表示release init load
@@ -170,7 +171,7 @@ namespace HotAssembly
                 this.type = type;
                 config = ConfigManager.Instance.GameConfigs.Data_UIConfig.GetDataByID((int)type);
             }
-            public void SetParam(UIType from, Action open = null, params object[] param)
+            public void SetParam(UIType from, Action<bool> open = null, params object[] param)
             {
                 this.from = from;
                 this.open = open;
@@ -189,7 +190,8 @@ namespace HotAssembly
                 else
                 {
                     Instance.SetEventSystemState(false);
-                    if (loaderID <= 0) loaderID = AssetManager.Instance.Load<GameObject>(config.prefabName, LoadFinish);
+                    AssetManager.Instance.Unload(loaderID);
+                    loaderID = AssetManager.Instance.Load<GameObject>(config.prefabName, LoadFinish);
                 }
             }
             private void LoadFinish(int id, Object asset)
@@ -198,19 +200,16 @@ namespace HotAssembly
                 {
                     Release(true);
                 }
-                else if ((state & 1) == 0)
+                else if (state == 0)
                 {
                     state |= 1;
-                    baseObj = Object.Instantiate(asset) as GameObject;
-                    baseObj.transform.SetParent(Instance.tUIRoot);
-                    baseObj.transform.localPosition = Vector3.zero;
-                    baseObj.transform.localRotation = Quaternion.identity;
-                    baseObj.transform.localScale = Vector3.one;
+                    baseObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, Instance.tUIRoot) as GameObject;
                     RectTransform rt = baseObj.GetComponent<RectTransform>();
                     rt.anchoredPosition3D = Vector3.zero;
                     rt.anchorMin = Vector2.zero;
                     rt.anchorMax = Vector2.one;
                     rt.sizeDelta = Vector2.zero;
+                    baseObj.SetActive(false);
                 }
                 releaseTime = Mathf.Lerp(releaseTime, 120f, 0.2f);
                 Instance.SetEventSystemState(true);
@@ -220,11 +219,12 @@ namespace HotAssembly
             {
                 if (state == 1)
                 {
+                    baseObj.SetActive(true);
                     Type t = System.Type.GetType("HotAssembly." + type);
                     baseUI = Activator.CreateInstance(t) as UIBase;
                     baseUI.InitUI(baseObj, type, from, config, param);
                     Instance.curUI.Add(this);
-                    open?.Invoke();
+                    OpenActionInvoke(true);
                     state = 3;
                 }
                 else if (state == 3)
@@ -232,8 +232,16 @@ namespace HotAssembly
                     baseObj.SetActive(true);
                     baseUI.OnEnable(param);
                     Instance.curUI.Add(this);
-                    open?.Invoke();
+                    OpenActionInvoke(true);
                 }
+                else
+                {
+                    OpenActionInvoke(false);
+                }
+            }
+            public void OpenActionInvoke(bool success)
+            {
+                open?.Invoke(success);
             }
             public void Release(bool immediate = false)
             {
@@ -245,6 +253,7 @@ namespace HotAssembly
             }
             private void _Release()
             {
+                TimeManager.Instance.StopTimer(timerId, false);
                 if (baseUI != null) baseUI.OnDestroy();
                 if (baseObj != null) GameObject.Destroy(baseObj);
                 AssetManager.Instance.Unload(loaderID);
