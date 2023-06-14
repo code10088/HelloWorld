@@ -4,12 +4,13 @@ using UnityEngine;
 public class AsyncManager : Singletion<AsyncManager>
 {
     private AsyncItem first = new AsyncItem();
+    private AsyncItem add = new AsyncItem();
     private float realtimeSinceStartup = 0;
 
     public void Add(AsyncItem item)
     {
-        item.next = first.next;
-        first.next = item;
+        item.next = add.next;
+        add.next = item;
     }
     public void Remove(int id, bool execMark)
     {
@@ -17,10 +18,20 @@ public class AsyncManager : Singletion<AsyncManager>
         while (item != null)
         {
             AsyncItem temp = item.next;
-            if (temp == null) return;
+            if (temp == null) break;
             if (temp.ItemID == id) temp.endMark = true;
             if (temp.endMark) temp.execMark = execMark;
-            if (temp.endMark) return;
+            if (temp.endMark) break;
+            else item = temp;
+        }
+        item = add;
+        while (item != null)
+        {
+            AsyncItem temp = item.next;
+            if (temp == null) break;
+            if (temp.ItemID == id) temp.endMark = true;
+            if (temp.endMark) temp.execMark = execMark;
+            if (temp.endMark) break;
             else item = temp;
         }
     }
@@ -31,12 +42,28 @@ public class AsyncManager : Singletion<AsyncManager>
         while (item != null)
         {
             AsyncItem temp = item.next;
-            if (temp == null) return;
+            if (temp == null) break;
             if (temp.Update()) temp.Finish();
             if (temp.endMark) item.next = temp.next;
             else item = temp;
             if (temp.endMark) temp.Reset();
-            if (Time.realtimeSinceStartup - realtimeSinceStartup > GameSetting.updateTimeSliceS) return;
+            if (Time.realtimeSinceStartup - realtimeSinceStartup > GameSetting.updateTimeSliceS) break;
+        }
+        item = add;
+        while (item != null)
+        {
+            AsyncItem temp = item.next;
+            if (temp == null)
+            {
+                if (add.next != null)
+                {
+                    item.next = first.next;
+                    first.next = add.next;
+                    add.next = null;
+                }
+                break;
+            }
+            item = temp;
         }
     }
 }
