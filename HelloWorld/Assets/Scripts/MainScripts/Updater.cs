@@ -1,14 +1,13 @@
 using System;
+using System.Collections.Generic;
 
 public class Updater : Singletion<Updater>
 {
-    private static UpdateItem cache = new UpdateItem();
+    private static Queue<UpdateItem> cache = new();
 
     public int StartUpdate(Action action)
     {
-        UpdateItem temp = (UpdateItem)cache.next;
-        if (temp == null) temp = new UpdateItem();
-        else cache.next = temp.next;
+        UpdateItem temp = cache.Count > 0 ? cache.Dequeue() : new();
         temp.Init(action);
         AsyncManager.Instance.Add(temp);
         return temp.ItemID;
@@ -21,26 +20,20 @@ public class Updater : Singletion<Updater>
 
     private class UpdateItem : AsyncItem
     {
-        private Action action;
-
-        public new void Init(Action action)
+        public override void Update()
         {
-            base.Init(null);
-            this.action = action;
+            if (endMark) return;
+            Finish();
         }
-        public override bool Update()
+        public override void Finish()
         {
-            if (endMark) return true;
-            action();
-            return false;
+            finish?.Invoke();
         }
         public override void Reset()
         {
             base.Reset();
-            action = null;
 
-            next = cache.next;
-            cache.next = this;
+            cache.Enqueue(this);
         }
     }
 }

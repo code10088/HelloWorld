@@ -1,9 +1,10 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TimeManager : Singletion<TimeManager>
 {
-    private static TimeItem cache = new TimeItem();
+    private static Queue<TimeItem> cache = new();
 
     /// <summary>
     /// loop>0
@@ -19,9 +20,8 @@ public class TimeManager : Singletion<TimeManager>
     /// </summary>
     public int StartTimer(float time, float loop = 0f, Action<float> action = null, Action finish = null)
     {
-        TimeItem temp = (TimeItem)cache.next;
-        if (temp == null) temp = new TimeItem();
-        else cache.next = temp.next;
+        if (loop <= 0 && time <= 0) return -1;
+        TimeItem temp = cache.Count > 0 ? cache.Dequeue(): new();
         temp.Init(time, loop, action, finish);
         AsyncManager.Instance.Add(temp);
         return temp.ItemID;
@@ -42,22 +42,21 @@ public class TimeManager : Singletion<TimeManager>
 
         public void Init(float time, float loop = 0f, Action<float> action = null, Action finish = null)
         {
-            if (loop <= 0 && time <= 0) return;
             base.Init(finish);
             this.time = time;
             this.loop = loop;
             this.action = action;
         }
-        public override bool Update()
+        public override void Update()
         {
-            if (endMark) return true;
+            if (endMark) return;
             _time += Time.deltaTime;
             if (loop > 0 && _time > _loop)
             {
                 _loop += loop;
                 action(_time);
             }
-            return time > 0 && _time > time;
+            endMark = time > 0 && _time > time;
         }
         public override void Reset()
         {
@@ -68,8 +67,7 @@ public class TimeManager : Singletion<TimeManager>
             _time = 0;
             _loop = 0;
 
-            next = cache.next;
-            cache.next = this;
+            cache.Enqueue(this);
         }
     }
 }

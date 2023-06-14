@@ -23,6 +23,10 @@
         private void EnterMainScene()
         {
             SceneManager.Instance.OpenScene(1);
+            SceneManager.Instance.CloseScene(1);
+            SceneManager.Instance.OpenScene(1);
+            UIManager.Instance.OpenUI(UIType.UITest);
+            UIManager.Instance.CloseUI(UIType.UITest);
             UIManager.Instance.OpenUI(UIType.UITest);
         }
     }

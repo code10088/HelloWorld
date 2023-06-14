@@ -5,8 +5,8 @@ using System.Threading;
 public class ThreadManager : Singletion<ThreadManager>
 {
     private int count = 0;
-    private List<ThreadItem> wait = new List<ThreadItem>();
-    private static ThreadItem cache = new ThreadItem();
+    private List<ThreadItem> wait = new();
+    private static Queue<ThreadItem> cache = new();
 
     /// <summary>
     /// priority=0/1，值越小优先级越高，更高优先级单独开线程
@@ -14,9 +14,7 @@ public class ThreadManager : Singletion<ThreadManager>
     /// </summary>
     public int StartThread(Action<object> action, Action finish, object param = null, float time = 0, int priority = 1)
     {
-        ThreadItem temp = (ThreadItem)cache.next;
-        if (temp == null) temp = new ThreadItem();
-        else cache.next = temp.next;
+        ThreadItem temp = cache.Count > 0 ? cache.Dequeue() : new();
         temp.Init(action, finish, param, time, priority);
         int index = wait.FindIndex(a => a.priority > priority);
         if (index >= 0) wait.Insert(index, temp);
@@ -64,7 +62,7 @@ public class ThreadManager : Singletion<ThreadManager>
         }
         public void Start()
         {
-            thread = new Thread(Run);
+            thread = new(Run);
             thread.IsBackground = true;
             thread.Start();
             if (time > 0) TimeManager.Instance.StartTimer(time, finish: Timeout);
@@ -75,19 +73,15 @@ public class ThreadManager : Singletion<ThreadManager>
             {
                 action?.Invoke(param);
             }
-            catch
+            catch(Exception ex)
             {
-
+                GameDebug.LogError(ex.Message);
             }
             endMark = true;
         }
         private void Timeout()
         {
             endMark = true;
-        }
-        public override bool Update()
-        {
-            return endMark;
         }
         public override void Reset()
         {
@@ -98,8 +92,7 @@ public class ThreadManager : Singletion<ThreadManager>
             param = null;
             priority = -1;
 
-            next = cache.next;
-            cache.next = this;
+            cache.Enqueue(this);
             Instance.StartThread();
         }
     }

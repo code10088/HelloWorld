@@ -5,9 +5,10 @@ using Object = UnityEngine.Object;
 
 public class AssetManager : Singletion<AssetManager>
 {
-    private static Dictionary<int, AssetItemGroup> group = new Dictionary<int, AssetItemGroup>();
-    private static Dictionary<int, AssetItem> total = new Dictionary<int, AssetItem>();
-    private static AssetItem cache = new AssetItem();
+    private static Dictionary<int, AssetItemGroup> group = new();
+    private static Dictionary<int, AssetItem> total = new();
+    private static Queue<AssetItem> cache = new();
+    private static int uniqueId = 0;
     private Action initFinish;
 
     public void Init(Action action)
@@ -22,16 +23,14 @@ public class AssetManager : Singletion<AssetManager>
 
     public int Load<T>(string path, Action<int, Object> action = null) where T : Object
     {
-        AssetItem temp = (AssetItem)cache.next;
-        if (temp == null) temp = new AssetItem();
-        else cache.next = temp.next;
+        AssetItem temp = cache.Count > 0 ? cache.Dequeue() : new();
         temp.Init<T>(path, action);
         total[temp.ItemID] = temp;
         return temp.ItemID;
     }
     public int Load(string[] path, Action<string[], Object[]> action = null)
     {
-        AssetItemGroup temp = new AssetItemGroup();
+        AssetItemGroup temp = new();
         temp.Init(path, action);
         return temp.ItemID;
     }
@@ -57,18 +56,20 @@ public class AssetManager : Singletion<AssetManager>
     }
 
 
-    private class AssetItemGroup : AsyncItem
+    private class AssetItemGroup
     {
+        private int itemId = -1;
         private Action<string[], Object[]> action;
         private string[] path;
         private int[] ids;
         private Object[] assets;
         private int complete;
+        public int ItemID => itemId;
         public float Progress => (float)complete / ids.Length;
 
         public void Init(string[] path, Action<string[], Object[]> action)
         {
-            base.Init(null);
+            itemId = ++uniqueId;
             this.path = path;
             this.action = action;
             ids = new int[path.Length];
@@ -83,7 +84,6 @@ public class AssetManager : Singletion<AssetManager>
         }
         public void Unload()
         {
-            base.Reset();
             for (int i = 0; i < ids.Length; i++) Instance.Unload(ids[i]);
             action = null;
             path = null;
@@ -91,18 +91,20 @@ public class AssetManager : Singletion<AssetManager>
             assets = null;
         }
     }
-    private class AssetItem : AsyncItem
+    private class AssetItem
     {
+        private int itemId = -1;
         private Action<int, Object> action;
         private AssetRequest ar;
+        public int ItemID => itemId;
         public float Progress => ar == null ? 0 : ar.progress;
 
         public void Init<T>(string path, Action<int, Object> action) where T : Object
         {
-            base.Init(null);
+            itemId = ++uniqueId;
             this.action = action;
             ar = Asset.LoadAsync(path, typeof(T));
-            if (ar == null) Finish();
+            if (ar == null) Finish(null);
             else ar.completed += Finish;
         }
         private void Finish(Request request)
@@ -112,12 +114,11 @@ public class AssetManager : Singletion<AssetManager>
         }
         public void Unload()
         {
-            base.Reset();
             ar?.Release();
             ar = null;
             action = null;
-            next = cache.next;
-            cache.next = this;
+
+            cache.Enqueue(this);
         }
     }
 }

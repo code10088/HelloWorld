@@ -1,69 +1,54 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AsyncManager : Singletion<AsyncManager>
 {
-    private AsyncItem first = new AsyncItem();
-    private AsyncItem add = new AsyncItem();
-    private float realtimeSinceStartup = 0;
+    private List<AsyncItem> list = new(1000);
+    private float t = 0;
 
     public void Add(AsyncItem item)
     {
-        item.next = add.next;
-        add.next = item;
+        list.Add(item);
     }
     public void Remove(int id, bool execMark)
     {
-        AsyncItem item = first;
-        while (item != null)
+        AsyncItem temp;
+        for (int i = 0; i < list.Count; i++)
         {
-            AsyncItem temp = item.next;
-            if (temp == null) break;
-            if (temp.ItemID == id) temp.endMark = true;
-            if (temp.endMark) temp.execMark = execMark;
-            if (temp.endMark) break;
-            else item = temp;
-        }
-        item = add;
-        while (item != null)
-        {
-            AsyncItem temp = item.next;
-            if (temp == null) break;
-            if (temp.ItemID == id) temp.endMark = true;
-            if (temp.endMark) temp.execMark = execMark;
-            if (temp.endMark) break;
-            else item = temp;
+            temp = list[i];
+            if (temp == null)
+            {
+                continue;
+            }
+            if (temp.ItemID == id)
+            {
+                temp.endMark = true;
+                temp.execMark = execMark;
+                break;
+            }
         }
     }
     public void Update()
     {
-        realtimeSinceStartup = Time.realtimeSinceStartup;
-        AsyncItem item = first;
-        while (item != null)
+        AsyncItem temp;
+        t = Time.realtimeSinceStartup;
+        for (int i = 0; i < list.Count; i++)
         {
-            AsyncItem temp = item.next;
-            if (temp == null) break;
-            if (temp.Update()) temp.Finish();
-            if (temp.endMark) item.next = temp.next;
-            else item = temp;
-            if (temp.endMark) temp.Reset();
-            if (Time.realtimeSinceStartup - realtimeSinceStartup > GameSetting.updateTimeSliceS) break;
-        }
-        item = add;
-        while (item != null)
-        {
-            AsyncItem temp = item.next;
+            temp = list[i];
             if (temp == null)
             {
-                if (add.next != null)
-                {
-                    item.next = first.next;
-                    first.next = add.next;
-                    add.next = null;
-                }
-                break;
+                continue;
             }
-            item = temp;
+            temp.Update();
+            if (temp.endMark)
+            {
+                temp.Finish();
+                list.RemoveAt(i);
+                temp.Reset();
+                i--;
+            }
+            if (Time.realtimeSinceStartup - t > GameSetting.updateTimeSliceS) break;
         }
     }
 }
@@ -71,10 +56,9 @@ public class AsyncItem
 {
     private static int uniqueId = 0;
     private int itemId = -1;
-    public AsyncItem next;
     public bool endMark = false;
     public bool execMark = true;
-    private Action finish;
+    protected Action finish;
 
     public int ItemID => itemId;
 
@@ -84,9 +68,9 @@ public class AsyncItem
         this.finish = finish;
     }
 
-    public virtual bool Update()
+    public virtual void Update()
     {
-        return true;
+
     }
 
     public virtual void Finish()
@@ -97,8 +81,6 @@ public class AsyncItem
 
     public virtual void Reset()
     {
-        itemId = -1;
-        next = null;
         endMark = false;
         execMark = true;
         finish = null;
