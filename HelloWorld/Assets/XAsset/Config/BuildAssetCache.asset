@@ -45,6 +45,14 @@ MonoBehaviour:
     addressMode: 2
     dependencies: []
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/ZRes/DataConfig/Data_SceneConfig.bytes
+    bundle: dataconfig_data_sceneconfig_bytes.bundle
+    type: TextAsset
+    entry: Assets/ZRes/DataConfig
+    lastWriteTime: 0
+    addressMode: 2
+    dependencies: []
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/DataConfig/Data_Test.bytes
     bundle: dataconfig_data_test_bytes.bundle
     type: TextAsset
@@ -65,7 +73,7 @@ MonoBehaviour:
     bundle: prefab_uihotupdateres_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133307744332377965
+    lastWriteTime: 133311203478821521
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -80,7 +88,7 @@ MonoBehaviour:
     bundle: prefab_uimessagebox_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133307744332467730
+    lastWriteTime: 133311205605753021
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -97,7 +105,7 @@ MonoBehaviour:
     bundle: prefab_uitest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133307745409103163
+    lastWriteTime: 133311203478911237
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd

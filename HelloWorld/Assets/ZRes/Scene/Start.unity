@@ -373,6 +373,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  path: Assets/Scripts/SubScripts/UI/Auto/
   className: UIHotUpdateCodeComponent
 --- !u!114 &208097518
 MonoBehaviour:
@@ -845,7 +846,7 @@ GameObject:
   - component: {fileID: 1113543981}
   m_Layer: 0
   m_Name: Scene
-  m_TagString: Untagged
+  m_TagString: SceneRoot
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2245,7 +2246,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 332, y: -149}
+  m_AnchoredPosition: {x: -314, y: -149}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5455930756634345562
@@ -2539,6 +2540,6 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -313, y: -149}
+  m_AnchoredPosition: {x: 331, y: -149}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
