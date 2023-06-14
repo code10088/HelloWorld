@@ -7,6 +7,7 @@ TagManager:
   - UIRoot
   - UICamera
   - EventSystem
+  - SceneRoot
   layers:
   - Default
   - TransparentFX
