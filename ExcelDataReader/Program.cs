@@ -11,7 +11,7 @@ namespace MyClass
     class Program
     {
         static string csPath = Environment.CurrentDirectory + "../../../../HelloWorld/Assets/Scripts/SubScripts/Config/Auto";
-        static string bytePath = Environment.CurrentDirectory + "../../../../HelloWorld/Assets/ZRes/Config";
+        static string bytePath = Environment.CurrentDirectory + "../../../../HelloWorld/Assets/ZRes/DataConfig";
         static string excelPath = Environment.CurrentDirectory + "../../../../Excel";
         static void Main(string[] args)
         {
