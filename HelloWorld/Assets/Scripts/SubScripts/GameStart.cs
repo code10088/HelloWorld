@@ -22,6 +22,7 @@
         }
         private void EnterMainScene()
         {
+            SceneManager.Instance.OpenScene(1);
             UIManager.Instance.OpenUI(UIType.UITest);
         }
     }

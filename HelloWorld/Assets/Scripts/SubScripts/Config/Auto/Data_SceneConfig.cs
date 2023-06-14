@@ -66,6 +66,6 @@ public class Data_SceneConfig : BytesDecodeInterface
 }
 public enum SceneType
 {
-    MainScene,
+    SceneBase,
     TestScene,
 }
