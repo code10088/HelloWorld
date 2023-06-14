@@ -12,10 +12,10 @@ public class ThreadManager : Singletion<ThreadManager>
     /// priority=0/1，值越小优先级越高，更高优先级单独开线程
     /// 这里线程不保证立刻执行
     /// </summary>
-    public int StartThread(Action<object> action, Action finish, object param = null, float time = 0, int priority = 1)
+    public int StartThread(Action<object> action, Action finish, object param = null, float time = 0, int priority = 1, bool ignoreFrameTime = false)
     {
         ThreadItem temp = cache.Count > 0 ? cache.Dequeue() : new();
-        temp.Init(action, finish, param, time, priority);
+        temp.Init(action, finish, param, time, priority, ignoreFrameTime);
         int index = wait.FindIndex(a => a.priority > priority);
         if (index >= 0) wait.Insert(index, temp);
         else wait.Add(temp);
@@ -35,7 +35,7 @@ public class ThreadManager : Singletion<ThreadManager>
             wait.RemoveAt(0);
             temp.Start();
             count++;
-            AsyncManager.Instance.Add(temp);
+            AsyncManager.Instance.Add(temp, temp.ignoreFrameTime);
         }
     }
     public void StopThread(int id, bool execMark = true)
@@ -51,14 +51,16 @@ public class ThreadManager : Singletion<ThreadManager>
         private object param;
         private float time;
         public int priority;
+        public bool ignoreFrameTime;
 
-        public void Init(Action<object> action, Action finish, object param, float time, int priority)
+        public void Init(Action<object> action, Action finish, object param, float time, int priority, bool ignoreFrameTime)
         {
             base.Init(finish);
             this.action = action;
             this.param = param;
             this.time = time;
             this.priority = priority;
+            this.ignoreFrameTime = ignoreFrameTime;
         }
         public void Start()
         {
@@ -90,7 +92,6 @@ public class ThreadManager : Singletion<ThreadManager>
             thread = null;
             action = null;
             param = null;
-            priority = -1;
 
             cache.Enqueue(this);
             Instance.StartThread();

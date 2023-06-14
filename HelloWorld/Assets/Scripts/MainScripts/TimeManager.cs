@@ -18,12 +18,12 @@ public class TimeManager : Singletion<TimeManager>
     ///     action：没有意义
     ///     finish：总时间结束回调
     /// </summary>
-    public int StartTimer(float time, float loop = 0f, Action<float> action = null, Action finish = null)
+    public int StartTimer(float time, float loop = 0f, Action<float> action = null, Action finish = null, bool ignoreFrameTime = false)
     {
         if (loop <= 0 && time <= 0) return -1;
         TimeItem temp = cache.Count > 0 ? cache.Dequeue(): new();
         temp.Init(time, loop, action, finish);
-        AsyncManager.Instance.Add(temp);
+        AsyncManager.Instance.Add(temp, ignoreFrameTime);
         return temp.ItemID;
     }
     public void StopTimer(int id, bool execMark = true)
