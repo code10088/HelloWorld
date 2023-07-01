@@ -3,7 +3,6 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using System.Reflection;
 using cfg;
-using Bright.Serialization;
 
 namespace HotAssembly
 {
@@ -55,7 +54,7 @@ namespace HotAssembly
                 if (asset == null) return;
                 byte[] bytes = ((TextAsset)asset).bytes;
                 if (bytes == null) return;
-                ThreadManager.Instance.StartThread(a => tb.Deserialize(new ByteBuf(bytes)), Finish, bytes);
+                ThreadManager.Instance.StartThread(a => tb.Deserialize(bytes), Finish);
             }
             private void Finish()
             {

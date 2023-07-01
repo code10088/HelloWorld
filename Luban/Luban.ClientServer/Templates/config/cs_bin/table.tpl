@@ -18,14 +18,12 @@ using System.Collections.Generic;
 public partial class {{name}} : TbBase
 {
     {{~if x.is_map_table ~}}
-    private Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> _dataMap;
-    private List<{{cs_define_type value_type}}> _dataList;
+    private readonly Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}> _dataMap = new();
+    private readonly List<{{cs_define_type value_type}}> _dataList = new();
     
-    public void Deserialize(ByteBuf _buf)
+    public void Deserialize(byte[] bytes)
     {
-        _dataMap = new Dictionary<{{cs_define_type key_type}}, {{cs_define_type value_type}}>();
-        _dataList = new List<{{cs_define_type value_type}}>();
-        
+		ByteBuf _buf = new(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
             {{cs_define_type value_type}} _v;

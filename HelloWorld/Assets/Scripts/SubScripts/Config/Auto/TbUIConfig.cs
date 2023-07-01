@@ -14,14 +14,12 @@ namespace cfg
    
 public partial class TbUIConfig : TbBase
 {
-    private Dictionary<UIType, UIConfig> _dataMap;
-    private List<UIConfig> _dataList;
+    private readonly Dictionary<UIType, UIConfig> _dataMap = new();
+    private readonly List<UIConfig> _dataList = new();
     
-    public void Deserialize(ByteBuf _buf)
+    public void Deserialize(byte[] bytes)
     {
-        _dataMap = new Dictionary<UIType, UIConfig>();
-        _dataList = new List<UIConfig>();
-        
+		ByteBuf _buf = new(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
             UIConfig _v;

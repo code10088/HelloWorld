@@ -14,14 +14,12 @@ namespace cfg
    
 public partial class TbDeviceInfo : TbBase
 {
-    private Dictionary<string, DeviceInfo> _dataMap;
-    private List<DeviceInfo> _dataList;
+    private readonly Dictionary<string, DeviceInfo> _dataMap = new();
+    private readonly List<DeviceInfo> _dataList = new();
     
-    public void Deserialize(ByteBuf _buf)
+    public void Deserialize(byte[] bytes)
     {
-        _dataMap = new Dictionary<string, DeviceInfo>();
-        _dataList = new List<DeviceInfo>();
-        
+		ByteBuf _buf = new(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
             DeviceInfo _v;
