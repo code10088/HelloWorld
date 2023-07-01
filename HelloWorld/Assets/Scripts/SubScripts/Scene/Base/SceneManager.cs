@@ -1,4 +1,5 @@
-﻿using System;
+﻿using cfg;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -89,7 +90,7 @@ namespace HotAssembly
             private int id;
             private int from;
             private int loaderID;
-            private Data_SceneConfig config;
+            private SceneConfig config;
             private SceneBase baseScene;
             private GameObject baseObj;
             private Action<bool> open = null;
@@ -108,7 +109,7 @@ namespace HotAssembly
             public SceneItem(int _id)
             {
                 id = ++uniqueId;
-                config = ConfigManager.Instance.GameConfigs.Data_SceneConfig.GetDataByID(_id);
+                config = ConfigManager.Instance.GameConfigs.TbSceneConfig[_id];
             }
             public void SetParam(int _from, Action<bool> _open = null, Action<float> _progress = null, params object[] _param)
             {
@@ -130,7 +131,7 @@ namespace HotAssembly
                 else
                 {
                     AssetManager.Instance.Unload(loaderID);
-                    loaderID = AssetManager.Instance.Load<GameObject>(config.prefabName, LoadFinish);
+                    loaderID = AssetManager.Instance.Load<GameObject>(config.PrefabName, LoadFinish);
                 }
             }
             private void LoadFinish(int id, Object asset)
@@ -153,7 +154,7 @@ namespace HotAssembly
                 if (state == 1)
                 {
                     baseObj.SetActive(true);
-                    Type t = System.Type.GetType("HotAssembly." + config.type);
+                    Type t = System.Type.GetType("HotAssembly." + config.SceneType);
                     baseScene = Activator.CreateInstance(t) as SceneBase;
                     baseScene.InitScene(baseObj, id, from, config, param);
                     Instance.curScene.Add(this);

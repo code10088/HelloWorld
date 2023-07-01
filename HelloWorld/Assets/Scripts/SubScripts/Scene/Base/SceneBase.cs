@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using cfg;
+using UnityEngine;
 
 namespace HotAssembly
 {
@@ -7,8 +8,8 @@ namespace HotAssembly
         protected GameObject SceneObj;
         protected int curId;
         protected int fromId;
-        protected Data_SceneConfig config;
-        public virtual void InitScene(GameObject _SceneObj, int id, int from, Data_SceneConfig _config, params object[] param)
+        protected SceneConfig config;
+        public virtual void InitScene(GameObject _SceneObj, int id, int from, SceneConfig _config, params object[] param)
         {
             SceneObj = _SceneObj;
             curId = id;

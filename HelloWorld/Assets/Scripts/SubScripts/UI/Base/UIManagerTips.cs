@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using cfg;
+using System.Collections.Generic;
 
 namespace HotAssembly
 {

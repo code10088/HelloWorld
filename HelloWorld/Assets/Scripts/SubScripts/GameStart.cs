@@ -1,10 +1,12 @@
-﻿namespace HotAssembly
+﻿using cfg;
+
+namespace HotAssembly
 {
     public class GameStart : Singletion<GameStart>
     {
         public void Init()
         {
-            ConfigManager.Instance.InitSpecial("Data_UIConfig", StartHotUpdateRes);
+            ConfigManager.Instance.InitSpecial("TbUIConfig", StartHotUpdateRes);
         }
         private void StartHotUpdateRes()
         {

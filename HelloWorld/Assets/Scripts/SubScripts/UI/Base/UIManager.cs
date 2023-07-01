@@ -1,4 +1,5 @@
-﻿using System;
+﻿using cfg;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,15 +30,6 @@ namespace HotAssembly
         public void OpenUI(UIType type, Action<bool> open = null, params object[] param)
         {
             UIType from = GetFromUI();
-            if (type == UIType.Max)
-            {
-                for (int i = 0; i < loadUI.Count; i++) loadUI[i].Release();
-                cacheUI.AddRange(loadUI);
-                loadUI.Clear();
-                for (int i = 0; i < curUI.Count; i++) curUI[i].Release();
-                cacheUI.AddRange(loadUI);
-                curUI.Clear();
-            }
 
             int tempIndex = loadUI.FindIndex(a => a.Type == type);
             if (tempIndex >= 0)
@@ -120,7 +112,7 @@ namespace HotAssembly
         private UIType GetFromUI()
         {
             //TODO：获取当前非本身、非提示UI
-            return UIType.None;
+            return UIType.UITest;
         }
         public bool HasOpen(UIType type)
         {
@@ -152,7 +144,7 @@ namespace HotAssembly
             private UIType type;
             private UIType from;
             private int loaderID;
-            private Data_UIConfig config;
+            private UIConfig config;
             private UIBase baseUI;
             private GameObject baseObj;
             private Action<bool> open = null;
@@ -169,7 +161,7 @@ namespace HotAssembly
             public UIItem(UIType type)
             {
                 this.type = type;
-                config = ConfigManager.Instance.GameConfigs.Data_UIConfig.GetDataByID((int)type);
+                config = ConfigManager.Instance.GameConfigs.TbUIConfig[type];
             }
             public void SetParam(UIType from, Action<bool> open = null, params object[] param)
             {
@@ -191,7 +183,7 @@ namespace HotAssembly
                 {
                     Instance.SetEventSystemState(false);
                     AssetManager.Instance.Unload(loaderID);
-                    loaderID = AssetManager.Instance.Load<GameObject>(config.prefabName, LoadFinish);
+                    loaderID = AssetManager.Instance.Load<GameObject>(config.PrefabName, LoadFinish);
                 }
             }
             private void LoadFinish(int id, Object asset)

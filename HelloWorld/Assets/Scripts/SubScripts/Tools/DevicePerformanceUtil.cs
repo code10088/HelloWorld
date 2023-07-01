@@ -143,9 +143,9 @@ namespace HotAssembly
 #if UNITY_EDITOR
             tempLv = DevicePerformanceLevel.High;
 #else
-            var deviceInfo = ConfigManager.Instance.GameConfigs.Data_DeviceInfo.array;
+            var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
             var graphicsDevice = SystemInfo.graphicsDeviceName.ToLower();
-            for (int i = 0; i < deviceInfo.Length; i++)
+            for (int i = 0; i < deviceInfo.Count; i++)
             {
                 if (graphicsDevice.Contains(deviceInfo[i].Name))
                 {
@@ -167,9 +167,9 @@ namespace HotAssembly
 #if UNITY_EDITOR
             tempLv = DevicePerformanceLevel.High;
 #else
-            var deviceInfo = ConfigManager.Instance.GameConfigs.Data_DeviceInfo.array;
+            var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
             var deviceModel = SystemInfo.deviceModel.ToLower();
-            for (int i = 0; i < deviceInfo.Length; i++)
+            for (int i = 0; i < deviceInfo.Count; i++)
             {
                 if (deviceModel.Contains(deviceInfo[i].Name))
                 {

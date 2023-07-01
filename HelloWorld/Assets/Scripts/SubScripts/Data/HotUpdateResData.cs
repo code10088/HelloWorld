@@ -1,3 +1,4 @@
+using cfg;
 using System;
 using UnityEngine;
 using xasset;

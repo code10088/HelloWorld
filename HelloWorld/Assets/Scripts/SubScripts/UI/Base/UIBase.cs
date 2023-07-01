@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using cfg;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityExtensions.Tween;
 
@@ -9,9 +10,9 @@ namespace HotAssembly
         protected GameObject UIObj;
         protected UIType type;
         protected UIType from;
-        protected Data_UIConfig config;
+        protected UIConfig config;
         private Dictionary<int, int> layerRecord = new Dictionary<int, int>();
-        public virtual void InitUI(GameObject UIObj, UIType type, UIType from, Data_UIConfig config, params object[] param)
+        public virtual void InitUI(GameObject UIObj, UIType type, UIType from, UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;
             this.type = type;

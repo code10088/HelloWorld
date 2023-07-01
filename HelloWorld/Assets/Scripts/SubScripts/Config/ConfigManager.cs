@@ -2,22 +2,24 @@ using System;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using System.Reflection;
+using cfg;
+using Bright.Serialization;
 
 namespace HotAssembly
 {
     public class ConfigManager : Singletion<ConfigManager>
     {
-        private GameConfigs gameConfigs;
+        private Tables gameConfigs;
         private int configCounter = 0;
         private Action finish;
 
-        public GameConfigs GameConfigs => gameConfigs;
+        public Tables GameConfigs => gameConfigs;
 
         public void Init(Action finish)
         {
-            if (gameConfigs == null) gameConfigs = new GameConfigs();
+            if (gameConfigs == null) gameConfigs = new Tables();
             this.finish = finish;
-            var fis = typeof(GameConfigs).GetFields();
+            var fis = typeof(Tables).GetFields();
             configCounter = fis.Length;
             for (int i = 0; i < configCounter; i++) new ConfigItem().Load(fis[i], Finish);
         }
@@ -31,21 +33,21 @@ namespace HotAssembly
         }
         public void InitSpecial(string name, Action finish)
         {
-            if (gameConfigs == null) gameConfigs = new GameConfigs();
-            var fi = typeof(GameConfigs).GetField(name);
+            if (gameConfigs == null) gameConfigs = new Tables();
+            var fi = typeof(Tables).GetField(name);
             new ConfigItem().Load(fi, finish);
         }
 
         class ConfigItem
         {
             private Action finish;
-            private BytesDecodeInterface bdi;
+            private TbBase tb;
             private int loadId;
             public void Load(FieldInfo fi, Action _finish)
             {
                 finish = _finish;
-                string tempPath = fi.Name;
-                bdi = fi.GetValue(Instance.GameConfigs) as BytesDecodeInterface;
+                string tempPath = fi.Name.ToLower();
+                tb = fi.GetValue(Instance.GameConfigs) as TbBase;
                 loadId = AssetManager.Instance.Load<TextAsset>(tempPath, Deserialize);
             }
             private void Deserialize(int id, Object asset)
@@ -53,11 +55,11 @@ namespace HotAssembly
                 if (asset == null) return;
                 byte[] bytes = ((TextAsset)asset).bytes;
                 if (bytes == null) return;
-                BytesDecode.Deserialize(bdi, bytes, Finish);
+                ThreadManager.Instance.StartThread(a => tb.Deserialize(new ByteBuf(bytes)), Finish, bytes);
             }
             private void Finish()
             {
-                bdi = null;
+                tb = null;
                 AssetManager.Instance.Unload(loadId);
                 finish?.Invoke();
             }
