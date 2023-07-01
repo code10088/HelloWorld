@@ -49,17 +49,6 @@ namespace UnityExtensions.Tween
             }
         }
 
-        public override TweenFromTo<Color, TTarget> Clone2()
-        {
-            var newTween = Clone3();
-            newTween.useGradient = useGradient;
-            newTween.gradient = gradient;
-            newTween.toggleRGB = toggleRGB;
-            newTween.toggleAlpha = toggleAlpha;
-            return newTween;
-        }
-
-        public abstract TweenColor<TTarget> Clone3();
 
 #if UNITY_EDITOR
 

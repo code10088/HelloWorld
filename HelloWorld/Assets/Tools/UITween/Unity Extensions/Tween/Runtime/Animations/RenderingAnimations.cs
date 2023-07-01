@@ -12,11 +12,6 @@ namespace UnityExtensions.Tween
             get => target ? target.color : Color.white;
             set { if (target) target.color = value; }
         }
-
-        public override TweenColor<Light> Clone3()
-        {
-            return new TweenLightColor();
-        }
     }
 
     [Serializable, TweenAnimation("Rendering/Light Intensity", "Light Intensity")]
@@ -26,11 +21,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.intensity : 1f;
             set { if (target) target.intensity = value; }
-        }
-
-        public override TweenFloat<Light> Clone3()
-        {
-            return new TweenLightIntensity();
         }
     }
 
@@ -42,10 +32,15 @@ namespace UnityExtensions.Tween
             get => target ? target.range : 10f;
             set { if (target) target.range = value; }
         }
+    }
 
-        public override TweenFloat<Light> Clone3()
+    [Serializable, TweenAnimation("Rendering/Volume Weight", "Volume Weight")]
+    public class TweenVolumeWeight : TweenFloat<Volume>
+    {
+        public override float current
         {
-            return new TweenLightRange();
+            get => target ? target.weight : 1f;
+            set { if (target) target.weight = value; }
         }
     }
 

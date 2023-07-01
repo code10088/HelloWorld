@@ -19,13 +19,6 @@ namespace UnityExtensions.Tween
             set { if (target) target.enabled = target.enabled ? (value >= criticalValue) : (value > criticalValue); }
         }
 
-        public override TweenFloat<Behaviour> Clone3()
-        {
-            var newTween = new TweenBehaviourEnabled();
-            newTween.criticalValue = criticalValue;
-            return newTween;
-        }
-
 #if UNITY_EDITOR
         public override void Reset(TweenPlayer player)
         {
@@ -51,13 +44,6 @@ namespace UnityExtensions.Tween
         {
             get => (!target || target.activeSelf) ? (criticalValue + 0.5f) : (criticalValue - 0.5f);
             set { if (target) target.SetActive(target.activeSelf ? (value >= criticalValue) : (value > criticalValue)); }
-        }
-
-        public override TweenFloat<GameObject> Clone3()
-        {
-            var newTween = new TweenGameObjectActive();
-            newTween.criticalValue = criticalValue;
-            return newTween;
         }
 
 #if UNITY_EDITOR
@@ -102,14 +88,6 @@ namespace UnityExtensions.Tween
             }
         }
 
-        public override TweenFloat<ParticleSystem> Clone3()
-        {
-            var newTween = new TweenParticleSystemPlaying();
-            newTween.withChildren = withChildren;
-            newTween.criticalValue = criticalValue;
-            return newTween;
-        }
-
 #if UNITY_EDITOR
         public override void Reset(TweenPlayer player)
         {
@@ -139,13 +117,6 @@ namespace UnityExtensions.Tween
             set { if (target) target.distance = normalizedMode ? (target.path ? value * target.path.length : 0f) : value; }
         }
 
-        public override TweenFloat<MoveAlongPath> Clone3()
-        {
-            var newTween = new TweenPositionAlongPath();
-            newTween.normalizedMode = normalizedMode;
-            return newTween;
-        }
-
 #if UNITY_EDITOR
         public override void Reset(TweenPlayer player)
         {
@@ -169,11 +140,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.normalizedTime : 0;
             set { if (target) target.normalizedTime = value; }
-        }
-
-        public override TweenFloat<TweenPlayer> Clone3()
-        {
-            return new TweenSubPlayerNormalizedTime();
         }
 
 #if UNITY_EDITOR

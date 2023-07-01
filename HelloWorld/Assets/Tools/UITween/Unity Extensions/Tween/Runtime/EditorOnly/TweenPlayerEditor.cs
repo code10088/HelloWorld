@@ -12,7 +12,6 @@ using UnityEngine;
 using UnityEditor;
 using UnityExtensions.Editor;
 using UnityExtensions.Tween.Editor;
-using System.Collections.Generic;
 
 namespace UnityExtensions.Tween
 {
@@ -302,14 +301,12 @@ namespace UnityExtensions.Tween
                 }
             }
 
-            SerializedProperty _configProp;
             SerializedProperty _durationProp;
             SerializedProperty _updateModeProp;
             SerializedProperty _timeModeProp;
             SerializedProperty _wrapModeProp;
             SerializedProperty _arrivedActionProp;
             SerializedProperty _syncOnAwakeProp;
-            SerializedProperty _tweenGridProp;
             SerializedProperty _onForwardArrivedProp;
             SerializedProperty _onBackArrivedProp;
             SerializedProperty _animationsProp;
@@ -343,14 +340,12 @@ namespace UnityExtensions.Tween
 
             void OnEnable()
             {
-                _configProp = serializedObject.FindProperty(nameof(config));
                 _durationProp = serializedObject.FindProperty(nameof(_duration));
                 _updateModeProp = serializedObject.FindProperty("_updateMode");
                 _timeModeProp = serializedObject.FindProperty(nameof(timeMode));
                 _wrapModeProp = serializedObject.FindProperty(nameof(wrapMode));
                 _arrivedActionProp = serializedObject.FindProperty(nameof(arrivedAction));
                 _syncOnAwakeProp = serializedObject.FindProperty(nameof(sampleOnAwake));
-                _tweenGridProp = serializedObject.FindProperty(nameof(tweenGrid));
 
                 _onForwardArrivedProp = serializedObject.FindProperty(nameof(_onForwardArrived));
                 _onBackArrivedProp = serializedObject.FindProperty(nameof(_onBackArrived));
@@ -376,32 +371,6 @@ namespace UnityExtensions.Tween
             public override void OnInspectorGUI()
             {
                 serializedObject.Update();
-
-                EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.PropertyField(_configProp);
-                if (GUILayout.Button("Import", GUILayout.Height(EditorGUIUtility.singleLineHeight)))
-                {
-                    if (target.config != null)
-                    {
-                        TweenAnimation.tweenAniRoot = target.transform;
-                        BytesDecode.Deserialize(target, target.config.bytes);
-                        AssetDatabase.Refresh();
-                        return;
-                    }
-                }
-                if (GUILayout.Button("Export", GUILayout.Height(EditorGUIUtility.singleLineHeight)))
-                {
-                    if (target.config != null)
-                    {
-                        TweenAnimation.tweenAniRoot = target.transform;
-                        string path = AssetDatabase.GetAssetPath(target.config);
-                        path = Application.dataPath + path.Substring(6).Replace(".asset", ".bytes");
-                        BytesDecode.Serialize(target, 0, path);
-                        return;
-                    }
-                }
-                EditorGUILayout.EndHorizontal();
-                GUILayout.Space(4);
 
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
@@ -429,27 +398,6 @@ namespace UnityExtensions.Tween
                     EditorGUILayout.PropertyField(_wrapModeProp);
                     EditorGUILayout.PropertyField(_arrivedActionProp);
                     EditorGUILayout.PropertyField(_syncOnAwakeProp);
-                    EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.PropertyField(_tweenGridProp);
-                    if (target.tweenGrid)
-                    {
-                        target.tweenGridDir = EditorGUILayout.Toggle(target.tweenGridDir);
-                        target.tweenGridInterval = EditorGUILayout.FloatField(target.tweenGridInterval);
-                        if (GUILayout.Button(EditorResources.instance.leftArrow, GUILayout.Height(EditorGUIUtility.singleLineHeight)))
-                        {
-                            target.duration = target.itemDurationRecord;
-                            target._animations = target.itemAnimationsRecord;
-                            return;
-                        }
-                        if (GUILayout.Button(EditorResources.instance.rightArrow, GUILayout.Height(EditorGUIUtility.singleLineHeight)))
-                        {
-                            target.itemDurationRecord = target.duration;
-                            target.itemAnimationsRecord = new List<TweenAnimation>(target._animations);
-                            target.RefreshTweenGrid();
-                            return;
-                        }
-                    }
-                    EditorGUILayout.EndHorizontal();
                     GUILayout.Space(4);
                 }
 

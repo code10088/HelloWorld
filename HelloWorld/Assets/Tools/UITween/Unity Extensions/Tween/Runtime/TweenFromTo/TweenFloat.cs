@@ -13,27 +13,6 @@ namespace UnityExtensions.Tween
             current = (to - from) * factor + from;
         }
 
-        public override TweenFromTo<float, TTarget> Clone2()
-        {
-            return Clone3();
-        }
-
-        public abstract TweenFloat<TTarget> Clone3();
-
-        public override void Serialize(BytesDecode bd)
-        {
-            base.Serialize(bd);
-            bd.ToBytes(from);
-            bd.ToBytes(to);
-        }
-
-        public override void Deserialize(BytesDecode bd)
-        {
-            base.Deserialize(bd);
-            from = bd.ToFloat();
-            to = bd.ToFloat();
-        }
-
 #if UNITY_EDITOR
 
         protected override void OnPropertiesGUI(TweenPlayer player, SerializedProperty property)

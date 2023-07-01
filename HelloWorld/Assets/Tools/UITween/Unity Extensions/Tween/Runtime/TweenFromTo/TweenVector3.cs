@@ -25,35 +25,6 @@ namespace UnityExtensions.Tween
             }
         }
 
-        public override TweenFromTo<Vector3, TTarget> Clone2()
-        {
-            var newTween = Clone3();
-            newTween.toggle = toggle;
-            return newTween;
-        }
-
-        public abstract TweenVector3<TTarget> Clone3();
-
-        public override void Serialize(BytesDecode bd)
-        {
-            base.Serialize(bd);
-            bd.ToBytes(toggle.x);
-            bd.ToBytes(toggle.y);
-            bd.ToBytes(toggle.z);
-            bd.ToBytes(from);
-            bd.ToBytes(to);
-        }
-
-        public override void Deserialize(BytesDecode bd)
-        {
-            base.Deserialize(bd);
-            toggle.x = bd.ToBool();
-            toggle.y = bd.ToBool();
-            toggle.z = bd.ToBool();
-            from = bd.ToVector3();
-            to = bd.ToVector3();
-        }
-
 #if UNITY_EDITOR
 
         public override void Reset(TweenPlayer player)

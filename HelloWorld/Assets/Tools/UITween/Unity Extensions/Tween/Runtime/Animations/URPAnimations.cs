@@ -17,11 +17,6 @@ namespace UnityExtensions.Tween
             get => target ? target.pointLightOuterAngle : 30f;
             set { if (target) target.pointLightOuterAngle = value; }
         }
-
-        public override TweenFloat<Light2D> Clone3()
-        {
-            return new TweenLight2DOuterAngle();
-        }
     }
 
     [Serializable, TweenAnimation("Rendering/Light 2D Outer Radius", "Light 2D Outer Radius")]
@@ -31,11 +26,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.pointLightOuterRadius : 10f;
             set { if (target) target.pointLightOuterRadius = value; }
-        }
-
-        public override TweenFloat<Light2D> Clone3()
-        {
-            return new TweenLight2DOuterRadius();
         }
     }
 
@@ -47,11 +37,6 @@ namespace UnityExtensions.Tween
             get => target ? target.intensity : 1f;
             set { if (target) target.intensity = value; }
         }
-
-        public override TweenFloat<Light2D> Clone3()
-        {
-            return new TweenLight2DIntensity();
-        }
     }
 
     [Serializable, TweenAnimation("Rendering/Light 2D Color", "Light 2D Color")]
@@ -61,11 +46,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.color : Color.white;
             set { if (target) target.color = value; }
-        }
-
-        public override TweenColor<Light2D> Clone3()
-        {
-            return new TweenLight2DColor();
         }
     }
 

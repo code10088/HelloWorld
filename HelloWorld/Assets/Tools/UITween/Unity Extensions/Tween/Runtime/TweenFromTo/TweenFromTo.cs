@@ -21,7 +21,7 @@ namespace UnityExtensions.Tween
 
     interface ITweenFromToWithTarget
     {
-        UnityEngine.Object target { get; set; }
+        UnityEngine.Object target { get; }
         void LetCurrentEqualFrom();
         void LetCurrentEqualTo();
     }
@@ -36,22 +36,6 @@ namespace UnityExtensions.Tween
         {
             RuntimeUtilities.Swap(ref from, ref to);
         }
-
-        public override TweenAnimation Clone()
-        {
-            var newTween = Clone1();
-            newTween.enabled = enabled;
-            newTween.minNormalizedTime = minNormalizedTime;
-            newTween.maxNormalizedTime = maxNormalizedTime;
-            newTween.holdBeforeStart = holdBeforeStart;
-            newTween.holdAfterEnd = holdAfterEnd;
-            newTween.interpolator = interpolator;
-            newTween.from = from;
-            newTween.to = to;
-            return newTween;
-        }
-
-        public abstract TweenFromTo<T> Clone1();
 
 #if UNITY_EDITOR
 
@@ -155,7 +139,7 @@ namespace UnityExtensions.Tween
     {
         public TTarget target;
 
-        UnityEngine.Object ITweenFromToWithTarget.target { get => target; set => target = (TTarget)value; }
+        UnityEngine.Object ITweenFromToWithTarget.target => target;
 
         public void LetCurrentEqualFrom()
         {
@@ -165,71 +149,6 @@ namespace UnityExtensions.Tween
         public void LetCurrentEqualTo()
         {
             Interpolate(1f);    // supports toggles
-        }
-
-        public override TweenFromTo<TValue> Clone1()
-        {
-            var newTween = Clone2();
-            newTween.target = target;
-            return newTween;
-        }
-
-        public abstract TweenFromTo<TValue, TTarget> Clone2();
-
-        public override void Serialize(BytesDecode bd)
-        {
-            base.Serialize(bd);
-            if (target is GameObject g)
-            {
-                Transform t = g.GetComponent<Transform>();
-                string targetPath = GetRelativePath(t);
-                bd.ToBytes(targetPath);
-                bd.ToBytes(string.Empty);
-            }
-            else if (target is Component c)
-            {
-                Transform t = c.GetComponent<Transform>();
-                string targetPath = GetRelativePath(t);
-                bd.ToBytes(targetPath);
-                string targetType = target.GetType().Name;
-                bd.ToBytes(targetType);
-            }
-            else
-            {
-                bd.ToBytes(string.Empty);
-                bd.ToBytes(string.Empty);
-            }
-        }
-
-        private string GetRelativePath(Transform a)
-        {
-            string path = string.Empty;
-            if (a != tweenAniRoot)
-            {
-                path = a.name;
-                Transform p = a.parent;
-                while (p != tweenAniRoot)
-                {
-                    path = p.name + "/" + path;
-                    p = p.parent;
-                }
-            }
-            return path;
-        }
-
-        public override void Deserialize(BytesDecode bd)
-        {
-            base.Deserialize(bd);
-            string targetPath = bd.ToStr();
-            Transform t = null;
-            if (string.IsNullOrEmpty(targetPath)) t = tweenAniRoot;
-            else t = tweenAniRoot.Find(targetPath);
-            string targetType = bd.ToStr();
-            if (t)
-            {
-                if (string.IsNullOrEmpty(targetType)) target = t.gameObject as TTarget;
-                else target = t.GetComponent(targetType) as TTarget;
-            }
         }
 
 #if UNITY_EDITOR

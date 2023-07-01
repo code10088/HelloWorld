@@ -114,17 +114,6 @@ namespace UnityExtensions.Tween
             return Mathf.Min(_materials.Count, 32);
         }
 
-        public override TweenFromTo<Vector4> Clone1()
-        {
-            var newTween = new TweenMaterialProperty();
-            newTween.target = target;
-            newTween._materialMask = _materialMask;
-            newTween._propertyName = _propertyName;
-            newTween._propertyType = _propertyType;
-            newTween._propertyID = _propertyID;
-            return newTween;
-        }
-
 #if UNITY_EDITOR
 
         Renderer _originalTarget;

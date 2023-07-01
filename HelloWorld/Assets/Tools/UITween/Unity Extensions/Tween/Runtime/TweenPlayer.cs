@@ -232,11 +232,6 @@ namespace UnityExtensions.Tween
 
         private void Awake()
         {
-            TweenAnimation.tweenAniRoot = transform;
-            if (config) BytesDecode.Deserialize(this, config.bytes);
-            itemDurationRecord = duration;
-            itemAnimationsRecord = new List<TweenAnimation>(_animations);
-			if (tweenGrid) RefreshTweenGrid();
             if (sampleOnAwake) Sample(_normalizedTime);
         }
 

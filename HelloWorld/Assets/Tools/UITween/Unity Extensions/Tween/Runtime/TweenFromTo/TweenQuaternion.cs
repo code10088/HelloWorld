@@ -13,29 +13,6 @@ namespace UnityExtensions.Tween
             current = Quaternion.SlerpUnclamped(from, to, factor);
         }
 
-        public override TweenFromTo<Quaternion, TTarget> Clone2()
-        {
-            var newTween = Clone3();
-            return newTween;
-        }
-
-        public abstract TweenQuaternion<TTarget> Clone3();
-
-        public override void Serialize(BytesDecode bd)
-        {
-            base.Serialize(bd);
-            bd.ToBytes(from);
-            bd.ToBytes(to);
-        }
-
-        public override void Deserialize(BytesDecode bd)
-        {
-            base.Deserialize(bd);
-            from = bd.ToQuaternion();
-            to = bd.ToQuaternion();
-        }
-
-
 #if UNITY_EDITOR
 
         Quaternion _fromQuaternion = Quaternion.identity;

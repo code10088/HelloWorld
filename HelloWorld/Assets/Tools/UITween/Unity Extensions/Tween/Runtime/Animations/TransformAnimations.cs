@@ -26,13 +26,6 @@ namespace UnityExtensions.Tween
             }
         }
 
-        public override TweenVector3<Transform> Clone3()
-        {
-            var newTween = new TweenTransformPosition();
-            newTween.space = space;
-            return newTween;
-        }
-
 #if UNITY_EDITOR
         public override void Reset(TweenPlayer player)
         {
@@ -65,13 +58,6 @@ namespace UnityExtensions.Tween
                     else target.localEulerAngles = value;
                 }
             }
-        }
-
-        public override TweenVector3<Transform> Clone3()
-        {
-            var newTween = new TweenTransformEulerAngles();
-            newTween.space = space;
-            return newTween;
         }
 
 #if UNITY_EDITOR
@@ -108,13 +94,6 @@ namespace UnityExtensions.Tween
             }
         }
 
-        public override TweenQuaternion<Transform> Clone3()
-        {
-            var newTween = new TweenTransformRotation();
-            newTween.space = space;
-            return newTween;
-        }
-
 #if UNITY_EDITOR
         public override void Reset(TweenPlayer player)
         {
@@ -138,11 +117,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.localScale : Vector3.one;
             set { if (target) target.localScale = value; }
-        }
-
-        public override TweenVector3<Transform> Clone3()
-        {
-            return new TweenTransformScale();
         }
 
     } // class TweenTransformScale
@@ -191,16 +165,6 @@ namespace UnityExtensions.Tween
                     currentLocalScale = Vector3.LerpUnclamped(from.localScale, to.localScale, factor);
                 }
             }
-        }
-
-        public override TweenFromTo<Transform> Clone1()
-        {
-            var newTween = new TweenTransform();
-            newTween.togglePosition = togglePosition;
-            newTween.toggleRotation = toggleRotation;
-            newTween.toggleLocalScale = toggleLocalScale;
-            newTween.target = target;
-            return newTween;
         }
 
 #if UNITY_EDITOR

@@ -11,11 +11,6 @@ namespace UnityExtensions.Tween
             get => target ? target.sizeDelta : default;
             set { if (target) target.sizeDelta = value; }
         }
-
-        public override TweenVector2<RectTransform> Clone3()
-        {
-            return new TweenRectTransformSizeDelta();
-        }
     }
 
     [Serializable, TweenAnimation("Rect Transform/Anchored Position", "Rect Transform Anchored Position")]
@@ -25,11 +20,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.anchoredPosition : default;
             set { if (target) target.anchoredPosition = value; }
-        }
-
-        public override TweenVector2<RectTransform> Clone3()
-        {
-            return new TweenRectTransformAnchoredPosition();
         }
     }
 
@@ -41,11 +31,6 @@ namespace UnityExtensions.Tween
             get => target ? target.offsetMax : default;
             set { if (target) target.offsetMax = value; }
         }
-
-        public override TweenVector2<RectTransform> Clone3()
-        {
-            return new TweenRectTransformOffsetMax();
-        }
     }
 
     [Serializable, TweenAnimation("Rect Transform/Offset Min", "Rect Transform Offset Min")]
@@ -55,11 +40,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.offsetMin : default;
             set { if (target) target.offsetMin = value; }
-        }
-
-        public override TweenVector2<RectTransform> Clone3()
-        {
-            return new TweenRectTransformOffsetMin();
         }
     }
 
@@ -71,11 +51,6 @@ namespace UnityExtensions.Tween
             get => target ? target.anchorMax : default;
             set { if (target) target.anchorMax = value; }
         }
-
-        public override TweenVector2<RectTransform> Clone3()
-        {
-            return new TweenRectTransformAnchorMax();
-        }
     }
 
     [Serializable, TweenAnimation("Rect Transform/Anchor Min", "Rect Transform Anchor Min")]
@@ -85,11 +60,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.anchorMin : default;
             set { if (target) target.anchorMin = value; }
-        }
-
-        public override TweenVector2<RectTransform> Clone3()
-        {
-            return new TweenRectTransformAnchorMin();
         }
     }
 

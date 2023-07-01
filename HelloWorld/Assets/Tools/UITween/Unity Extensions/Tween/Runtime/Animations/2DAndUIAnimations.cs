@@ -24,11 +24,6 @@ namespace UnityExtensions.Tween
             get => target ? target.alpha : 1f;
             set { if (target) target.alpha = value; }
         }
-
-        public override TweenFloat<CanvasGroup> Clone3()
-        {
-            return new TweenCanvasGroupAlpha();
-        }
     }
 
     [Serializable, TweenAnimation("2D and UI/Graphic Color", "Graphic Color")]
@@ -39,11 +34,6 @@ namespace UnityExtensions.Tween
             get => target ? target.color : Color.white;
             set { if (target) target.color = value; }
         }
-
-        public override TweenColor<Graphic> Clone3()
-        {
-            return new TweenGraphicColor();
-        }
     }
 
     [Serializable, TweenAnimation("2D and UI/Image Fill Amount", "Image Fill Amount")]
@@ -53,11 +43,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.fillAmount : 1;
             set { if (target) target.fillAmount = value; }
-        }
-
-        public override TweenFloat<Image> Clone3()
-        {
-            return new TweenImageFillAmount();
         }
     }
 
@@ -70,11 +55,6 @@ namespace UnityExtensions.Tween
             get => target ? target.cellSize : default;
             set { if (target) target.cellSize = value; }
         }
-
-        public override TweenVector2<GridLayoutGroup> Clone3()
-        {
-            return new TweenGridLayoutGroupCellSize();
-        }
     }
 
     [Serializable, TweenAnimation("2D and UI/Grid Layout Group Spacing", "Grid Layout Group Spacing")]
@@ -84,11 +64,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.spacing : default;
             set { if (target) target.spacing = value; }
-        }
-
-        public override TweenVector2<GridLayoutGroup> Clone3()
-        {
-            return new TweenGridLayoutGroupSpacing();
         }
     }
 
@@ -102,11 +77,6 @@ namespace UnityExtensions.Tween
             get => target ? target.color : Color.white;
             set { if (target) target.color = value; }
         }
-
-        public override TweenColor<SpriteRenderer> Clone3()
-        {
-            return new TweenSpriteColor();
-        }
     }
 
 
@@ -119,11 +89,6 @@ namespace UnityExtensions.Tween
         {
             get => target ? target.fontSize : 1f;
             set { if (target) target.fontSize = value; }
-        }
-
-        public override TweenFloat<TMP_Text> Clone3()
-        {
-            return new TextMeshProFontSize();
         }
     }
 
