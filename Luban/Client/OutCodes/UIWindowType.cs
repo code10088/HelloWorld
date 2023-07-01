@@ -9,12 +9,10 @@
 
 namespace cfg
 { 
-    public enum UIType
+    public enum UIWindowType
     {
-        UITest = 1,
-        UIMessageBox = 2,
-        UIHotUpdateRes = 3,
-        UIMain = 4,
+        Normal = 1,
+        Tips = 2,
     }
 
 } 

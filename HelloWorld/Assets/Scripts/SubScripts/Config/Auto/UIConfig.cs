@@ -18,6 +18,7 @@ public sealed partial class UIConfig :  Bright.Config.BeanBase
         UIType = (UIType)_buf.ReadInt();
         Name = _buf.ReadString();
         PrefabName = _buf.ReadString();
+        UIWindowType = (UIWindowType)_buf.ReadInt();
         PostInit();
     }
 
@@ -35,6 +36,10 @@ public sealed partial class UIConfig :  Bright.Config.BeanBase
     /// 资源名字
     /// </summary>
     public string PrefabName { get; private set; }
+    /// <summary>
+    /// 窗口类型
+    /// </summary>
+    public UIWindowType UIWindowType { get; private set; }
 
     public const int __ID__ = 202324726;
     public override int GetTypeId() => __ID__;
@@ -54,6 +59,7 @@ public sealed partial class UIConfig :  Bright.Config.BeanBase
         + "UIType:" + UIType + ","
         + "Name:" + Name + ","
         + "PrefabName:" + PrefabName + ","
+        + "UIWindowType:" + UIWindowType + ","
         + "}";
     }
     

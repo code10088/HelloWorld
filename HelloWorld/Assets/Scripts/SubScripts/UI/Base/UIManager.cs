@@ -29,7 +29,7 @@ namespace HotAssembly
         }
         public void OpenUI(UIType type, Action<bool> open = null, params object[] param)
         {
-            UIType from = GetFromUI();
+            UIType from = GetFromUI(type);
 
             int tempIndex = loadUI.FindIndex(a => a.Type == type);
             if (tempIndex >= 0)
@@ -109,10 +109,16 @@ namespace HotAssembly
             }
             return null;
         }
-        private UIType GetFromUI()
+        private UIType GetFromUI(UIType type)
         {
-            //TODO：获取当前非本身、非提示UI
-            return UIType.UITest;
+            for (int i = curUI.Count - 1; i >= 0; i--)
+            {
+                if(curUI[i].Type != type && curUI[i].Config.UIWindowType != UIWindowType.Tips)
+                {
+                    return curUI[i].Type;
+                }
+            }
+            return UIType.UIMain;
         }
         public bool HasOpen(UIType type)
         {
@@ -156,6 +162,7 @@ namespace HotAssembly
 
             public UIType Type => type;
             public UIBase BaseUI => baseUI;
+            public UIConfig Config => config;
             public bool State => state > 0;
 
             public UIItem(UIType type)

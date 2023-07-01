@@ -14,6 +14,7 @@ namespace cfg
         UITest = 1,
         UIMessageBox = 2,
         UIHotUpdateRes = 3,
+        UIMain = 4,
     }
 
 } 
