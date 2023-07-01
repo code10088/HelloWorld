@@ -19,6 +19,8 @@ public partial class TbSceneConfig : TbBase
     
     public void Deserialize(byte[] bytes)
     {
+		_dataMap.Clear();
+		_dataList.Clear();
 		ByteBuf _buf = new(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
