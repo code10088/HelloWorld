@@ -115,6 +115,7 @@ public class AssetManager : Singletion<AssetManager>
         public void Unload()
         {
             ar?.Release();
+            ar?.Reset();
             ar = null;
             action = null;
 

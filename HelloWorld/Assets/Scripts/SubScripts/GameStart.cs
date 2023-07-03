@@ -26,7 +26,7 @@ namespace HotAssembly
         {
             SceneManager.Instance.OpenScene(1, a => GameDebug.Log(a));
             SceneManager.Instance.CloseScene(1);
-            //SceneManager.Instance.OpenScene(1, a => GameDebug.Log(a));
+            SceneManager.Instance.OpenScene(1, a => GameDebug.Log(a));
             UIManager.Instance.OpenUI(UIType.UITest);
             UIManager.Instance.CloseUI(UIType.UITest);
             UIManager.Instance.OpenUI(UIType.UITest);
