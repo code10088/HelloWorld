@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -102,416 +102,158 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\DeviceInfo.cs">
-      <Link>SubScripts\Config\Auto\DeviceInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\SceneConfig.cs">
-      <Link>SubScripts\Config\Auto\SceneConfig.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\SceneType.cs">
-      <Link>SubScripts\Config\Auto\SceneType.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\Tables.cs">
-      <Link>SubScripts\Config\Auto\Tables.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\TbDeviceInfo.cs">
-      <Link>SubScripts\Config\Auto\TbDeviceInfo.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\TbSceneConfig.cs">
-      <Link>SubScripts\Config\Auto\TbSceneConfig.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\TbUIConfig.cs">
-      <Link>SubScripts\Config\Auto\TbUIConfig.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\UIConfig.cs">
-      <Link>SubScripts\Config\Auto\UIConfig.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\UIType.cs">
-      <Link>SubScripts\Config\Auto\UIType.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\UIWindowType.cs">
-      <Link>SubScripts\Config\Auto\UIWindowType.cs</Link>
+    <Compile Include="..\Assets\Scripts\SubScripts\GameStart.cs">
+       <Link>GameStart.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Config\ConfigManager.cs">
-      <Link>SubScripts\Config\ConfigManager.cs</Link>
+       <Link>ConfigManager.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Config\TbBase.cs">
-      <Link>SubScripts\Config\TbBase.cs</Link>
+       <Link>TbBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\DeviceInfo.cs">
+       <Link>DeviceInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\SceneConfig.cs">
+       <Link>SceneConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\SceneType.cs">
+       <Link>SceneType.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\Tables.cs">
+       <Link>Tables.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\TbDeviceInfo.cs">
+       <Link>TbDeviceInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\TbSceneConfig.cs">
+       <Link>TbSceneConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\TbUIConfig.cs">
+       <Link>TbUIConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\UIConfig.cs">
+       <Link>UIConfig.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\UIType.cs">
+       <Link>UIType.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\UIWindowType.cs">
+       <Link>UIWindowType.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Data\DataManager.cs">
-      <Link>SubScripts\Data\DataManager.cs</Link>
+       <Link>DataManager.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Data\HotUpdateResData.cs">
-      <Link>SubScripts\Data\HotUpdateResData.cs</Link>
+       <Link>HotUpdateResData.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Data\TestData.cs">
-      <Link>SubScripts\Data\TestData.cs</Link>
+       <Link>TestData.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Event\EventType.cs">
-      <Link>SubScripts\Event\EventType.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\GameStart.cs">
-      <Link>SubScripts\GameStart.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Network\Message\NetMsgId.cs">
-      <Link>SubScripts\Network\Message\NetMsgId.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Network\Message\Person.cs">
-      <Link>SubScripts\Network\Message\Person.cs</Link>
+       <Link>EventType.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatch.cs">
-      <Link>SubScripts\Network\NetMsgDispatch.cs</Link>
+       <Link>NetMsgDispatch.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatchAuto.cs">
-      <Link>SubScripts\Network\NetMsgDispatchAuto.cs</Link>
+       <Link>NetMsgDispatchAuto.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Network\Message\NetMsgId.cs">
+       <Link>NetMsgId.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Network\Message\Person.cs">
+       <Link>Person.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Scene\Auto\TestSceneComponent.cs">
-      <Link>SubScripts\Scene\Auto\TestSceneComponent.cs</Link>
+       <Link>TestSceneComponent.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Scene\Base\SceneBase.cs">
-      <Link>SubScripts\Scene\Base\SceneBase.cs</Link>
+       <Link>SceneBase.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Scene\Base\SceneManager.cs">
-      <Link>SubScripts\Scene\Base\SceneManager.cs</Link>
+       <Link>SceneManager.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Scene\Base\TestScene.cs">
-      <Link>SubScripts\Scene\Base\TestScene.cs</Link>
+       <Link>TestScene.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\DevicePerformanceUtil.cs">
-      <Link>SubScripts\Tools\DevicePerformanceUtil.cs</Link>
+       <Link>DevicePerformanceUtil.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor\LoopScrollRectInspector.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Editor\LoopScrollRectInspector.cs</Link>
+       <Link>LoopScrollRectInspector.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor\SGDefaultControls.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Editor\SGDefaultControls.cs</Link>
+       <Link>SGDefaultControls.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor\SGMenuOptions.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Editor\SGMenuOptions.cs</Link>
+       <Link>SGMenuOptions.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\CustomLoopScrollSource.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\CustomLoopScrollSource.cs</Link>
+       <Link>CustomLoopScrollSource.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRect.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRect.cs</Link>
+       <Link>LoopHorizontalScrollRect.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRectMulti.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRectMulti.cs</Link>
+       <Link>LoopHorizontalScrollRectMulti.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollDataSource.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollDataSource.cs</Link>
+       <Link>LoopScrollDataSource.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollPrefabSource.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollPrefabSource.cs</Link>
+       <Link>LoopScrollPrefabSource.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRect.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRect.cs</Link>
+       <Link>LoopScrollRect.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectBase.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectBase.cs</Link>
+       <Link>LoopScrollRectBase.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectMulti.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectMulti.cs</Link>
+       <Link>LoopScrollRectMulti.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollSizeHelper.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollSizeHelper.cs</Link>
+       <Link>LoopScrollSizeHelper.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRect.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRect.cs</Link>
+       <Link>LoopVerticalScrollRect.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRectMulti.cs">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRectMulti.cs</Link>
+       <Link>LoopVerticalScrollRectMulti.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UIHotUpdateResComponent.cs">
-      <Link>SubScripts\UI\Auto\UIHotUpdateResComponent.cs</Link>
+       <Link>UIHotUpdateResComponent.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UIMessageBoxComponent.cs">
-      <Link>SubScripts\UI\Auto\UIMessageBoxComponent.cs</Link>
+       <Link>UIMessageBoxComponent.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UITestComponent.cs">
-      <Link>SubScripts\UI\Auto\UITestComponent.cs</Link>
+       <Link>UITestComponent.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIBase.cs">
-      <Link>SubScripts\UI\Base\UIBase.cs</Link>
+       <Link>UIBase.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIItemBase.cs">
-      <Link>SubScripts\UI\Base\UIItemBase.cs</Link>
+       <Link>UIItemBase.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIManager.cs">
-      <Link>SubScripts\UI\Base\UIManager.cs</Link>
+       <Link>UIManager.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIManagerTips.cs">
-      <Link>SubScripts\UI\Base\UIManagerTips.cs</Link>
+       <Link>UIManagerTips.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\UIHotUpdateRes\UIHotUpdateRes.cs">
-      <Link>SubScripts\UI\UIHotUpdateRes\UIHotUpdateRes.cs</Link>
+       <Link>UIHotUpdateRes.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\UITest\UITest.cs">
-      <Link>SubScripts\UI\UITest\UITest.cs</Link>
+       <Link>UITest.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\UITips\UIMessageBox.cs">
-      <Link>SubScripts\UI\UITips\UIMessageBox.cs</Link>
+       <Link>UIMessageBox.cs</Link>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Assets\Scripts\SubScripts\Config.meta">
-      <Link>SubScripts\Config.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto.meta">
-      <Link>SubScripts\Config\Auto.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\DeviceInfo.cs.meta">
-      <Link>SubScripts\Config\Auto\DeviceInfo.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\SceneConfig.cs.meta">
-      <Link>SubScripts\Config\Auto\SceneConfig.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\SceneType.cs.meta">
-      <Link>SubScripts\Config\Auto\SceneType.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\Tables.cs.meta">
-      <Link>SubScripts\Config\Auto\Tables.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\TbDeviceInfo.cs.meta">
-      <Link>SubScripts\Config\Auto\TbDeviceInfo.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\TbSceneConfig.cs.meta">
-      <Link>SubScripts\Config\Auto\TbSceneConfig.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\TbUIConfig.cs.meta">
-      <Link>SubScripts\Config\Auto\TbUIConfig.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\UIConfig.cs.meta">
-      <Link>SubScripts\Config\Auto\UIConfig.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\UIType.cs.meta">
-      <Link>SubScripts\Config\Auto\UIType.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\Auto\UIWindowType.cs.meta">
-      <Link>SubScripts\Config\Auto\UIWindowType.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\ConfigManager.cs.meta">
-      <Link>SubScripts\Config\ConfigManager.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Config\TbBase.cs.meta">
-      <Link>SubScripts\Config\TbBase.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Data.meta">
-      <Link>SubScripts\Data.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Data\DataManager.cs.meta">
-      <Link>SubScripts\Data\DataManager.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Data\HotUpdateResData.cs.meta">
-      <Link>SubScripts\Data\HotUpdateResData.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Data\TestData.cs.meta">
-      <Link>SubScripts\Data\TestData.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Event.meta">
-      <Link>SubScripts\Event.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Event\EventType.cs.meta">
-      <Link>SubScripts\Event\EventType.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\GameStart.cs.meta">
-      <Link>SubScripts\GameStart.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Network.meta">
-      <Link>SubScripts\Network.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Network\Message.meta">
-      <Link>SubScripts\Network\Message.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Network\Message\NetMsgId.cs.meta">
-      <Link>SubScripts\Network\Message\NetMsgId.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Network\Message\Person.cs.meta">
-      <Link>SubScripts\Network\Message\Person.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatch.cs.meta">
-      <Link>SubScripts\Network\NetMsgDispatch.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Network\NetMsgDispatchAuto.cs.meta">
-      <Link>SubScripts\Network\NetMsgDispatchAuto.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Scene.meta">
-      <Link>SubScripts\Scene.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Scene\Auto.meta">
-      <Link>SubScripts\Scene\Auto.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Scene\Auto\TestSceneComponent.cs.meta">
-      <Link>SubScripts\Scene\Auto\TestSceneComponent.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Scene\Base.meta">
-      <Link>SubScripts\Scene\Base.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Scene\Base\SceneBase.cs.meta">
-      <Link>SubScripts\Scene\Base\SceneBase.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Scene\Base\SceneManager.cs.meta">
-      <Link>SubScripts\Scene\Base\SceneManager.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Scene\Base\TestScene.cs.meta">
-      <Link>SubScripts\Scene\Base\TestScene.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools.meta">
-      <Link>SubScripts\Tools.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\DevicePerformanceUtil.cs.meta">
-      <Link>SubScripts\Tools\DevicePerformanceUtil.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect.meta">
-      <Link>SubScripts\Tools\LoopScrollRect.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\CHANGELOG.md">
-      <Link>SubScripts\Tools\LoopScrollRect\CHANGELOG.md</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\CHANGELOG.md.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\CHANGELOG.md.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Editor.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor\LoopScrollRectInspector.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Editor\LoopScrollRectInspector.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor\SGDefaultControls.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Editor\SGDefaultControls.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor\SGMenuOptions.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Editor\SGMenuOptions.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\LICENSE">
-      <Link>SubScripts\Tools\LoopScrollRect\LICENSE</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\LICENSE.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\LICENSE.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\package.json">
-      <Link>SubScripts\Tools\LoopScrollRect\package.json</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\package.json.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\package.json.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\README.md">
-      <Link>SubScripts\Tools\LoopScrollRect\README.md</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\README.md.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\README.md.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\CustomLoopScrollSource.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\CustomLoopScrollSource.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRect.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRect.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRectMulti.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRectMulti.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollDataSource.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollDataSource.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollPrefabSource.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollPrefabSource.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRect.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRect.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectBase.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectBase.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectMulti.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectMulti.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollSizeHelper.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollSizeHelper.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRect.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRect.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRectMulti.cs.meta">
-      <Link>SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRectMulti.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI.meta">
-      <Link>SubScripts\UI.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\Auto.meta">
-      <Link>SubScripts\UI\Auto.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\Auto\UIHotUpdateResComponent.cs.meta">
-      <Link>SubScripts\UI\Auto\UIHotUpdateResComponent.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\Auto\UIMessageBoxComponent.cs.meta">
-      <Link>SubScripts\UI\Auto\UIMessageBoxComponent.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\Auto\UITestComponent.cs.meta">
-      <Link>SubScripts\UI\Auto\UITestComponent.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\Base.meta">
-      <Link>SubScripts\UI\Base.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIBase.cs.meta">
-      <Link>SubScripts\UI\Base\UIBase.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIItemBase.cs.meta">
-      <Link>SubScripts\UI\Base\UIItemBase.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIManager.cs.meta">
-      <Link>SubScripts\UI\Base\UIManager.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\Base\UIManagerTips.cs.meta">
-      <Link>SubScripts\UI\Base\UIManagerTips.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\UIHotUpdateRes.meta">
-      <Link>SubScripts\UI\UIHotUpdateRes.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\UIHotUpdateRes\UIHotUpdateRes.cs.meta">
-      <Link>SubScripts\UI\UIHotUpdateRes\UIHotUpdateRes.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\UITest.meta">
-      <Link>SubScripts\UI\UITest.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\UITest\UITest.cs.meta">
-      <Link>SubScripts\UI\UITest\UITest.cs.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\UITips.meta">
-      <Link>SubScripts\UI\UITips.meta</Link>
-    </None>
-    <None Include="..\Assets\Scripts\SubScripts\UI\UITips\UIMessageBox.cs.meta">
-      <Link>SubScripts\UI\UITips\UIMessageBox.cs.meta</Link>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\.gitignore">
-      <Link>SubScripts\Tools\LoopScrollRect\.gitignore</Link>
-    </Content>
-    <Content Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Images~\Content.png">
-      <Link>SubScripts\Tools\LoopScrollRect\Images~\Content.png</Link>
-    </Content>
-    <Content Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Images~\demo1.gif">
-      <Link>SubScripts\Tools\LoopScrollRect\Images~\demo1.gif</Link>
-    </Content>
-    <Content Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Images~\demo2.gif">
-      <Link>SubScripts\Tools\LoopScrollRect\Images~\demo2.gif</Link>
-    </Content>
-    <Content Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Images~\demo3.gif">
-      <Link>SubScripts\Tools\LoopScrollRect\Images~\demo3.gif</Link>
-    </Content>
-    <Content Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Images~\LoopVerticalScrollRect.png">
-      <Link>SubScripts\Tools\LoopScrollRect\Images~\LoopVerticalScrollRect.png</Link>
-    </Content>
-    <Content Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Images~\ScrollCell.png">
-      <Link>SubScripts\Tools\LoopScrollRect\Images~\ScrollCell.png</Link>
-    </Content>
-    <Content Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Images~\ScrollToIndex.gif">
-      <Link>SubScripts\Tools\LoopScrollRect\Images~\ScrollToIndex.gif</Link>
-    </Content>
+
+	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
