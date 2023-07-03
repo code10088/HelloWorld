@@ -14,14 +14,14 @@ namespace cfg
    
 public partial class TbSceneConfig : TbBase
 {
-    private readonly Dictionary<int, SceneConfig> _dataMap = new();
-    private readonly List<SceneConfig> _dataList = new();
+    private readonly Dictionary<int, SceneConfig> _dataMap = new Dictionary<int, SceneConfig>();
+    private readonly List<SceneConfig> _dataList = new List<SceneConfig>();
     
     public void Deserialize(byte[] bytes)
     {
 		_dataMap.Clear();
 		_dataList.Clear();
-		ByteBuf _buf = new(bytes);
+		ByteBuf _buf = new ByteBuf(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
             SceneConfig _v;

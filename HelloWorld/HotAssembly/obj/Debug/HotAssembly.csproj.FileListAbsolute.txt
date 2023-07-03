@@ -170,10 +170,12 @@ D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\UnityEngine.TextCoreTextEngineMod
 D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\UnityEngine.UIElementsNativeModule.xml
 D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\UnityEngine.ARModule.xml
 D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\UnityEngine.InputModule.xml
-D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.csproj.AssemblyReference.cache
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.csproj.CoreCompileInputs.cache
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.csproj.CopyComplete
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.dll
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.pdb
 D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\HybridCLR.Runtime.dll
 D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\HybridCLR.Runtime.pdb
+D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\Unity.RenderPipelines.Core.Runtime.dll
+D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\Unity.RenderPipelines.Core.Runtime.pdb
+D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.csproj.AssemblyReference.cache

@@ -13,9 +13,9 @@ namespace cfg
 { 
 public partial class Tables
 {
-    public TbUIConfig TbUIConfig = new();
-    public TbDeviceInfo TbDeviceInfo = new();
-    public TbSceneConfig TbSceneConfig = new();
+    public TbUIConfig TbUIConfig = new TbUIConfig();
+    public TbDeviceInfo TbDeviceInfo = new TbDeviceInfo();
+    public TbSceneConfig TbSceneConfig = new TbSceneConfig();
 }
 
 }

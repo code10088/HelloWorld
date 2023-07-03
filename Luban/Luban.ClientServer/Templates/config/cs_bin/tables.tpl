@@ -16,7 +16,7 @@ public partial class {{name}}
     /// {{table.escape_comment}}
     /// </summary>
 {{~end~}}
-    public {{table.full_name}} {{table.name}} = new();
+    public {{table.full_name}} {{table.name}} = new {{table.full_name}}();
     {{~end~}}
 }
 

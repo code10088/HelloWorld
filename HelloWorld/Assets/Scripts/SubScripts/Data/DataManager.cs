@@ -5,8 +5,8 @@ namespace HotAssembly
         private TestData testData;
         private HotUpdateResData hotUpdateResData;
 
-        public TestData TestData { get => testData == null ? new TestData() : testData; }
-        public HotUpdateResData HotUpdateResData { get => hotUpdateResData == null ? new HotUpdateResData() : hotUpdateResData; }
+        public TestData TestData { get => testData == null ? testData = new TestData() : testData; }
+        public HotUpdateResData HotUpdateResData { get => hotUpdateResData == null ? hotUpdateResData = new HotUpdateResData() : hotUpdateResData; }
 
 
         public void Clear()
