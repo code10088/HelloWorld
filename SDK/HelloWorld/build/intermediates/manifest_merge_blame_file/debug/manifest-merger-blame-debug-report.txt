@@ -1,0 +1,33 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.qs.HelloWorld" >
+4
+5    <uses-sdk
+6        android:minSdkVersion="21"
+6-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+7        android:targetSdkVersion="33" />
+7-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+8
+9    <queries>
+9-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:12:5-14:15
+10        <package android:name="com.tencent.mm" />
+10-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:13:9-50
+10-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:13:18-47
+11    </queries>
+12
+13    <application android:allowBackup="true" >
+13-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:4:5-11:19
+13-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:5:9-35
+14        <activity
+14-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:6:9-10:11
+15            android:name="com.qs.HelloWorld.wxapi.WXEntryActivity"
+15-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:6:19-73
+16            android:exported="true"
+16-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:7:13-36
+17            android:launchMode="singleTop"
+17-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:9:13-43
+18            android:taskAffinity="com.qs.HelloWorld" />
+18-->D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:8:13-53
+19    </application>
+20
+21</manifest>

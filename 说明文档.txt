@@ -31,8 +31,8 @@ URP
 	Profiler显示urp Gfx.PresentFrame耗时高，并非GPU渲染耗时高，Gfx.PresentFrame=GPU渲染时间+WaitForTargetFPS时间
 	
 LoopScrollRect调整
-	修改命名空间
-	添加CustomLoopScrollSource并修改对应接口
+	添加CustomLoopItem并修改对应接口
+	添加CustomLoopScroll并修改对应接口
 	LoopScrollMultiDataSource改成LoopScrollDataSource
 	修改报错
 

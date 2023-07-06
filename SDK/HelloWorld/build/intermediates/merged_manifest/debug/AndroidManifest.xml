@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.qs.HelloWorld" >
+
+    <uses-sdk
+        android:minSdkVersion="21"
+        android:targetSdkVersion="33" />
+
+    <queries>
+        <package android:name="com.tencent.mm" />
+    </queries>
+
+    <application android:allowBackup="true" >
+        <activity
+            android:name="com.qs.HelloWorld.wxapi.WXEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity="com.qs.HelloWorld" />
+    </application>
+
+</manifest>

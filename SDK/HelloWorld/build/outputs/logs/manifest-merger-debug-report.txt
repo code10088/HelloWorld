@@ -1,0 +1,45 @@
+-- Merging decision tree log ---
+manifest
+ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:2:1-15:12
+INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:2:1-15:12
+INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:2:1-15:12
+	package
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:3:5-32
+		INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+		INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:2:11-69
+application
+ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:4:5-11:19
+	android:allowBackup
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:5:9-35
+activity#com.qs.HelloWorld.wxapi.WXEntryActivity
+ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:6:9-10:11
+	android:launchMode
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:9:13-43
+	android:exported
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:7:13-36
+	android:taskAffinity
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:8:13-53
+	android:name
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:6:19-73
+queries
+ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:12:5-14:15
+package#com.tencent.mm
+ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:13:9-50
+	android:name
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml:13:18-47
+uses-sdk
+INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+		INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+		ADDED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml
+		INJECTED from D:\HelloWorld\SDK\HelloWorld\src\main\AndroidManifest.xml

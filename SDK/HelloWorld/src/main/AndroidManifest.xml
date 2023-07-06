@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.qs.HelloWorld">
+    <application
+        android:allowBackup="true">
+        <activity android:name="com.qs.HelloWorld.wxapi.WXEntryActivity"
+            android:exported="true"
+            android:taskAffinity="com.qs.HelloWorld"
+            android:launchMode="singleTop"
+        />
+    </application>
+    <queries>
+        <package android:name="com.tencent.mm" />
+    </queries>
+</manifest>
