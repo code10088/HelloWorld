@@ -110,7 +110,7 @@ public class AssetManager : Singletion<AssetManager>
         private void Finish(Request request)
         {
             Object asset = ar == null ? null : ar.asset;
-            action?.Invoke(ItemID, asset);
+            action?.Invoke(itemId, asset);
         }
         public void Unload()
         {

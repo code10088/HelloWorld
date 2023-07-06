@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace HotAssembly
 {
     public class UITest : UIBase
     {
         private UITestComponent component = new UITestComponent();
-        private CustomLoopScrollSource<TestItem> clss = new CustomLoopScrollSource<TestItem>();
+        private CustomLoopScroll<TestItem> clss = new CustomLoopScroll<TestItem>();
 
         protected override void InitComponent()
         {
@@ -36,6 +37,7 @@ namespace HotAssembly
 
         private void OnClickClose()
         {
+            SDKManager.Instance.InitSDK();
             GameDebug.Log("UITest Click");
             UIMessageBoxParam param = new UIMessageBoxParam();
             param.type = UIMessageBoxType.SureAndCancel;
@@ -49,7 +51,7 @@ namespace HotAssembly
         {
             clss.Init(component.loopLoopVerticalScrollRect, component.itemObj, DataManager.Instance.TestData.testItemDatas.Count);
         }
-        private class TestItem : UIItemBase
+        private class TestItem : CustomLoopItem
         {
             public TestData.TestItemData data;
             public UITestItem component = new UITestItem();

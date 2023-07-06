@@ -5,14 +5,14 @@ namespace HotAssembly
     {
         public GameObject obj;
         public UnityEngine.UI.Button buttonButton = null;
-        public HotAssembly.LoopVerticalScrollRect loopLoopVerticalScrollRect = null;
+        public UnityEngine.UI.LoopVerticalScrollRect loopLoopVerticalScrollRect = null;
         public GameObject itemObj = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
             ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);
             buttonButton = allData[0].exportComponent[0] as UnityEngine.UI.Button;
-            loopLoopVerticalScrollRect = allData[1].exportComponent[0] as HotAssembly.LoopVerticalScrollRect;
+            loopLoopVerticalScrollRect = allData[1].exportComponent[0] as UnityEngine.UI.LoopVerticalScrollRect;
             itemObj = allData[2].gameObject;
         }
     }

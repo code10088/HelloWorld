@@ -73,12 +73,6 @@
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>C:\Program Files\Unity2021.3.25\Editor\Data\Managed\UnityEngine\UnityEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.CoreModule">
-      <HintPath>C:\Program Files\Unity2021.3.25\Editor\Data\Managed\UnityEngine\UnityEditor.CoreModule.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity2021.3.25\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
@@ -180,48 +174,6 @@
     <Compile Include="..\Assets\Scripts\SubScripts\Tools\DevicePerformanceUtil.cs">
        <Link>DevicePerformanceUtil.cs</Link>
     </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor\LoopScrollRectInspector.cs">
-       <Link>LoopScrollRectInspector.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor\SGDefaultControls.cs">
-       <Link>SGDefaultControls.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Editor\SGMenuOptions.cs">
-       <Link>SGMenuOptions.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\CustomLoopScrollSource.cs">
-       <Link>CustomLoopScrollSource.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRect.cs">
-       <Link>LoopHorizontalScrollRect.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopHorizontalScrollRectMulti.cs">
-       <Link>LoopHorizontalScrollRectMulti.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollDataSource.cs">
-       <Link>LoopScrollDataSource.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollPrefabSource.cs">
-       <Link>LoopScrollPrefabSource.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRect.cs">
-       <Link>LoopScrollRect.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectBase.cs">
-       <Link>LoopScrollRectBase.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollRectMulti.cs">
-       <Link>LoopScrollRectMulti.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopScrollSizeHelper.cs">
-       <Link>LoopScrollSizeHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRect.cs">
-       <Link>LoopVerticalScrollRect.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\Tools\LoopScrollRect\Runtime\LoopVerticalScrollRectMulti.cs">
-       <Link>LoopVerticalScrollRectMulti.cs</Link>
-    </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UIHotUpdateResComponent.cs">
        <Link>UIHotUpdateResComponent.cs</Link>
     </Compile>
@@ -233,9 +185,6 @@
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIBase.cs">
        <Link>UIBase.cs</Link>
-    </Compile>
-    <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIItemBase.cs">
-       <Link>UIItemBase.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIManager.cs">
        <Link>UIManager.cs</Link>

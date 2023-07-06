@@ -73,12 +73,6 @@
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>EditorInstallPath\Data\Managed\UnityEngine\UnityEditor.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor.CoreModule">
-      <HintPath>EditorInstallPath\Data\Managed\UnityEngine\UnityEditor.CoreModule.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>EditorInstallPath\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>
