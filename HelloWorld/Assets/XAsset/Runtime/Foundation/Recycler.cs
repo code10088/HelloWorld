@@ -8,6 +8,7 @@ namespace xasset
     {
         void EndRecycle();
         bool CanRecycle();
+        bool IsUnused();
         void RecycleAsync();
         bool Recycling();
     }
@@ -57,6 +58,8 @@ namespace xasset
 
                 Recyclables.RemoveAt(index);
                 index--;
+
+                if (!request.IsUnused()) continue;
                 request.RecycleAsync();
                 Progressing.Add(request);
             }
@@ -67,7 +70,7 @@ namespace xasset
                 if (request.Recycling()) continue;
                 Progressing.RemoveAt(index);
                 index--;
-                if (request.CanRecycle()) request.EndRecycle();
+                if (request.CanRecycle() && request.IsUnused()) request.EndRecycle();
                 if (Scheduler.Busy) return;
             }
         }
@@ -75,12 +78,6 @@ namespace xasset
         public static void RecycleAsync(IRecyclable recyclable)
         {
             Recyclables.Add(recyclable);
-        }
-
-        public static void CancelRecycle(IRecyclable recyclable)
-        {
-            Progressing.Remove(recyclable);
-            Recyclables.Remove(recyclable);
         }
     }
 }

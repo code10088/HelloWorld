@@ -48,7 +48,6 @@ namespace xasset
             else
             {
                 SendRequest();
-                Recycler.CancelRecycle(this);
             }
 
             refCount++;
@@ -65,6 +64,11 @@ namespace xasset
         public virtual bool CanRecycle()
         {
             return isDone;
+        }
+
+        public bool IsUnused()
+        {
+            return refCount == 0;
         }
 
         public virtual void RecycleAsync()

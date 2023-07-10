@@ -36,7 +36,7 @@ namespace xasset.editor
         /// <summary>
         ///     资源下载地址
         /// </summary>
-        [Tooltip("资源下载地址")] public string downloadURL = "http://127.0.0.1/Bundles";
+        [Tooltip("资源下载地址")] public string downloadURL = "http://127.0.0.1/";
 
         /// <summary>
         ///     安装包下载地址
