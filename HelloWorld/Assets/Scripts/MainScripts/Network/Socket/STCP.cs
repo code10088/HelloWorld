@@ -6,14 +6,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-public class SocketObject
+public class STCP
 {
     private string ip;
     private ushort port;
-    private Action<ushort, MemoryStream> dispatch;
     private Socket socket;
     private Thread thread;
-    private Queue<NetSendItem> sendPool = new Queue<NetSendItem>();
+    private Queue<TcpSendItem> sendPool = new Queue<TcpSendItem>();
     private Queue<byte[]> receivePool = new Queue<byte[]>();
 
     private int connectTimer;
@@ -30,7 +29,7 @@ public class SocketObject
     private int headLength = 4;
     private int bodyLength = 0;
 
-    public void Init(string ip, ushort port, Action<ushort, MemoryStream> dispatch)
+    public void Init(string ip, ushort port)
     {
         this.ip = ip;
         this.port = port;
@@ -104,7 +103,7 @@ public class SocketObject
                 }
                 lock (sendPool)
                 {
-                    NetSendItem nmb = sendPool.Dequeue();
+                    TcpSendItem nmb = sendPool.Dequeue();
                     nmb.Send(this);
                 }
             }
@@ -135,7 +134,7 @@ public class SocketObject
     {
         return socket.EndSend(ar);
     }
-    private void Send(bool result, NetSendItem nmb)
+    private void Send(bool result, TcpSendItem nmb)
     {
         if (result)
         {
@@ -153,7 +152,7 @@ public class SocketObject
     }
     public void Send(ushort id, IExtensible msg)
     {
-        NetSendItem nmb = new NetSendItem(id, msg);
+        TcpSendItem nmb = new TcpSendItem(id, msg);
         lock (sendPool) sendPool.Enqueue(nmb);
     }
     #endregion
@@ -229,27 +228,23 @@ public class SocketObject
     }
     private void Deserialize(byte[] bytes)
     {
-        using (MemoryStream ms = new MemoryStream(bytes, 2, bytes.Length - 2))
-        {
-            ushort id = BitConverter.ToUInt16(bytes, 0);
-            dispatch?.Invoke(id, ms);
-        }
+        NetMsgDispatch.Instance.Deserialize(bytes);
     }
     #endregion
 
-    class NetSendItem
+    class TcpSendItem
     {
-        private SocketObject so;
+        private STCP so;
         private int sendTimer;
         private int retryTime;
         private ushort id;
         private IExtensible msg;
-        public NetSendItem(ushort id, IExtensible msg)
+        public TcpSendItem(ushort id, IExtensible msg)
         {
             this.id = id;
             this.msg = msg;
         }
-        public void Send(SocketObject so)
+        public void Send(STCP so)
         {
             this.so = so;
             so.BeginSend(Serialize(msg), SendCallback);

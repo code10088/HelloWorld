@@ -19,7 +19,7 @@ namespace HotAssembly
         private void InitSetting() 
         {
             DevicePerformanceUtil.Init();
-            SocketManager.Instance.Init(NetMsgDispatch.Instance.Deserialize);
+            global::NetMsgDispatch.Instance.Init();
             EnterMainScene();
         }
         private void EnterMainScene()
