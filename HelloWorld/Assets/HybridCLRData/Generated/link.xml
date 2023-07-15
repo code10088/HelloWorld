@@ -7,10 +7,11 @@
     <type fullname="CustomLoopItem" preserve="all" />
     <type fullname="ExportComponent" preserve="all" />
     <type fullname="GameDebug" preserve="all" />
+    <type fullname="NetMsgDispatch" preserve="all" />
+    <type fullname="NetMsgItem" preserve="all" />
     <type fullname="SDKManager" preserve="all" />
     <type fullname="SingletionInterface" preserve="all" />
     <type fullname="Singletion`1" preserve="all" />
-    <type fullname="SocketManager" preserve="all" />
     <type fullname="ThreadManager" preserve="all" />
     <type fullname="TimeManager" preserve="all" />
     <type fullname="UIParticle" preserve="all" />
@@ -18,7 +19,6 @@
     <type fullname="UnityEngine.UI.LoopScrollRect" preserve="all" />
     <type fullname="UnityEngine.UI.LoopVerticalScrollRect" preserve="all" />
     <type fullname="UnityExtensions.Tween.TweenPlayer" preserve="all" />
-    <type fullname="Updater" preserve="all" />
   </assembly>
   <assembly fullname="System">
     <type fullname="System.Collections.Generic.Queue`1" preserve="all" />
@@ -70,6 +70,7 @@
     <type fullname="System.Activator" preserve="all" />
     <type fullname="System.Array" preserve="all" />
     <type fullname="System.AsyncCallback" preserve="all" />
+    <type fullname="System.BitConverter" preserve="all" />
     <type fullname="System.Boolean" preserve="all" />
     <type fullname="System.Collections.Generic.Dictionary`2" preserve="all" />
     <type fullname="System.Collections.Generic.List`1" preserve="all" />
@@ -112,7 +113,6 @@
     <type fullname="System.Single" preserve="all" />
     <type fullname="System.String" preserve="all" />
     <type fullname="System.Threading.Interlocked" preserve="all" />
-    <type fullname="System.Threading.Monitor" preserve="all" />
     <type fullname="System.Type" preserve="all" />
   </assembly>
   <assembly fullname="protobuf-net">

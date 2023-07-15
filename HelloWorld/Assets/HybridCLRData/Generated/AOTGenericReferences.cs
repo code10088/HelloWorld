@@ -21,7 +21,6 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Action<float>
 	// System.Action<int,object>
 	// System.Action<object>
-	// System.Action<ushort,object>
 	// System.Collections.Generic.Dictionary<cfg.UIType,object>
 	// System.Collections.Generic.Dictionary<int,int>
 	// System.Collections.Generic.Dictionary<int,object>
