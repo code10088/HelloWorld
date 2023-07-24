@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 
 namespace HotAssembly
@@ -14,9 +15,9 @@ namespace HotAssembly
             component.sure2Button.onClick.AddListener(OnClickSure2);
             component.cancelButton.onClick.AddListener(OnClickCancel);
         }
-        public override void OnEnable(params object[] param)
+        public override async UniTask OnEnable(params object[] param)
         {
-            base.OnEnable(param);
+            await base.OnEnable(param);
             messageBoxParam = param[0] as UIMessageBoxParam;
             component.titleTextMeshProUGUI.text = messageBoxParam.title;
             component.contentTextMeshProUGUI.text = messageBoxParam.content;

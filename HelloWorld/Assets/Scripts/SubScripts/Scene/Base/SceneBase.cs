@@ -1,4 +1,5 @@
 ﻿using cfg;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace HotAssembly
@@ -22,9 +23,9 @@ namespace HotAssembly
         {
 
         }
-        public virtual void OnEnable(params object[] param)
+        public virtual async UniTask OnEnable(params object[] param)
         {
-
+            await UniTask.Yield();
         }
         public virtual void OnDisable()
         {

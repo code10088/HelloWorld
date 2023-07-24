@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,9 +14,9 @@ namespace HotAssembly
             component.Init(UIObj);
             component.buttonButton.onClick.AddListener(OnClickClose);
         }
-        public override void OnEnable(params object[] param)
+        public override async UniTask OnEnable(params object[] param)
         {
-            base.OnEnable(param);
+            await base.OnEnable(param);
             GameDebug.Log("UITest OnEnable");
             InitLoopScrollRect();
         }

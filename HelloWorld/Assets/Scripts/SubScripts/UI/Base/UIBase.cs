@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityExtensions.Tween;
+using Cysharp.Threading.Tasks;
 
 namespace HotAssembly
 {
@@ -25,8 +26,9 @@ namespace HotAssembly
         {
 
         }
-        public virtual void OnEnable(params object[] param)
+        public virtual async UniTask OnEnable(params object[] param)
         {
+            await UniTask.Yield();
             ResetUILayer();
             PlayInitAni();
         }
