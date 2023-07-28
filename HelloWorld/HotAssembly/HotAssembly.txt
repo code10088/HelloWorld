@@ -70,6 +70,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+	<Reference Include="UniTask">
+      <HintPath>..\Library\ScriptAssemblies\UniTask.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>

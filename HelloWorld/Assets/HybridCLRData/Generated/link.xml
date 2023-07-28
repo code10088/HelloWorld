@@ -24,6 +24,14 @@
     <type fullname="System.Collections.Generic.Queue`1" preserve="all" />
     <type fullname="System.ComponentModel.DefaultValueAttribute" preserve="all" />
   </assembly>
+  <assembly fullname="UniTask">
+    <type fullname="Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.PlayerLoopTiming" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.UniTask" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.UniTask/Awaiter" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.YieldAwaitable" preserve="all" />
+    <type fullname="Cysharp.Threading.Tasks.YieldAwaitable/Awaiter" preserve="all" />
+  </assembly>
   <assembly fullname="Unity.TextMeshPro">
     <type fullname="TMPro.TMP_Text" preserve="all" />
     <type fullname="TMPro.TextMeshProUGUI" preserve="all" />
@@ -80,7 +88,10 @@
     <type fullname="System.Diagnostics.DebuggableAttribute/DebuggingModes" preserve="all" />
     <type fullname="System.Diagnostics.DebuggerBrowsableAttribute" preserve="all" />
     <type fullname="System.Diagnostics.DebuggerBrowsableState" preserve="all" />
+    <type fullname="System.Diagnostics.DebuggerHiddenAttribute" preserve="all" />
+    <type fullname="System.Diagnostics.DebuggerStepThroughAttribute" preserve="all" />
     <type fullname="System.Enum" preserve="all" />
+    <type fullname="System.Exception" preserve="all" />
     <type fullname="System.Func`3" preserve="all" />
     <type fullname="System.GC" preserve="all" />
     <type fullname="System.IAsyncResult" preserve="all" />
@@ -103,8 +114,10 @@
     <type fullname="System.Reflection.DefaultMemberAttribute" preserve="all" />
     <type fullname="System.Reflection.FieldInfo" preserve="all" />
     <type fullname="System.Reflection.MemberInfo" preserve="all" />
+    <type fullname="System.Runtime.CompilerServices.AsyncStateMachineAttribute" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.CompilationRelaxationsAttribute" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.CompilerGeneratedAttribute" preserve="all" />
+    <type fullname="System.Runtime.CompilerServices.IAsyncStateMachine" preserve="all" />
     <type fullname="System.Runtime.CompilerServices.RuntimeCompatibilityAttribute" preserve="all" />
     <type fullname="System.Runtime.InteropServices.ComVisibleAttribute" preserve="all" />
     <type fullname="System.Runtime.InteropServices.GuidAttribute" preserve="all" />
@@ -112,6 +125,7 @@
     <type fullname="System.RuntimeTypeHandle" preserve="all" />
     <type fullname="System.Single" preserve="all" />
     <type fullname="System.String" preserve="all" />
+    <type fullname="System.Threading.CancellationToken" preserve="all" />
     <type fullname="System.Threading.Interlocked" preserve="all" />
     <type fullname="System.Type" preserve="all" />
   </assembly>

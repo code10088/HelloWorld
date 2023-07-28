@@ -148,3 +148,5 @@ D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.csproj.CoreCompileInp
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.csproj.CopyComplete
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.dll
 D:\HelloWorld\HelloWorld\HotAssembly\obj\Debug\HotAssembly.pdb
+D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\UniTask.dll
+D:\HelloWorld\HelloWorld\HotAssembly\bin\Debug\UniTask.pdb

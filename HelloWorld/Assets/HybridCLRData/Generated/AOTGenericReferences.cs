@@ -6,6 +6,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	public static readonly IReadOnlyList<string> PatchedAOTAssemblyList = new List<string>
 	{
 		"Assembly-CSharp.dll",
+		"UniTask.dll",
 		"UnityEngine.CoreModule.dll",
 		"mscorlib.dll",
 		"protobuf-net.dll",
@@ -22,7 +23,6 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Action<int,object>
 	// System.Action<object>
 	// System.Collections.Generic.Dictionary<cfg.UIType,object>
-	// System.Collections.Generic.Dictionary<int,int>
 	// System.Collections.Generic.Dictionary<int,object>
 	// System.Collections.Generic.Dictionary<object,object>
 	// System.Collections.Generic.List.Enumerator<object>
@@ -35,10 +35,14 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	public void RefMethods()
 	{
 		// int AssetManager.Load<object>(string,System.Action<int,UnityEngine.Object>)
+		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder.AwaitUnsafeOnCompleted<Cysharp.Threading.Tasks.UniTask.Awaiter,object>(Cysharp.Threading.Tasks.UniTask.Awaiter&,object&)
+		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder.AwaitUnsafeOnCompleted<Cysharp.Threading.Tasks.YieldAwaitable.Awaiter,object>(Cysharp.Threading.Tasks.YieldAwaitable.Awaiter&,object&)
+		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder.Start<object>(object&)
 		// object ProtoBuf.Serializer.Deserialize<object>(System.IO.Stream)
 		// object[] System.Array.Empty<object>()
 		// int System.Array.FindIndex<object>(object[],System.Predicate<object>)
 		// object System.Threading.Interlocked.CompareExchange<object>(object&,object,object)
+		// object UnityEngine.Component.GetComponentInParent<object>()
 		// object UnityEngine.GameObject.GetComponent<object>()
 		// object[] UnityEngine.GameObject.GetComponentsInChildren<object>(bool)
 	}

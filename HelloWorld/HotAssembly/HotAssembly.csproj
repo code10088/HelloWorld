@@ -70,6 +70,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+	<Reference Include="UniTask">
+      <HintPath>..\Library\ScriptAssemblies\UniTask.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
@@ -180,6 +183,9 @@
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UIMessageBoxComponent.cs">
        <Link>UIMessageBoxComponent.cs</Link>
     </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UISubTestComponent.cs">
+       <Link>UISubTestComponent.cs</Link>
+    </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Auto\UITestComponent.cs">
        <Link>UITestComponent.cs</Link>
     </Compile>
@@ -192,8 +198,14 @@
     <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UIManagerTips.cs">
        <Link>UIManagerTips.cs</Link>
     </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\Base\UISubItem.cs">
+       <Link>UISubItem.cs</Link>
+    </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\UIHotUpdateRes\UIHotUpdateRes.cs">
        <Link>UIHotUpdateRes.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\UI\UITest\UISubTest.cs">
+       <Link>UISubTest.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\UI\UITest\UITest.cs">
        <Link>UITest.cs</Link>
