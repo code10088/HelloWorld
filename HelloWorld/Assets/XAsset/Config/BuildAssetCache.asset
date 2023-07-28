@@ -65,7 +65,7 @@ MonoBehaviour:
     bundle: prefab_uihotupdateres_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133346402078324451
+    lastWriteTime: 133349374547904325
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -80,7 +80,7 @@ MonoBehaviour:
     bundle: prefab_uimessagebox_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133346402079466772
+    lastWriteTime: 133349374547984400
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -93,11 +93,26 @@ MonoBehaviour:
     - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
     - Assets/Tools/UITween/Unity Extensions/Tween/Runtime/EditorOnly/EditorResources/Tween.png
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/ZRes/UI/Prefab/UISubTest.prefab
+    bundle: prefab_uisubtest_prefab.bundle
+    type: GameObject
+    entry: Assets/ZRes/UI/Prefab
+    lastWriteTime: 133349872026985992
+    addressMode: 2
+    dependencies:
+    - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
+    - Assets/TextMesh Pro/Shaders/TMP_SDF-Mobile.shader
+    - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Text Component
+      Icon.psd
+    - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset
+    - Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset
+    - Assets/TextMesh Pro/Fonts/LiberationSans.ttf
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/UI/Prefab/UITest.prefab
     bundle: prefab_uitest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133346402077257303
+    lastWriteTime: 133349872026995969
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -120,7 +135,7 @@ MonoBehaviour:
     bundle: scene_testscene_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/Scene
-    lastWriteTime: 133346402076948130
+    lastWriteTime: 133349374548004346
     addressMode: 2
     dependencies:
     - Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat

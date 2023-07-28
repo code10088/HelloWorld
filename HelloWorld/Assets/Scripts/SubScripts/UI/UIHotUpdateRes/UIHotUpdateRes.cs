@@ -8,8 +8,9 @@ namespace HotAssembly
         public UIHotUpdateResComponent component = new UIHotUpdateResComponent();
         private int loadId = -1;
 
-        protected override void InitComponent()
+        protected override void Init()
         {
+            base.Init();
             component.Init(UIObj);
         }
         public override void OnDestroy()

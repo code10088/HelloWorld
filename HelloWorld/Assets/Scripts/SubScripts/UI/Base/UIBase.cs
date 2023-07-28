@@ -1,5 +1,4 @@
 ﻿using cfg;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityExtensions.Tween;
 using Cysharp.Threading.Tasks;
@@ -12,49 +11,49 @@ namespace HotAssembly
         protected UIType type;
         protected UIType from;
         protected UIConfig config;
-        private Dictionary<int, int> layerRecord = new Dictionary<int, int>();
-        public virtual void InitUI(GameObject UIObj, UIType type, UIType from, UIConfig config, params object[] param)
+        protected bool active = false;
+        private Canvas[] layerRecord1;
+        private int[] layerRecord2;
+        private UIParticle[] layerRecord3;
+        public void InitUI(GameObject UIObj, UIType type, UIType from, UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;
             this.type = type;
             this.from = from;
             this.config = config;
-            InitComponent();
+            Init();
             OnEnable(param);
         }
-        protected virtual void InitComponent()
+        protected virtual void Init()
         {
-
+            layerRecord1 = UIObj.GetComponentsInChildren<Canvas>(true);
+            layerRecord2 = new int[layerRecord1.Length];
+            for (int i = 0; i < layerRecord1.Length; i++) layerRecord2[i] = layerRecord1[i].sortingOrder;
+            layerRecord3 = UIObj.GetComponentsInChildren<UIParticle>(true);
         }
         public virtual async UniTask OnEnable(params object[] param)
         {
-            await UniTask.Yield();
-            ResetUILayer();
+            active = true;
+            RefreshUILayer();
             PlayInitAni();
+            await UniTask.Yield();
         }
-        private void ResetUILayer()
+        protected virtual void RefreshUILayer()
         {
-            Canvas[] canvas = UIObj.GetComponentsInChildren<Canvas>(true);
-            for (int i = 0; i < canvas.Length; i++)
+            for (int i = 0; i < layerRecord1.Length; i++)
             {
-                int tempKey = canvas[i].GetInstanceID();
-                if (layerRecord.TryGetValue(tempKey, out int tempLayer))
+                if (layerRecord1[i] != null)
                 {
-                    UIManager.layer += tempLayer;
-                    canvas[i].sortingOrder = UIManager.layer;
-                }
-                else
-                {
-                    tempLayer = canvas[i].sortingOrder;
-                    layerRecord[tempKey] = tempLayer;
-                    UIManager.layer += tempLayer;
-                    canvas[i].sortingOrder = UIManager.layer;
+                    UIManager.layer += layerRecord2[i];
+                    layerRecord1[i].sortingOrder = UIManager.layer;
                 }
             }
-            UIParticle[] particles = UIObj.GetComponentsInChildren<UIParticle>(true);
-            for (int i = 0; i < particles.Length; i++)
+            for (int i = 0; i < layerRecord3.Length; i++)
             {
-                particles[i].Refresh();
+                if (layerRecord3[i] != null)
+                {
+                    layerRecord3[i].Refresh();
+                }
             }
         }
         protected virtual void PlayInitAni()
@@ -64,17 +63,19 @@ namespace HotAssembly
         }
         public virtual void OnDisable()
         {
-
+            active = false;
         }
         public virtual void OnDestroy()
         {
-            layerRecord.Clear();
+            layerRecord1 = null;
+            layerRecord2 = null;
+            layerRecord3 = null;
         }
-        protected virtual void OnClose()
+        protected void OnClose()
         {
             UIManager.Instance.CloseUI(type);
         }
-        protected virtual void OnReture()
+        protected void OnReture()
         {
             OnClose();
             UIManager.Instance.OpenUI(from);

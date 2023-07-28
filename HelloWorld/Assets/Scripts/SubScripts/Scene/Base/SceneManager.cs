@@ -199,6 +199,9 @@ namespace HotAssembly
                 loaderID = -1;
                 baseScene = null;
                 baseObj = null;
+                open = null;
+                progress = null;
+                param = null;
                 timerId = -1;
                 state = 0;
             }

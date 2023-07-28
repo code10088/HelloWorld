@@ -8,8 +8,9 @@ namespace HotAssembly
         private UIMessageBoxComponent component = new UIMessageBoxComponent();
         private UIMessageBoxParam messageBoxParam;
 
-        protected override void InitComponent()
+        protected override void Init()
         {
+            base.Init();
             component.Init(UIObj);
             component.sure1Button.onClick.AddListener(OnClickSure1);
             component.sure2Button.onClick.AddListener(OnClickSure2);

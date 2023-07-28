@@ -8,16 +8,22 @@ namespace HotAssembly
     {
         private UITestComponent component = new UITestComponent();
         private CustomLoopScroll<TestItem> clss = new CustomLoopScroll<TestItem>();
+        private UISubTest subUI = new UISubTest("UISubTest");
 
-        protected override void InitComponent()
+        protected override void Init()
         {
+            base.Init();
             component.Init(UIObj);
-            component.buttonButton.onClick.AddListener(OnClickClose);
+            component.closeBtnButton.onClick.AddListener(OnClose);
+            component.openSubBtnButton.onClick.AddListener(OnOpenSub);
+            component.openMsgBtnButton.onClick.AddListener(OnOpenMessage);
+            component.openSDKBtnButton.onClick.AddListener(SDKInit);
         }
         public override async UniTask OnEnable(params object[] param)
         {
             await base.OnEnable(param);
             GameDebug.Log("UITest OnEnable");
+            await UniTask.Delay(1000);
             InitLoopScrollRect();
         }
         protected override void PlayInitAni()
@@ -25,27 +31,41 @@ namespace HotAssembly
             base.PlayInitAni();
             GameDebug.Log("UITest OnPlayUIAnimation");
         }
+        protected override void RefreshUILayer()
+        {
+            base.RefreshUILayer();
+            GameDebug.Log("UITest RefreshUILayer");
+        }
         public override void OnDisable()
         {
             base.OnDisable();
+            subUI.Close();
             GameDebug.Log("UITest OnDisable");
         }
         public override void OnDestroy()
         {
             base.OnDestroy();
+            subUI.Close(true);
             GameDebug.Log("UITest OnDestroy");
         }
 
-        private void OnClickClose()
+        private void OnOpenMessage()
         {
-            SDKManager.Instance.InitSDK();
-            GameDebug.Log("UITest Click");
             UIMessageBoxParam param = new UIMessageBoxParam();
             param.type = UIMessageBoxType.SureAndCancel;
             param.title = "Tips";
             param.content = "Content";
-            param.sure = a => OnClickClose();
+            param.sure = a => OnOpenMessage();
             UIManager.Instance.OpenMessageBox(param);
+        }
+        private void OnOpenSub()
+        {
+            if (subUI.Active) subUI.SetActive(component.subRootObj.transform, false);
+            else subUI.Open(component.subRootObj.transform);
+        }
+        private void SDKInit()
+        {
+            SDKManager.Instance.InitSDK();
         }
 
         private void InitLoopScrollRect()

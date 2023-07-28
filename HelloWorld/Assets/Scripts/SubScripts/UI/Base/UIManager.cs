@@ -259,6 +259,8 @@ namespace HotAssembly
                 loaderID = -1;
                 baseUI = null;
                 baseObj = null;
+                open = null;
+                param = null;
                 timerId = -1;
                 state = 0;
             }
