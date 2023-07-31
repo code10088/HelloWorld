@@ -32,6 +32,7 @@ public class AssetManager : Singletion<AssetManager>
     {
         AssetItemGroup temp = new();
         temp.Init(path, action);
+        group[temp.ItemID] = temp;
         return temp.ItemID;
     }
     public void Unload(int id)
@@ -114,12 +115,12 @@ public class AssetManager : Singletion<AssetManager>
         }
         public void Unload()
         {
-            ar?.Release();
-            ar?.Reset();
+            cache.Enqueue(this);
+            if (ar == null) return;
+            ar.completed -= Finish;
+            ar.Release();
             ar = null;
             action = null;
-
-            cache.Enqueue(this);
         }
     }
 }

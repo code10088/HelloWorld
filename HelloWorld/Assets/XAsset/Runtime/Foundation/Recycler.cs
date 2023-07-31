@@ -77,7 +77,11 @@ namespace xasset
 
         public static void RecycleAsync(IRecyclable recyclable)
         {
-            Recyclables.Add(recyclable);
+            if (!Recyclables.Contains(recyclable)) Recyclables.Add(recyclable);
+        }
+        public static void CancelRecycle(IRecyclable recyclable)
+        {
+            if (Recyclables.Contains(recyclable)) Recyclables.Remove(recyclable);
         }
     }
 }
