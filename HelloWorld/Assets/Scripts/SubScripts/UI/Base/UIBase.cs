@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityExtensions.Tween;
 using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
+using UnityEngine.UI;
 
 namespace HotAssembly
 {
@@ -15,6 +17,7 @@ namespace HotAssembly
         private Canvas[] layerRecord1;
         private int[] layerRecord2;
         private UIParticle[] layerRecord3;
+        private List<int> loaders = new();
         public void InitUI(GameObject UIObj, UIType type, UIType from, UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;
@@ -64,6 +67,7 @@ namespace HotAssembly
         public virtual void OnDisable()
         {
             active = false;
+            for (int i = 0; i < loaders.Count; i++) AssetManager.Instance.Unload(loaders[i]);
         }
         public virtual void OnDestroy()
         {
@@ -80,5 +84,13 @@ namespace HotAssembly
             OnClose();
             UIManager.Instance.OpenUI(from);
         }
+
+        #region 扩展方法
+        protected void SetSprite(Image image, string name)
+        {
+            int id = AssetManager.Instance.Load<Sprite>(name, (a, b) => image.sprite = (Sprite)b);
+            loaders.Add(id);
+        }
+        #endregion
     }
 }

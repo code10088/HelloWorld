@@ -154,7 +154,7 @@ namespace HotAssembly
                 if (state == 1)
                 {
                     baseObj.SetActive(true);
-                    Type t = System.Type.GetType("HotAssembly." + config.SceneType);
+                    Type t = Type.GetType("HotAssembly." + config.SceneType);
                     baseScene = Activator.CreateInstance(t) as SceneBase;
                     baseScene.InitScene(baseObj, id, from, config, param);
                     Instance.curScene.Add(this);

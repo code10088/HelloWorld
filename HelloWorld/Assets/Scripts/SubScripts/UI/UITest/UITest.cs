@@ -18,6 +18,7 @@ namespace HotAssembly
             component.openSubBtnButton.onClick.AddListener(OnOpenSub);
             component.openMsgBtnButton.onClick.AddListener(OnOpenMessage);
             component.openSDKBtnButton.onClick.AddListener(SDKInit);
+            component.loadSpriteButton.onClick.AddListener(LoadSprite);
         }
         public override async UniTask OnEnable(params object[] param)
         {
@@ -66,6 +67,12 @@ namespace HotAssembly
         private void SDKInit()
         {
             SDKManager.Instance.InitSDK();
+        }
+        private void LoadSprite()
+        {
+            SetSprite(component.imageImage, "TestIcon");
+            SetSprite(component.imageImage, "TestIcon2");
+            SetSprite(component.imageImage, "TestIcon3");
         }
 
         private void InitLoopScrollRect()
