@@ -4,6 +4,7 @@ using UnityExtensions.Tween;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System;
 
 namespace HotAssembly
 {
@@ -14,9 +15,9 @@ namespace HotAssembly
         protected UIType from;
         protected UIConfig config;
         protected bool active = false;
-        private Canvas[] layerRecord1;
-        private int[] layerRecord2;
-        private UIParticle[] layerRecord3;
+        protected Canvas[] layerRecord1;
+        protected int[] layerRecord2;
+        protected UIParticle[] layerRecord3;
         private List<int> loaders = new();
         public void InitUI(GameObject UIObj, UIType type, UIType from, UIConfig config, params object[] param)
         {
@@ -90,6 +91,25 @@ namespace HotAssembly
         {
             int id = AssetManager.Instance.Load<Sprite>(name, (a, b) => image.sprite = (Sprite)b);
             loaders.Add(id);
+        }
+        protected void SetSprite(RawImage image, string name)
+        {
+            int id = AssetManager.Instance.Load<Texture>(name, (a, b) => image.texture = (Texture)b);
+            loaders.Add(id);
+        }
+        protected void LoadPrefab(string name, Action<GameObject> finish)
+        {
+            int id = AssetManager.Instance.Load<GameObject>(name, (a, b) => finish?.Invoke((GameObject)b));
+            loaders.Add(id);
+        }
+        protected GameObject Instantiate(GameObject obj, Transform parent = null)
+        {
+            var result = GameObject.Instantiate(obj);
+            if (parent) result.transform.SetParent(parent);
+            result.transform.localPosition = Vector3.zero;
+            result.transform.localRotation = Quaternion.identity;
+            result.transform.localScale = Vector3.one;
+            return result;
         }
         #endregion
     }

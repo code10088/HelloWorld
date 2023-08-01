@@ -1,18 +1,15 @@
 ﻿using UnityEngine;
-using UnityExtensions.Tween;
-using Cysharp.Threading.Tasks;
 using System;
 using Object = UnityEngine.Object;
 
 namespace HotAssembly
 {
-    public class UISubItem
+    public class UISubItem : UIBase
     {
         #region 加载
         private string prefabPath;
         private Transform parent;
         private int loaderID;
-        protected GameObject UIObj;
         private Action<bool> open = null;
         private object[] param = null;
 
@@ -101,42 +98,25 @@ namespace HotAssembly
         }
         #endregion
 
-        private bool active = false;
-        private Canvas[] layerRecord1;
-        private int[] layerRecord2;
-        private UIParticle[] layerRecord3;
-        public bool Active => active;
-        public string PrefabPath => prefabPath;
+        private bool subactive = false;
+        public bool Active => subactive;
 
         public void SetActive(Transform parent, bool state, Action<bool> open = null, params object[] param)
         {
-            if (state && !active) Open(parent, open, param);
-            else if (!state && active) Close();
+            if (state && !subactive) Open(parent, open, param);
+            else if (!state && subactive) Close();
         }
         public void Open(Transform parent, Action<bool> open = null, params object[] param)
         {
-            active = true;
+            subactive = true;
             Load(parent, open, param);
         }
         public void Close(bool immediate = false)
         {
-            active = false;
+            subactive = false;
             Release(immediate);
         }
-        protected virtual void Init()
-        {
-            layerRecord1 = UIObj.GetComponentsInChildren<Canvas>(true);
-            layerRecord2 = new int[layerRecord1.Length];
-            for (int i = 0; i < layerRecord1.Length; i++) layerRecord2[i] = layerRecord1[i].sortingOrder;
-            layerRecord3 = UIObj.GetComponentsInChildren<UIParticle>(true);
-        }
-        protected virtual async UniTask OnEnable(params object[] param)
-        {
-            RefreshUILayer();
-            PlayInitAni();
-            await UniTask.Yield();
-        }
-        protected virtual void RefreshUILayer()
+        protected override void RefreshUILayer()
         {
             Canvas canvas = parent.GetComponentInParent<Canvas>();
             for (int i = 0; i < layerRecord1.Length; i++)
@@ -153,21 +133,6 @@ namespace HotAssembly
                     layerRecord3[i].Refresh();
                 }
             }
-        }
-        protected virtual void PlayInitAni()
-        {
-            TweenPlayer tp = UIObj.GetComponent<TweenPlayer>();
-            if (tp) tp.SetForwardDirectionAndEnabled();
-        }
-        protected virtual void OnDisable()
-        {
-
-        }
-        protected virtual void OnDestroy()
-        {
-            layerRecord1 = null;
-            layerRecord2 = null;
-            layerRecord3 = null;
         }
     }
 }
