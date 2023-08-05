@@ -13,7 +13,7 @@ namespace HotAssembly
             component.Init(UIObj);
             component.buttonButton.onClick.AddListener(OnClickClose);
         }
-        protected override async UniTask OnEnable(params object[] param)
+        public override async UniTask OnEnable(params object[] param)
         {
             await base.OnEnable(param);
             GameDebug.Log("UISubTest OnEnable");
@@ -23,12 +23,12 @@ namespace HotAssembly
             base.PlayInitAni();
             GameDebug.Log("UISubTest OnPlayUIAnimation");
         }
-        protected override void OnDisable()
+        public override void OnDisable()
         {
             base.OnDisable();
             GameDebug.Log("UISubTest OnDisable");
         }
-        protected override void OnDestroy()
+        public override void OnDestroy()
         {
             base.OnDestroy();
             GameDebug.Log("UISubTest OnDestroy");
