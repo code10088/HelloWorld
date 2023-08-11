@@ -16,6 +16,7 @@ public partial class Tables
     public TbUIConfig TbUIConfig = new TbUIConfig();
     public TbDeviceInfo TbDeviceInfo = new TbDeviceInfo();
     public TbSceneConfig TbSceneConfig = new TbSceneConfig();
+    public TbPlayerAvatarPart TbPlayerAvatarPart = new TbPlayerAvatarPart();
 }
 
 }

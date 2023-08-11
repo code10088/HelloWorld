@@ -5,18 +5,16 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-using Bright.Serialization;
-
 
 
 namespace cfg
 { 
-public partial class Tables
-{
-    public TbUIConfig TbUIConfig = new TbUIConfig();
-    public TbDeviceInfo TbDeviceInfo = new TbDeviceInfo();
-    public TbSceneConfig TbSceneConfig = new TbSceneConfig();
-    public TbPlayerAvatarPart TbPlayerAvatarPart = new TbPlayerAvatarPart();
-}
+    public enum PlayerAvatarPartType
+    {
+        Hair = 1,
+        Head = 2,
+        Body = 3,
+        Foot = 4,
+    }
 
-}
+} 
