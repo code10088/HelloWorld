@@ -54,6 +54,14 @@ namespace HotAssembly
                 }
             }
         }
+        public void OnDestroy()
+        {
+            for (int i = 0; i < dress.Count; i++) dress[i].Release();
+            for (int i = 0; i < cache.Count; i++) cache[i].Release();
+            allBones.Clear();
+            dress.Clear();
+            cache.Clear();
+        }
 
 
         class PlayerAvatarPartItem
