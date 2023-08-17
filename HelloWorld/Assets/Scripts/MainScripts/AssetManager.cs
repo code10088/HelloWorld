@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 using xasset;
 using Object = UnityEngine.Object;
 
@@ -122,5 +123,186 @@ public class AssetManager : Singletion<AssetManager>
             ar = null;
             action = null;
         }
+    }
+}
+public class LoadGmaeObjectItem
+{
+    private string path;
+    private Transform parent;
+    private Object asset;
+    private GameObject obj;
+    private int loaderID;
+    private int state = 0;//7：二进制111：分别表示release instantiate load
+    private int timer = 0;
+    private int timerId = -1;
+
+    public GameObject Target => obj;
+
+    public void Init(string path, Transform parent)
+    {
+        this.path = path;
+        this.parent = parent;
+    }
+    public void SetActive(bool b)
+    {
+        if (b && state > 3)
+        {
+            Recycle();
+            Load();
+        }
+        else if (!b && state <= 3)
+        {
+            Delay();
+        }
+    }
+    private void Load()
+    {
+        if (state == 0)
+        {
+            loaderID = AssetManager.Instance.Load<GameObject>(path, LoadFinish);
+        }
+        else if (state == 1)
+        {
+            LoadFinish(loaderID, asset);
+        }
+        else
+        {
+            obj.SetActive(true);
+            Finish(1, obj);
+        }
+    }
+    private void LoadFinish(int id, Object _asset)
+    {
+        if (_asset == null)
+        {
+            Release();
+            Finish(-1, null);
+        }
+        else if (state > 3)
+        {
+            asset = _asset;
+            state |= 1;
+            Finish(-1, null);
+        }
+        else
+        {
+            state = 3;
+            obj = Object.Instantiate(_asset, Vector3.zero, Quaternion.identity, parent) as GameObject;
+            Finish(0, obj);
+        }
+    }
+    /// <summary>
+    /// state=-1：未加载成功或加载过程中卸载
+    /// state=0：第一次成功加载
+    /// state=1：缓存
+    /// </summary>
+    protected virtual void Finish(int state, GameObject obj)
+    {
+
+    }
+    private void Delay()
+    {
+        obj?.SetActive(false);
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Release);
+        state |= 4;
+    }
+    public virtual void Release()
+    {
+        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        if (obj != null) GameObject.Destroy(obj);
+        AssetManager.Instance.Unload(loaderID);
+        parent = null;
+        asset = null;
+        obj = null;
+        loaderID = -1;
+        state = 0;
+        timer = 0;
+        timerId = -1;
+    }
+    private void Recycle()
+    {
+        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        timer += 30;
+        timerId = -1;
+        state &= 3;
+    }
+}
+public class LoadAssetItem
+{
+    private string path;
+    private Object asset;
+    private int loaderID;
+    private bool releaseMark = false;
+    private bool loadMark = false;
+    private int timer = 0;
+    private int timerId = -1;
+
+    public Object Target => asset;
+
+    public void Init(string path)
+    {
+        this.path = path;
+    }
+    public void Load()
+    {
+        if (releaseMark)
+        {
+            Recycle();
+        }
+        if (loadMark)
+        {
+            Finish(asset);
+        }
+        else
+        {
+            loaderID = AssetManager.Instance.Load<GameObject>(path, LoadFinish);
+        }
+    }
+    private void LoadFinish(int id, Object _asset)
+    {
+        if (_asset == null)
+        {
+            Release();
+            Finish(null);
+        }
+        else
+        {
+            asset = _asset;
+            loadMark = true;
+            if (releaseMark) Finish(null);
+            else Finish(asset);
+        }
+    }
+    /// <summary>
+    /// state=-1：未加载成功或加载过程中卸载
+    /// state=0：第一次成功加载
+    /// state=1：缓存
+    /// </summary>
+    protected virtual void Finish(Object asset)
+    {
+
+    }
+    public void Delay()
+    {
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Release);
+        releaseMark = true;
+    }
+    public virtual void Release()
+    {
+        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        AssetManager.Instance.Unload(loaderID);
+        asset = null;
+        loaderID = -1;
+        releaseMark = false;
+        loadMark = false;
+        timer = 0;
+        timerId = -1;
+    }
+    private void Recycle()
+    {
+        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        timer += 30;
+        timerId = -1;
+        releaseMark = false;
     }
 }

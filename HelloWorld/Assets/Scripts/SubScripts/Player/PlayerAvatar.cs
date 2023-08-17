@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using cfg;
 using System;
-using Object = UnityEngine.Object;
 
 namespace HotAssembly
 {
@@ -12,6 +11,7 @@ namespace HotAssembly
         private Dictionary<string, Transform> allBones = new();
         private List<PlayerAvatarPartItem> dress = new();
         private List<PlayerAvatarPartItem> cache = new();
+        private int cacheCount = 10;
 
         public PlayerAvatar(GameObject obj)
         {
@@ -47,14 +47,12 @@ namespace HotAssembly
                 tempItem.SetActive(false);
                 dress.Remove(tempItem);
                 cache.Add(tempItem);
-                if (cache.Count > 10)
-                {
-                    cache[0].Release();
-                    cache.RemoveAt(0);
-                }
+                if (cache.Count < cacheCount) continue;
+                cache[0].Release();
+                cache.RemoveAt(0);
             }
         }
-        public void OnDestroy()
+        public void Release()
         {
             for (int i = 0; i < dress.Count; i++) dress[i].Release();
             for (int i = 0; i < cache.Count; i++) cache[i].Release();
@@ -64,16 +62,11 @@ namespace HotAssembly
         }
 
 
-        class PlayerAvatarPartItem
+        class PlayerAvatarPartItem : LoadGmaeObjectItem
         {
             private PlayerAvatar avatar;
             private PlayerAvatarPart partCfg;
             private Action<int> finish;
-            private Object partAsset;
-            private GameObject partObj;
-            private int loaderID;
-            private int state = 0;//7：二进制111：分别表示release instantiate load
-            public bool Active => state <= 3;
             public PlayerAvatarPart PartCfg => partCfg;
 
             public PlayerAvatarPartItem(PlayerAvatar avatar, int partId, Action<int> finish)
@@ -81,66 +74,22 @@ namespace HotAssembly
                 this.avatar = avatar;
                 this.finish = finish;
                 partCfg = ConfigManager.Instance.GameConfigs.TbPlayerAvatarPart.Get(partId);
+                Init(partCfg.PrefabName, avatar.modelT);
             }
-            public void SetActive(bool b)
+            protected override void Finish(int state, GameObject obj)
             {
-                if (b && !Active)
-                {
-                    partObj?.SetActive(true);
-                    state &= 3;
-                    Load();
-                }
-                else if (!b && Active)
-                {
-                    partObj?.SetActive(false);
-                    state |= 4;
-                }
-            }
-            private void Load()
-            {
-                if (state == 0)
-                {
-                    loaderID = AssetManager.Instance.Load<GameObject>(partCfg.PrefabName, LoadFinish);
-                }
-                else if (state == 1)
-                {
-                    LoadFinish(loaderID, partAsset);
-                }
-                else
-                {
-                    partObj.SetActive(true);
-                    finish(partCfg.ID);
-                }
-            }
-            private void LoadFinish(int id, Object asset)
-            {
-                if (asset == null)
-                {
-                    Release();
-                    finish(-1);
-                }
-                else if (state > 3)
-                {
-                    partAsset = asset;
-                    state |= 1;
-                    finish(-1);
-                }
-                else
-                {
-                    state = 3;
-                    partObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, avatar.modelT) as GameObject;
-                    Combine();
-                    finish(partCfg.ID);
-                }
+                if (state < 0) return;
+                if (state == 0) Combine(obj);
+                finish(partCfg.ID);
             }
             /// <summary>
             /// 合并mesh+合并mat(合并贴图)
             ///     优点： 减少drawcall(drawcall非主要性能瓶颈)
             ///     缺点： 消耗cpu和内存，mat合并条件有限，只合并mesh性能提升有限
             /// </summary>
-            private void Combine()
+            private void Combine(GameObject obj)
             {
-                var smr = partObj.GetComponent<SkinnedMeshRenderer>();
+                var smr = obj.GetComponent<SkinnedMeshRenderer>();
                 var newBones = new Transform[smr.bones.Length];
                 for (int i = 0; i < newBones.Length; i++)
                 {
@@ -148,17 +97,6 @@ namespace HotAssembly
                     else GameDebug.LogError("模型非同一骨骼");
                 }
                 smr.bones = newBones;
-            }
-            public void Release()
-            {
-                if (partObj != null) GameObject.Destroy(partObj);
-                AssetManager.Instance.Unload(loaderID);
-                avatar = null;
-                partCfg = null;
-                partAsset = null;
-                partObj = null;
-                loaderID = -1;
-                state = 0;
             }
         }
     }
