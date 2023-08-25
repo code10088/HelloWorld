@@ -125,18 +125,16 @@ public class AssetManager : Singletion<AssetManager>
         }
     }
 }
-public class LoadGmaeObjectItem
+public class LoadGameObjectItem
 {
-    private string path;
-    private Transform parent;
-    private Object asset;
-    private GameObject obj;
+    protected string path;
+    protected Transform parent;
+    protected Object asset;
+    protected GameObject obj;
     private int loaderID;
     private int state = 0;//7：二进制111：分别表示release instantiate load
     private int timer = 0;
     private int timerId = -1;
-
-    public GameObject Target => obj;
 
     public void Init(string path, Transform parent)
     {
@@ -222,28 +220,26 @@ public class LoadGmaeObjectItem
     private void Recycle()
     {
         if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
-        timer += 30;
+        timer += GameSetting.recycleTime;
         timerId = -1;
         state &= 3;
     }
 }
 public class LoadAssetItem
 {
-    private string path;
-    private Object asset;
+    protected string path;
+    protected Object asset;
     private int loaderID;
     private bool releaseMark = false;
     private bool loadMark = false;
     private int timer = 0;
     private int timerId = -1;
 
-    public Object Target => asset;
-
     public void Init(string path)
     {
         this.path = path;
     }
-    public void Load()
+    public void Load<T>() where T : Object
     {
         if (releaseMark)
         {
@@ -255,7 +251,7 @@ public class LoadAssetItem
         }
         else
         {
-            loaderID = AssetManager.Instance.Load<GameObject>(path, LoadFinish);
+            loaderID = AssetManager.Instance.Load<T>(path, LoadFinish);
         }
     }
     private void LoadFinish(int id, Object _asset)
@@ -301,7 +297,7 @@ public class LoadAssetItem
     private void Recycle()
     {
         if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
-        timer += 30;
+        timer += GameSetting.recycleTime;
         timerId = -1;
         releaseMark = false;
     }

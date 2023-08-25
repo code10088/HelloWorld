@@ -7,4 +7,5 @@ public static class GameSetting
     public static int threadLimit = 6;
     public static int httpLimit = 3;//小于threadLimit
     public static int writeLimit = 3;//小于threadLimit
+    public static int recycleTime = 30;
 }

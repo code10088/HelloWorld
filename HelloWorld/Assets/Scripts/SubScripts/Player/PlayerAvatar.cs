@@ -62,7 +62,7 @@ namespace HotAssembly
         }
 
 
-        class PlayerAvatarPartItem : LoadGmaeObjectItem
+        class PlayerAvatarPartItem : LoadGameObjectItem
         {
             private PlayerAvatar avatar;
             private PlayerAvatarPart partCfg;
