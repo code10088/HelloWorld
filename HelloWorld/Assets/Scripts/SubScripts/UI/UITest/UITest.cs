@@ -81,6 +81,9 @@ namespace HotAssembly
         private void LoadBulletFromPool()
         {
             pool.Dequeue();
+            pool.Dequeue();
+            pool.Enqueue(pool.Use[0]);
+            pool.Dequeue();
         }
         private void DelectBullet()
         {

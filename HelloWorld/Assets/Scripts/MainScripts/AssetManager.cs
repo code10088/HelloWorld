@@ -38,6 +38,7 @@ public class AssetManager : Singletion<AssetManager>
     }
     public void Unload(int id)
     {
+        if (id < 0) return;
         if (group.TryGetValue(id, out AssetItemGroup a))
         {
             a.Unload();
@@ -157,6 +158,7 @@ public class LoadGameObjectItem
     {
         if (state == 0)
         {
+            AssetManager.Instance.Unload(loaderID);
             loaderID = AssetManager.Instance.Load<GameObject>(path, LoadFinish);
         }
         else if (state == 1)
@@ -251,6 +253,7 @@ public class LoadAssetItem
         }
         else
         {
+            AssetManager.Instance.Unload(loaderID);
             loaderID = AssetManager.Instance.Load<T>(path, LoadFinish);
         }
     }
