@@ -26,8 +26,9 @@ public class TimeManager : Singletion<TimeManager>
         AsyncManager.Instance.Add(temp, ignoreFrameTime);
         return temp.ItemID;
     }
-    public void StopTimer(int id, bool execMark = true)
+    public void StopTimer(int id, bool execMark = false)
     {
+        if (id < 0) return;
         AsyncManager.Instance.Remove(id, execMark);
     }
 
@@ -56,6 +57,7 @@ public class TimeManager : Singletion<TimeManager>
                 _loop += loop;
                 action(_time);
             }
+            if (endMark) return;
             endMark = time > 0 && _time > time;
         }
         public override void Reset()

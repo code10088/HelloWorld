@@ -13,6 +13,8 @@ namespace HotAssembly
         public UnityEngine.UI.Button openSDKBtnButton = null;
         public UnityEngine.UI.Button loadSpriteButton = null;
         public UnityEngine.UI.Image imageImage = null;
+        public UnityEngine.UI.Button poolEnqueueButton = null;
+        public UnityEngine.UI.Button poolDequeueButton = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
@@ -26,6 +28,8 @@ namespace HotAssembly
             openSDKBtnButton = allData[7].exportComponent[0] as UnityEngine.UI.Button;
             loadSpriteButton = allData[8].exportComponent[0] as UnityEngine.UI.Button;
             imageImage = allData[9].exportComponent[0] as UnityEngine.UI.Image;
+            poolEnqueueButton = allData[10].exportComponent[0] as UnityEngine.UI.Button;
+            poolDequeueButton = allData[11].exportComponent[0] as UnityEngine.UI.Button;
         }
     }
     public partial class UITestItem

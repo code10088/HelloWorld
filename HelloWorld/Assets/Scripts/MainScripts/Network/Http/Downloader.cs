@@ -10,19 +10,22 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
     private List<HttpItem> all = new List<HttpItem>();
     private List<HttpItemGroup> group = new List<HttpItemGroup>();
     private int count = 0;
+    private int updateId = -1;
 
     public void Init()
     {
-        Updater.Instance.StartUpdate(UpdateProgress);
+        
     }
     public void Download(string url, string path, Action<string, byte[]> finish, Action<string, float, float> update = null, int timeout = 5)
     {
         all.Add(new HttpItem(url, path, finish, update, timeout));
+        if (updateId < 0) updateId = Updater.Instance.StartUpdate(UpdateProgress);
         CheckHttpQueue();
     }
     public void Download(string[] url, string[] path, Action<string[]> finish, Action<int, int> update = null)
     {
         group.Add(new HttpItemGroup(url, path, finish, update));
+        if (updateId < 0) updateId = Updater.Instance.StartUpdate(UpdateProgress);
     }
     public void CheckHttpQueue()
     {
@@ -43,6 +46,10 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
         for (int i = 0; i < group.Count; i++)
         {
             group[i].Update();
+        }
+        if (all.Count == 0 && group.Count == 0)
+        {
+            Updater.Instance.StopUpdate(updateId);
         }
     }
 

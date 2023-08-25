@@ -16,9 +16,9 @@ MonoBehaviour:
     collectAllAssets: 0
     simulationMode: 0
     updatable: 1
-    updateInfoURL: http://192.168.6.26/BundlesCache
-    downloadURL: http://192.168.6.26/Bundles
-    playerURL: http://192.168.6.26/Build/xasset.apk
+    updateInfoURL: http://192.168.7.133/BundlesCache
+    downloadURL: http://192.168.7.133/Bundles
+    playerURL: http://192.168.7.133/Build/xasset.apk
     splitMode: 2
     packed: 0
     logLevel: 0

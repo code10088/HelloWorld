@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-public class NetMsgDispatch : Singletion<NetMsgDispatch>, SingletionInterface
+public class NetMsgDispatch : Singletion<NetMsgDispatch>
 {
     private Queue<NetMsgItem> msgPool = new Queue<NetMsgItem>();
     public Action<NetMsgItem> dispatch;

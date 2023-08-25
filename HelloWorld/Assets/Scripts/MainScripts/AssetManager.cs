@@ -132,7 +132,7 @@ public class LoadGameObjectItem
     protected Object asset;
     protected GameObject obj;
     private int loaderID;
-    private int state = 0;//7：二进制111：分别表示release instantiate load
+    private int state = 4;//7：二进制111：分别表示release instantiate load
     private int timer = 0;
     private int timerId = -1;
 
@@ -206,20 +206,20 @@ public class LoadGameObjectItem
     }
     public virtual void Release()
     {
-        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        TimeManager.Instance.StopTimer(timerId);
         if (obj != null) GameObject.Destroy(obj);
         AssetManager.Instance.Unload(loaderID);
         parent = null;
         asset = null;
         obj = null;
         loaderID = -1;
-        state = 0;
+        state = 4;
         timer = 0;
         timerId = -1;
     }
     private void Recycle()
     {
-        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        TimeManager.Instance.StopTimer(timerId);
         timer += GameSetting.recycleTime;
         timerId = -1;
         state &= 3;
@@ -230,7 +230,7 @@ public class LoadAssetItem
     protected string path;
     protected Object asset;
     private int loaderID;
-    private bool releaseMark = false;
+    private bool releaseMark = true;
     private bool loadMark = false;
     private int timer = 0;
     private int timerId = -1;
@@ -285,18 +285,18 @@ public class LoadAssetItem
     }
     public virtual void Release()
     {
-        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        TimeManager.Instance.StopTimer(timerId);
         AssetManager.Instance.Unload(loaderID);
         asset = null;
         loaderID = -1;
-        releaseMark = false;
+        releaseMark = true;
         loadMark = false;
         timer = 0;
         timerId = -1;
     }
     private void Recycle()
     {
-        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        TimeManager.Instance.StopTimer(timerId);
         timer += GameSetting.recycleTime;
         timerId = -1;
         releaseMark = false;

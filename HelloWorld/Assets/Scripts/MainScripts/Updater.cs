@@ -14,6 +14,7 @@ public class Updater : Singletion<Updater>
     }
     public void StopUpdate(int id, bool execMark = true)
     {
+        if (id < 0) return;
         AsyncManager.Instance.Remove(id, execMark);
     }
 

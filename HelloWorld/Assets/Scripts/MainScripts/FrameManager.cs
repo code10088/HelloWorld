@@ -25,8 +25,9 @@ public class FrameManager : Singletion<FrameManager>
         AsyncManager.Instance.Add(temp, ignoreFrameTime);
         return temp.ItemID;
     }
-    public void StopFrame(int id, bool execMark = true)
+    public void StopFrame(int id, bool execMark = false)
     {
+        if (id < 0) return;
         AsyncManager.Instance.Remove(id, execMark);
     }
 
@@ -55,6 +56,7 @@ public class FrameManager : Singletion<FrameManager>
                 _loop += loop;
                 action(_frame);
             }
+            if (endMark) return;
             endMark = frame > 0 && _frame > frame;
         }
         public override void Reset()

@@ -78,7 +78,7 @@ namespace HotAssembly
         }
         private void _Release()
         {
-            TimeManager.Instance.StopTimer(timerId, false);
+            TimeManager.Instance.StopTimer(timerId);
             OnDestroy();
             if (UIObj != null) GameObject.Destroy(UIObj);
             AssetManager.Instance.Unload(loaderID);
@@ -92,7 +92,7 @@ namespace HotAssembly
         }
         private void Recycle()
         {
-            TimeManager.Instance.StopTimer(timerId, false);
+            TimeManager.Instance.StopTimer(timerId);
             timerId = -1;
             state &= 3;
         }

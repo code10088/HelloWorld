@@ -5,13 +5,18 @@ using Object = UnityEngine.Object;
 
 public class GameObjectPool<T> : LoadAssetItem where T : PoolItem, new()
 {
+    private List<T> use = new();
     private List<T> wait = new();
     private List<T> cache = new();
-    private int frameId;
+    private int frameId = -1;
+
+    public List<T> Use => use;
 
     public void Enqueue(T item)
     {
-        int index = wait.FindIndex(a => a.ItemID == item.ItemID);
+        int index = use.FindIndex(a => a.ItemID == item.ItemID);
+        if (index >= 0) use.RemoveAt(index);
+        index = wait.FindIndex(a => a.ItemID == item.ItemID);
         if (index >= 0) wait.RemoveAt(index);
         item.SetActive(false);
         cache.Add(item);
@@ -24,14 +29,17 @@ public class GameObjectPool<T> : LoadAssetItem where T : PoolItem, new()
         else temp = new T();
         temp.Init(Delete, param);
         temp.SetActive(true);
+        use.Add(temp);
         wait.Add(temp);
         Load<GameObject>();
         return temp;
     }
     public override void Release()
     {
-        for (int i = 0; i < cache.Count; i++) cache[i].Release();
-        if (frameId > 0) FrameManager.Instance.StopFrame(frameId);
+        for (int i = use.Count - 1; i >= 0; i--) use[i].Release();
+        for (int i = cache.Count - 1; i >= 0; i--) cache[i].Release();
+        FrameManager.Instance.StopFrame(frameId);
+        use.Clear();
         wait.Clear();
         cache.Clear();
         frameId = -1;
@@ -40,15 +48,24 @@ public class GameObjectPool<T> : LoadAssetItem where T : PoolItem, new()
     private void Delete(int itemId)
     {
         int index = wait.FindIndex(a => a.ItemID == itemId);
-        if (index >= 0) wait.RemoveAt(index);
+        if (index >= 0)
+        {
+            wait.RemoveAt(index);
+            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Delay();
+            return;
+        }
         index = cache.FindIndex(a => a.ItemID == itemId);
-        if (index >= 0) cache.RemoveAt(index);
-        if (wait.Count == 0 && cache.Count == 0) Delay();
+        if (index >= 0)
+        {
+            cache.RemoveAt(index);
+            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Delay();
+            return;
+        }
     }
     protected override void Finish(Object asset)
     {
         if (asset == null) return;
-        frameId = FrameManager.Instance.StartFrame(0, 1, Instantiate);
+        if (frameId < 0) frameId = FrameManager.Instance.StartFrame(0, 1, Instantiate);
     }
     private void Instantiate(int frame)
     {
@@ -106,7 +123,7 @@ public class PoolItem
     /// </summary>
     public virtual void Release()
     {
-        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        TimeManager.Instance.StopTimer(timerId);
         if (obj != null) GameObject.Destroy(obj);
         itemId = -1;
         obj = null;
@@ -117,7 +134,7 @@ public class PoolItem
     }
     private void Recycle()
     {
-        if (timerId < 0) TimeManager.Instance.StopTimer(timerId, false);
+        TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
         active = true;
         obj?.SetActive(true);

@@ -40,6 +40,7 @@ public class ThreadManager : Singletion<ThreadManager>
     }
     public void StopThread(int id, bool execMark = true)
     {
+        if (id < 0) return;
         AsyncManager.Instance.Remove(id, execMark);
     }
 
@@ -49,6 +50,7 @@ public class ThreadManager : Singletion<ThreadManager>
         private Thread thread;
         private Action<object> action;
         private object param;
+        private int timerId = -1;
         private float time;
         public int priority;
         public bool ignoreFrameTime;
@@ -67,7 +69,7 @@ public class ThreadManager : Singletion<ThreadManager>
             thread = new(Run);
             thread.IsBackground = true;
             thread.Start();
-            if (time > 0) TimeManager.Instance.StartTimer(time, finish: Timeout);
+            if (time > 0 && timerId < 0) timerId = TimeManager.Instance.StartTimer(time, finish: Timeout);
         }
         private void Run()
         {
@@ -79,6 +81,7 @@ public class ThreadManager : Singletion<ThreadManager>
             {
                 GameDebug.LogError(ex.Message);
             }
+            TimeManager.Instance.StopTimer(timerId);
             endMark = true;
         }
         private void Timeout()

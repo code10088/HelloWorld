@@ -9,6 +9,7 @@ namespace HotAssembly
         private UITestComponent component = new UITestComponent();
         private CustomLoopScroll<TestItem> clss = new CustomLoopScroll<TestItem>();
         private UISubTest subUI = new UISubTest("UISubTest");
+        private GameObjectPool<TestBullet> pool = new GameObjectPool<TestBullet>();
 
         protected override void Init()
         {
@@ -19,6 +20,8 @@ namespace HotAssembly
             component.openMsgBtnButton.onClick.AddListener(OnOpenMessage);
             component.openSDKBtnButton.onClick.AddListener(SDKInit);
             component.loadSpriteButton.onClick.AddListener(LoadSprite);
+            component.poolEnqueueButton.onClick.AddListener(LoadBulletFromPool);
+            component.poolDequeueButton.onClick.AddListener(DelectBullet);
         }
         public override async UniTask OnEnable(params object[] param)
         {
@@ -26,6 +29,7 @@ namespace HotAssembly
             GameDebug.Log("UITest OnEnable");
             await UniTask.Delay(1000);
             InitLoopScrollRect();
+            pool.Init("TestBullet");
         }
         protected override void PlayInitAni()
         {
@@ -74,6 +78,14 @@ namespace HotAssembly
             SetSprite(component.imageImage, "TestIcon2");
             SetSprite(component.imageImage, "TestIcon3");
         }
+        private void LoadBulletFromPool()
+        {
+            pool.Dequeue();
+        }
+        private void DelectBullet()
+        {
+            pool.Enqueue(pool.Use[0]);
+        }
 
         private void InitLoopScrollRect()
         {
@@ -92,6 +104,14 @@ namespace HotAssembly
             {
                 data = DataManager.Instance.TestData.testItemDatas[idx];
                 component.itemTextTextMeshProUGUI.text = data.name;
+            }
+        }
+        private class TestBullet : PoolItem
+        {
+            protected override void LoadFinish()
+            {
+                base.LoadFinish();
+                obj.transform.localScale = Vector3.one * Random.Range(0, 10);
             }
         }
     }

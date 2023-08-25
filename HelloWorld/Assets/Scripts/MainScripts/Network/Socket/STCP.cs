@@ -15,8 +15,8 @@ public class STCP
     private Queue<TcpSendItem> sendPool = new Queue<TcpSendItem>();
     private Queue<byte[]> receivePool = new Queue<byte[]>();
 
-    private int connectTimer;
-    private int receiveTimer;
+    private int connectTimer = -1;
+    private int receiveTimer = -1;
     private int sendFailCount = 0;
     private int receiveFailCount = 0;
     private bool receiveMark = false;
@@ -43,7 +43,7 @@ public class STCP
         IPEndPoint endPoint = new IPEndPoint(address, port);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         socket.BeginConnect(endPoint, ConnectCallback, null);
-        connectTimer = TimeManager.Instance.StartTimer(10, finish: Reconect);
+        if (connectTimer < 0) connectTimer = TimeManager.Instance.StartTimer(10, finish: Reconect);
     }
     private void ConnectCallback(IAsyncResult ar)
     {
@@ -164,7 +164,7 @@ public class STCP
         {
             receiveMark = false;
             socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback, null);
-            receiveTimer = TimeManager.Instance.StartTimer(10, finish: () => ReceiveCallback(0));
+            if (receiveTimer < 0) receiveTimer = TimeManager.Instance.StartTimer(10, finish: () => ReceiveCallback(0));
         }
     }
     private void ReceiveCallback(IAsyncResult ar)
@@ -235,7 +235,7 @@ public class STCP
     class TcpSendItem
     {
         private STCP so;
-        private int sendTimer;
+        private int sendTimer = -1;
         private int retryTime;
         private ushort id;
         private IExtensible msg;
@@ -248,7 +248,7 @@ public class STCP
         {
             this.so = so;
             so.BeginSend(Serialize(msg), SendCallback);
-            sendTimer = TimeManager.Instance.StartTimer(10, finish: () => SendCallback(false));
+            if (sendTimer < 0) sendTimer = TimeManager.Instance.StartTimer(10, finish: () => SendCallback(false));
         }
         private byte[] Serialize(IExtensible msg)
         {

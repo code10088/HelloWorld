@@ -18,7 +18,7 @@ public class SKCP
     private KcpReceiveItem kcpReceive;
     private Queue<KcpSendItem> sendPool = new Queue<KcpSendItem>();
 
-    private int connectTimer;
+    private int connectTimer = -1;
     private bool connectMark = false;
 
     public void Init(string ip, ushort port)
@@ -36,7 +36,7 @@ public class SKCP
         IPEndPoint endPoint = new IPEndPoint(address, port);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Udp);
         socket.BeginConnect(endPoint, ConnectCallback, null);
-        connectTimer = TimeManager.Instance.StartTimer(10, finish: Reconect);
+        if (connectTimer < 0) connectTimer = TimeManager.Instance.StartTimer(10, finish: Reconect);
     }
     private void ConnectCallback(IAsyncResult ar)
     {

@@ -45,6 +45,14 @@ MonoBehaviour:
     addressMode: 2
     dependencies: []
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/ZRes/DataConfig/tbplayeravatarpart.bytes
+    bundle: dataconfig_tbplayeravatarpart_bytes.bundle
+    type: TextAsset
+    entry: Assets/ZRes/DataConfig
+    lastWriteTime: 0
+    addressMode: 2
+    dependencies: []
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/DataConfig/tbsceneconfig.bytes
     bundle: dataconfig_tbsceneconfig_bytes.bundle
     type: TextAsset
@@ -61,11 +69,21 @@ MonoBehaviour:
     addressMode: 2
     dependencies: []
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/ZRes/UI/Prefab/TestBullet.prefab
+    bundle: prefab_testbullet_prefab.bundle
+    type: GameObject
+    entry: Assets/ZRes/UI/Prefab
+    lastWriteTime: 133374204507243125
+    addressMode: 2
+    dependencies:
+    - Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat
+    - Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/UI/Prefab/UIHotUpdateRes.prefab
     bundle: prefab_uihotupdateres_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133350203391789135
+    lastWriteTime: 133374204507253099
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -80,7 +98,7 @@ MonoBehaviour:
     bundle: prefab_uimessagebox_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133350203392881278
+    lastWriteTime: 133374204507342857
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -97,7 +115,7 @@ MonoBehaviour:
     bundle: prefab_uisubtest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133350203392641920
+    lastWriteTime: 133374204507342857
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -112,7 +130,7 @@ MonoBehaviour:
     bundle: prefab_uitest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133350738335664793
+    lastWriteTime: 133374207427369866
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -135,7 +153,7 @@ MonoBehaviour:
     bundle: scene_testscene_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/Scene
-    lastWriteTime: 133350203392412534
+    lastWriteTime: 133374204507362801
     addressMode: 2
     dependencies:
     - Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat

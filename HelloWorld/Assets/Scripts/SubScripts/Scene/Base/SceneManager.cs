@@ -15,6 +15,7 @@ namespace HotAssembly
         private List<SceneItem> loadScene = new List<SceneItem>();
         private List<SceneItem> curScene = new List<SceneItem>();
         private List<SceneItem> cacheScene = new List<SceneItem>();
+        private int timerId = -1;
 
         public void Init()
         {
@@ -22,7 +23,6 @@ namespace HotAssembly
             tSceneRoot = SceneRoot.transform;
             var temp = GameObject.FindWithTag("MainCamera");
             SceneCamera = temp.GetComponent<Camera>();
-            TimeManager.Instance.StartTimer(-1, 1, UpdateProgress);
         }
         /// <summary>
         /// 
@@ -42,6 +42,7 @@ namespace HotAssembly
             if (tempIndex >= 0) cacheScene.RemoveAt(tempIndex);
             loadScene.Add(item);
             item.Load();
+            if (timerId < 0) timerId = TimeManager.Instance.StartTimer(-1, 1, UpdateProgress);
             return item.ID;
         }
         public void CloseScene(int id)
@@ -77,10 +78,9 @@ namespace HotAssembly
         }
         public void UpdateProgress(float f)
         {
-            for (int i = 0; i < loadScene.Count; i++)
-            {
-                loadScene[i].ProgressActionInvoke();
-            }
+            if (loadScene.Count > 0) for (int i = 0; i < loadScene.Count; i++) loadScene[i].ProgressActionInvoke();
+            else TimeManager.Instance.StopTimer(timerId);
+
         }
 
 
@@ -192,7 +192,7 @@ namespace HotAssembly
             private void _Release()
             {
                 Instance.cacheScene.Remove(this);
-                TimeManager.Instance.StopTimer(timerId, false);
+                TimeManager.Instance.StopTimer(timerId);
                 if (baseScene != null) baseScene?.OnDestroy();
                 if (baseObj != null) GameObject.Destroy(baseObj);
                 AssetManager.Instance.Unload(loaderID);
@@ -207,7 +207,7 @@ namespace HotAssembly
             }
             private void Recycle()
             {
-                TimeManager.Instance.StopTimer(timerId, false);
+                TimeManager.Instance.StopTimer(timerId);
                 timerId = -1;
                 state &= 3;
             }

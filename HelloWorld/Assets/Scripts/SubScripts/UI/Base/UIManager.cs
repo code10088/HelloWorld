@@ -252,7 +252,7 @@ namespace HotAssembly
             }
             private void _Release()
             {
-                TimeManager.Instance.StopTimer(timerId, false);
+                TimeManager.Instance.StopTimer(timerId);
                 if (baseUI != null) baseUI.OnDestroy();
                 if (baseObj != null) GameObject.Destroy(baseObj);
                 AssetManager.Instance.Unload(loaderID);
@@ -266,7 +266,7 @@ namespace HotAssembly
             }
             private void Recycle()
             {
-                TimeManager.Instance.StopTimer(timerId, false);
+                TimeManager.Instance.StopTimer(timerId);
                 timerId = -1;
                 state &= 3;
             }
