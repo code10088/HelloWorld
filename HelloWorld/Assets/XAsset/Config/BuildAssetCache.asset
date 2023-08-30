@@ -73,7 +73,7 @@ MonoBehaviour:
     bundle: prefab_testbullet_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133374204507243125
+    lastWriteTime: 133378663556132579
     addressMode: 2
     dependencies:
     - Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat
@@ -83,7 +83,7 @@ MonoBehaviour:
     bundle: prefab_uihotupdateres_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133374204507253099
+    lastWriteTime: 133378663556142543
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -98,7 +98,7 @@ MonoBehaviour:
     bundle: prefab_uimessagebox_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133374204507342857
+    lastWriteTime: 133378663556222329
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -115,7 +115,7 @@ MonoBehaviour:
     bundle: prefab_uisubtest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133374204507342857
+    lastWriteTime: 133378663556232306
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -130,7 +130,7 @@ MonoBehaviour:
     bundle: prefab_uitest_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/UI/Prefab
-    lastWriteTime: 133374207427369866
+    lastWriteTime: 133378663556232306
     addressMode: 2
     dependencies:
     - Packages/com.unity.textmeshpro/Editor Resources/Gizmos/TMP - Font Asset Icon.psd
@@ -153,11 +153,36 @@ MonoBehaviour:
     bundle: scene_testscene_prefab.bundle
     type: GameObject
     entry: Assets/ZRes/Scene
-    lastWriteTime: 133374204507362801
+    lastWriteTime: 133378663556242275
     addressMode: 2
     dependencies:
     - Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat
     - Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader
+    group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
+  - path: Assets/ZRes/Debug/IngameDebugConsole.prefab
+    bundle: debug_ingamedebugconsole_prefab.bundle
+    type: GameObject
+    entry: Assets/ZRes/Debug
+    lastWriteTime: 133378663556252254
+    addressMode: 2
+    dependencies:
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconWarning.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconError.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconClear.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/SlicedBackground.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/Unused/IconInfoHighRes.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/SearchIcon.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Prefabs/CommandSuggestion.prefab
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconCollapse.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Prefabs/DebugLogItem.prefab
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconInfo.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/SlicedBackground2.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconSnapToBottomBg.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconHide.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconResizeVertialOnly.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconResizeAllDirections.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/SlicedBackground3.psd
+    - Packages/com.yasirkula.ingamedebugconsole/Plugins/IngameDebugConsole/Sprites/IconSnapToBottom.psd
     group: {fileID: 11400000, guid: d4c60234e4402234daa6609fa9f05e70, type: 2}
   - path: Assets/ZRes/UI/Atlas/Test/TestIcon.png
     bundle: atlas_test.bundle

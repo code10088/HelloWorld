@@ -15,7 +15,21 @@ namespace MainAssembly
         private void Start()
         {
             Application.runInBackground = true;
-            AssetManager.Instance.Init(HotUpdate);
+            AssetManager.Instance.Init(OpenDebug);
+        }
+        private void OpenDebug()
+        {
+#if DEBUG
+            GameDebug.showLog = true;
+            AssetManager.Instance.Load<GameObject>("IngameDebugConsole", (a,b)=>
+            {
+                Instantiate(b);
+                HotUpdate();
+            });
+#elif RELEASE
+            GameDebug.showLog = false;
+            HotUpdate()
+#endif
         }
         private void HotUpdate()
         {

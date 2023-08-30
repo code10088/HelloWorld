@@ -1,0 +1,20 @@
+水：Stylized Water Shader、Water 2D Tool
+涂色：Ink Painter
+特效性能：ParticleEffectProfiler
+图片粉碎机：Unity-2D-Destruction
+动态字符：TMP-Text-Juicer
+体积互动模型雕刻：Clayxels
+网格生成与连接：MudBun
+刀切片mesh：Mesh Slicer
+网格动画：Mega-Fiers
+动态骨骼：Dynamic Bone、Boing Kit
+布料：Magica Cloth
+后处理：Beautify 2
+log：In-game Debug Console
+赛车物理：Edy's Vehicle Physics
+寻路：A* Pathfinding Project Pro
+shader编辑器：Amplify Shader Editor、Amplify Shader Pack
+广告：ADMob
+绳子：Obi Rope
+模型切片粉碎：RayFire for Unity
+防作弊：Anti-Cheat Toolkit

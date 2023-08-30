@@ -28,9 +28,12 @@ public class UIPreview : ObjectPreview
         previewRender.camera.nearClipPlane = 0.1f;
         previewRender.camera.farClipPlane = 100f;
 
-        var canvasInstance = previewRender.InstantiatePrefabInScene(obj).GetComponent<Canvas>();
-        canvasInstance.renderMode = RenderMode.ScreenSpaceCamera;
-        canvasInstance.worldCamera = previewRender.camera;
+        if (obj = previewRender.InstantiatePrefabInScene(obj))
+        {
+            var canvasInstance = obj.GetComponent<Canvas>();
+            canvasInstance.renderMode = RenderMode.ScreenSpaceCamera;
+            canvasInstance.worldCamera = previewRender.camera;
+        }
 
         previewRender.BeginStaticPreview(rect1);
         previewRender.Render();
