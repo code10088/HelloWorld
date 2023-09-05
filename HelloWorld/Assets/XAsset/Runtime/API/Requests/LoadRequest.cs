@@ -52,6 +52,7 @@ namespace xasset
             }
             else
             {
+                Recycler.CancelRecycle(this);
                 SendRequest(); 
             }
 

@@ -16,7 +16,7 @@ namespace xasset
         ///     是否开启对资源的引用计数，编辑器下开启后可以及时释放被 AssetDatabase 加载的资源，
         ///     运行时如果资源打包粒度不合理，也可以开启这个选项提前释放 AssetBundle 里面加载的资源，打包粒度合理的话，关闭这个可以优化性能。
         /// </summary>
-        public static bool Enabled { get; set; }
+        public static bool Enabled { get; set; } = true;
 
         private static string[] GetDependenciesRuntime(string path)
         {

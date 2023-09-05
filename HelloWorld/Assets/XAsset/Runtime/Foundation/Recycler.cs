@@ -102,6 +102,12 @@ namespace xasset
             Recyclables.Add(recyclable);
         }
 
+        public static void CancelRecycle(IRecyclable recyclable)
+        {
+            if (Recyclables.Contains(recyclable)) Recyclables.Remove(recyclable);
+            else if (Progressing.Contains(recyclable)) Progressing.Remove(recyclable);
+        }
+
         public static void Autorelease(IAutorelease autorelease)
         {
             Autoreleases.Add(autorelease);

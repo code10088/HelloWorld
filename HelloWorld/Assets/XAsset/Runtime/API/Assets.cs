@@ -191,7 +191,15 @@ namespace xasset
         public static void LoadPlayerAssets(PlayerAssets settings)
         {
             // 仿真模式下载地址会特殊处理
-            if (!Application.isEditor) Updatable = settings.updatable;
+            if (!Application.isEditor)
+            {
+                Updatable = settings.updatable;
+            }
+            if (RealtimeMode)
+            {
+                UpdateInfoURL = settings.updateInfoURL;
+                DownloadURL = settings.downloadURL;
+            }
             MaxRetryTimes = settings.maxRetryTimes;
             MaxDownloads = settings.maxDownloads;
             Scheduler.MaxRequests = settings.maxRequests;

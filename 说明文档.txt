@@ -8,11 +8,12 @@ Luban
 	修改Luban.ClientServer/Templates/config/cs_bin模板
 	
 XAsset
+	每次更新完成单独提交一次修改以便查看
 	更新时需要对比示例更新流程和当前更新流程，看是否有遗漏
 	免费版需要在GetDownloadSizeRequest中添加局部按需更新功能（最新版已经包含该功能）
-	免费版需要打开单个资源卸载References.Enabled
+	免费版需要打开单个资源卸载References.Enabled=true
 	免费版回收系统重复回收问题（如果load unload load unload同一个资源情况下，会出现同一个assetrequest被回收两次的情况）
-		Recycler.RecycleAsync 添加判断 if(!Recyclables.Contains(recyclable))
+		Recycler.RecycleAsync 添加判断 if(!Recyclables.Contains(recyclable))（最新版已经包含该功能）
 		LoadRequest.LoadAsync 添加取消 Recycler.CancelRecycle(this)
 	Assets中LoadPlayerAssets自动赋值UpdateInfoURL和DownloadURL
 	
