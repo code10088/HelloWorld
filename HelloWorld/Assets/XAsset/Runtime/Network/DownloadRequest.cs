@@ -5,9 +5,10 @@ namespace xasset
 {
     public sealed class DownloadRequest : DownloadRequestBase
     {
+        public static bool Resumable { get; set; } = true;
         public IDownloadHandler handler { get; set; }
+        // ReSharper disable once MemberCanBePrivate.Global
         public Action<DownloadRequest> completed { get; set; }
-        public Action<DownloadRequest> updated { get; set; } = null;
         public DownloadContent content { get; set; }
         public string savePath => content.savePath;
         public string url => content.url;
@@ -122,7 +123,6 @@ namespace xasset
         public void Update()
         {
             handler.Update();
-            updated?.Invoke(this);
         }
 
         public void Complete()

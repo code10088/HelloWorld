@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace xasset
 {
@@ -12,15 +13,15 @@ namespace xasset
 
     public class ReloadRequest : Request
     {
-        public Versions versions;
-
         private readonly List<IReloadable> queue = new List<IReloadable>();
+        public Versions versions;
         public int max { get; private set; }
         public int pos { get; private set; }
 
         protected override void OnStart()
         {
             Assets.Versions = versions;
+            PlayerPrefs.SetString(Assets.kBundlesVersions, versions.GetFilename());
             versions.Save(Assets.GetDownloadDataPath(Versions.Filename));
 
             var changed = new HashSet<string>();
@@ -55,7 +56,7 @@ namespace xasset
                 pair.Value.info = value;
                 Reload(pair.Value);
             }
-
+            
             max = queue.Count;
             pos = 0;
         }
@@ -83,10 +84,7 @@ namespace xasset
             pos = max - queue.Count;
             progress = pos * 1f / max;
 
-            if (queue.Count > 0)
-            {
-                return;
-            }
+            if (queue.Count > 0) return;
 
             SetResult(Result.Success);
         }

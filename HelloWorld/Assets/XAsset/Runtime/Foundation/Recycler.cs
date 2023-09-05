@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace xasset
 {
@@ -13,31 +12,25 @@ namespace xasset
         bool Recycling();
     }
 
+    public interface IAutorelease
+    {
+        bool IsUnused();
+        bool CanRelease();
+        void Release();
+    }
+
+    [DisallowMultipleComponent]
     public class Recycler : MonoBehaviour
     {
+        private static readonly List<IAutorelease> Autoreleases = new List<IAutorelease>();
         private static readonly List<IRecyclable> Recyclables = new List<IRecyclable>();
         private static readonly List<IRecyclable> Progressing = new List<IRecyclable>();
         private static readonly Queue<Object> UnusedAssets = new Queue<Object>();
-        public static float AutoRecycleTimestep { get; set; } = 0.3f; // 300ms 一次  
         private float _lastUpdateTime;
-
-        private void UpdateAutoRecycle()
-        {
-            if (!(Time.realtimeSinceStartup - _lastUpdateTime > AutoRecycleTimestep)) return;
-            AutoreleaseCache.UpdateAllCaches();
-            _lastUpdateTime = Time.realtimeSinceStartup;
-        }
-
-        public static void UnloadAsset(Object asset)
-        {
-            UnusedAssets.Enqueue(asset);
-        }
-
+        public static float AutoreleaseTimestep { get; set; } = 0.3f; // 300ms 一次  
 
         private void Update()
         {
-            UpdateAutoRecycle();
-
             if (UnusedAssets.Count > 0)
             {
                 while (UnusedAssets.Count > 0)
@@ -49,8 +42,8 @@ namespace xasset
                 Resources.UnloadUnusedAssets();
             }
 
-            if (Scheduler.Working) return; // 有加载的时候不回收资源，防止 Unity 引擎底层出异常。 
-
+            UpdateAutorelease();
+            
             for (var index = 0; index < Recyclables.Count; index++)
             {
                 var request = Recyclables[index];
@@ -59,10 +52,13 @@ namespace xasset
                 Recyclables.RemoveAt(index);
                 index--;
 
+                // 卸载的资源加载好后，可能会被再次使用
                 if (!request.IsUnused()) continue;
                 request.RecycleAsync();
                 Progressing.Add(request);
             }
+            
+            if (Scheduler.Working) return; // 有加载的时候不回收资源，防止 Unity 引擎底层出异常。 
 
             for (var index = 0; index < Progressing.Count; index++)
             {
@@ -75,13 +71,40 @@ namespace xasset
             }
         }
 
+        private void UpdateAutorelease()
+        {
+            if (!(Time.realtimeSinceStartup - _lastUpdateTime > AutoreleaseTimestep)) return;
+            for (var index = 0; index < Autoreleases.Count; index++)
+            {
+                var autorelease = Autoreleases[index];
+                if (!autorelease.CanRelease())
+                    continue;
+                Autoreleases.RemoveAt(index);
+                index--;
+                if (autorelease.IsUnused())
+                    continue;
+                autorelease.Release();
+            }
+
+            _lastUpdateTime = Time.realtimeSinceStartup;
+        }
+
+        public static void UnloadAsset(Object asset)
+        {
+            UnusedAssets.Enqueue(asset);
+        }
+
         public static void RecycleAsync(IRecyclable recyclable)
         {
-            if (!Recyclables.Contains(recyclable)) Recyclables.Add(recyclable);
+            // 防止重复回收
+            if (Recyclables.Contains(recyclable) || Progressing.Contains(recyclable))
+                return;
+            Recyclables.Add(recyclable);
         }
-        public static void CancelRecycle(IRecyclable recyclable)
+
+        public static void Autorelease(IAutorelease autorelease)
         {
-            if (Recyclables.Contains(recyclable)) Recyclables.Remove(recyclable);
+            Autoreleases.Add(autorelease);
         }
     }
 }

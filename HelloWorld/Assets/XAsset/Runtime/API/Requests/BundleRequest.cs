@@ -9,8 +9,28 @@ namespace xasset
         private IBundleHandler handler;
         internal AssetBundle assetBundle { get; private set; }
         public ManifestBundle info { get; private set; }
+
         public override int priority => 0;
+
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public static Func<BundleRequest, IBundleHandler> CreateHandler { get; set; }
+
+        public void ReloadAsync()
+        {
+            status = Status.Processing;
+            handler = GetHandler(this);
+            handler.OnStart(this);
+        }
+
+        public void OnReloaded()
+        {
+        }
+
+        public bool IsReloaded()
+        {
+            OnUpdated();
+            return isDone;
+        }
 
         protected override void OnStart()
         {
@@ -25,7 +45,7 @@ namespace xasset
         protected override void OnWaitForCompletion()
         {
             handler.WaitForCompletion(this);
-        }
+        } 
 
         public void LoadAssetBundle(string filename)
         {
@@ -50,6 +70,14 @@ namespace xasset
             assetBundle.Unload(true);
             RemoveAssetBundle(info.name);
             assetBundle = null;
+        }
+
+        public void Reload(ManifestBundle bundle)
+        {
+            Reset();
+            info = bundle;
+            path = bundle.file;
+            handler = GetHandler(this);
         }
 
         #region Hotreload
@@ -85,15 +113,11 @@ namespace xasset
             var bundle = request.info;
             var handler = CreateHandler?.Invoke(request);
             if (handler != null) return handler;
-            
-            if (Assets.IsPlayerAsset(bundle.hash))
-                return new RuntimeLocalBundleHandler
-                {
-                    path = Assets.GetPlayerDataPath(bundle.file)
-                };
-            if (Assets.IsDownloaded(bundle))
-                return new RuntimeLocalBundleHandler { path = Assets.GetDownloadDataPath(bundle.file) };
 
+            if (Assets.IsDownloaded(bundle, false))
+                return new RuntimeLocalBundleHandler { path = Assets.GetDownloadDataPath(bundle.file) }; 
+            if (Assets.IsPlayerAsset(bundle.hash))
+                return new RuntimeLocalBundleHandler { path = Assets.GetPlayerDataPath( bundle.file) };
             return new RuntimeDownloadBundleHandler();
         }
 
@@ -117,30 +141,5 @@ namespace xasset
         }
 
         #endregion
-
-        public void Reload(ManifestBundle bundle)
-        {
-            Reset();
-            info = bundle;
-            path = bundle.file;
-            handler = GetHandler(this);
-        }
-
-        public void ReloadAsync()
-        {
-            status = Status.Processing;
-            handler = GetHandler(this);
-            handler.OnStart(this);
-        }
-
-        public void OnReloaded()
-        {
-        }
-
-        public bool IsReloaded()
-        {
-            OnUpdated();
-            return isDone;
-        }
     }
 }

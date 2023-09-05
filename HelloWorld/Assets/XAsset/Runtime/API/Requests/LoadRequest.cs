@@ -3,11 +3,16 @@ namespace xasset
     public abstract class LoadRequest : Request, IRecyclable
     {
         protected int refCount { get; private set; }
-        public string path { get; set; }
+        public string path { get; protected set; } 
 
         protected override void OnCompleted()
         {
-            Logger.D($"Load {GetType().Name} {path} {result}.");
+            Logger.D($"Load {GetType().Name} {path} {result}."); 
+        }
+
+        public void Retain()
+        {
+            refCount++;
         }
 
         public void Release()
@@ -47,11 +52,10 @@ namespace xasset
             }
             else
             {
-                Recycler.CancelRecycle(this);
-                SendRequest();
+                SendRequest(); 
             }
 
-            refCount++;
+            Retain();
         }
 
         #region IRecyclable
@@ -59,7 +63,7 @@ namespace xasset
         public void EndRecycle()
         {
             Logger.D($"Unload {GetType().Name} {path}.");
-            OnDispose();
+            OnDispose(); 
         }
 
         public virtual bool CanRecycle()

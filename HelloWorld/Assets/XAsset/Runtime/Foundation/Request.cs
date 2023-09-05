@@ -25,8 +25,9 @@ namespace xasset
         public Status status { get; protected set; } = Status.Wait;
         public bool isDone => status == Status.Complete;
         public float progress { get; set; }
-        public virtual int priority => 1;
         public string error { get; protected set; }
+
+        public virtual int priority => 1;
 
         public bool MoveNext()
         {

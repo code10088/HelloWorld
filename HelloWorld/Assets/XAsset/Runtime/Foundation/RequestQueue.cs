@@ -7,9 +7,9 @@ namespace xasset
         private readonly List<Request> processing = new List<Request>();
         private readonly Queue<Request> queue = new Queue<Request>();
         public string key;
+        public int priority { get; set; } = 1;
         public byte maxRequests { get; set; } = 10;
         public bool working => processing.Count > 0 || queue.Count > 0;
-        public int priority { get; set; }
 
         public void Enqueue(Request request)
         {

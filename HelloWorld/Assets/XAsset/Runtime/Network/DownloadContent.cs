@@ -41,6 +41,7 @@ namespace xasset
                 hash = hash,
                 size = size
             };
+
             Contents[url] = value;
             return value;
         }

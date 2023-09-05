@@ -11,12 +11,14 @@ namespace MainAssembly
     {
         private Action hotUpdateCodeFinish;
         private Versions latestVersion;
+        private DownloadRequestBatch downloadRequestBatch;
+        private int timerId = -1;
 
         public void StartUpdate(Action finish)
         {
             hotUpdateCodeFinish = finish;
-            if (Assets.SimulationMode) UpdateFinish();
-            else CheckUpdateInfo();
+            if (Assets.RealtimeMode) CheckUpdateInfo();
+            else UpdateFinish();
         }
 
         #region Version
@@ -36,7 +38,7 @@ namespace MainAssembly
                 var playerVersion = System.Version.Parse(Assets.PlayerAssets.version);
                 if (updateVersion.Minor == playerVersion.Minor)
                 {
-                    var getVersionsAsync = Assets.GetVersionsAsync(getUpdateInfoAsync.info);
+                    var getVersionsAsync = getUpdateInfoAsync.GetVersionsAsync();
                     getVersionsAsync.completed += RemoveUnusedFile;
 
                     UIHotUpdateCode.Instance.SetText("CheckUpdateVersion");
@@ -109,7 +111,7 @@ namespace MainAssembly
         private void CheckDownloadHotUpdateConfig()
         {
             string[] include = new string[] { "HotUpdateConfig.txt" };
-            var getDownloadSizeAsync = Assets.GetDownloadSizeAsync(Assets.Versions, include);
+            var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync(include);
             getDownloadSizeAsync.completed += StartDownloadHotUpdateConfig;
 
             UIHotUpdateCode.Instance.SetText("CheckDownloadHotUpdateConfig");
@@ -120,26 +122,27 @@ namespace MainAssembly
             if (getDownloadSizeAsync.downloadSize > 0)
             {
                 var downloadAsync = getDownloadSizeAsync.DownloadAsync();
-                var downloadRequestBatch = downloadAsync as DownloadRequestBatch;
-                downloadRequestBatch.updated = DownloadingHotUpdateConfig;
+                downloadRequestBatch = downloadAsync as DownloadRequestBatch;
                 downloadRequestBatch.completed += DownloadHotUpdateConfigFinish;
+                timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateConfig);
             }
             else
             {
                 LoadHotUpdateConfig();
             }
         }
-        private void DownloadingHotUpdateConfig(DownloadRequestBatch download)
+        private void DownloadingHotUpdateConfig(float t)
         {
-            var downloadedBytes = Utility.FormatBytes(download.downloadedBytes);
-            var downloadSize = Utility.FormatBytes(download.downloadSize);
-            var bandwidth = Utility.FormatBytes(download.bandwidth);
+            var downloadedBytes = Utility.FormatBytes(downloadRequestBatch.downloadedBytes);
+            var downloadSize = Utility.FormatBytes(downloadRequestBatch.downloadSize);
+            var bandwidth = Utility.FormatBytes(downloadRequestBatch.bandwidth);
 
             UIHotUpdateCode.Instance.SetText($"Download：{downloadedBytes}/{downloadSize} {bandwidth}/s");
-            UIHotUpdateCode.Instance.SetSlider(download.progress);
+            UIHotUpdateCode.Instance.SetSlider(downloadRequestBatch.progress);
         }
         private void DownloadHotUpdateConfigFinish(DownloadRequestBatch download)
         {
+            TimeManager.Instance.StopTimer(timerId);
             if (download.result == DownloadRequestBase.Result.Success) LoadHotUpdateConfig();
             else UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", CheckDownloadHotUpdateConfig);
         }
@@ -159,7 +162,7 @@ namespace MainAssembly
             List<string> include = new List<string>();
             include.AddRange(config.Metadata);
             include.AddRange(config.HotUpdateRes);
-            var getDownloadSizeAsync = Assets.GetDownloadSizeAsync(Assets.Versions, include.ToArray());
+            var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync(include.ToArray());
             getDownloadSizeAsync.completed += StartDownloadHotUpdateRes;
 
             UIHotUpdateCode.Instance.SetText("CheckDownloadHotUpdateRes");
@@ -170,26 +173,27 @@ namespace MainAssembly
             if (getDownloadSizeAsync.downloadSize > 0)
             {
                 var downloadAsync = getDownloadSizeAsync.DownloadAsync();
-                var downloadRequestBatch = downloadAsync as DownloadRequestBatch;
-                downloadRequestBatch.updated = DownloadingHotUpdateRes;
+                downloadRequestBatch = downloadAsync as DownloadRequestBatch;
                 downloadRequestBatch.completed += DownloadHotUpdateResFinish;
+                timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateRes);
             }
             else
             {
                 UpdateFinish();
             }
         }
-        private void DownloadingHotUpdateRes(DownloadRequestBatch download)
+        private void DownloadingHotUpdateRes(float t)
         {
-            var downloadedBytes = Utility.FormatBytes(download.downloadedBytes);
-            var downloadSize = Utility.FormatBytes(download.downloadSize);
-            var bandwidth = Utility.FormatBytes(download.bandwidth);
+            var downloadedBytes = Utility.FormatBytes(downloadRequestBatch.downloadedBytes);
+            var downloadSize = Utility.FormatBytes(downloadRequestBatch.downloadSize);
+            var bandwidth = Utility.FormatBytes(downloadRequestBatch.bandwidth);
 
             UIHotUpdateCode.Instance.SetText($"Download：{downloadedBytes}/{downloadSize} {bandwidth}/s");
-            UIHotUpdateCode.Instance.SetSlider(download.progress);
+            UIHotUpdateCode.Instance.SetSlider(downloadRequestBatch.progress);
         }
         private void DownloadHotUpdateResFinish(DownloadRequestBatch download)
         {
+            TimeManager.Instance.StopTimer(timerId);
             if (download.result == DownloadRequestBase.Result.Success) UpdateFinish();
             else UIHotUpdateCode.Instance.OpenMessageBox("Tips", "Retry", LoadHotUpdateConfig);
         }

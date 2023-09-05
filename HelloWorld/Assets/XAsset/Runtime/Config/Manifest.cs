@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace xasset
@@ -20,25 +21,35 @@ namespace xasset
         LoadByName,
 
         /// <summary>
-        ///     按 不带扩展名的文件名 加载。
+        ///     按 不带扩张名的文件名 加载。
         /// </summary>
         LoadByNameWithoutExtension,
 
         /// <summary>
-        ///     按 依赖 加载。
+        ///     按 依赖 加载，不主动生成加载地址。
         /// </summary>
-        LoadByDependencies,
+        LoadByDependencies
     }
 
+    /// <summary>
+    ///     交付模式
+    /// </summary>
+    public enum DeliveryMode
+    {
+        InstallTime, // 在安装包中
+        FastFollow, // 不在安装包中，启动后立即下载
+        OnDemand // 按需更新，点更新才下载
+    }
+    
     [Serializable]
     public class ManifestAsset
     {
-        public int id { get; set; }
         public string name;
+        public int[] deps = Array.Empty<int>();
         public int bundle;
         public int dir;
-        public int[] deps = Array.Empty<int>();
         public AddressMode addressMode = AddressMode.LoadByPath;
+        public int id { get; set; }
         public string path { get; set; }
         public Manifest manifest { get; set; }
     }
@@ -48,37 +59,65 @@ namespace xasset
     {
         public int[] deps = Array.Empty<int>();
         public Manifest manifest { get; set; }
+    } 
+    
+    [Serializable]
+    public class ManifestGroup
+    {
+        public DeliveryMode deliveryMode = DeliveryMode.OnDemand;
+        public List<int> assets = new List<int>();
+        private Dictionary<string, int> _assets = new Dictionary<string, int>();
+        public string desc;
+        public string name;
+        public Manifest manifest { get; set; }
+
+        public void OnDeserialize()
+        {
+            var bundles = manifest.bundles;
+            for (var index = 0; index < assets.Count; index++)
+            {
+                var asset = assets[index];
+                var id = asset;
+                if (id >= 0 && id < bundles.Length)
+                {
+                    _assets[bundles[id].name] = id;
+                }
+                else
+                {
+                    assets.RemoveAt(index);
+                    index--;
+                    Logger.W($"Asset {id} not exist in {manifest.name}.");
+                }
+            }
+        }
+
+        public bool TryGetAsset(string asset, out int result)
+        {
+            return _assets.TryGetValue(asset, out result);
+        }
+
+        public bool Contains(string asset)
+        {
+            return _assets.ContainsKey(asset);
+        } 
     }
 
     public class Manifest : ScriptableObject, ISerializationCallbackReceiver
     {
-        public static Action<ManifestAsset> OnReadAsset;
-        public string extension;
-        public bool saveBundleName;
+        internal static Action<ManifestAsset> OnReadAsset;
         public string[] dirs = Array.Empty<string>();
         public ManifestAsset[] assets = Array.Empty<ManifestAsset>();
         public ManifestBundle[] bundles = Array.Empty<ManifestBundle>();
-
-        private readonly Dictionary<string, List<int>> directoryWithAssets = new Dictionary<string, List<int>>();
+        public ManifestGroup[] groups = Array.Empty<ManifestGroup>();
         private readonly Dictionary<string, ManifestAsset> addressWithAssets = new Dictionary<string, ManifestAsset>();
+        private readonly Dictionary<string, List<int>> directoryWithAssets = new Dictionary<string, List<int>>();
+        private readonly Dictionary<string, ManifestBundle> nameWithBundles = new Dictionary<string, ManifestBundle>();
 
         private readonly Dictionary<string, ManifestBundle[]> nameWithDependencies =
             new Dictionary<string, ManifestBundle[]>();
 
-        private readonly Dictionary<string, ManifestBundle> nameWithBundles = new Dictionary<string, ManifestBundle>();
-
-        public void Clear()
-        {
-            dirs = Array.Empty<string>();
-
-            bundles = Array.Empty<ManifestBundle>();
-            assets = Array.Empty<ManifestAsset>();
-
-            addressWithAssets.Clear();
-            directoryWithAssets.Clear();
-            nameWithDependencies.Clear();
-            nameWithBundles.Clear();
-        }
+        private readonly Dictionary<string, ManifestGroup> nameWithGroups = new Dictionary<string, ManifestGroup>();
+        public long time;
 
         public void OnBeforeSerialize()
         {
@@ -99,31 +138,25 @@ namespace xasset
                 }
             }
 
-            if (saveBundleName)
+            foreach (var group in groups)
             {
-                foreach (var bundle in bundles)
-                {
-                    var key = string.IsNullOrEmpty(extension)
-                        ? $"{bundle.name}_{bundle.hash}"
-                        : $"{bundle.name.Replace(extension, string.Empty)}_{bundle.hash}{extension}";
-                    bundle.file = key;
-                    bundle.manifest = this;
-                    nameWithBundles[bundle.name] = bundle;
-                }
-            }
-            else
-            {
-                foreach (var bundle in bundles)
-                {
-                    var key = string.IsNullOrEmpty(extension)
-                        ? $"{bundle.hash}"
-                        : $"{bundle.hash}{extension}";
-                    bundle.file = key;
-                    bundle.manifest = this;
-                    nameWithBundles[bundle.name] = bundle;
-                }
+                group.manifest = this;
+                group.OnDeserialize();
+                nameWithGroups[group.name] = group;
             }
 
+            foreach (var bundle in bundles)
+            {
+                if (string.IsNullOrEmpty(bundle.name))
+                    continue;
+                var extension = Path.GetExtension(bundle.name);
+                var key = string.IsNullOrEmpty(extension)
+                    ? $"{bundle.hash}"
+                    : $"{bundle.hash}{extension}";
+                bundle.file = key;
+                bundle.manifest = this;
+                nameWithBundles[bundle.name] = bundle;
+            }
 
             for (var index = 0; index < assets.Length; index++)
             {
@@ -135,6 +168,21 @@ namespace xasset
                 AddAsset(asset);
                 if (directoryWithAssets.TryGetValue(dir, out var value)) value.Add(index);
             }
+        }
+
+        public void Clear()
+        {
+            dirs = Array.Empty<string>();
+
+            groups = Array.Empty<ManifestGroup>();
+            bundles = Array.Empty<ManifestBundle>();
+            assets = Array.Empty<ManifestAsset>();
+
+            nameWithGroups.Clear();
+            addressWithAssets.Clear();
+            directoryWithAssets.Clear();
+            nameWithDependencies.Clear();
+            nameWithBundles.Clear();
         }
 
         public int[] GetAssets(string dir, bool recursion)
@@ -160,11 +208,7 @@ namespace xasset
 
         private void AddAsset(ManifestAsset asset)
         {
-            if (asset.addressMode == AddressMode.LoadByDependencies)
-            {
-                return;
-            }
-
+            if (asset.addressMode == AddressMode.LoadByDependencies) return;
             addressWithAssets[asset.path] = asset;
             OnReadAsset?.Invoke(asset);
         }
@@ -184,14 +228,14 @@ namespace xasset
             return addressWithAssets.TryGetValue(path, out asset);
         }
 
-        public ManifestBundle GetBundle(string assetPath)
-        {
-            return nameWithBundles.TryGetValue(assetPath, out var bundle) ? bundle : null;
-        }
-
         public ManifestBundle GetBundleWithAsset(string assetPath)
         {
             return TryGetAsset(assetPath, out var value) ? bundles[value.bundle] : null;
+        }
+
+        public ManifestBundle GetBundle(string assetPath)
+        {
+            return nameWithBundles.TryGetValue(assetPath, out var bundle) ? bundle : null;
         }
 
         public ManifestBundle[] GetDependencies(ManifestBundle bundle)
@@ -202,6 +246,11 @@ namespace xasset
                 : Array.ConvertAll(bundle.deps, input => bundles[input]);
             nameWithDependencies[bundle.name] = value;
             return value;
+        }
+
+        public bool TryGetGroups(string group, out ManifestGroup result)
+        {
+            return nameWithGroups.TryGetValue(group, out result);
         }
     }
 }

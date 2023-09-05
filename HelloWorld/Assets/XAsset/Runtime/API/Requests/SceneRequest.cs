@@ -10,7 +10,6 @@ namespace xasset
         private static readonly List<SceneRequest> UnActives = new List<SceneRequest>();
         private static readonly Queue<SceneRequest> Unused = new Queue<SceneRequest>();
         private static readonly List<SceneRequest> Additives = new List<SceneRequest>();
-        private static readonly List<SceneRequest> Unloading = new List<SceneRequest>();
         private bool _allowSceneActivation = true;
         private AsyncOperation _loadAsync;
 
@@ -20,7 +19,7 @@ namespace xasset
         public ManifestAsset info { get; private set; }
         public bool withAdditive { get; private set; }
         public override int priority => 1;
-        
+
         public bool allowSceneActivation
         {
             get => _allowSceneActivation;
@@ -37,12 +36,13 @@ namespace xasset
         public static Func<ISceneHandler> CreateHandler { get; set; } =
             RuntimeSceneHandler.CreateInstance;
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public static SceneRequest main { get; private set; }
 
         protected override void OnStart()
         {
-            References.Retain(path);
             handler.OnStart(this);
+            ReferencesCounter.Retain(path);
         }
 
         protected override void OnWaitForCompletion()
@@ -53,30 +53,29 @@ namespace xasset
         public override void RecycleAsync()
         {
             if (!withAdditive || !Additives.Contains(this)) return;
-            var scene = SceneManager.GetSceneByPath(path);
-            if (!scene.IsValid()) return;
-            _unloadAsync = SceneManager.UnloadSceneAsync(scene.name);
-            Unloading.Add(this);
+            for (var i = SceneManager.sceneCount - 1; i > 0; i--)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (!scene.IsValid() || !scene.isLoaded || scene.path != path) continue;
+                _unloadAsync = SceneManager.UnloadSceneAsync(scene);
+                return;
+            }
         }
 
         public override bool CanRecycle()
         {
-            if (!isDone) return false;
+            if (!isDone || refCount > 0) return false;
             if (main != null && !main.isDone) return false;
             if (!allowSceneActivation)
                 allowSceneActivation = true;
-            if (_loadAsync != null && !_loadAsync.isDone)
-                return false;
-            return Unloading.Count == 0;
+            return _loadAsync == null || _loadAsync.isDone;
         }
 
         public override bool Recycling()
         {
             if (_unloadAsync == null) return false;
             if (_loadAsync != null && !_loadAsync.isDone) return true;
-            if (!_unloadAsync.isDone) return true;
-            Unloading.Remove(this);
-            return false;
+            return !_unloadAsync.isDone;
         }
 
         protected override void OnUpdated()
@@ -133,7 +132,7 @@ namespace xasset
 
         protected override void OnDispose()
         {
-            References.Release(path);
+            ReferencesCounter.Release(path);
             allowSceneActivation = true;
             _loadAsync = null;
             _unloadAsync = null;
@@ -145,7 +144,11 @@ namespace xasset
 
         internal static SceneRequest LoadInternal(string path, bool withAdditive)
         {
-            if (!Assets.TryGetAsset(ref path, out var info)) return null;
+            if (!Assets.TryGetAsset(ref path, out var info)) 
+            {
+                Logger.E($"File not found {path}.");    
+                return null;
+            }
 
             var request = Unused.Count > 0 ? Unused.Dequeue() : new SceneRequest();
             request.Reset();

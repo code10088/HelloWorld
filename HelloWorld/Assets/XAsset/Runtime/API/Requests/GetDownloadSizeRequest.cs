@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace xasset
 {
@@ -12,7 +10,7 @@ namespace xasset
 
         public Versions versions { get; set; }
         public ulong downloadSize { get; private set; }
-        public string[] include { get; set; }
+        public string[] assets { get; set; }
 
         public DownloadRequestBase DownloadAsync()
         {
@@ -30,37 +28,44 @@ namespace xasset
             {
                 SetResult(Result.Success);
                 return;
-            }
-
-            foreach (var version in versions.data)
-            {
-                if (include == null)
+            } 
+            var set = new HashSet<ManifestBundle>();
+            if (assets.Length == 0)
+                foreach (var version in versions.data)
                 {
                     var bundles = version.manifest.bundles;
-                    _bundles.AddRange(bundles);
+                    foreach (var bundle in bundles)
+                        set.Add(bundle);
                 }
-                else
-                {
-                    List<int> result = new List<int>();
-                    var assets = version.manifest.assets;
-                    for (int i = 0; i < assets.Length; i++)
+            else
+                foreach (var path in assets)
+                    if (versions.TryGetGroups(path, out var groups))
                     {
-                        if (include.Contains(assets[i].name)) Exclude(i, assets, result);
+                        foreach (var group in groups)
+                        foreach (var asset in group.assets)
+                        {
+                            var bundles = group.manifest.bundles;
+                            var bundle = bundles[asset];
+                            set.Add(bundle); 
+                            foreach (var dep in bundle.deps)
+                                set.Add(bundles[dep]);
+                        }
                     }
-                    for (int i = 0; i < result.Count; i++)
+                    else
                     {
-                        _bundles.Add(version.manifest.bundles[result[i]]);
+                        if (!versions.TryGetAssets(path, out var value)) continue;
+                        foreach (var asset in value)
+                        {
+                            var bundles = asset.manifest.bundles;
+                            var bundle = bundles[asset.bundle];
+                            set.Add(bundle);
+                            foreach (var dep in bundle.deps)
+                                set.Add(bundles[dep]);
+                        }
                     }
-                }
-            }
 
+            _bundles.AddRange(set); 
             _max = _bundles.Count;
-        }
-        private void Exclude(int id, ManifestAsset[] asset, List<int> result)
-        {
-            if (result.Contains(asset[id].bundle)) return;
-            result.Add(asset[id].bundle);
-            foreach (var item in asset[id].deps) Exclude(item, asset, result);
         }
 
         protected override void OnUpdated()
@@ -71,22 +76,21 @@ namespace xasset
                 AddContent(_bundles[0]);
                 _bundles.RemoveAt(0);
                 if (Scheduler.Busy) return;
-            }
-
+            } 
             SetResult(Result.Success);
         }
 
-        private void AddContent(ManifestBundle bundle)
+        private void AddContent(Downloadable file)
         {
-            var url = Assets.GetDownloadURL(bundle.file);
-            var savePath = Assets.GetDownloadDataPath(bundle.file);
-            var content = DownloadContent.Get(url, savePath, bundle.hash, bundle.size);
-            content.status = DownloadContent.Status.Default;
+            var url = Assets.GetDownloadURL(file.file);
+            var savePath = Assets.GetDownloadDataPath(file.file);
+            var content = DownloadContent.Get(url, savePath, file.hash, file.size);
             _contents.Add(content);
-            if (!Assets.IsPlayerAsset(bundle.hash) && !Assets.IsDownloaded(bundle))
+            Logger.I($"AddContent {file.file} {Assets.IsDownloaded(file)}");
+            if (!Assets.IsDownloaded(file))
                 downloadSize += content.downloadSize;
             else
                 content.status = DownloadContent.Status.Downloaded;
-        }
+        } 
     }
 }

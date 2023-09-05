@@ -9,14 +9,30 @@ namespace xasset
         private static readonly Queue<Dependencies> Unused = new Queue<Dependencies>();
         private readonly List<BundleRequest> _bundles = new List<BundleRequest>();
         private readonly List<BundleRequest> _loading = new List<BundleRequest>();
-        public ManifestAsset asset { get; set; }
         private BundleRequest _bundleRequest;
         private int _refCount;
+        public ManifestAsset asset { get; set; }
         public bool isDone => _loading.Count == 0;
         public float progress => (_bundles.Count - _loading.Count) * 1f / _bundles.Count;
 
-        private BundleRequest Load(ManifestBundle bundle)
+        public void ReloadAsync()
         {
+            ClearAll();
+            LoadAll();
+        }
+
+        public void OnReloaded()
+        {
+        }
+
+        public bool IsReloaded()
+        {
+            Update();
+            return isDone;
+        }
+
+        private BundleRequest Load(ManifestBundle bundle)
+        { 
             var request = BundleRequest.Load(bundle);
             _bundles.Add(request);
             _loading.Add(request);
@@ -25,11 +41,7 @@ namespace xasset
 
         private void LoadAsync()
         {
-            if (_refCount == 0)
-            {
-                LoadAll();
-            }
-
+            if (_refCount == 0) LoadAll();
             _refCount++;
         }
 
@@ -37,7 +49,8 @@ namespace xasset
         {
             var bundles = asset.manifest.bundles;
             var bundle = bundles[asset.bundle];
-            _bundleRequest = Load(bundle);
+            _bundleRequest = Load(bundles[asset.bundle]);
+            if (bundle.deps == null || bundle.deps.Length <= 0) return;
             foreach (var dep in bundle.deps)
                 Load(bundles[dep]);
         }
@@ -111,22 +124,6 @@ namespace xasset
                 _loading.RemoveAt(index);
                 index--;
             }
-        }
-
-        public void ReloadAsync()
-        {
-            ClearAll();
-            LoadAll();
-        }
-
-        public void OnReloaded()
-        {
-        }
-
-        public bool IsReloaded()
-        {
-            Update();
-            return isDone;
         }
     }
 }

@@ -1,0 +1,130 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f710e0f2414f0ae47803f57c4ef683c4, type: 3}
+  m_Name: PackedAssets
+  m_EditorClassIdentifier: 
+  data:
+  - asset: Assets/ZRes/Assembly/HotAssembly.bytes
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: assembly_hotassembly_bytes.bundle
+  - asset: Assets/ZRes/Assembly/mscorlib.bytes
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: assembly_mscorlib_bytes.bundle
+  - asset: Assets/ZRes/Assembly/protobuf-net.bytes
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: assembly_protobuf_net_bytes.bundle
+  - asset: Assets/ZRes/DataConfig/tbdeviceinfo.bytes
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: dataconfig_tbdeviceinfo_bytes.bundle
+  - asset: Assets/ZRes/DataConfig/tbplayeravatarpart.bytes
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: dataconfig_tbplayeravatarpart_bytes.bundle
+  - asset: Assets/ZRes/DataConfig/tbsceneconfig.bytes
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: dataconfig_tbsceneconfig_bytes.bundle
+  - asset: Assets/ZRes/DataConfig/tbuiconfig.bytes
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: dataconfig_tbuiconfig_bytes.bundle
+  - asset: Assets/ZRes/Debug/IngameDebugConsole.prefab
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: debug_ingamedebugconsole_prefab.bundle
+  - asset: Assets/ZRes/Font/MSYG/MSYG_Simply SDF - Fallback.asset
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: font_msyg.bundle
+  - asset: Assets/ZRes/Font/MSYG/MSYG_Simply SDF - Outline.mat
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: font_msyg.bundle
+  - asset: Assets/ZRes/Font/MSYG/MSYG_Simply SDF.asset
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: font_msyg.bundle
+  - asset: Assets/ZRes/Font/MSYG/MSYG_Simply.ttf
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: font_msyg.bundle
+  - asset: "Assets/ZRes/Font/\u5E38\u7528\u5B57.txt"
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: font.bundle
+  - asset: Assets/ZRes/GameConfig/HotUpdateConfig.txt
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: gameconfig_hotupdateconfig_txt.bundle
+  - asset: Assets/ZRes/Scene/TestScene.prefab
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: scene_testscene_prefab.bundle
+  - asset: Assets/ZRes/UI/Atlas/Test/TestIcon.png
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: atlas_test.bundle
+  - asset: Assets/ZRes/UI/Atlas/Test/TestIcon2.png
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: atlas_test.bundle
+  - asset: Assets/ZRes/UI/Atlas/Test/TestIcon3.png
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: atlas_test.bundle
+  - asset: Assets/ZRes/UI/Prefab/TestBullet.prefab
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: prefab_testbullet_prefab.bundle
+  - asset: Assets/ZRes/UI/Prefab/UIHotUpdateRes.prefab
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: prefab_uihotupdateres_prefab.bundle
+  - asset: Assets/ZRes/UI/Prefab/UIMessageBox.prefab
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: prefab_uimessagebox_prefab.bundle
+  - asset: Assets/ZRes/UI/Prefab/UISubTest.prefab
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: prefab_uisubtest_prefab.bundle
+  - asset: Assets/ZRes/UI/Prefab/UITest.prefab
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: prefab_uitest_prefab.bundle

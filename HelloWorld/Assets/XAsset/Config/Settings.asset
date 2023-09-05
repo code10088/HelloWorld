@@ -9,35 +9,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a764f4aad4f646c4b59cfad907af36c9, type: 3}
+  m_Script: {fileID: 11500000, guid: 4386c364978186d4491c8866005cfdca, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
+  playMode: 2
   player:
-    collectAllAssets: 0
-    simulationMode: 0
+    assetsSplitMode: 2
     updatable: 1
     updateInfoURL: http://192.168.7.133/BundlesCache
     downloadURL: http://192.168.7.133/Bundles
     playerURL: http://192.168.7.133/Build/xasset.apk
-    splitMode: 2
-    packed: 0
     logLevel: 0
     maxDownloads: 5
     maxRetryTimes: 3
     maxRequests: 10
-    autoSlicing: 1
-    autoSliceTimestep: 0.0625
-    autoRecycleTimestep: 0.7
+    autoslicing: 1
+    autoslicingTimestep: 0.010000001
+    autoreleaseTimestep: 0.7
   bundle:
-    encryption: 1
     checkReference: 1
-    saveBundleName: 0
-    splitBundleNameWithBuild: 0
+    options: 12544
     packByFileForAllScenes: 0
     packTogetherForAllShaders: 1
-    buildAssetPackAssets: 0
     forceUseBuiltinPipeline: 0
-    maxAssetPackSize: 20971520
     extension: .bundle
     shaders:
     - .shader

@@ -90,7 +90,6 @@ namespace xasset
         {
             //TODO: 这里可以使用第三方的 hash 库优化性能。
             if (!File.Exists(filename)) return string.Empty;
-
             using (var stream = File.OpenRead(filename))
             {
                 return ToHash(MD5.Create().ComputeHash(stream));

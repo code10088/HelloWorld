@@ -9,15 +9,39 @@ namespace xasset
     {
         private static readonly Queue<AssetRequest> Unused = new Queue<AssetRequest>();
         internal static readonly Dictionary<string, AssetRequest> Loaded = new Dictionary<string, AssetRequest>();
-        private IAssetHandler handler { get; } = CreateHandler();
-        public override int priority => 1;
+
+        // ReSharper disable once MemberCanBePrivate.Global
+        public IAssetHandler handler { get; } = CreateHandler();
+
         public Object asset { get; set; }
         public Object[] assets { get; set; }
         public bool isAll { get; private set; }
         public ManifestAsset info { get; internal set; }
         public Type type { get; private set; }
+        public override int priority => 1;
 
         public static Func<IAssetHandler> CreateHandler { get; set; } = RuntimeAssetHandler.CreateInstance;
+
+        // ReSharper disable once MemberCanBePrivate.Global
+        public Action reloaded { get; set; }
+
+        public void ReloadAsync()
+        {
+            status = Status.Processing;
+            handler.OnReload(this);
+        }
+
+        public void OnReloaded()
+        {
+            reloaded?.Invoke();
+            reloaded = null;
+        }
+
+        public bool IsReloaded()
+        {
+            OnUpdated();
+            return isDone;
+        }
 
         protected override void OnStart()
         {
@@ -38,7 +62,7 @@ namespace xasset
         {
             Remove(this);
             handler.Dispose(this);
-            if (References.Release(path) <= 0)
+            if (ReferencesCounter.Release(path) <= 0)
             {
                 if (isAll)
                 {
@@ -66,14 +90,22 @@ namespace xasset
 
         internal static T Get<T>(string path) where T : Object
         {
-            if (!Assets.TryGetAsset(ref path, out _)) return null;
+            if (!Assets.TryGetAsset(ref path, out _)) 
+            {
+                Logger.E($"File not found {path}.");    
+                return null;
+            }
             if (!Loaded.TryGetValue($"{path}[{typeof(T).Name}]", out var request)) return null;
             return request.asset as T;
         }
 
         internal static T[] GetAll<T>(string path) where T : Object
         {
-            if (!Assets.TryGetAsset(ref path, out _)) return null;
+            if (!Assets.TryGetAsset(ref path, out _)) 
+            {
+                Logger.E($"File not found {path}.");    
+                return null;
+            }
             if (!Loaded.TryGetValue($"{path}[{typeof(T).Name}]", out var request)) return null;
             return request.assets as T[];
         }
@@ -100,30 +132,10 @@ namespace xasset
             }
 
             if (request.refCount == 1)
-                References.Retain(path);
+                ReferencesCounter.Retain(path);
 
             request.LoadAsync();
             return request;
-        }
-
-        public void ReloadAsync()
-        {
-            status = Status.Processing;
-            handler.OnReload(this);
-        }
-
-        public Action reloaded { get; set; }
-
-        public void OnReloaded()
-        {
-            reloaded?.Invoke();
-            reloaded = null;
-        }
-
-        public bool IsReloaded()
-        {
-            OnUpdated();
-            return isDone;
         }
     }
 }

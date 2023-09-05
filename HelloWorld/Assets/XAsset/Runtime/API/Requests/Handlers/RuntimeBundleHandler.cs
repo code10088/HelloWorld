@@ -22,8 +22,7 @@ namespace xasset
         public void WaitForCompletion(BundleRequest request)
         {
         }
-    }
-
+    } 
     internal struct RuntimeDownloadBundleHandler : IBundleHandler
     {
         private DownloadRequest _downloadAsync;
@@ -60,8 +59,11 @@ namespace xasset
                 return;
             }
 
+            // 网络不可达的时候，如果是异步加载，可以提示用户检查网络链接。
+
             request.SetResult(Request.Result.Failed, _downloadAsync.error);
         }
+
 
         public void Dispose(BundleRequest request)
         {

@@ -11,7 +11,7 @@ namespace xasset
         private DownloadRequestBatch _contents;
         private DownloadRequest _download;
         private int _retryTimes;
-        private Step _step = Step.DownloadHeader;
+        private Step _step = Step.HeaderDownloading;
         public Versions versions { get; private set; }
         public string url { get; set; }
         public string hash { get; set; }
@@ -20,19 +20,19 @@ namespace xasset
         protected override void OnStart()
         {
             AllRequests.Add(this);
-
             if (!Assets.Updatable)
             {
                 SetResult(Result.Success);
                 return;
             }
 
+            _retryTimes = 0;
             if (string.IsNullOrEmpty(url)) url = Assets.GetDownloadURL(Versions.Filename);
             var savePath = Assets.GetTemporaryCachePath(Versions.Filename);
             var content = DownloadContent.Get(url, savePath, hash, size);
             content.Clear();
             _download = Downloader.DownloadAsync(content);
-            _step = Step.DownloadHeader;
+            _step = Step.HeaderDownloading;
         }
 
         protected override void OnUpdated()
@@ -42,13 +42,13 @@ namespace xasset
 
             switch (_step)
             {
-                case Step.DownloadHeader:
+                case Step.HeaderDownloading:
                     UpdateDownloadHeader();
                     break;
-                case Step.DownloadContents:
+                case Step.ContentsDownloading:
                     UpdateDownloadContents();
                     break;
-                case Step.LoadContents:
+                case Step.ContentsLoading:
                     UpdateLoadVersions();
                     break;
                 default:
@@ -62,16 +62,10 @@ namespace xasset
             {
                 var version = queue.Dequeue();
                 if (Assets.Versions.TryGetVersion(version.name, out var value) && value.hash.Equals(version.hash))
-                {
                     version.manifest = value.manifest;
-                }
                 else
-                {
-                    var path = Assets.GetDownloadDataPath(version.file);
-                    var manifest = Utility.LoadFromFile<Manifest>(path);
-                    manifest.name = version.file;
-                    version.manifest = manifest;
-                }
+                    version.Load(Assets.GetDownloadDataPath(version.file));
+
 
                 if (Scheduler.Busy) return;
             }
@@ -101,7 +95,7 @@ namespace xasset
 
             foreach (var version in versions.data) queue.Enqueue(version);
 
-            _step = Step.LoadContents;
+            _step = Step.ContentsLoading;
         }
 
         private void UpdateDownloadHeader()
@@ -141,12 +135,12 @@ namespace xasset
                 }
 
                 _contents.SendRequest();
-                _step = Step.DownloadContents;
+                _step = Step.ContentsDownloading;
             }
             else
             {
                 foreach (var version in versions.data) queue.Enqueue(version);
-                _step = Step.LoadContents;
+                _step = Step.ContentsLoading;
             }
         }
 
@@ -157,9 +151,9 @@ namespace xasset
 
         private enum Step
         {
-            DownloadHeader,
-            DownloadContents,
-            LoadContents
+            HeaderDownloading,
+            ContentsDownloading,
+            ContentsLoading
         }
     }
 }

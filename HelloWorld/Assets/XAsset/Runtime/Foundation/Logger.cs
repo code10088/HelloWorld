@@ -1,6 +1,6 @@
 using System.Diagnostics;
+using UnityEngine;
 using Debug = UnityEngine.Debug;
-using Object = UnityEngine.Object;
 
 namespace xasset
 {
@@ -9,14 +9,15 @@ namespace xasset
         Debug,
         Info,
         Warning,
-        Error
+        Error,
+        None
     }
 
     public static class Logger
     {
         private const string TAG = "[xasset]";
-
         public static LogLevel LogLevel { get; set; } = LogLevel.Debug;
+
 
         [Conditional("DEBUG")]
         public static void D(object msg, Object context = null)
@@ -25,6 +26,7 @@ namespace xasset
                 Debug.Log($"{TAG} {msg}", context);
         }
 
+        [Conditional("DEBUG")]
         public static void I(object msg, Object context = null)
         {
             if (LogLevel <= LogLevel.Info)

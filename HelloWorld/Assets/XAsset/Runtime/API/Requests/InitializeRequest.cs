@@ -115,10 +115,12 @@ namespace xasset
             }
 
             Logger.D($"API Version:{Assets.APIVersion}");
-            Logger.D($"Simulation Mode: {Assets.SimulationMode}");
+            Logger.D($"Unity Version:{Application.unityVersion}");
+            Logger.D($"Realtime Mode: {Assets.RealtimeMode}");
             Logger.D($"Updatable: {Assets.Updatable}");
             Logger.D($"Versions: {Assets.Versions}");
-            Logger.D($"Platform: {Assets.Platform}");
+            Logger.D($"Download URL: {Assets.DownloadURL}");
+            Logger.D($"Player Data Path: {Assets.PlayerDataPath}");
         }
     }
 }

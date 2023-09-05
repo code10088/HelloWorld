@@ -16,23 +16,33 @@ namespace xasset
             return $"{name.ToLower()}_{hash}.json";
         }
 
-        public void Load(string path)
+        public Manifest Load(string path)
         {
-            manifest = Utility.LoadFromFile<Manifest>(path);
+            if (manifest != null)
+                return manifest;
+
+            var bundle = AssetBundle.LoadFromFile(path);
+            if (bundle == null)
+            {
+                Debug.LogError($"File not found {path}");
+                return ScriptableObject.CreateInstance<Manifest>();
+            }
+
+            var assetPath = $"Assets/{name}.asset";
+            manifest = bundle.LoadAsset<Manifest>(assetPath);
+            manifest.name = name;
+            bundle.Unload(false);
+            return manifest;
         }
     }
 
     public class Versions : ScriptableObject, ISerializationCallbackReceiver
     {
         public const string Filename = "versions.json";
+        public const string BundleFilename = "bundle-versions.json";
         public long timestamp;
         public List<Version> data = new List<Version>();
         private Dictionary<string, Version> _data = new Dictionary<string, Version>();
-
-        public bool IsNew(Versions v)
-        {
-            return timestamp > v.timestamp;
-        }
 
         public void OnBeforeSerialize()
         {
@@ -48,6 +58,11 @@ namespace xasset
             }
         }
 
+        public bool IsNew(Versions v)
+        {
+            return timestamp > v.timestamp;
+        }
+
         public string GetFilename()
         {
             return $"versions_v{ToString()}.json";
@@ -61,10 +76,7 @@ namespace xasset
 
         public void Set(Version value)
         {
-            if (!_data.ContainsKey(value.name))
-            {
-                data.Add(value);
-            }
+            if (!_data.ContainsKey(value.name)) data.Add(value);
 
             _data[value.name] = value;
             timestamp = DateTime.Now.ToFileTime();
@@ -125,6 +137,16 @@ namespace xasset
             return false;
         }
 
+        public bool TryGetGroups(string group, out ManifestGroup[] result)
+        {
+            var groups = new List<ManifestGroup>();
+            foreach (var version in data)
+                if (version.manifest.TryGetGroups(group, out var value))
+                    groups.Add(value);
+            result = groups.ToArray();
+            return groups.Count > 0;
+        }
+
         public ManifestBundle GetBundle(string bundle)
         {
             foreach (var version in data)
@@ -135,6 +157,14 @@ namespace xasset
             }
 
             return null;
+        }
+
+
+        public GetDownloadSizeRequest GetDownloadSizeAsync(params string[] assets)
+        {
+            var request = new GetDownloadSizeRequest { assets = assets, versions = this };
+            request.SendRequest();
+            return request;
         }
     }
 }

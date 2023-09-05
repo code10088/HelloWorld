@@ -30,9 +30,8 @@ namespace xasset
             if (string.IsNullOrEmpty(_request.error))
             {
                 info = Utility.LoadFromJson<UpdateInfo>(_request.downloadHandler.text);
-
-                // Web GL 直接读取 PlayerDataPath
-                if (Assets.IsWebGLPlatform && !Application.isEditor)
+                // Web GL 直接读取 Player Data Path
+                if (!Application.isEditor && Assets.IsWebGLPlatform)
                     Assets.DownloadURL = info.downloadURL;
 
                 // 版本文件未发生更新
@@ -51,6 +50,16 @@ namespace xasset
 
         protected override void OnCompleted()
         {
+            _request?.Dispose();
+            _request = null;
+        }
+
+        public VersionsRequest GetVersionsAsync()
+        {
+            var request = new VersionsRequest
+                { url = Assets.GetDownloadURL(info.file), hash = info.hash, size = info.size };
+            request.SendRequest();
+            return request;
         }
     }
 }

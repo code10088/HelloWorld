@@ -5,28 +5,28 @@ namespace xasset
 {
     /// <summary>
     ///     支持自动切片的调度器，可以对单帧密集的更新操作进行负载均衡处理。
-    /// </summary> 
+    /// </summary>
     public class Scheduler : MonoBehaviour
     {
         private static readonly Dictionary<string, RequestQueue> _Queues = new Dictionary<string, RequestQueue>();
         private static readonly List<RequestQueue> Queues = new List<RequestQueue>();
         private static readonly Queue<RequestQueue> Append = new Queue<RequestQueue>();
         private static float _realtimeSinceStartup;
-        public static bool AutoSlicing { get; set; } = true;
+
+        private static byte _updateMaxRequests = MaxRequests;
+        public static bool Autoslicing { get; set; } = true;
         public static bool Working => Queues.Exists(o => o.working);
 
         public static bool Busy =>
-            AutoSlicing && Time.realtimeSinceStartup - _realtimeSinceStartup > AutoSliceTimestep;
+            Autoslicing && Time.realtimeSinceStartup - _realtimeSinceStartup > AutoslicingTimestep;
 
-        public static float AutoSliceTimestep { get; set; } = 1f / 60f;
+        public static float AutoslicingTimestep { get; set; } = 1f / 60f;
         public static byte MaxRequests { get; set; } = 10;
 
         private void Start()
         {
             DontDestroyOnLoad(gameObject);
         }
-
-        private static byte updateMaxRequests { get; set; } = 10;
 
         private void Update()
         {
@@ -39,22 +39,28 @@ namespace xasset
                     Queues.Add(item);
                 }
 
-                Queues.Sort((x, y) => x.priority.CompareTo(y.priority));
+                Queues.Sort(Comparison);
             }
 
             foreach (var queue in Queues)
                 if (!queue.Update())
                     break;
 
-            if (updateMaxRequests != MaxRequests)
-            {
-                foreach (var queue in Queues)
-                {
-                    queue.maxRequests = MaxRequests;
-                }
+            ResizeIfNeed();
+        }
 
-                updateMaxRequests = MaxRequests;
-            }
+        private static int Comparison(RequestQueue x, RequestQueue y)
+        {
+            return x.priority.CompareTo(y.priority);
+        }
+
+        private static void ResizeIfNeed()
+        {
+            if (_updateMaxRequests == MaxRequests) return;
+
+            foreach (var queue in Queues) queue.maxRequests = MaxRequests;
+
+            _updateMaxRequests = MaxRequests;
         }
 
         public static void Enqueue(Request request)
@@ -65,7 +71,6 @@ namespace xasset
                 queue = new RequestQueue { key = key, maxRequests = MaxRequests, priority = request.priority };
                 _Queues.Add(key, queue);
                 Append.Enqueue(queue);
-                // TODO: 这里可以考虑给 Request 加个优先级。
             }
 
             queue.Enqueue(request);

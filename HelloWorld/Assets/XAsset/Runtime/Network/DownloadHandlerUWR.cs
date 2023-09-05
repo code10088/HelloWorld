@@ -1,4 +1,5 @@
 using System.IO;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace xasset
@@ -28,6 +29,7 @@ namespace xasset
 
         public void OnStart()
         {
+            _step = Step.GetContent;
             StartDownload();
         }
 
@@ -59,13 +61,16 @@ namespace xasset
 
         private void StartDownload()
         {
-            if (Assets.SimulationMode)
+            if (!DownloadRequest.Resumable)
             {
                 // 本地仿真的时候不支持断点续传。
                 _request.downloadedBytes = 0;
-                var path = _request.url.Replace(Assets.Protocol, string.Empty);
-                var file = new FileInfo(path);
-                if (file.Exists) _request.OnGetDownloadSize((ulong)file.Length);
+                if (Application.isEditor)
+                {
+                    var path = _request.url.Replace(Assets.Protocol, string.Empty);
+                    var file = new FileInfo(path);
+                    if (file.Exists) _request.OnGetDownloadSize((ulong)file.Length);
+                }
                 GetContentRequest();
             }
             else

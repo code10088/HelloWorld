@@ -8,13 +8,18 @@ namespace xasset
     {
         private static readonly List<DownloadRequestBatch> Progressing = new List<DownloadRequestBatch>();
         private static readonly Queue<DownloadRequestBatch> Unused = new Queue<DownloadRequestBatch>();
+
+        // ReSharper disable once MemberCanBePrivate.Global
         public readonly Dictionary<string, DownloadContent> contents = new Dictionary<string, DownloadContent>();
         private readonly Queue<DownloadContent> queue = new Queue<DownloadContent>();
         private readonly List<DownloadRequest> working = new List<DownloadRequest>();
 
+        private int _retryTimes;
+
         private ulong _successDownloadedBytes;
+
+        // ReSharper disable once MemberCanBePrivate.Global
         public Action<DownloadRequestBatch> completed { get; set; }
-        public Action<DownloadRequestBatch> updated { get; set; } = null;
 
         public static DownloadRequestBatch Create()
         {
@@ -49,8 +54,6 @@ namespace xasset
             BeganSample();
         }
 
-        private byte _retryTimes;
-
         private bool Update()
         {
             if (status == Status.Paused) return true;
@@ -84,11 +87,13 @@ namespace xasset
 
             downloadedBytes = size + _successDownloadedBytes;
             progress = downloadedBytes * 1f / downloadSize;
-            updated?.Invoke(this);
+
             if (working.Count > failed) return true;
 
             if (failed == 0)
+            {
                 SetResult(Result.Success);
+            }
             else
             {
                 // 网络可达才自动 Retry

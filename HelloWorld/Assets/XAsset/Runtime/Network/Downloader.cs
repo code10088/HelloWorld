@@ -17,6 +17,7 @@ namespace xasset
         public static bool IsDownloading => Queue.Count > 0 || Progressing.Count > 0;
         public static bool Paused { get; private set; }
 
+
         private void Update()
         {
             UpdateAll();

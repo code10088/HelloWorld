@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfaba0a0f7653d148b59dd819e6365b8, type: 3}
+  m_Name: ZRes
+  m_EditorClassIdentifier: 
+  id: 0
+  enabled: 1
+  parameters:
+    buildNumber: 0
+    optimizeDependencies: 0
+    options: 12544
+  groups:
+  - name: 
+    id: 0
+    enabled: 1
+    deliveryMode: 2
+    assets:
+    - asset: Assets/ZRes/Assembly
+      bundleMode: 1
+      addressMode: 2
+      filter: 
+      bundle: 
+    - asset: Assets/ZRes/DataConfig
+      bundleMode: 1
+      addressMode: 2
+      filter: 
+      bundle: 
+    - asset: Assets/ZRes/Debug
+      bundleMode: 1
+      addressMode: 2
+      filter: 
+      bundle: 
+    - asset: Assets/ZRes/Font
+      bundleMode: 4
+      addressMode: 2
+      filter: 
+      bundle: 
+    - asset: Assets/ZRes/GameConfig
+      bundleMode: 1
+      addressMode: 2
+      filter: 
+      bundle: 
+    - asset: Assets/ZRes/Scene
+      bundleMode: 1
+      addressMode: 2
+      filter: 
+      bundle: 
+    - asset: Assets/ZRes/UI/Atlas
+      bundleMode: 4
+      addressMode: 2
+      filter: 
+      bundle: 
+    - asset: Assets/ZRes/UI/Prefab
+      bundleMode: 1
+      addressMode: 2
+      filter: 
+      bundle: 
+    desc: 
