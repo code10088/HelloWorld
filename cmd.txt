@@ -20,6 +20,7 @@ windows
 			top -d 1 | grep <package | pid>
 		选择字体
 			java -jar sfnttool.jar -s 'abc' OPPOSans-M-2.ttf CN-Simple.ttf
+			使用sfnttool时‘’“”''""必须成对出现
 		adb端口被占用
 			查进程netstat -ano | findstr :5037
 			杀进程taskkill -f -pid xxx
