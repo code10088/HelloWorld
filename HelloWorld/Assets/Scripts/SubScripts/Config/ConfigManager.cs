@@ -47,7 +47,7 @@ namespace HotAssembly
                 finish = _finish;
                 string tempPath = fi.Name.ToLower();
                 tb = fi.GetValue(Instance.GameConfigs) as TbBase;
-                loadId = AssetManager.Instance.Load<TextAsset>(tempPath, Deserialize);
+                AssetManager.Instance.Load<TextAsset>(ref loadId, tempPath, Deserialize);
             }
             private void Deserialize(int id, Object asset)
             {

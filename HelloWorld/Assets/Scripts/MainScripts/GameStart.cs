@@ -21,7 +21,8 @@ namespace MainAssembly
         {
 #if DEBUG
             GameDebug.showLog = true;
-            AssetManager.Instance.Load<GameObject>("IngameDebugConsole", (a,b)=>
+            int loadId = -1;
+            AssetManager.Instance.Load<GameObject>(ref loadId, "IngameDebugConsole", (a,b)=>
             {
                 Instantiate(b);
                 HotUpdate();
@@ -37,7 +38,8 @@ namespace MainAssembly
         }
         private void LoadHotUpdateConfig()
         {
-            AssetManager.Instance.Load<TextAsset>("HotUpdateConfig", LoadMetadataRes);
+            int loadId = -1;
+            AssetManager.Instance.Load<TextAsset>(ref loadId, "HotUpdateConfig", LoadMetadataRes);
         }
         private void LoadMetadataRes(int id, Object asset)
         {
@@ -46,7 +48,7 @@ namespace MainAssembly
             var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
             string[] path = new string[config.Metadata.Count];
             for (int i = 0; i < path.Length; i++) path[i] = Path.GetFileNameWithoutExtension(config.Metadata[i]);
-            loadId = AssetManager.Instance.Load(path, LoadMetadataForAOTAssembly);
+            AssetManager.Instance.Load(ref loadId, path, LoadMetadataForAOTAssembly);
         }
         private void LoadMetadataForAOTAssembly(string[] path, Object[] assets)
         {

@@ -89,18 +89,21 @@ namespace HotAssembly
         #region 扩展方法
         protected void SetSprite(Image image, string name)
         {
-            int id = AssetManager.Instance.Load<Sprite>(name, (a, b) => image.sprite = (Sprite)b);
-            loaders.Add(id);
+            int loadId = -1;
+            AssetManager.Instance.Load<Sprite>(ref loadId, name, (a, b) => image.sprite = (Sprite)b);
+            loaders.Add(loadId);
         }
         protected void SetSprite(RawImage image, string name)
         {
-            int id = AssetManager.Instance.Load<Texture>(name, (a, b) => image.texture = (Texture)b);
-            loaders.Add(id);
+            int loadId = -1;
+            AssetManager.Instance.Load<Texture>(ref loadId, name, (a, b) => image.texture = (Texture)b);
+            loaders.Add(loadId);
         }
         protected void LoadPrefab(string name, Action<GameObject> finish)
         {
-            int id = AssetManager.Instance.Load<GameObject>(name, (a, b) => finish?.Invoke((GameObject)b));
-            loaders.Add(id);
+            int loadId = -1;
+            AssetManager.Instance.Load<GameObject>(ref loadId, name, (a, b) => finish?.Invoke((GameObject)b));
+            loaders.Add(loadId);
         }
         protected GameObject Instantiate(GameObject obj, Transform parent = null)
         {

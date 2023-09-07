@@ -20,8 +20,7 @@ namespace MainAssembly
         }
         public void SetBg(string name)
         {
-            AssetManager.Instance.Unload(loadId);
-            loadId = AssetManager.Instance.Load<Texture>(name, LoadBg);
+            AssetManager.Instance.Load<Texture>(ref loadId, name, LoadBg);
         }
         private void LoadBg(int id, Object asset)
         {

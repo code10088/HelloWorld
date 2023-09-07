@@ -22,19 +22,21 @@ public class AssetManager : Singletion<AssetManager>
         initFinish?.Invoke();
     }
 
-    public int Load<T>(string path, Action<int, Object> action = null) where T : Object
+    public void Load<T>(ref int loadId, string path, Action<int, Object> action = null) where T : Object
     {
+        if (loadId > 0) Unload(loadId);
         AssetItem temp = cache.Count > 0 ? cache.Dequeue() : new();
         temp.Init<T>(path, action);
         total[temp.ItemID] = temp;
-        return temp.ItemID;
+        loadId = temp.ItemID;
     }
-    public int Load(string[] path, Action<string[], Object[]> action = null)
+    public void Load(ref int loadId, string[] path, Action<string[], Object[]> action = null)
     {
+        if (loadId > 0) Unload(loadId);
         AssetItemGroup temp = new();
         temp.Init(path, action);
         group[temp.ItemID] = temp;
-        return temp.ItemID;
+        loadId = temp.ItemID;
     }
     public void Unload(int id)
     {
@@ -77,7 +79,7 @@ public class AssetManager : Singletion<AssetManager>
             this.action = action;
             ids = new int[path.Length];
             assets = new Object[path.Length];
-            for (int i = 0; i < path.Length; i++) ids[i] = Instance.Load<Object>(path[i], Finish);
+            for (int i = 0; i < path.Length; i++) Instance.Load<Object>(ref ids[i], path[i], Finish);
         }
         private void Finish(int id, Object asset)
         {
@@ -132,7 +134,7 @@ public class LoadGameObjectItem
     protected Transform parent;
     protected Object asset;
     protected GameObject obj;
-    private int loaderID;
+    private int loadId;
     private int state = 4;//7：二进制111：分别表示release instantiate load
     private int timer = 0;
     private int timerId = -1;
@@ -158,12 +160,11 @@ public class LoadGameObjectItem
     {
         if (state == 0)
         {
-            AssetManager.Instance.Unload(loaderID);
-            loaderID = AssetManager.Instance.Load<GameObject>(path, LoadFinish);
+            AssetManager.Instance.Load<GameObject>(ref loadId, path, LoadFinish);
         }
         else if (state == 1)
         {
-            LoadFinish(loaderID, asset);
+            LoadFinish(loadId, asset);
         }
         else
         {
@@ -210,11 +211,11 @@ public class LoadGameObjectItem
     {
         TimeManager.Instance.StopTimer(timerId);
         if (obj != null) GameObject.Destroy(obj);
-        AssetManager.Instance.Unload(loaderID);
+        AssetManager.Instance.Unload(loadId);
         parent = null;
         asset = null;
         obj = null;
-        loaderID = -1;
+        loadId = -1;
         state = 4;
         timer = 0;
         timerId = -1;
@@ -231,7 +232,7 @@ public class LoadAssetItem
 {
     protected string path;
     protected Object asset;
-    private int loaderID;
+    private int loadId;
     private bool releaseMark = true;
     private bool loadMark = false;
     private int timer = 0;
@@ -253,8 +254,7 @@ public class LoadAssetItem
         }
         else
         {
-            AssetManager.Instance.Unload(loaderID);
-            loaderID = AssetManager.Instance.Load<T>(path, LoadFinish);
+            AssetManager.Instance.Load<T>(ref loadId, path, LoadFinish);
         }
     }
     private void LoadFinish(int id, Object _asset)
@@ -289,9 +289,9 @@ public class LoadAssetItem
     public virtual void Release()
     {
         TimeManager.Instance.StopTimer(timerId);
-        AssetManager.Instance.Unload(loaderID);
+        AssetManager.Instance.Unload(loadId);
         asset = null;
-        loaderID = -1;
+        loadId = -1;
         releaseMark = true;
         loadMark = false;
         timer = 0;

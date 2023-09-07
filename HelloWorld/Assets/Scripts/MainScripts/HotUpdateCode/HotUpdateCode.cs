@@ -148,7 +148,8 @@ namespace MainAssembly
         }
         private void LoadHotUpdateConfig()
         {
-            AssetManager.Instance.Load<TextAsset>("HotUpdateConfig", CheckDownloadHotUpdateRes);
+            int loadId = -1;
+            AssetManager.Instance.Load<TextAsset>(ref loadId, "HotUpdateConfig", CheckDownloadHotUpdateRes);
             UIHotUpdateCode.Instance.SetText("LoadHotUpdateConfig");
         }
         #endregion

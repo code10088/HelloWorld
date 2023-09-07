@@ -9,7 +9,7 @@ namespace HotAssembly
         #region 加载
         private string prefabPath;
         private Transform parent;
-        private int loaderID;
+        private int loadId;
         private Action<bool> open = null;
         private object[] param = null;
 
@@ -32,12 +32,11 @@ namespace HotAssembly
             }
             if (state > 0)
             {
-                LoadFinish(loaderID, UIObj);
+                LoadFinish(loadId, UIObj);
             }
             else
             {
-                AssetManager.Instance.Unload(loaderID);
-                loaderID = AssetManager.Instance.Load<GameObject>(prefabPath, LoadFinish);
+                AssetManager.Instance.Load<GameObject>(ref loadId, prefabPath, LoadFinish);
             }
         }
         private void LoadFinish(int id, Object asset)
@@ -81,9 +80,9 @@ namespace HotAssembly
             TimeManager.Instance.StopTimer(timerId);
             OnDestroy();
             if (UIObj != null) GameObject.Destroy(UIObj);
-            AssetManager.Instance.Unload(loaderID);
+            AssetManager.Instance.Unload(loadId);
             parent = null;
-            loaderID = -1;
+            loadId = -1;
             UIObj = null;
             open = null;
             param = null;

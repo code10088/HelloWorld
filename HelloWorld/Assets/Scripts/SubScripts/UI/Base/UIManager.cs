@@ -149,7 +149,7 @@ namespace HotAssembly
         {
             private UIType type;
             private UIType from;
-            private int loaderID;
+            private int loadId;
             private UIConfig config;
             private UIBase baseUI;
             private GameObject baseObj;
@@ -184,13 +184,12 @@ namespace HotAssembly
                 }
                 if (state > 0)
                 {
-                    LoadFinish(loaderID, baseObj);
+                    LoadFinish(loadId, baseObj);
                 }
                 else
                 {
                     Instance.SetEventSystemState(false);
-                    AssetManager.Instance.Unload(loaderID);
-                    loaderID = AssetManager.Instance.Load<GameObject>(config.PrefabName, LoadFinish);
+                    AssetManager.Instance.Load<GameObject>(ref loadId, config.PrefabName, LoadFinish);
                 }
             }
             private void LoadFinish(int id, Object asset)
@@ -255,8 +254,8 @@ namespace HotAssembly
                 TimeManager.Instance.StopTimer(timerId);
                 if (baseUI != null) baseUI.OnDestroy();
                 if (baseObj != null) GameObject.Destroy(baseObj);
-                AssetManager.Instance.Unload(loaderID);
-                loaderID = -1;
+                AssetManager.Instance.Unload(loadId);
+                loadId = -1;
                 baseUI = null;
                 baseObj = null;
                 open = null;
