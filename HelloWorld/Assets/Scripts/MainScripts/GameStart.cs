@@ -68,7 +68,8 @@ namespace MainAssembly
 #if UNITY_EDITOR
             HotAssembly.GameStart.Instance.Init();
 #else
-            AssetManager.Instance.Load<TextAsset>("HotAssembly", StartHotAssembly);
+            int loadId = -1;
+            AssetManager.Instance.Load<TextAsset>(ref loadId, "HotAssembly", StartHotAssembly);
 #endif
         }
         private void StartHotAssembly(int id, Object asset)

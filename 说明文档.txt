@@ -8,6 +8,10 @@ Luban
 	修改Luban.ClientServer/Templates/config/cs_bin模板
 	
 XAsset
+	经测试并非官网所说的根据文件做的依赖
+		prefab1依赖mat1、prefab2依赖mat2，prefab1 prefab2打包到一起，mat1 mat2单独打包
+		如果按照文件做依赖加载prefab1，只需要加载两个ab包，但是测试加载了三个（卸载没有问题正常卸载了三个）
+		
 	每次更新完成单独提交一次修改以便查看
 	更新时需要对比示例更新流程和当前更新流程，看是否有遗漏
 	免费版需要在GetDownloadSizeRequest中添加局部按需更新功能（最新版已经包含该功能）
