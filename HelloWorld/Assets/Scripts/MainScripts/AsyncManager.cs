@@ -88,6 +88,10 @@ public class AsyncManager : Singletion<AsyncManager>
             GC.Collect();
         }
     }
+    public void GCCollect()
+    {
+        gcTimer = -GameSetting.gcTimeIntervalS;
+    }
 }
 public class AsyncItem
 {

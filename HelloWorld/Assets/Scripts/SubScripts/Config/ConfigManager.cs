@@ -27,7 +27,7 @@ namespace HotAssembly
             if (--configCounter == 0)
             {
                 finish?.Invoke();
-                GC.Collect();
+                AsyncManager.Instance.GCCollect();
             }
         }
         public void InitSpecial(string name, Action finish)
