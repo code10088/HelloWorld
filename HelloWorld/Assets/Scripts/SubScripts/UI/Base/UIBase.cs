@@ -18,7 +18,7 @@ namespace HotAssembly
         protected Canvas[] layerRecord1;
         protected int[] layerRecord2;
         protected UIParticle[] layerRecord3;
-        private List<int> loaders = new();
+        private List<int> loaders = new List<int>();
         public void InitUI(GameObject UIObj, UIType type, UIType from, UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;

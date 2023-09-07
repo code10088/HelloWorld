@@ -8,9 +8,9 @@ namespace HotAssembly
     public class PlayerAvatar
     {
         private Transform modelT;
-        private Dictionary<string, Transform> allBones = new();
-        private List<PlayerAvatarPartItem> dress = new();
-        private List<PlayerAvatarPartItem> cache = new();
+        private Dictionary<string, Transform> allBones = new Dictionary<string, Transform>();
+        private List<PlayerAvatarPartItem> dress = new List<PlayerAvatarPartItem>();
+        private List<PlayerAvatarPartItem> cache = new List<PlayerAvatarPartItem>();
         private int cacheCount = 10;
 
         public PlayerAvatar(GameObject obj)
@@ -31,7 +31,7 @@ namespace HotAssembly
             if (index >= 0) return;
 
             var target = cache.Find(a => a.PartCfg.ID == partId);
-            if (target == null) target = new(this, partId, ChangeFinish);
+            if (target == null) target = new PlayerAvatarPartItem(this, partId, ChangeFinish);
             else cache.Remove(target);
             target.SetActive(true);
             dress.Add(target);
