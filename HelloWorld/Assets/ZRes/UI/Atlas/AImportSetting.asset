@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e494f574f80e543e78da3b08a102430b, type: 3}
+  m_Name: AImportSetting
+  m_EditorClassIdentifier: 
+  IsEnabled: 1
+  ForcePreprocess: 0
+  ConfigSortOrder: 10
+  MatchList:
+  - ZRes/UI/Atlas
+  IgnoreList: []
+  sRGB: 1
+  AlphaSource: 1
+  AlphaIsTransparency: 1
+  IgnorePNGFileGamma: 0
+  GeneratePhysicsShape: 0
+  NPOTScale: 1
+  ReadWrite: 0
+  StreamingMipmaps: 0
+  VirtualTextureOnly: 0
+  GenerateMipMaps: 0
+  BorderMipMaps: 0
+  MipMapFiltering: 0
+  MipMapPreserveCoverage: 0
+  FadeoutMipMaps: 0
+  FilterMode: 1
+  AnisoLevel: 1
+  PlatformsRegexList:
+  - Default
+  - PC
+  - Android
+  - iOS
+  - WebGL
+  MaxSize: 2048
+  ResizeAlgorithm: 0
+  PCRGBFormat: 10
+  PCRGBAFormat: 12
+  MobileRGBFormat: 50
+  MobileRGBAFormat: 50
+  CompressorQuality: 50
+  OverrideETC2Fallback: 0
