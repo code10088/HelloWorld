@@ -40,6 +40,7 @@ public class AsyncManager : Singletion<AsyncManager>
     public void Update()
     {
         float t = Time.realtimeSinceStartup;
+        xasset.Scheduler._realtimeSinceStartup = t;
         AsyncItem temp;
         for (int i = 0; i < list1.Count; i++)
         {

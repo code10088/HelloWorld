@@ -227,6 +227,8 @@ namespace HotAssembly
             Application.targetFrameRate = targetFrameRate;
             PlayerPrefs.SetInt("Quality_FrameRate", targetFrameRate);
             if (frameRateChange != null) frameRateChange(targetFrameRate);
+            GameSetting.updateTimeSliceS = 1.0f / targetFrameRate;
+            xasset.Scheduler.AutoslicingTimestep = GameSetting.updateTimeSliceS;
         }
         /// <summary>
         /// 分辨率

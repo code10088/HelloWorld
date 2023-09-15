@@ -11,7 +11,7 @@ namespace xasset
         private static readonly Dictionary<string, RequestQueue> _Queues = new Dictionary<string, RequestQueue>();
         private static readonly List<RequestQueue> Queues = new List<RequestQueue>();
         private static readonly Queue<RequestQueue> Append = new Queue<RequestQueue>();
-        private static float _realtimeSinceStartup;
+        public static float _realtimeSinceStartup;
 
         private static byte _updateMaxRequests = MaxRequests;
         public static bool Autoslicing { get; set; } = true;
@@ -30,7 +30,6 @@ namespace xasset
 
         private void Update()
         {
-            _realtimeSinceStartup = Time.realtimeSinceStartup;
             if (Append.Count > 0)
             {
                 while (Append.Count > 0)
