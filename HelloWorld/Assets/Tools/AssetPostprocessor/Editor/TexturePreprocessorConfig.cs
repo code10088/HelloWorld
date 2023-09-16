@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using Sirenix.OdinInspector;
 
 namespace AssetPreprocessor.Scripts.Editor
 {
@@ -20,13 +19,9 @@ namespace AssetPreprocessor.Scripts.Editor
         public bool StreamingMipmaps = false;
         public bool VirtualTextureOnly = false;
         public bool GenerateMipMaps = false;
-        [ShowIf(nameof(GenerateMipMaps))]
         public bool BorderMipMaps = false;
-        [ShowIf(nameof(GenerateMipMaps))]
         public TextureImporterMipFilter MipMapFiltering = TextureImporterMipFilter.BoxFilter;
-        [ShowIf(nameof(GenerateMipMaps))]
         public bool MipMapPreserveCoverage = false;
-        [ShowIf(nameof(GenerateMipMaps))]
         public bool FadeoutMipMaps = false;
 
         [Header("FilterMode")]

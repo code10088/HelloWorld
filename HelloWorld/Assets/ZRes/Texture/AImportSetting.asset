@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: AImportSetting
   m_EditorClassIdentifier: 
   IsEnabled: 1
-  ForcePreprocess: 0
   ConfigSortOrder: 10
   MatchList:
   - ZRes/Texture
@@ -45,5 +44,6 @@ MonoBehaviour:
   PCRGBFormat: 10
   PCRGBAFormat: 12
   MobileRGBFormat: 50
+  MobileRGBAFormat: 50
   CompressorQuality: 50
   OverrideETC2Fallback: 0

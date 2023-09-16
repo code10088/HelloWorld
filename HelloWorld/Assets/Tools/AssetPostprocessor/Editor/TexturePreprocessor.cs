@@ -9,7 +9,7 @@ namespace AssetPreprocessor.Scripts.Editor
     {
         private void OnPreprocessTexture()
         {
-            var textureImporter = (TextureImporter)assetImporter;
+            var textureImporter = assetImporter as TextureImporter;
 
             var configs = AssetDatabase.FindAssets("t:ScriptableObject")
                 .ToList()

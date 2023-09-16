@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +9,6 @@ namespace AssetPreprocessor.Scripts.Editor
     {
         [Header("设置")]
         public bool IsEnabled = true;
-        public bool ForcePreprocess;
         [Tooltip("值小优先")]
         public int ConfigSortOrder = 10;
 
