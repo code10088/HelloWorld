@@ -65,7 +65,7 @@ namespace HotAssembly
                 OnEnable(param);
                 open?.Invoke(true);
             }
-            releaseTime = Mathf.Lerp(releaseTime, 120f, 0.2f);
+            releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMax, 0.2f);
         }
         private void Release(bool immediate = false)
         {

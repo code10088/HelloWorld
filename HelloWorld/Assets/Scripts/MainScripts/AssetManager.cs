@@ -136,7 +136,7 @@ public class LoadGameObjectItem
     protected GameObject obj;
     private int loadId;
     private int state = 4;//7：二进制111：分别表示release instantiate load
-    private int timer = 0;
+    private float timer = 0;
     private int timerId = -1;
 
     private Action<int, object[], GameObject> action;
@@ -229,6 +229,7 @@ public class LoadGameObjectItem
     {
         TimeManager.Instance.StopTimer(timerId);
         timer += GameSetting.recycleTime;
+        timer = Math.Min(timer, GameSetting.recycleTimeMax);
         timerId = -1;
         state &= 3;
     }
@@ -240,7 +241,7 @@ public class LoadAssetItem
     private int loadId;
     private bool releaseMark = true;
     private bool loadMark = false;
-    private int timer = 0;
+    private float timer = 0;
     private int timerId = -1;
 
     private Action<object[], Object> action;
@@ -311,6 +312,7 @@ public class LoadAssetItem
     {
         TimeManager.Instance.StopTimer(timerId);
         timer += GameSetting.recycleTime;
+        timer = Math.Min(timer, GameSetting.recycleTimeMax);
         timerId = -1;
         releaseMark = false;
     }
