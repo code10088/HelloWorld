@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class GameObjectPool<T> : LoadAssetItem where T : PoolItem, new()
+public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new()
 {
     private List<T> use = new();
     private List<T> wait = new();
@@ -21,13 +21,13 @@ public class GameObjectPool<T> : LoadAssetItem where T : PoolItem, new()
         item.SetActive(false);
         cache.Add(item);
     }
-    public T Dequeue(params object[] param)
+    public T Dequeue(Action<object[], GameObject> action = null, params object[] param)
     {
         T temp = null;
         if (cache.Count > 0) temp = cache[0];
         if (temp != null) cache.RemoveAt(0);
         else temp = new T();
-        temp.Init(Delete, param);
+        temp.Init(Delete, action, param);
         temp.SetActive(true);
         use.Add(temp);
         wait.Add(temp);
@@ -81,7 +81,7 @@ public class GameObjectPool<T> : LoadAssetItem where T : PoolItem, new()
         }
     }
 }
-public class PoolItem
+public class GameObjectPoolItem
 {
     private static int uniqueId = 0;
     private int itemId = -1;
@@ -90,6 +90,7 @@ public class PoolItem
     private bool active = false;
 
     private Action<int> release;
+    private Action<object[], GameObject> action;
     protected object[] param;
 
     public int ItemID => itemId;
@@ -97,9 +98,10 @@ public class PoolItem
     /// <summary>
     /// «Î π”√LoadGameObjectPool
     /// </summary>
-    public void Init(Action<int> release, params object[] param)
+    public void Init(Action<int> release, Action<object[], GameObject> action, params object[] param)
     {
         itemId = ++uniqueId;
+        this.action = action;
         this.release = release;
         this.param = param;
     }
@@ -150,6 +152,6 @@ public class PoolItem
     }
     protected virtual void LoadFinish()
     {
-
+        action?.Invoke(param, obj);
     }
 }

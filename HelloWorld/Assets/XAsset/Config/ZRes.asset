@@ -64,4 +64,9 @@ MonoBehaviour:
       addressMode: 2
       filter: 
       bundle: 
+    - asset: Assets/ZRes/Audio
+      bundleMode: 1
+      addressMode: 2
+      filter: 
+      bundle: 
     desc: 

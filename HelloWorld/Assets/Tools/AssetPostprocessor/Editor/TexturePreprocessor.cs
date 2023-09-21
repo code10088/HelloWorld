@@ -42,55 +42,68 @@ namespace AssetPreprocessor.Scripts.Editor
             textureImporter.fadeout = config.FadeoutMipMaps;
             textureImporter.filterMode = config.FilterMode;
             textureImporter.anisoLevel = config.AnisoLevel;
+
             int w, h;
             textureImporter.GetSourceTextureWidthAndHeight(out w, out h);
             int textureSize = Mathf.NextPowerOfTwo(Mathf.Max(w, h));
             textureSize = Mathf.Min(textureSize, config.MaxSize);
-            config.PlatformsRegexList.ForEach(name =>
+            textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings
             {
-                bool haveAlpha = textureImporter.DoesSourceTextureHaveAlpha();
-                if (name == "Default")
-                {
-                    textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings
-                    {
-                        name = textureImporter.GetDefaultPlatformTextureSettings().name,
-                        maxTextureSize = textureSize,
-                        resizeAlgorithm = config.ResizeAlgorithm,
-                        format = TextureImporterFormat.Automatic,
-                        compressionQuality = (int)config.CompressorQuality,
-                        crunchedCompression = false,
-                        allowsAlphaSplitting = false,
-                    });
-                }
-                else if (name == "PC")
-                {
-                    textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings
-                    {
-                        name = name,
-                        overridden = true,
-                        maxTextureSize = textureSize,
-                        resizeAlgorithm = config.ResizeAlgorithm,
-                        format = haveAlpha ? config.PCRGBAFormat : config.PCRGBFormat,
-                        compressionQuality = (int)config.CompressorQuality,
-                        crunchedCompression = false,
-                        allowsAlphaSplitting = false,
-                    });
-                }
-                else
-                {
-                    textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings
-                    {
-                        name = name,
-                        overridden = true,
-                        maxTextureSize = textureSize,
-                        resizeAlgorithm = config.ResizeAlgorithm,
-                        format = haveAlpha ? config.MobileRGBAFormat : config.MobileRGBFormat,
-                        compressionQuality = (int)config.CompressorQuality,
-                        crunchedCompression = false,
-                        allowsAlphaSplitting = false,
-                        androidETC2FallbackOverride = config.OverrideETC2Fallback
-                    });
-                }
+                name = textureImporter.GetDefaultPlatformTextureSettings().name,
+                maxTextureSize = textureSize,
+                resizeAlgorithm = config.ResizeAlgorithm,
+                format = TextureImporterFormat.Automatic,
+                compressionQuality = (int)config.CompressorQuality,
+                crunchedCompression = false,
+                allowsAlphaSplitting = false,
+            });
+            bool haveAlpha = textureImporter.DoesSourceTextureHaveAlpha();
+            textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings
+            {
+                name = "PC",
+                overridden = true,
+                maxTextureSize = textureSize,
+                resizeAlgorithm = config.ResizeAlgorithm,
+                format = haveAlpha ? config.PCRGBAFormat : config.PCRGBFormat,
+                compressionQuality = (int)config.CompressorQuality,
+                crunchedCompression = false,
+                allowsAlphaSplitting = false,
+            });
+            textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings
+            {
+                name = "Android",
+                overridden = true,
+                maxTextureSize = textureSize,
+                resizeAlgorithm = config.ResizeAlgorithm,
+                format = haveAlpha ? config.MobileRGBAFormat : config.MobileRGBFormat,
+                compressionQuality = (int)config.CompressorQuality,
+                crunchedCompression = false,
+                allowsAlphaSplitting = false,
+                androidETC2FallbackOverride = config.OverrideETC2Fallback
+            });
+            textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings
+            {
+                name = "iOS",
+                overridden = true,
+                maxTextureSize = textureSize,
+                resizeAlgorithm = config.ResizeAlgorithm,
+                format = haveAlpha ? config.MobileRGBAFormat : config.MobileRGBFormat,
+                compressionQuality = (int)config.CompressorQuality,
+                crunchedCompression = false,
+                allowsAlphaSplitting = false,
+                androidETC2FallbackOverride = config.OverrideETC2Fallback
+            });
+            textureImporter.SetPlatformTextureSettings(new TextureImporterPlatformSettings
+            {
+                name = "WebGL",
+                overridden = true,
+                maxTextureSize = textureSize,
+                resizeAlgorithm = config.ResizeAlgorithm,
+                format = haveAlpha ? config.MobileRGBAFormat : config.MobileRGBFormat,
+                compressionQuality = (int)config.CompressorQuality,
+                crunchedCompression = false,
+                allowsAlphaSplitting = false,
+                androidETC2FallbackOverride = config.OverrideETC2Fallback
             });
         }
     }

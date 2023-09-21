@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca970977ce5de496dbfe52ee14ca3917, type: 3}
+  m_Name: AModelSetting
+  m_EditorClassIdentifier: 
+  IsEnabled: 1
+  ForcePreprocess: 0
+  ConfigSortOrder: 10
+  EnableVerboseLogging: 0
+  MatchRegexList: []
+  IgnoreRegexList: []
+  ModelImporterMaterialImportMode: 1
+  ImportBlendShapes: 0
+  SortHierarchyByName: 1
+  ForceGenerateLightmapUVs: 0
+  EnableReadWrite: 1
+  MeshCompression: 0
+  ResampleCurves: 1
+  ModelImporterAnimationCompression: 3
+  EnableAnimationPreprocessing: 0
+  ModelImporterAnimationType: 2
+  KeepOriginalOrientation: 0
+  KeepOriginalPositionXZ: 0
+  KeepOriginalPositionY: 1
+  ClipAnimationMaskType: 3
+  MaskBonesToEnable: []
+  EnableRigPreprocessing: 0
+  OptimizeGameObjects: 0
+  ExtraExposedTransformPaths: []
+  ImportLights: 0
+  ImportVisibility: 0
+  ImportCameras: 0

@@ -28,42 +28,45 @@ namespace AssetPreprocessor.Scripts.Editor
             audioImporter.ambisonic = config.Ambisonic;
             audioImporter.preloadAudioData = config.PreloadAudioData;
 
-            config.PlatformsRegexList.ForEach(name =>
+            audioImporter.defaultSampleSettings = new AudioImporterSampleSettings
             {
-                if (name == "Default")
-                {
-                    var setting = new AudioImporterSampleSettings
-                    {
-                        loadType = config.LoadType,
-                        compressionFormat = config.CompressionFormat,
-                        quality = config.Quality,
-                        sampleRateSetting = config.SampleRateSetting,
-                        sampleRateOverride = config.SampleRate,
-                    };
-                    audioImporter.defaultSampleSettings = setting;
-                }
-                else if (name == "WebGL")
-                {
-                    audioImporter.SetOverrideSampleSettings(name, new AudioImporterSampleSettings
-                    {
-                        loadType = config.LoadType,
-                        compressionFormat = AudioCompressionFormat.AAC,
-                        quality = config.Quality,
-                        sampleRateSetting = config.SampleRateSetting,
-                        sampleRateOverride = config.SampleRate,
-                    });
-                }
-                else
-                {
-                    audioImporter.SetOverrideSampleSettings(name, new AudioImporterSampleSettings
-                    {
-                        loadType = config.LoadType,
-                        compressionFormat = config.CompressionFormat,
-                        quality = config.Quality,
-                        sampleRateSetting = config.SampleRateSetting,
-                        sampleRateOverride = config.SampleRate,
-                    });
-                }
+                loadType = config.LoadType,
+                compressionFormat = config.CompressionFormat,
+                quality = config.Quality,
+                sampleRateSetting = config.SampleRateSetting,
+                sampleRateOverride = config.SampleRate,
+            };
+            audioImporter.SetOverrideSampleSettings("PC", new AudioImporterSampleSettings
+            {
+                loadType = config.LoadType,
+                compressionFormat = config.CompressionFormat,
+                quality = config.Quality,
+                sampleRateSetting = config.SampleRateSetting,
+                sampleRateOverride = config.SampleRate,
+            });
+            audioImporter.SetOverrideSampleSettings("Android", new AudioImporterSampleSettings
+            {
+                loadType = config.LoadType,
+                compressionFormat = config.CompressionFormat,
+                quality = config.Quality,
+                sampleRateSetting = config.SampleRateSetting,
+                sampleRateOverride = config.SampleRate,
+            });
+            audioImporter.SetOverrideSampleSettings("iOS", new AudioImporterSampleSettings
+            {
+                loadType = config.LoadType,
+                compressionFormat = config.CompressionFormat,
+                quality = config.Quality,
+                sampleRateSetting = config.SampleRateSetting,
+                sampleRateOverride = config.SampleRate,
+            });
+            audioImporter.SetOverrideSampleSettings("WebGL", new AudioImporterSampleSettings
+            {
+                loadType = config.LoadType,
+                compressionFormat = AudioCompressionFormat.AAC,
+                quality = config.Quality,
+                sampleRateSetting = config.SampleRateSetting,
+                sampleRateOverride = config.SampleRate,
             });
         }
     }

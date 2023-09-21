@@ -128,3 +128,48 @@ MonoBehaviour:
     addressMode: 2
     filter: 
     bundle: prefab_uitest_prefab.bundle
+  - asset: Assets/ZRes/UI/Atlas/AImportSetting.asset
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: atlas.bundle
+  - asset: Assets/ZRes/Audio/Bgm/Frequence/AudioSetting.asset
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: audio_bgm_frequence_audiosetting_asset.bundle
+  - asset: Assets/ZRes/Audio/Bgm/Frequence/Button1.mp3
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: audio_bgm_frequence_button1_mp3.bundle
+  - asset: Assets/ZRes/Audio/Bgm/NotFrequence/AudioSetting.asset
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: audio_bgm_notfrequence_audiosetting_asset.bundle
+  - asset: Assets/ZRes/Audio/Bgm/NotFrequence/Button2.mp3
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: audio_bgm_notfrequence_button2_mp3.bundle
+  - asset: Assets/ZRes/Audio/Sound/Frequence/AudioSetting.asset
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: audio_sound_frequence_audiosetting_asset.bundle
+  - asset: Assets/ZRes/Audio/Sound/Frequence/Button3.mp3
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: audio_sound_frequence_button3_mp3.bundle
+  - asset: Assets/ZRes/Audio/Sound/NotFrequence/AudioSetting.asset
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: audio_sound_notfrequence_audiosetting_asset.bundle
+  - asset: Assets/ZRes/Audio/Sound/NotFrequence/Button4.mp3
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: audio_sound_notfrequence_button4_mp3.bundle

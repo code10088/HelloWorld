@@ -139,10 +139,15 @@ public class LoadGameObjectItem
     private int timer = 0;
     private int timerId = -1;
 
-    public void Init(string path, Transform parent)
+    private Action<int, object[], GameObject> action;
+    protected object[] param;
+
+    public void Init(string path, Transform parent, Action<int, object[], GameObject> action = null, params object[] param)
     {
         this.path = path;
         this.parent = parent;
+        this.action = action;
+        this.param = param;
     }
     public void SetActive(bool b)
     {
@@ -199,7 +204,7 @@ public class LoadGameObjectItem
     /// </summary>
     protected virtual void Finish(int state, GameObject obj)
     {
-
+        action?.Invoke(state, param, obj);
     }
     private void Delay()
     {
@@ -238,9 +243,14 @@ public class LoadAssetItem
     private int timer = 0;
     private int timerId = -1;
 
-    public void Init(string path)
+    private Action<object[], Object> action;
+    protected object[] param;
+
+    public void Init(string path, Action<object[], Object> action = null, params object[] param)
     {
         this.path = path;
+        this.action = action;
+        this.param = param;
     }
     public void Load<T>() where T : Object
     {
@@ -279,7 +289,7 @@ public class LoadAssetItem
     /// </summary>
     protected virtual void Finish(Object asset)
     {
-
+        action?.Invoke(param, asset);
     }
     public void Delay()
     {

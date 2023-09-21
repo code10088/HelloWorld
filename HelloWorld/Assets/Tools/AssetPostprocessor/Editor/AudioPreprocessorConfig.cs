@@ -14,9 +14,7 @@ namespace AssetPreprocessor.Scripts.Editor
         public bool LoadInBackground = true;
         public bool Ambisonic = false;
 
-        [Header("平台")]
-        public List<string> PlatformsRegexList = new List<string> { "Default", "PC", "Android", "iOS", "WebGL" };
-
+        [Header("压缩")]
         [Tooltip("常用sound使用DecompressOnLoad无压缩的释放到内存，不常用sound使用CompressedInMemory播放时消耗CPU解压处理，常用bgm使用DecompressOnLoad，不常用bgm使用Streaming")]
         public AudioClipLoadType LoadType = AudioClipLoadType.DecompressOnLoad;
         [Tooltip("如果设置false还需要调用audioClip.LoadAudioData()")]

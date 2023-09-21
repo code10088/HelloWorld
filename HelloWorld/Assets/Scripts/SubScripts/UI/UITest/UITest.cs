@@ -9,7 +9,7 @@ namespace HotAssembly
         private UITestComponent component = new UITestComponent();
         private CustomLoopScroll<TestItem> clss = new CustomLoopScroll<TestItem>();
         private UISubTest subUI = new UISubTest("UISubTest");
-        private GameObjectPool<TestBullet> pool = new GameObjectPool<TestBullet>();
+        private GameObjectPool<GameObjectPoolItem> pool = new GameObjectPool<GameObjectPoolItem>();
 
         protected override void Init()
         {
@@ -71,6 +71,7 @@ namespace HotAssembly
         private void SDKInit()
         {
             SDKManager.Instance.InitSDK();
+            AudioManager.Instance.PlaySound("Button1");
         }
         private void LoadSprite()
         {
@@ -80,10 +81,10 @@ namespace HotAssembly
         }
         private void LoadBulletFromPool()
         {
-            pool.Dequeue();
-            pool.Dequeue();
+            pool.Dequeue((a, b) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
+            pool.Dequeue((a, b) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
             pool.Enqueue(pool.Use[0]);
-            pool.Dequeue();
+            pool.Dequeue((a, b) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
         }
         private void DelectBullet()
         {
@@ -107,14 +108,6 @@ namespace HotAssembly
             {
                 data = DataManager.Instance.TestData.testItemDatas[idx];
                 component.itemTextTextMeshProUGUI.text = data.name;
-            }
-        }
-        private class TestBullet : PoolItem
-        {
-            protected override void LoadFinish()
-            {
-                base.LoadFinish();
-                obj.transform.localScale = Vector3.one * Random.Range(0, 10);
             }
         }
     }

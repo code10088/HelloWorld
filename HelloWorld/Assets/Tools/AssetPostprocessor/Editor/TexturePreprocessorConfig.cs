@@ -28,8 +28,7 @@ namespace AssetPreprocessor.Scripts.Editor
         public FilterMode FilterMode = FilterMode.Bilinear;
         public int AnisoLevel = 0;
 
-        [Header("平台")]
-        public List<string> PlatformsRegexList = new List<string> { "Default", "PC", "Android", "iOS", };
+        [Header("格式")]
         public int MaxSize = 2048;
         public TextureResizeAlgorithm ResizeAlgorithm = TextureResizeAlgorithm.Mitchell;
         public TextureImporterFormat PCRGBFormat = TextureImporterFormat.DXT1;
