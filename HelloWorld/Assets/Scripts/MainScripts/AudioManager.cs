@@ -12,7 +12,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
 
     public void Init()
     {
-        root = GameObject.FindWithTag("SoundRoot");
+        root = new GameObject("Sound");
         music = root.AddComponent<AudioSource>();
     }
 
