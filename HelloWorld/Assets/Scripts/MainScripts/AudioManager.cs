@@ -105,6 +105,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
         }
         public void Stop()
         {
+            source.Stop();
             Instance.ReleaseAudioSource(source);
             TimeManager.Instance.StopTimer(timerId);
             timerId = -1;
