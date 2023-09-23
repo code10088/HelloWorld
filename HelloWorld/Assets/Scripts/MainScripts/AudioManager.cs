@@ -45,7 +45,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             audioPool.Add(path, pool);
         }
         var item = pool.Dequeue();
-        item.Set(loop);
+        item.Set(pool, loop);
         return item.ItemID;
     }
     public void StopAllSoud()
@@ -93,29 +93,28 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     public class SoundItem : AssetPoolItem
     {
         private AudioSource source;
+        private AssetPool<SoundItem> pool;
         private bool loop = false;
-        private bool stop = false;
         private int timerId = -1;
 
-        public void Set(bool loop)
+        public void Set(AssetPool<SoundItem> pool, bool loop)
         {
+            this.pool = pool;
             this.loop = loop;
             if (source) source.loop = loop;
         }
         public void Stop()
         {
+            Instance.ReleaseAudioSource(source);
             TimeManager.Instance.StopTimer(timerId);
             timerId = -1;
-            stop = true;
-            Instance.ReleaseAudioSource(source);
-            Release();
+            pool.Enqueue(this);
         }
-        public override void LoadFinish(Object asset)
+        public override void LoadFinish()
         {
-            if (stop || asset == null) return;
             source = Instance.GetEmptyAudioSource();
             source.loop = loop;
-            var clip = asset as AudioClip;
+            var clip = obj as AudioClip;
             source.clip = clip;
             source.Play();
             if (!loop && timerId < 0) timerId = TimeManager.Instance.StartTimer(clip.length, finish: Stop);
