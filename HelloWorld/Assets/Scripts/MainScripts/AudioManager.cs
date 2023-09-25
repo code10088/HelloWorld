@@ -55,7 +55,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             var use = item.Value.Use;
             for (int i = 0; i < use.Count; i++)
             {
-                use[i].Stop();
+                item.Value.Enqueue(use[i]);
             }
         }
     }
@@ -68,7 +68,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             {
                 if (use[i].ItemID == id)
                 {
-                    use[i].Stop();
+                    item.Value.Enqueue(use[i]);
                     return;
                 }
             }
@@ -103,13 +103,33 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             this.loop = loop;
             if (source) source.loop = loop;
         }
-        public void Stop()
+        protected override void Delay()
         {
-            source.Stop();
-            Instance.ReleaseAudioSource(source);
-            TimeManager.Instance.StopTimer(timerId);
-            timerId = -1;
-            pool.Enqueue(this);
+            if (source)
+            {
+                source.Stop();
+                Instance.ReleaseAudioSource(source);
+            }
+            if (timerId > 0)
+            {
+                TimeManager.Instance.StopTimer(timerId);
+                timerId = -1;
+            }
+            base.Delay();
+        }
+        public override void Release()
+        {
+            if (source)
+            {
+                source.Stop();
+                Instance.ReleaseAudioSource(source);
+            }
+            if (timerId > 0)
+            {
+                TimeManager.Instance.StopTimer(timerId);
+                timerId = -1;
+            }
+            base.Release();
         }
         public override void LoadFinish()
         {
@@ -119,6 +139,10 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             source.clip = clip;
             source.Play();
             if (!loop && timerId < 0) timerId = TimeManager.Instance.StartTimer(clip.length, finish: Stop);
+        }
+        private void Stop()
+        {
+            Instance.StopSound(ItemID);
         }
     }
 }

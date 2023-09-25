@@ -115,7 +115,7 @@ public class GameObjectPoolItem
         if (b) Recycle();
         else Delay();
     }
-    private void Delay()
+    protected virtual void Delay()
     {
         obj?.SetActive(false);
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTime, finish: Release);
@@ -253,7 +253,7 @@ public class AssetPoolItem
         if (b) Recycle();
         else Delay();
     }
-    private void Delay()
+    protected virtual void Delay()
     {
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTime, finish: Release);
         param = null;
