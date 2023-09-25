@@ -45,7 +45,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             audioPool.Add(path, pool);
         }
         var item = pool.Dequeue();
-        item.Set(pool, loop);
+        item.Set(loop);
         return item.ItemID;
     }
     public void StopAllSoud()
@@ -93,13 +93,11 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     public class SoundItem : AssetPoolItem
     {
         private AudioSource source;
-        private AssetPool<SoundItem> pool;
         private bool loop = false;
         private int timerId = -1;
 
-        public void Set(AssetPool<SoundItem> pool, bool loop)
+        public void Set(bool loop)
         {
-            this.pool = pool;
             this.loop = loop;
             if (source) source.loop = loop;
         }
