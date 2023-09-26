@@ -19,7 +19,7 @@ XAsset
 	免费版回收系统重复回收问题（如果load unload load unload同一个资源情况下，会出现同一个assetrequest被回收两次的情况）
 		Recycler.RecycleAsync 添加判断 if(!Recyclables.Contains(recyclable))（最新版已经包含该功能）
 		LoadRequest.LoadAsync 添加取消 Recycler.CancelRecycle(this)
-	Assets中LoadPlayerAssets自动赋值UpdateInfoURL和DownloadURL
+	Assets中LoadPlayerAssets自动赋值UpdateInfoURL和DownloadURL（最新版已经包含该功能）
 	Scheduler._realtimeSinceStartup在AsyncManager中修改，以便控制xasset分片（AsyncManager.Update优先级高于xasset）
 	
 ECS+Job+Brust
