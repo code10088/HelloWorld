@@ -1,75 +1,42 @@
-﻿using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
-
-#if ODIN_INSPECTOR
-using Sirenix.OdinInspector;
-#endif
 
 namespace AssetPreprocessor.Scripts.Editor
 {
     [CreateAssetMenu(menuName="ScriptableObject/AssetPreprocessor/ModelPreprocessorConfig")]
     public class ModelPreprocessorConfig : BasePreprocessorConfig
     {
-        [Header("Import Settings")]
-        #if UNITY_2020_1_OR_NEWER
-        public ModelImporterMaterialImportMode ModelImporterMaterialImportMode = ModelImporterMaterialImportMode.ImportStandard;
-        #else
-        public bool ImportMaterials;
-        #endif
-        
-        public bool ImportBlendShapes;
-        public bool SortHierarchyByName = true;
-        public bool ForceGenerateLightmapUVs;
-        public bool EnableReadWrite = true;
+        public float ScaleFactor = 1f;
+        public bool ConvertUnits = true;
+        public bool BakeAxisConversion = false;
+        public bool ImportBlendShapes = false;
+        public bool ImportVisibility = true;
+        public bool ImportCameras = false;
+        public bool ImportLights = false;
+        public bool PreserveHierarchy = true;
+        public bool SortHierarchyByName = false;
         public ModelImporterMeshCompression MeshCompression = ModelImporterMeshCompression.Off;
-
-        [Header("Animation Settings")]
-        public bool ResampleCurves = true;
-        public ModelImporterAnimationCompression ModelImporterAnimationCompression = ModelImporterAnimationCompression.Optimal;
-        
-        [Header("Animation Processing")]
-        public bool EnableAnimationPreprocessing;
-        #if ODIN_INSPECTOR
-        [ShowIf(nameof(EnableAnimationPreprocessing))]
-        #endif
-        public ModelImporterAnimationType ModelImporterAnimationType = ModelImporterAnimationType.Generic;
-        #if ODIN_INSPECTOR
-        [ShowIf(nameof(EnableAnimationPreprocessing))]
-        #endif
-        public bool KeepOriginalOrientation;
-        #if ODIN_INSPECTOR
-        [ShowIf(nameof(EnableAnimationPreprocessing))]
-        #endif
-        public bool KeepOriginalPositionXZ;
-        #if ODIN_INSPECTOR
-        [ShowIf(nameof(EnableAnimationPreprocessing))]
-        #endif
-        public bool KeepOriginalPositionY = true;
-        #if ODIN_INSPECTOR
-        [ShowIf(nameof(EnableAnimationPreprocessing))]
-        #endif
-        public ClipAnimationMaskType ClipAnimationMaskType = ClipAnimationMaskType.None;
-        #if ODIN_INSPECTOR
-        [ShowIf(nameof(ClipAnimationMaskType), ClipAnimationMaskType.CreateFromThisModel)]
-        [ShowIf(nameof(EnableAnimationPreprocessing))]
-        #endif
-        public List<string> MaskBonesToEnable;
-
-        [Header("Rig Settings")]
-        public bool EnableRigPreprocessing;
-        #if ODIN_INSPECTOR
-        [ShowIf(nameof(EnableRigPreprocessing))]
-        #endif
-        public bool OptimizeGameObjects;
-        #if ODIN_INSPECTOR
-        [ShowIf(nameof(EnableRigPreprocessing))]
-        #endif
-        public string[] ExtraExposedTransformPaths;
-        
-        [Header("Scene Settings")]
-        public bool ImportLights;
-        public bool ImportVisibility;
-        public bool ImportCameras;
+        public bool ReadWrite = false;
+        public MeshOptimizationFlags OptimizeMesh = MeshOptimizationFlags.Everything;
+        public bool GenerateColliders = false;
+        public bool KeepQuads = false;
+        public bool WeldVertices = true;
+        public ModelImporterIndexFormat IndexFormat = ModelImporterIndexFormat.Auto;
+        public bool LegacyBlendShapeNormals = true;
+        public ModelImporterNormals Normals = ModelImporterNormals.Import;
+        public ModelImporterNormalCalculationMode NormalsMode = ModelImporterNormalCalculationMode.AreaAndAngleWeighted;
+        public ModelImporterNormalSmoothingSource SmoothnessSource = ModelImporterNormalSmoothingSource.PreferSmoothingGroups;
+        public int SmoothingAngle = 60;
+        public ModelImporterTangents Tangents = ModelImporterTangents.Import;
+        public bool SwapUVs = false;
+        public bool GenerateLightmapUVs = false;
+        [Tooltip("暂不使用人型动画")]
+        public ModelImporterAnimationType AnimationType = ModelImporterAnimationType.Generic;
+        public ModelImporterAvatarSetup AvatarDefinition = ModelImporterAvatarSetup.NoAvatar;
+        public ModelImporterSkinWeights SkinWeights = ModelImporterSkinWeights.Standard;
+        public bool StripBones = true;
+        public bool ImportConstraints = false;
+        public bool ImportAnimation = false;
+        public ModelImporterMaterialImportMode MaterialCreationMode = ModelImporterMaterialImportMode.None;
     }
 }

@@ -15,18 +15,12 @@ MonoBehaviour:
   IsEnabled: 1
   ConfigSortOrder: 10
   MatchList:
-  - Sound/Frequence
+  - ZRes/Audio/Sound/Frequence
   IgnoreList: []
   ForceToMono: 1
   Normalize: 1
   LoadInBackground: 1
   Ambisonic: 0
-  PlatformsRegexList:
-  - Default
-  - PC
-  - Android
-  - iOS
-  - WebGL
   LoadType: 0
   PreloadAudioData: 1
   CompressionFormat: 0

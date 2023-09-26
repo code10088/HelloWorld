@@ -13,29 +13,38 @@ MonoBehaviour:
   m_Name: AModelSetting
   m_EditorClassIdentifier: 
   IsEnabled: 1
-  ForcePreprocess: 0
   ConfigSortOrder: 10
-  EnableVerboseLogging: 0
-  MatchRegexList: []
-  IgnoreRegexList: []
-  ModelImporterMaterialImportMode: 1
+  MatchList:
+  - ZRes/Model
+  IgnoreList: []
+  ScaleFactor: 1
+  ConvertUnits: 1
+  BakeAxisConversion: 0
   ImportBlendShapes: 0
-  SortHierarchyByName: 1
-  ForceGenerateLightmapUVs: 0
-  EnableReadWrite: 1
-  MeshCompression: 0
-  ResampleCurves: 1
-  ModelImporterAnimationCompression: 3
-  EnableAnimationPreprocessing: 0
-  ModelImporterAnimationType: 2
-  KeepOriginalOrientation: 0
-  KeepOriginalPositionXZ: 0
-  KeepOriginalPositionY: 1
-  ClipAnimationMaskType: 3
-  MaskBonesToEnable: []
-  EnableRigPreprocessing: 0
-  OptimizeGameObjects: 0
-  ExtraExposedTransformPaths: []
-  ImportLights: 0
-  ImportVisibility: 0
+  ImportVisibility: 1
   ImportCameras: 0
+  ImportLights: 0
+  PreserveHierarchy: 1
+  SortHierarchyByName: 0
+  MeshCompression: 0
+  ReadWrite: 0
+  OptimizeMesh: -1
+  GenerateColliders: 0
+  KeepQuads: 0
+  WeldVertices: 1
+  IndexFormat: 0
+  LegacyBlendShapeNormals: 1
+  Normals: 0
+  NormalsMode: 4
+  SmoothnessSource: 0
+  SmoothingAngle: 60
+  Tangents: 0
+  SwapUVs: 0
+  GenerateLightmapUVs: 0
+  AnimationType: 2
+  AvatarDefinition: 0
+  SkinWeights: 0
+  StripBones: 1
+  ImportConstraints: 0
+  ImportAnimation: 0
+  MaterialCreationMode: 0
