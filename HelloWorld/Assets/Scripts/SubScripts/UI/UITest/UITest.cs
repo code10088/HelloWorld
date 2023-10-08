@@ -1,13 +1,12 @@
 using Cysharp.Threading.Tasks;
+using SuperScrollView;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace HotAssembly
 {
     public class UITest : UIBase
     {
         private UITestComponent component = new UITestComponent();
-        private CustomLoopScroll<TestItem> clss = new CustomLoopScroll<TestItem>();
         private UISubTest subUI = new UISubTest("UISubTest");
         private GameObjectPool<GameObjectPoolItem> pool = new GameObjectPool<GameObjectPoolItem>();
 
@@ -15,20 +14,20 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(UIObj);
-            component.closeBtnButton.onClick.AddListener(OnClose);
-            component.openSubBtnButton.onClick.AddListener(OnOpenSub);
-            component.openMsgBtnButton.onClick.AddListener(OnOpenMessage);
-            component.openSDKBtnButton.onClick.AddListener(SDKInit);
-            component.loadSpriteButton.onClick.AddListener(LoadSprite);
-            component.poolEnqueueButton.onClick.AddListener(LoadBulletFromPool);
-            component.poolDequeueButton.onClick.AddListener(DelectBullet);
+            component.closeBtnUIButton.onClick.AddListener(OnClose);
+            component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
+            component.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);
+            component.openSDKBtnUIButton.onClick.AddListener(SDKInit);
+            component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
+            component.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
+            component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
+            component.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
         }
         public override async UniTask OnEnable(params object[] param)
         {
             await base.OnEnable(param);
             GameDebug.Log("UITest OnEnable");
             await UniTask.Delay(1000);
-            InitLoopScrollRect();
             pool.Init("TestBullet");
         }
         protected override void PlayInitAni()
@@ -91,24 +90,29 @@ namespace HotAssembly
             pool.Enqueue(pool.Use[0]);
         }
 
-        private void InitLoopScrollRect()
+        LoopListViewItem2 OnGetItemByIndex(LoopListView2 listView, int index)
         {
-            clss.Init(component.loopLoopVerticalScrollRect, component.itemObj, DataManager.Instance.TestData.testItemDatas.Count);
+            if (index < 0 || index >= DataManager.Instance.TestData.testItemDatas.Count)
+            {
+                return null;
+            }
+            LoopListViewItem2 item = listView.NewListViewItem("Item");
+            if (item.IsInitHandlerCalled == false)
+            {
+                item.IsInitHandlerCalled = true;
+                item.ItemData = new UITestItem();
+                item.ItemData.Init(item.gameObject);
+            }
+            item.ItemData.SetData(index);
+            return item;
         }
-        private class TestItem : CustomLoopItem
+    }
+    public partial class UITestItem
+    {
+        public void SetData(int index)
         {
-            public TestData.TestItemData data;
-            public UITestItem component = new UITestItem();
-            public override void Init(GameObject _obj)
-            {
-                base.Init(_obj);
-                component.Init(obj);
-            }
-            public override void SetData(int idx)
-            {
-                data = DataManager.Instance.TestData.testItemDatas[idx];
-                component.itemTextTextMeshProUGUI.text = data.name;
-            }
+            var data = DataManager.Instance.TestData.testItemDatas[index];
+            itemTextTextMeshProUGUI.text = data.name;
         }
     }
 }

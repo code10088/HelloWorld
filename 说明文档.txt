@@ -41,11 +41,9 @@ newtonjson
 URP
 	Profiler显示urp Gfx.PresentFrame耗时高，并非GPU渲染耗时高，Gfx.PresentFrame=GPU渲染时间+WaitForTargetFPS时间
 	
-LoopScrollRect调整
-	添加CustomLoopItem并修改对应接口
-	添加CustomLoopScroll并修改对应接口
-	LoopScrollMultiDataSource改成LoopScrollDataSource
-	修改报错
+SuperScrollView调整
+	LoopListViewItem2中添加UIChildItem
+	修改mDistanceForRecycle0、mDistanceForNew0、mDistanceForRecycle1、mDistanceForNew1默认值
 
 Occlusion Culling
 	消耗部分CPU去掉不可见物体，降低GPU的负载

@@ -4,42 +4,44 @@ namespace HotAssembly
     public partial class UITestComponent
     {
         public GameObject obj;
-        public UnityEngine.UI.Button closeBtnButton = null;
-        public UnityEngine.UI.LoopVerticalScrollRect loopLoopVerticalScrollRect = null;
-        public GameObject itemObj = null;
+        public UIButton closeBtnUIButton = null;
+        public SuperScrollView.LoopListView2 loopLoopListView2 = null;
+        public SuperScrollView.LoopListViewItem2 itemLoopListViewItem2 = null;
         public GameObject subRootObj = null;
-        public UnityEngine.UI.Button openSubBtnButton = null;
-        public UnityEngine.UI.Button openMsgBtnButton = null;
-        public UnityEngine.UI.Button openSDKBtnButton = null;
-        public UnityEngine.UI.Button loadSpriteButton = null;
+        public UIButton openSubBtnUIButton = null;
+        public UIButton openMsgBtnUIButton = null;
+        public UIButton openSDKBtnUIButton = null;
+        public UIButton loadSpriteUIButton = null;
         public UnityEngine.UI.Image imageImage = null;
-        public UnityEngine.UI.Button poolEnqueueButton = null;
-        public UnityEngine.UI.Button poolDequeueButton = null;
+        public UIButton poolEnqueueUIButton = null;
+        public UIButton poolDequeueUIButton = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
             ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);
-            closeBtnButton = allData[0].exportComponent[0] as UnityEngine.UI.Button;
-            loopLoopVerticalScrollRect = allData[1].exportComponent[0] as UnityEngine.UI.LoopVerticalScrollRect;
-            itemObj = allData[2].gameObject;
+            closeBtnUIButton = allData[0].exportComponent[0] as UIButton;
+            loopLoopListView2 = allData[1].exportComponent[0] as SuperScrollView.LoopListView2;
+            itemLoopListViewItem2 = allData[2].exportComponent[0] as SuperScrollView.LoopListViewItem2;
             subRootObj = allData[4].gameObject;
-            openSubBtnButton = allData[5].exportComponent[0] as UnityEngine.UI.Button;
-            openMsgBtnButton = allData[6].exportComponent[0] as UnityEngine.UI.Button;
-            openSDKBtnButton = allData[7].exportComponent[0] as UnityEngine.UI.Button;
-            loadSpriteButton = allData[8].exportComponent[0] as UnityEngine.UI.Button;
+            openSubBtnUIButton = allData[5].exportComponent[0] as UIButton;
+            openMsgBtnUIButton = allData[6].exportComponent[0] as UIButton;
+            openSDKBtnUIButton = allData[7].exportComponent[0] as UIButton;
+            loadSpriteUIButton = allData[8].exportComponent[0] as UIButton;
             imageImage = allData[9].exportComponent[0] as UnityEngine.UI.Image;
-            poolEnqueueButton = allData[10].exportComponent[0] as UnityEngine.UI.Button;
-            poolDequeueButton = allData[11].exportComponent[0] as UnityEngine.UI.Button;
+            poolEnqueueUIButton = allData[10].exportComponent[0] as UIButton;
+            poolDequeueUIButton = allData[11].exportComponent[0] as UIButton;
         }
     }
-    public partial class UITestItem
+    public partial class UITestItem : UIChildItem
     {
         public GameObject obj;
+        public SuperScrollView.LoopListViewItem2 itemLoopListViewItem2 = null;
         public TMPro.TextMeshProUGUI itemTextTextMeshProUGUI = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
             ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);
+            itemLoopListViewItem2 = allData[0].exportComponent[0] as SuperScrollView.LoopListViewItem2;
             itemTextTextMeshProUGUI = allData[1].exportComponent[0] as TMPro.TextMeshProUGUI;
         }
     }

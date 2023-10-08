@@ -81,8 +81,9 @@ public class ExportComponentScript
             for (int j = 0; j < tempComponentArray.Length; j++)
             {
                 ExportComponent tempComponent = tempComponentArray[j];
+                ExportClass selfClass = tempComponent.GetComponent<ExportClass>();
                 ExportClass tempParentClass = tempComponent.transform.parent.GetComponentInParent<ExportClass>(true);
-                if (tempParentClass == tempClass)
+                if (selfClass == tempClass || tempParentClass == tempClass)
                 {
                     ExportComponent b = tempComponentList.Find(a => a.name == tempComponent.name);
                     if (b == null)
