@@ -12,16 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbUIConfig
+public partial class TbUIConfig : TbBase
 {
-    private readonly System.Collections.Generic.Dictionary<UIType, UIConfig> _dataMap;
-    private readonly System.Collections.Generic.List<UIConfig> _dataList;
+    private readonly System.Collections.Generic.Dictionary<UIType, UIConfig> _dataMap = new System.Collections.Generic.Dictionary<UIType, UIConfig>();
+    private readonly System.Collections.Generic.List<UIConfig> _dataList = new System.Collections.Generic.List<UIConfig>();
     
-    public TbUIConfig(ByteBuf _buf)
+    public void Deserialize(byte[] bytes)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<UIType, UIConfig>();
-        _dataList = new System.Collections.Generic.List<UIConfig>();
-        
+		_dataMap.Clear();
+		_dataList.Clear();
+        ByteBuf _buf = new ByteBuf(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
             UIConfig _v;

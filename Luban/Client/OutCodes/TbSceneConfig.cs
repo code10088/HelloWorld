@@ -12,16 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbSceneConfig
+public partial class TbSceneConfig : TbBase
 {
-    private readonly System.Collections.Generic.Dictionary<int, SceneConfig> _dataMap;
-    private readonly System.Collections.Generic.List<SceneConfig> _dataList;
+    private readonly System.Collections.Generic.Dictionary<int, SceneConfig> _dataMap = new System.Collections.Generic.Dictionary<int, SceneConfig>();
+    private readonly System.Collections.Generic.List<SceneConfig> _dataList = new System.Collections.Generic.List<SceneConfig>();
     
-    public TbSceneConfig(ByteBuf _buf)
+    public void Deserialize(byte[] bytes)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<int, SceneConfig>();
-        _dataList = new System.Collections.Generic.List<SceneConfig>();
-        
+		_dataMap.Clear();
+		_dataList.Clear();
+        ByteBuf _buf = new ByteBuf(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
             SceneConfig _v;

@@ -12,16 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbDeviceInfo
+public partial class TbDeviceInfo : TbBase
 {
-    private readonly System.Collections.Generic.Dictionary<string, DeviceInfo> _dataMap;
-    private readonly System.Collections.Generic.List<DeviceInfo> _dataList;
+    private readonly System.Collections.Generic.Dictionary<string, DeviceInfo> _dataMap = new System.Collections.Generic.Dictionary<string, DeviceInfo>();
+    private readonly System.Collections.Generic.List<DeviceInfo> _dataList = new System.Collections.Generic.List<DeviceInfo>();
     
-    public TbDeviceInfo(ByteBuf _buf)
+    public void Deserialize(byte[] bytes)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<string, DeviceInfo>();
-        _dataList = new System.Collections.Generic.List<DeviceInfo>();
-        
+		_dataMap.Clear();
+		_dataList.Clear();
+        ByteBuf _buf = new ByteBuf(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
             DeviceInfo _v;

@@ -12,16 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbPlayerAvatarPart
+public partial class TbPlayerAvatarPart : TbBase
 {
-    private readonly System.Collections.Generic.Dictionary<int, PlayerAvatarPart> _dataMap;
-    private readonly System.Collections.Generic.List<PlayerAvatarPart> _dataList;
+    private readonly System.Collections.Generic.Dictionary<int, PlayerAvatarPart> _dataMap = new System.Collections.Generic.Dictionary<int, PlayerAvatarPart>();
+    private readonly System.Collections.Generic.List<PlayerAvatarPart> _dataList = new System.Collections.Generic.List<PlayerAvatarPart>();
     
-    public TbPlayerAvatarPart(ByteBuf _buf)
+    public void Deserialize(byte[] bytes)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<int, PlayerAvatarPart>();
-        _dataList = new System.Collections.Generic.List<PlayerAvatarPart>();
-        
+		_dataMap.Clear();
+		_dataList.Clear();
+        ByteBuf _buf = new ByteBuf(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
             PlayerAvatarPart _v;

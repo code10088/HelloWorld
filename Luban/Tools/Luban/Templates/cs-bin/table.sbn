@@ -34,17 +34,17 @@ using Luban;
 /// {{escape_comment __table.comment}}
 /// </summary>
 {{~end~}}
-public partial class {{__name}}
+public partial class {{__name}} : TbBase
 {
     {{~if __table.is_map_table ~}}
-    private readonly System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}> _dataMap;
-    private readonly System.Collections.Generic.List<{{declaring_type_name value_type}}> _dataList;
+    private readonly System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}> _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}>();
+    private readonly System.Collections.Generic.List<{{declaring_type_name value_type}}> _dataList = new System.Collections.Generic.List<{{declaring_type_name value_type}}>();
     
-    public {{__name}}(ByteBuf _buf)
+    public void Deserialize(byte[] bytes)
     {
-        _dataMap = new System.Collections.Generic.Dictionary<{{declaring_type_name key_type}}, {{declaring_type_name value_type}}>();
-        _dataList = new System.Collections.Generic.List<{{declaring_type_name value_type}}>();
-        
+		_dataMap.Clear();
+		_dataList.Clear();
+        ByteBuf _buf = new ByteBuf(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
             {{declaring_type_name value_type}} _v;

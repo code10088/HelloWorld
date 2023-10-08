@@ -13,27 +13,10 @@ namespace cfg
 {
 public partial class Tables
 {
-    public TbUIConfig TbUIConfig {get; }
-    public TbDeviceInfo TbDeviceInfo {get; }
-    public TbSceneConfig TbSceneConfig {get; }
-    public TbPlayerAvatarPart TbPlayerAvatarPart {get; }
-
-    public Tables(System.Func<string, ByteBuf> loader)
-    {
-        TbUIConfig = new TbUIConfig(loader("tbuiconfig"));
-        TbDeviceInfo = new TbDeviceInfo(loader("tbdeviceinfo"));
-        TbSceneConfig = new TbSceneConfig(loader("tbsceneconfig"));
-        TbPlayerAvatarPart = new TbPlayerAvatarPart(loader("tbplayeravatarpart"));
-        ResolveRef();
-    }
-    
-    private void ResolveRef()
-    {
-        TbUIConfig.ResolveRef(this);
-        TbDeviceInfo.ResolveRef(this);
-        TbSceneConfig.ResolveRef(this);
-        TbPlayerAvatarPart.ResolveRef(this);
-    }
+    public TbUIConfig TbUIConfig = new TbUIConfig();
+    public TbDeviceInfo TbDeviceInfo = new TbDeviceInfo();
+    public TbSceneConfig TbSceneConfig = new TbSceneConfig();
+    public TbPlayerAvatarPart TbPlayerAvatarPart = new TbPlayerAvatarPart();
 }
 
 }
