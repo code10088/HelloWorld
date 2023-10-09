@@ -98,6 +98,11 @@ Library: D:\HelloWorld\HelloWorld\Temp\StagingArea\tempburstlibs\armeabi-v7a\lib
 --compilation-defines=ENABLE_MONO
 --compilation-defines=NET_4_6
 --compilation-defines=NET_UNITY_4_8
+--compilation-defines=DEVELOPMENT_BUILD
+--compilation-defines=ENABLE_PROFILER
+--compilation-defines=DEBUG
+--compilation-defines=TRACE
+--compilation-defines=UNITY_ASSERTIONS
 --compilation-defines=UNITY_PRO_LICENSE
 --compilation-defines=ENABLE_CUSTOM_RENDER_TEXTURE
 --compilation-defines=ENABLE_DIRECTOR
@@ -112,7 +117,6 @@ Library: D:\HelloWorld\HelloWorld\Temp\StagingArea\tempburstlibs\armeabi-v7a\lib
 --compilation-defines=ODIN_INSPECTOR_3
 --compilation-defines=ODIN_INSPECTOR_3_1
 --compilation-defines=ODIN_INSPECTOR_EDITOR_ONLY
---compilation-defines=DEBUG
 --compilation-defines=PACKAGE_PHYSICS
 --compilation-defines=PACKAGE_PHYSICS2D
 --compilation-defines=PACKAGE_TILEMAP
@@ -134,6 +138,7 @@ Library: D:\HelloWorld\HelloWorld\Temp\StagingArea\tempburstlibs\armeabi-v7a\lib
 --compilation-defines=UNITASK_TEXTMESHPRO_SUPPORT
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=D:\HelloWorld\HelloWorld\Temp\Burst
+--debug=Full
 --key-folder=C:/Program Files/Unity2021.3.25/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=D:\HelloWorld\HelloWorld\Library\Burst
 --output=D:\HelloWorld\HelloWorld\Temp\StagingArea\tempburstlibs\armeabi-v7a\lib_burst_generated
