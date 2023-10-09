@@ -2,6 +2,11 @@
 HybridCLR
 	macos系统下编译libil2cpp.a时，执行bash ./build_libil2cpp.sh报错，直接拖到cmd运行不报错(3.2版本后已经全部自动化不需要libil2cpp.a)
 	自己编译dll，添加热更新dlls列表，只是为了生成补充元数据文件AOTGenericReferences，原则上不需要添加热更新dlls编译
+
+代码裁剪问题
+	Could not produce class with ID
+	http://docs.unity3d.com/Manual/ClassIDReference.html 找到ID对应的class，加到link.xml中
+	
 Luban
 	必要文件 Tools MiniTemplate/Datas MiniTemplate/Defines MiniTemplate/luban.conf Projects/Csharp_Unity_bin/gen.bat
 	修改gen.bat路径问题
