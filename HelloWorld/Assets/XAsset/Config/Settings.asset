@@ -16,9 +16,9 @@ MonoBehaviour:
   player:
     assetsSplitMode: 2
     updatable: 1
-    updateInfoURL: http://192.168.7.133/BundlesCache
-    downloadURL: http://192.168.7.133/Bundles
-    playerURL: http://192.168.7.133/Build/xasset.apk
+    updateInfoURL: https://assets-1321503079.cos.ap-beijing.myqcloud.com/Bundles
+    downloadURL: https://assets-1321503079.cos.ap-beijing.myqcloud.com/Bundles
+    playerURL: https://assets-1321503079.cos.ap-beijing.myqcloud.com
     logLevel: 0
     maxDownloads: 5
     maxRetryTimes: 3

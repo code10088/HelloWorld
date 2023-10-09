@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<linker>
+  <assembly fullname="IngameDebugConsole.Runtime">
+    <type fullname="IngameDebugConsole.DebugLogManager" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.PhysicsModule">
+    <type fullname="UnityEngine.MeshCollider" preserve="all" />
+	<type fullname="UnityEngine.BoxCollider" preserve="all" />
+  </assembly>
+</linker>
