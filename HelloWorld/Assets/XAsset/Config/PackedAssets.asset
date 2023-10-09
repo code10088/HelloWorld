@@ -173,3 +173,8 @@ MonoBehaviour:
     addressMode: 2
     filter: 
     bundle: audio_sound_notfrequence_button4_mp3.bundle
+  - asset: Assets/ZRes/UI/Atlas/Test/TestIcon1.png
+    bundleMode: 4
+    addressMode: 2
+    filter: 
+    bundle: atlas_test.bundle

@@ -2,23 +2,34 @@
 <linker>
   <assembly fullname="Assembly-CSharp">
     <type fullname="AssetManager" preserve="all" />
-    <type fullname="Bright.Config.BeanBase" preserve="all" />
-    <type fullname="Bright.Serialization.ByteBuf" preserve="all" />
-    <type fullname="CustomLoopItem" preserve="all" />
+    <type fullname="AsyncManager" preserve="all" />
+    <type fullname="AudioManager" preserve="all" />
     <type fullname="ExportComponent" preserve="all" />
     <type fullname="GameDebug" preserve="all" />
+    <type fullname="GameObjectPoolItem" preserve="all" />
+    <type fullname="GameObjectPool`1" preserve="all" />
+    <type fullname="GameSetting" preserve="all" />
+    <type fullname="LoadAssetItem" preserve="all" />
+    <type fullname="LoadGameObjectItem" preserve="all" />
+    <type fullname="LoopItemData" preserve="all" />
     <type fullname="NetMsgDispatch" preserve="all" />
     <type fullname="NetMsgItem" preserve="all" />
     <type fullname="SDKManager" preserve="all" />
     <type fullname="SingletionInterface" preserve="all" />
     <type fullname="Singletion`1" preserve="all" />
+    <type fullname="SuperScrollView.LoopListView2" preserve="all" />
+    <type fullname="SuperScrollView.LoopListViewInitParam" preserve="all" />
+    <type fullname="SuperScrollView.LoopListViewItem2" preserve="all" />
     <type fullname="ThreadManager" preserve="all" />
     <type fullname="TimeManager" preserve="all" />
+    <type fullname="UIButton" preserve="all" />
     <type fullname="UIParticle" preserve="all" />
-    <type fullname="UnityEngine.UI.CustomLoopScroll`1" preserve="all" />
-    <type fullname="UnityEngine.UI.LoopScrollRect" preserve="all" />
-    <type fullname="UnityEngine.UI.LoopVerticalScrollRect" preserve="all" />
     <type fullname="UnityExtensions.Tween.TweenPlayer" preserve="all" />
+  </assembly>
+  <assembly fullname="Luban.Runtime">
+    <type fullname="Luban.BeanBase" preserve="all" />
+    <type fullname="Luban.ByteBuf" preserve="all" />
+    <type fullname="Luban.StringUtil" preserve="all" />
   </assembly>
   <assembly fullname="System">
     <type fullname="System.Collections.Generic.Queue`1" preserve="all" />
@@ -50,10 +61,13 @@
     <type fullname="UnityEngine.PlayerPrefs" preserve="all" />
     <type fullname="UnityEngine.QualitySettings" preserve="all" />
     <type fullname="UnityEngine.Quaternion" preserve="all" />
+    <type fullname="UnityEngine.Random" preserve="all" />
     <type fullname="UnityEngine.RectTransform" preserve="all" />
     <type fullname="UnityEngine.Screen" preserve="all" />
     <type fullname="UnityEngine.Shader" preserve="all" />
     <type fullname="UnityEngine.ShadowQuality" preserve="all" />
+    <type fullname="UnityEngine.SkinnedMeshRenderer" preserve="all" />
+    <type fullname="UnityEngine.Sprite" preserve="all" />
     <type fullname="UnityEngine.SystemInfo" preserve="all" />
     <type fullname="UnityEngine.TextAsset" preserve="all" />
     <type fullname="UnityEngine.Texture" preserve="all" />
@@ -65,6 +79,7 @@
     <type fullname="UnityEngine.EventSystems.EventSystem" preserve="all" />
     <type fullname="UnityEngine.UI.Button" preserve="all" />
     <type fullname="UnityEngine.UI.Button/ButtonClickedEvent" preserve="all" />
+    <type fullname="UnityEngine.UI.Image" preserve="all" />
     <type fullname="UnityEngine.UI.RawImage" preserve="all" />
     <type fullname="UnityEngine.UI.Slider" preserve="all" />
   </assembly>
@@ -75,12 +90,14 @@
     <type fullname="System.Action" preserve="all" />
     <type fullname="System.Action`1" preserve="all" />
     <type fullname="System.Action`2" preserve="all" />
+    <type fullname="System.Action`3" preserve="all" />
     <type fullname="System.Activator" preserve="all" />
     <type fullname="System.Array" preserve="all" />
     <type fullname="System.AsyncCallback" preserve="all" />
     <type fullname="System.BitConverter" preserve="all" />
     <type fullname="System.Boolean" preserve="all" />
     <type fullname="System.Collections.Generic.Dictionary`2" preserve="all" />
+    <type fullname="System.Collections.Generic.IEnumerable`1" preserve="all" />
     <type fullname="System.Collections.Generic.List`1" preserve="all" />
     <type fullname="System.Collections.Generic.List`1/Enumerator" preserve="all" />
     <type fullname="System.Delegate" preserve="all" />
@@ -93,12 +110,12 @@
     <type fullname="System.Enum" preserve="all" />
     <type fullname="System.Exception" preserve="all" />
     <type fullname="System.Func`3" preserve="all" />
-    <type fullname="System.GC" preserve="all" />
     <type fullname="System.IAsyncResult" preserve="all" />
     <type fullname="System.IDisposable" preserve="all" />
     <type fullname="System.IO.MemoryStream" preserve="all" />
     <type fullname="System.IO.Stream" preserve="all" />
     <type fullname="System.Int32" preserve="all" />
+    <type fullname="System.Math" preserve="all" />
     <type fullname="System.MulticastDelegate" preserve="all" />
     <type fullname="System.Object" preserve="all" />
     <type fullname="System.ParamArrayAttribute" preserve="all" />
@@ -147,6 +164,7 @@
     <type fullname="xasset.DownloadRequestBatch" preserve="all" />
     <type fullname="xasset.GetDownloadSizeRequest" preserve="all" />
     <type fullname="xasset.Request" preserve="all" />
+    <type fullname="xasset.Scheduler" preserve="all" />
     <type fullname="xasset.Utility" preserve="all" />
     <type fullname="xasset.Versions" preserve="all" />
   </assembly>

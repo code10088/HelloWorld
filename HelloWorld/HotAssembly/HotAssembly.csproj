@@ -36,6 +36,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\Library\ScriptAssemblies\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Luban.Runtime">
+      <HintPath>..\Library\ScriptAssemblies\Luban.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\Assets\Plugins\Protobuf-net\net462\protobuf-net.dll</HintPath>
     </Reference>
@@ -111,6 +114,12 @@
     <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\DeviceInfo.cs">
        <Link>DeviceInfo.cs</Link>
     </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\PlayerAvatarPart.cs">
+       <Link>PlayerAvatarPart.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\PlayerAvatarPartType.cs">
+       <Link>PlayerAvatarPartType.cs</Link>
+    </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\SceneConfig.cs">
        <Link>SceneConfig.cs</Link>
     </Compile>
@@ -122,6 +131,9 @@
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\TbDeviceInfo.cs">
        <Link>TbDeviceInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\TbPlayerAvatarPart.cs">
+       <Link>TbPlayerAvatarPart.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Config\Auto\TbSceneConfig.cs">
        <Link>TbSceneConfig.cs</Link>
@@ -161,6 +173,15 @@
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Network\Message\Person.cs">
        <Link>Person.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Player\PlayerAni.cs">
+       <Link>PlayerAni.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Player\PlayerAvatar.cs">
+       <Link>PlayerAvatar.cs</Link>
+    </Compile>
+    <Compile Include="..\Assets\Scripts\SubScripts\Player\PlayerBase.cs">
+       <Link>PlayerBase.cs</Link>
     </Compile>
     <Compile Include="..\Assets\Scripts\SubScripts\Scene\Auto\TestSceneComponent.cs">
        <Link>TestSceneComponent.cs</Link>

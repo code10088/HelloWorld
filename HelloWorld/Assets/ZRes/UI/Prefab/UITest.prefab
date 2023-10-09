@@ -2688,7 +2688,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: Assets/Scripts/SubScripts/UI/Auto/
-  className: 'UITestItem : UIChildItem'
+  className: 'UITestItem : LoopItemData'
 --- !u!114 &6461286606601584838
 MonoBehaviour:
   m_ObjectHideFlags: 0

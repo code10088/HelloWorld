@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 public class HotAssemblyCompile
 {
@@ -11,7 +10,7 @@ public class HotAssemblyCompile
     //新建代码工程目录
     private static string newProjectPath = System.Environment.CurrentDirectory + "/" + newProjectName;
 
-    [MenuItem("Tools/HotAssemblyCompile")]
+    [MenuItem("Tools/HotAssemblyCompile", false, (int)ToolsMenuSort.HotAssemblyCompile)]
     public static void Generate()
     {
         StreamReader sr = new StreamReader(newProjectPath + "/" + newProjectName + ".txt");
@@ -53,24 +52,5 @@ public class HotAssemblyCompile
             msbuild.Close();
             AssetDatabase.Refresh();
         }
-    }
-    [MenuItem("Tools/CopyMatedata")]
-    public static void CopyMetadata()
-    {
-        string platform = "Windows";
-#if UNITY_ANDROID
-        platform = "Android";
-#elif UNITY_IOS
-        platform = "IOS";
-#endif
-        TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/ZRes/GameConfig/HotUpdateConfig.txt");
-        var config = JsonConvert.DeserializeObject<MainAssembly.HotUpdateConfig>(ta.text);
-        for (int i = 0; i < config.Metadata.Count; i++)
-        {
-            var name = Path.GetFileNameWithoutExtension(config.Metadata[i]);
-            File.Copy($"{System.Environment.CurrentDirectory}\\HybridCLRData\\AssembliesPostIl2CppStrip\\{platform}\\{name}.dll", $"{Application.dataPath}\\ZRes\\Assembly\\{name}.bytes", true);
-        }
-        File.Copy($"{System.Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
-        AssetDatabase.Refresh();
     }
 }

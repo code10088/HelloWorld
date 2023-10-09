@@ -32,7 +32,7 @@ namespace HotAssembly
             poolDequeueUIButton = allData[11].exportComponent[0] as UIButton;
         }
     }
-    public partial class UITestItem : UIChildItem
+    public partial class UITestItem : LoopItemData
     {
         public GameObject obj;
         public SuperScrollView.LoopListViewItem2 itemLoopListViewItem2 = null;

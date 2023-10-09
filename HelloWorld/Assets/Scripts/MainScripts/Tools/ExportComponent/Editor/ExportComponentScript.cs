@@ -13,7 +13,7 @@ public class ExportComponentScript
     [ExecuteInEditMode,InitializeOnLoadMethod]
     public static void Init()
     {
-        if (texture == null) texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Scripts/MainScripts/ExportComponent/Editor/1.png");
+        if (texture == null) texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Scripts/MainScripts/Tools/ExportComponent/Editor/1.png");
         EditorApplication.hierarchyWindowItemOnGUI -= DrawItemGUI;
         EditorApplication.hierarchyWindowItemOnGUI += DrawItemGUI;
         EditorApplication.playModeStateChanged -= Hide;

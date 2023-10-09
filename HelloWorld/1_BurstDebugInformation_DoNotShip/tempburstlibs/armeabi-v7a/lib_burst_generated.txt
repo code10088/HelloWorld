@@ -126,9 +126,16 @@ Library: D:\HelloWorld\HelloWorld\Temp\StagingArea\tempburstlibs\armeabi-v7a\lib
 --compilation-defines=CSHARP_7_3_OR_NEWER
 --compilation-defines=ENABLE_VR_MODULE
 --compilation-defines=ENABLE_XR_MODULE
+--compilation-defines=UNITASK_ASSETBUNDLE_SUPPORT
+--compilation-defines=UNITASK_PHYSICS_SUPPORT
+--compilation-defines=UNITASK_PHYSICS2D_SUPPORT
+--compilation-defines=UNITASK_PARTICLESYSTEM_SUPPORT
+--compilation-defines=UNITASK_UGUI_SUPPORT
+--compilation-defines=UNITASK_WEBREQUEST_SUPPORT
 --compilation-defines=ENABLE_BURST_1_0_0_OR_NEWER
 --compilation-defines=USING_ANIMATION_MODULE
 --compilation-defines=USING_PHYSICS2D_MODULE
+--compilation-defines=UNITASK_TEXTMESHPRO_SUPPORT
 --generate-link-xml=Temp\burst.link.xml
 --temp-folder=D:\HelloWorld\HelloWorld\Temp\Burst
 --debug=Full
