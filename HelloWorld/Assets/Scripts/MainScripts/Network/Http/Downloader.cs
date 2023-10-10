@@ -172,6 +172,7 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
         }
         private void Finish()
         {
+            Instance.count--;
             finish?.Invoke(url, result);
             Instance.CheckHttpQueue();
         }
