@@ -6,15 +6,6 @@ using xasset.editor;
 using xasset;
 using HybridCLR.Editor.Commands;
 
-public enum ToolsMenuSort
-{
-    BuildBundlesFast,
-    BuildBundles,
-    CopyConfig,
-    HotAssemblyCompile,
-    CopyMetadata,
-    XAssetBuild,
-}
 public class BuildEditor
 {
     [MenuItem("Tools/BuildBundlesFast", false, (int)ToolsMenuSort.BuildBundlesFast)]
