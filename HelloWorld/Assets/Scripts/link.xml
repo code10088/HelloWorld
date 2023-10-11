@@ -6,5 +6,7 @@
   <assembly fullname="UnityEngine.PhysicsModule">
     <type fullname="UnityEngine.MeshCollider" preserve="all" />
 	<type fullname="UnityEngine.BoxCollider" preserve="all" />
+	<type fullname="UnityEngine.SphereCollider" preserve="all" />
+	<type fullname="UnityEngine.CapsuleCollider" preserve="all" />
   </assembly>
 </linker>

@@ -1,5 +1,6 @@
 public enum ToolsMenuSort
 {
+    BuildPlayer,
     BuildBundlesFast,
     BuildBundles,
     CopyConfig,

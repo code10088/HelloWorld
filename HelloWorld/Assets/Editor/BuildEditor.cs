@@ -5,17 +5,25 @@ using System.IO;
 using xasset.editor;
 using xasset;
 using HybridCLR.Editor.Commands;
+using System;
 
 public class BuildEditor
 {
-    [MenuItem("Tools/BuildBundlesFast", false, (int)ToolsMenuSort.BuildBundlesFast)]
-    public static void BuildBundlesFast()
+    [MenuItem("Tools/BuildPlayer", false, (int)ToolsMenuSort.BuildPlayer)]
+    public static void BuildPlayer()
     {
-        CopyConfig();
-        HotAssemblyCompile.Generate();
-        CopyMetadata();
-        XAssetBuild();
+        string[] args = Environment.GetCommandLineArgs();
+        PlayerSettings.bundleVersion = args[9].Replace("--version:", string.Empty);
+        BuildBundles();
+        var buildTarget = EditorUserBuildSettings.activeBuildTarget;
+        var targetName = PlayerSettings.productName;
+        if (buildTarget == BuildTarget.Android) targetName += ".apk";
+        else targetName += ".app";
+        string path = $"{Environment.CurrentDirectory}/{targetName}";
+        //BuildOptions options = EditorUserBuildSettings.development ? BuildOptions.Development : BuildOptions.None;
+        BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path, EditorUserBuildSettings.activeBuildTarget, BuildOptions.None);
     }
+
     [MenuItem("Tools/BuildBundles", false, (int)ToolsMenuSort.BuildBundles)]
     public static void BuildBundles()
     {
@@ -29,7 +37,7 @@ public class BuildEditor
     [MenuItem("Tools/CopyConfig", false, (int)ToolsMenuSort.CopyConfig)]
     public static void CopyConfig()
     {
-        string path = System.Environment.CurrentDirectory.Substring(0, System.Environment.CurrentDirectory.LastIndexOf(@"\"));
+        string path = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
         FileUtil.ReplaceDirectory($"{path}\\Luban\\Client\\OutCodes", $"{Application.dataPath}\\Scripts\\SubScripts\\Config\\Auto");
         FileUtil.ReplaceDirectory($"{path}\\Luban\\Client\\OutBytes", $"{Application.dataPath}\\ZRes\\DataConfig");
         AssetDatabase.Refresh();
@@ -48,9 +56,9 @@ public class BuildEditor
         for (int i = 0; i < config.Metadata.Count; i++)
         {
             var name = Path.GetFileNameWithoutExtension(config.Metadata[i]);
-            File.Copy($"{System.Environment.CurrentDirectory}\\HybridCLRData\\AssembliesPostIl2CppStrip\\{platform}\\{name}.dll", $"{Application.dataPath}\\ZRes\\Assembly\\{name}.bytes", true);
+            File.Copy($"{Environment.CurrentDirectory}\\HybridCLRData\\AssembliesPostIl2CppStrip\\{platform}\\{name}.dll", $"{Application.dataPath}\\ZRes\\Assembly\\{name}.bytes", true);
         }
-        File.Copy($"{System.Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
+        File.Copy($"{Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
         AssetDatabase.Refresh();
     }
     [MenuItem("Tools/XAssetBuild", false, (int)ToolsMenuSort.XAssetBuild)]
