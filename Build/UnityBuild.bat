@@ -7,6 +7,7 @@ git checkout %1
 git reset --hard %1
 git pull
 
+taskkill /f /im Unity.exe
 echo 执行打包
 "C:/Program Files/Unity2021.3.25/Editor/Unity.exe" ^
 -quit ^
