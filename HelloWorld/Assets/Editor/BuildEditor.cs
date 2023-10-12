@@ -13,13 +13,21 @@ public class BuildEditor
     public static void BuildPlayer()
     {
         string[] args = Environment.GetCommandLineArgs();
-        PlayerSettings.bundleVersion = args[9].Replace("--version:", string.Empty);
+        string path = string.Empty;
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i].StartsWith("--path:"))
+            {
+                path = args[i].Replace("--path:", string.Empty);
+                Debug.Log(args[i]);
+            }
+            else if (args[i].StartsWith("--version:"))
+            {
+                PlayerSettings.bundleVersion = args[i].Replace("--version:", string.Empty);
+                Debug.Log(args[i]);
+            }
+        }
         BuildBundles();
-        var buildTarget = EditorUserBuildSettings.activeBuildTarget;
-        var targetName = PlayerSettings.productName;
-        if (buildTarget == BuildTarget.Android) targetName += ".apk";
-        else targetName += ".app";
-        string path = $"{Environment.CurrentDirectory}/{targetName}";
         //BuildOptions options = EditorUserBuildSettings.development ? BuildOptions.Development : BuildOptions.None;
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path, EditorUserBuildSettings.activeBuildTarget, BuildOptions.None);
     }
