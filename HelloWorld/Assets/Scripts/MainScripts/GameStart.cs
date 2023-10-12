@@ -3,7 +3,6 @@ using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Newtonsoft.Json;
-using System.IO;
 using HybridCLR;
 
 namespace MainAssembly
@@ -65,7 +64,11 @@ namespace MainAssembly
         private void StartHotAssembly()
         {
 #if UNITY_EDITOR
-            HotAssembly.GameStart.Instance.Init();
+            Type t = Type.GetType("HotAssembly.GameStart");
+            PropertyInfo p = t.BaseType.GetProperty("Instance");
+            object o = p.GetMethod.Invoke(null, null);
+            MethodInfo m = t.GetMethod("Init");
+            m.Invoke(o, null);
 #else
             int loadId = -1;
             AssetManager.Instance.Load<TextAsset>(ref loadId, "HotAssembly", StartHotAssembly);
