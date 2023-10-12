@@ -11,3 +11,6 @@
 /HelloWorld/Temp
 /HelloWorld/*.csproj
 /HelloWorld/*.sln
+
+/Build/HelloWorld*
+/Build/build.log
