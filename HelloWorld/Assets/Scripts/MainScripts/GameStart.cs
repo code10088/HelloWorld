@@ -46,8 +46,7 @@ namespace MainAssembly
             AssetManager.Instance.Unload(id);
             TextAsset ta = asset as TextAsset;
             var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
-            string[] path = new string[config.Metadata.Count];
-            for (int i = 0; i < path.Length; i++) path[i] = Path.GetFileNameWithoutExtension(config.Metadata[i]);
+            string[] path = config.Metadata.ToArray();
             AssetManager.Instance.Load(ref loadId, path, LoadMetadataForAOTAssembly);
         }
         private void LoadMetadataForAOTAssembly(string[] path, Object[] assets)

@@ -53,18 +53,13 @@ public class BuildEditor
     [MenuItem("Tools/CopyMatedata", false, (int)ToolsMenuSort.CopyMetadata)]
     public static void CopyMetadata()
     {
-        string platform = "Windows";
-#if UNITY_ANDROID
-        platform = "Android";
-#elif UNITY_IOS
-        platform = "IOS";
-#endif
         TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/ZRes/GameConfig/HotUpdateConfig.txt");
         var config = JsonConvert.DeserializeObject<MainAssembly.HotUpdateConfig>(ta.text);
+        string stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
         for (int i = 0; i < config.Metadata.Count; i++)
         {
-            var name = Path.GetFileNameWithoutExtension(config.Metadata[i]);
-            File.Copy($"{Environment.CurrentDirectory}\\HybridCLRData\\AssembliesPostIl2CppStrip\\{platform}\\{name}.dll", $"{Application.dataPath}\\ZRes\\Assembly\\{name}.bytes", true);
+            var name = config.Metadata[i];
+            File.Copy($"{stripDir}/{name}.dll", $"{Application.dataPath}\\ZRes\\Assembly\\{name}.bytes", true);
         }
         File.Copy($"{Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
         AssetDatabase.Refresh();

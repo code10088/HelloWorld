@@ -178,3 +178,8 @@ MonoBehaviour:
     addressMode: 2
     filter: 
     bundle: atlas_test.bundle
+  - asset: Assets/ZRes/Assembly/UniTask.bytes
+    bundleMode: 1
+    addressMode: 2
+    filter: 
+    bundle: assembly_unitask_bytes.bundle
