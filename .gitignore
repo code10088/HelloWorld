@@ -1,6 +1,8 @@
 /HelloWorld/.vs
 /HelloWorld/Bundles
 /HelloWorld/BundlesCache
+/HelloWorld/HotAssembly/bin
+/HelloWorld/HotAssembly/obj
 /HelloWorld/HybridCLRData
 /HelloWorld/Library
 /HelloWorld/Logs
