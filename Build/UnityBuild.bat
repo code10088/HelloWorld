@@ -1,7 +1,8 @@
 @echo off
+chcp 65001
 
 echo 执行git
-cd D:\HelloWorld
+cd /d D:/HelloWorld
 git checkout %1
 git reset --hard %1
 git pull
