@@ -16,4 +16,5 @@ echo 执行打包
 -logFile "D:/HelloWorld/Build/build.log" ^
 -executeMethod %2 ^
 --path:D:\HelloWorld\Build\HelloWorld.apk ^
---version:%3
+--version:%3 ^
+--develop:%4

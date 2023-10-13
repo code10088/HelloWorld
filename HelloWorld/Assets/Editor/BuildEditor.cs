@@ -15,6 +15,7 @@ public class BuildEditor
     {
         string[] args = Environment.GetCommandLineArgs();
         string path = string.Empty;
+        BuildOptions options = BuildOptions.None;
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i].StartsWith("--path:"))
@@ -27,11 +28,17 @@ public class BuildEditor
                 PlayerSettings.bundleVersion = args[i].Replace("--version:", string.Empty);
                 Debug.Log(args[i]);
             }
+            else if (args[i].StartsWith("--develop:"))
+            {
+                bool b = bool.Parse(args[i].Replace("--version:", string.Empty));
+                if (b) options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
+                Debug.Log(args[i]);
+            }
         }
         BuildBundles();
         //BuildOptions options = EditorUserBuildSettings.development ? BuildOptions.Development : BuildOptions.None;
         HideSubScripts(true);
-        BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path, EditorUserBuildSettings.activeBuildTarget, BuildOptions.None);
+        BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path, EditorUserBuildSettings.activeBuildTarget, options);
         HideSubScripts(false);
     }
     private static void HideSubScripts(bool b)
