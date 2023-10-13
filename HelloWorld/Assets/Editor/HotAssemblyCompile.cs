@@ -50,6 +50,7 @@ public class HotAssemblyCompile
             System.Diagnostics.Process msbuild = System.Diagnostics.Process.Start(strMSBuildPath, strParam);
             msbuild.WaitForExit();
             msbuild.Close();
+            File.Copy($"{System.Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
             AssetDatabase.Refresh();
         }
     }
