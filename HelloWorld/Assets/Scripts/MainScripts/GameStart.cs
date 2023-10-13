@@ -14,6 +14,7 @@ namespace MainAssembly
         private void Start()
         {
             Application.runInBackground = true;
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
             AssetManager.Instance.Init(OpenDebug);
         }
         private void OpenDebug()
