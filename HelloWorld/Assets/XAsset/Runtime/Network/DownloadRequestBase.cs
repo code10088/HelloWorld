@@ -43,6 +43,7 @@ namespace xasset
         {
             downloadedBytes = 0;
             downloadSize = 0;
+            progress = 0;
             SetResult(Result.Default);
         }
 
