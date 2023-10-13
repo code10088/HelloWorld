@@ -110,5 +110,6 @@ public class BuildEditor
         //BuildUpdateInfo在BuildBundles时已经更新
         //Builder.BuildUpdateInfo(versions, hash, file.Length);
         Builder.BuildPlayerAssets(versions);
+        File.Copy($"{Settings.PlatformCachePath}/updateinfo.json", $"{Settings.PlatformDataPath}/updateinfo.json", true);
     }
 }
