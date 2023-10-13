@@ -6,6 +6,7 @@ using xasset.editor;
 using xasset;
 using HybridCLR.Editor.Commands;
 using System;
+using System.Collections.Generic;
 
 public class BuildEditor
 {
@@ -63,8 +64,20 @@ public class BuildEditor
     public static void CopyConfig()
     {
         string path = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
-        FileUtil.ReplaceDirectory($"{path}\\Luban\\Client\\OutCodes", $"{Application.dataPath}\\Scripts\\SubScripts\\Config\\Auto");
-        FileUtil.ReplaceDirectory($"{path}\\Luban\\Client\\OutBytes", $"{Application.dataPath}\\ZRes\\DataConfig");
+        List<FileInfo> list = new List<FileInfo>();
+        FileUtils.GetAllFilePath($"{path}\\Luban\\Client\\OutCodes", list);
+        for (int i = 0; i < list.Count; i++)
+        {
+            string target = $"{Application.dataPath}\\Scripts\\SubScripts\\Config\\Auto\\{list[i].Name}";
+            File.Copy(list[i].FullName, target, true);
+        }
+        list.Clear();
+        FileUtils.GetAllFilePath($"{path}\\Luban\\Client\\OutBytes", list);
+        for (int i = 0; i < list.Count; i++)
+        {
+            string target = $"{Application.dataPath}\\ZRes\\DataConfig\\{list[i].Name}";
+            File.Copy(list[i].FullName, target, true);
+        }
         AssetDatabase.Refresh();
     }
     [MenuItem("Tools/HybridCLRGenerate", false, (int)ToolsMenuSort.HybridCLRGenerate)]

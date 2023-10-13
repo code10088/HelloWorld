@@ -15,7 +15,7 @@ public class FileUtils : Singletion<FileUtils>
         }
     }
 
-    #region 读写文件
+    #region 运行时多线程读写文件
     private static List<FileItem> queue = new List<FileItem>();
     private static int count = 0;
 
@@ -129,7 +129,7 @@ public class FileUtils : Singletion<FileUtils>
         }
         return hashMD5;
     }
-    public static void GetAllFilePath(string path, List<FileInfo> fileList, string selection)
+    public static void GetAllFilePath(string path, List<FileInfo> fileList, string selection = "")
     {
         DirectoryInfo dir = new DirectoryInfo(path);
         FileInfo[] fileInfos = dir.GetFiles();
