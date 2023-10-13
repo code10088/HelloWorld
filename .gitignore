@@ -15,3 +15,5 @@
 
 /Build/HelloWorld*
 /Build/build.log
+
+/HelloWorld/Assets/XAsset/Config/PackedAssets.asset
