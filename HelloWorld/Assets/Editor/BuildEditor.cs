@@ -30,7 +30,7 @@ public class BuildEditor
             }
             else if (args[i].StartsWith("--develop:"))
             {
-                bool b = bool.Parse(args[i].Replace("--version:", string.Empty));
+                bool b = bool.Parse(args[i].Replace("--develop:", string.Empty));
                 if (b) options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
                 Debug.Log(args[i]);
             }
