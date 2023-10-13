@@ -26,47 +26,47 @@ MonoBehaviour:
     assets:
     - asset: Assets/ZRes/Assembly
       bundleMode: 1
-      addressMode: 2
+      addressMode: 0
       filter: 
       bundle: 
     - asset: Assets/ZRes/DataConfig
       bundleMode: 1
-      addressMode: 2
+      addressMode: 0
       filter: 
       bundle: 
     - asset: Assets/ZRes/Debug
       bundleMode: 1
-      addressMode: 2
+      addressMode: 0
       filter: 
       bundle: 
     - asset: Assets/ZRes/Font
       bundleMode: 4
-      addressMode: 2
+      addressMode: 0
       filter: 
       bundle: 
     - asset: Assets/ZRes/GameConfig
       bundleMode: 1
-      addressMode: 2
+      addressMode: 0
       filter: 
       bundle: 
     - asset: Assets/ZRes/Scene
       bundleMode: 1
-      addressMode: 2
+      addressMode: 0
       filter: 
       bundle: 
     - asset: Assets/ZRes/UI/Atlas
       bundleMode: 4
-      addressMode: 2
+      addressMode: 0
       filter: 
       bundle: 
     - asset: Assets/ZRes/UI/Prefab
       bundleMode: 1
-      addressMode: 2
+      addressMode: 0
       filter: 
       bundle: 
     - asset: Assets/ZRes/Audio
       bundleMode: 1
-      addressMode: 2
+      addressMode: 0
       filter: 
       bundle: 
     desc: 

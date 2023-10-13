@@ -22,7 +22,7 @@ namespace MainAssembly
 #if DEBUG
             GameDebug.showLog = true;
             int loadId = -1;
-            AssetManager.Instance.Load<GameObject>(ref loadId, "IngameDebugConsole", (a,b)=>
+            AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/IngameDebugConsole.prefab", (a,b)=>
             {
                 Instantiate(b);
                 HotUpdate();
@@ -39,7 +39,7 @@ namespace MainAssembly
         private void LoadHotUpdateConfig()
         {
             int loadId = -1;
-            AssetManager.Instance.Load<TextAsset>(ref loadId, "HotUpdateConfig", LoadMetadataRes);
+            AssetManager.Instance.Load<TextAsset>(ref loadId, "Assets/ZRes/GameConfig/HotUpdateConfig.txt", LoadMetadataRes);
         }
         private void LoadMetadataRes(int id, Object asset)
         {

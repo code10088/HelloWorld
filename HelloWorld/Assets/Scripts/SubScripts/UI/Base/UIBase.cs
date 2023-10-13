@@ -87,22 +87,30 @@ namespace HotAssembly
         }
 
         #region 扩展方法
-        protected void SetSprite(Image image, string name)
+        protected void SetSprite(Image image, string atlas, string name)
         {
             int loadId = -1;
-            AssetManager.Instance.Load<Sprite>(ref loadId, name, (a, b) => image.sprite = (Sprite)b);
+            AssetManager.Instance.Load<Sprite>(ref loadId, $"{atlas}{name}.png", (a, b) => image.sprite = (Sprite)b);
             loaders.Add(loadId);
         }
-        protected void SetSprite(RawImage image, string name)
+        /// <summary>
+        /// 背景图
+        /// </summary>
+        /// <param name="path">相对于Assets/ZRes/UI/Texture的相对路径</param>
+        protected void SetSprite(RawImage image, string path)
         {
             int loadId = -1;
-            AssetManager.Instance.Load<Texture>(ref loadId, name, (a, b) => image.texture = (Texture)b);
+            AssetManager.Instance.Load<Texture>(ref loadId, $"{ZResConst.ResUITexturePath}{path}.png", (a, b) => image.texture = (Texture)b);
             loaders.Add(loadId);
         }
-        protected void LoadPrefab(string name, Action<GameObject> finish)
+        /// <summary>
+        /// 加载Prefab
+        /// </summary>
+        /// <param name="path">相对于Assets/ZRes/UI/Prefab的相对路径</param>
+        protected void LoadPrefab(string path, Action<GameObject> finish)
         {
             int loadId = -1;
-            AssetManager.Instance.Load<GameObject>(ref loadId, name, (a, b) => finish?.Invoke((GameObject)b));
+            AssetManager.Instance.Load<GameObject>(ref loadId, $"{ZResConst.ResUIPrefabPath}{path}.prefab", (a, b) => finish?.Invoke((GameObject)b));
             loaders.Add(loadId);
         }
         protected GameObject Instantiate(GameObject obj, Transform parent = null)

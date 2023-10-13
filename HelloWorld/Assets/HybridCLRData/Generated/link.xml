@@ -3,7 +3,6 @@
   <assembly fullname="Assembly-CSharp">
     <type fullname="AssetManager" preserve="all" />
     <type fullname="AsyncManager" preserve="all" />
-    <type fullname="AudioManager" preserve="all" />
     <type fullname="ExportComponent" preserve="all" />
     <type fullname="GameDebug" preserve="all" />
     <type fullname="GameObjectPoolItem" preserve="all" />

@@ -129,7 +129,7 @@ namespace MainAssembly
         #region Config
         private void CheckDownloadHotUpdateConfig()
         {
-            string[] include = new string[] { "HotUpdateConfig.txt" };
+            string[] include = new string[] { "Assets/ZRes/GameConfig/HotUpdateConfig.txt" };
             var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync(include);
             getDownloadSizeAsync.completed += StartDownloadHotUpdateConfig;
 
@@ -173,7 +173,7 @@ namespace MainAssembly
         private void LoadHotUpdateConfig()
         {
             int loadId = -1;
-            AssetManager.Instance.Load<TextAsset>(ref loadId, "HotUpdateConfig", CheckDownloadHotUpdateRes);
+            AssetManager.Instance.Load<TextAsset>(ref loadId, "Assets/ZRes/GameConfig/HotUpdateConfig.txt", CheckDownloadHotUpdateRes);
             UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.LoadHotUpdateConfig.ToString());
         }
         #endregion

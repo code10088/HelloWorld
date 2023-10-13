@@ -28,7 +28,7 @@ namespace HotAssembly
             await base.OnEnable(param);
             GameDebug.Log("UITest OnEnable");
             await UniTask.Delay(1000);
-            pool.Init("TestBullet");
+            pool.Init($"{ZResConst.ResUIPrefabPath}TestBullet.prefab");
         }
         protected override void PlayInitAni()
         {
@@ -70,13 +70,12 @@ namespace HotAssembly
         private void SDKInit()
         {
             SDKManager.Instance.InitSDK();
-            AudioManager.Instance.PlaySound("Button1");
         }
         private void LoadSprite()
         {
-            SetSprite(component.imageImage, "TestIcon");
-            SetSprite(component.imageImage, "TestIcon2");
-            SetSprite(component.imageImage, "TestIcon3");
+            SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
+            SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
+            SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon3");
         }
         private void LoadBulletFromPool()
         {

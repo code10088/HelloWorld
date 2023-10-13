@@ -97,8 +97,9 @@ public class BuildEditor
         string stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
         for (int i = 0; i < config.Metadata.Count; i++)
         {
-            var name = config.Metadata[i];
-            File.Copy($"{stripDir}/{name}.dll", $"{Application.dataPath}\\ZRes\\Assembly\\{name}.bytes", true);
+            var path = config.Metadata[i];
+            var name = Path.GetFileNameWithoutExtension(path);
+            File.Copy($"{stripDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
         }
         HideSubScripts(false);
     }

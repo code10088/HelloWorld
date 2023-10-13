@@ -45,8 +45,8 @@ namespace HotAssembly
             public void Load(FieldInfo fi, Action _finish)
             {
                 finish = _finish;
-                string tempPath = fi.Name.ToLower();
                 tb = fi.GetValue(Instance.GameConfigs) as TbBase;
+                string tempPath = $"{ZResConst.ResDataConfigPath}{fi.Name.ToLower()}.bytes";
                 AssetManager.Instance.Load<TextAsset>(ref loadId, tempPath, Deserialize);
             }
             private void Deserialize(int id, Object asset)

@@ -18,7 +18,7 @@ public sealed partial class UIConfig : Luban.BeanBase
     {
         UIType = (UIType)_buf.ReadInt();
         Name = _buf.ReadString();
-        PrefabName = _buf.ReadString();
+        PrefabPath = _buf.ReadString();
         UIWindowType = (UIWindowType)_buf.ReadInt();
     }
 
@@ -35,7 +35,7 @@ public sealed partial class UIConfig : Luban.BeanBase
     /// <summary>
     /// 资源名字
     /// </summary>
-    public readonly string PrefabName;
+    public readonly string PrefabPath;
     /// <summary>
     /// 窗口类型
     /// </summary>
@@ -57,7 +57,7 @@ public sealed partial class UIConfig : Luban.BeanBase
         return "{ "
         + "UIType:" + UIType + ","
         + "Name:" + Name + ","
-        + "PrefabName:" + PrefabName + ","
+        + "PrefabPath:" + PrefabPath + ","
         + "UIWindowType:" + UIWindowType + ","
         + "}";
     }

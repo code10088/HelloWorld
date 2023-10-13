@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace MainAssembly
 {
@@ -17,14 +16,6 @@ namespace MainAssembly
             component.Init(gameObject);
             component.sureButton.onClick.AddListener(OnClickRetry);
             component.cancelButton.onClick.AddListener(OnClickQuit);
-        }
-        public void SetBg(string name)
-        {
-            AssetManager.Instance.Load<Texture>(ref loadId, name, LoadBg);
-        }
-        private void LoadBg(int id, Object asset)
-        {
-            component.bgRawImage.texture = asset as Texture;
         }
         public void SetText(string str)
         {

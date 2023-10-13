@@ -17,6 +17,10 @@ namespace HotAssembly
         private float releaseTime = 10f;
         private int timerId = -1;
 
+        /// <summary>
+        /// 子界面
+        /// </summary>
+        /// <param name="path">相对于Assets/ZRes/UI/Prefab的相对路径</param>
         public UISubItem(string path)
         {
             prefabPath = path;
@@ -36,7 +40,7 @@ namespace HotAssembly
             }
             else
             {
-                AssetManager.Instance.Load<GameObject>(ref loadId, prefabPath, LoadFinish);
+                AssetManager.Instance.Load<GameObject>(ref loadId, $"{ZResConst.ResUIPrefabPath}{prefabPath}.prefab", LoadFinish);
             }
         }
         private void LoadFinish(int id, Object asset)

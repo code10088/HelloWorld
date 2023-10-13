@@ -1,4 +1,15 @@
 {
-	"Metadata": ["mscorlib", "protobuf-net", "UniTask"],
-	"HotUpdateRes": ["HotAssembly.bytes", "Data_UIConfig.bytes", "UIHotUpdateRes.prefab", "UIMessageBox.prefab"]
+	"Metadata":
+	[
+		"Assets/ZRes/Assembly/mscorlib.bytes",
+		"Assets/ZRes/Assembly/protobuf-net.bytes",
+		"Assets/ZRes/Assembly/UniTask.bytes"
+	],
+	"HotUpdateRes":
+	[
+		"Assets/ZRes/Assembly/HotAssembly.bytes",
+		"Assets/ZRes/DataConfig/tbuiconfig.bytes",
+		"Assets/ZRes/UI/Prefab/UIHotUpdateRes.prefab",
+		"Assets/ZRes/UI/Prefab/UIMessageBox.prefab"
+	]
 }

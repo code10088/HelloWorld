@@ -189,7 +189,7 @@ namespace HotAssembly
                 else
                 {
                     Instance.SetEventSystemState(false);
-                    AssetManager.Instance.Load<GameObject>(ref loadId, config.PrefabName, LoadFinish);
+                    AssetManager.Instance.Load<GameObject>(ref loadId, config.PrefabPath, LoadFinish);
                 }
             }
             private void LoadFinish(int id, Object asset)

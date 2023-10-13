@@ -18,8 +18,7 @@ public sealed partial class SceneConfig : Luban.BeanBase
     {
         ID = _buf.ReadInt();
         SceneType = (SceneType)_buf.ReadInt();
-        Ame = _buf.ReadString();
-        PrefabName = _buf.ReadString();
+        PrefabPath = _buf.ReadString();
     }
 
     public static SceneConfig DeserializeSceneConfig(ByteBuf _buf)
@@ -30,20 +29,15 @@ public sealed partial class SceneConfig : Luban.BeanBase
     public readonly int ID;
     public readonly SceneType SceneType;
     /// <summary>
-    /// 名字
-    /// </summary>
-    public readonly string Ame;
-    /// <summary>
     /// 资源名字
     /// </summary>
-    public readonly string PrefabName;
+    public readonly string PrefabPath;
    
     public const int __ID__ = 935827150;
     public override int GetTypeId() => __ID__;
 
     public  void ResolveRef(Tables tables)
     {
-        
         
         
         
@@ -54,8 +48,7 @@ public sealed partial class SceneConfig : Luban.BeanBase
         return "{ "
         + "ID:" + ID + ","
         + "SceneType:" + SceneType + ","
-        + "ame:" + Ame + ","
-        + "PrefabName:" + PrefabName + ","
+        + "PrefabPath:" + PrefabPath + ","
         + "}";
     }
 }

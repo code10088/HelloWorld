@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class AudioManager : Singletion<AudioManager>, SingletionInterface
 {
+    public static readonly string ResBgmPath = "Assets/ZRes/Audio/Bgm/";
+    public static readonly string ResSoundPath = "Assets/ZRes/Audio/Sound/";
+
     private GameObject root;
 
     private int loadId = -1;
@@ -17,9 +20,13 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     }
 
     #region 背景音乐
+    /// <summary>
+    /// 背景音乐
+    /// </summary>
+    /// <param name="path">相对于Assets/ZRes/Audio/Bgm的相对路径</param>
     public void PlayMusic(string path, bool loop = true)
     {
-        AssetManager.Instance.Load<AudioClip>(ref loadId, path, LoadMusicFinish);
+        AssetManager.Instance.Load<AudioClip>(ref loadId, $"{ResBgmPath}{path}.mp3", LoadMusicFinish);
         music.loop = loop;
     }
     private void LoadMusicFinish(int id, Object asset)
@@ -35,9 +42,14 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     #endregion
 
     #region 音效
+    /// <summary>
+    /// 音效
+    /// </summary>
+    /// <param name="path">相对于Assets/ZRes/Audio/Sound的相对路径</param>
     public int PlaySound(string path, bool loop = false)
     {
         AssetPool<SoundItem> pool;
+        path = $"{ResSoundPath}{path}.mp3";
         if (!audioPool.TryGetValue(path, out pool))
         {
             pool = new AssetPool<SoundItem>();

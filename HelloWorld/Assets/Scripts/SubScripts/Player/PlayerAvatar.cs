@@ -74,7 +74,7 @@ namespace HotAssembly
                 this.avatar = avatar;
                 this.finish = finish;
                 partCfg = ConfigManager.Instance.GameConfigs.TbPlayerAvatarPart.Get(partId);
-                Init(partCfg.PrefabName, avatar.modelT);
+                Init(partCfg.PrefabPath, avatar.modelT);
             }
             protected override void Finish(int state, GameObject obj)
             {

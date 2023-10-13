@@ -18,7 +18,7 @@ public sealed partial class PlayerAvatarPart : Luban.BeanBase
     {
         ID = _buf.ReadInt();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);OccupyPart = new System.Collections.Generic.List<PlayerAvatarPartType>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { PlayerAvatarPartType _e0;  _e0 = (PlayerAvatarPartType)_buf.ReadInt(); OccupyPart.Add(_e0);}}
-        PrefabName = _buf.ReadString();
+        PrefabPath = _buf.ReadString();
     }
 
     public static PlayerAvatarPart DeserializePlayerAvatarPart(ByteBuf _buf)
@@ -31,7 +31,7 @@ public sealed partial class PlayerAvatarPart : Luban.BeanBase
     /// <summary>
     /// 资源名字
     /// </summary>
-    public readonly string PrefabName;
+    public readonly string PrefabPath;
    
     public const int __ID__ = 1825807053;
     public override int GetTypeId() => __ID__;
@@ -48,7 +48,7 @@ public sealed partial class PlayerAvatarPart : Luban.BeanBase
         return "{ "
         + "ID:" + ID + ","
         + "OccupyPart:" + Luban.StringUtil.CollectionToString(OccupyPart) + ","
-        + "PrefabName:" + PrefabName + ","
+        + "PrefabPath:" + PrefabPath + ","
         + "}";
     }
 }
