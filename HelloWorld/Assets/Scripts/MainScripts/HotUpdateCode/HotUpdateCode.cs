@@ -9,6 +9,19 @@ namespace MainAssembly
 {
     public class HotUpdateCode : Singletion<HotUpdateCode>
     {
+        enum HotUpdateCodeStep
+        {
+            CheckUpdateInfo = 5,
+            CheckUpdateVersion = 10,
+            RemoveUnusedFile = 20,
+            CheckDownloadHotUpdateConfig = 25,
+            DownloadingHotUpdateConfig = 50,
+            LoadHotUpdateConfig = 55,
+            CheckDownloadHotUpdateRes = 60,
+            DownloadingHotUpdateRes = 100,
+            Max = 100,
+        }
+
         private Action hotUpdateCodeFinish;
         private Versions latestVersion;
         private DownloadRequestBatch downloadRequestBatch;
@@ -27,10 +40,12 @@ namespace MainAssembly
             var getUpdateInfoAsync = Assets.GetUpdateInfoAsync();
             getUpdateInfoAsync.completed += CheckUpdateVersion;
 
-            UIHotUpdateCode.Instance.SetText("CheckUpdateInfo");
+            UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckUpdateInfo.ToString());
         }
         private void CheckUpdateVersion(Request request)
         {
+            UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckUpdateInfo / (float)HotUpdateCodeStep.Max);
+
             var getUpdateInfoAsync = request as GetUpdateInfoRequest;
             if (getUpdateInfoAsync.result == Request.Result.Success)
             {
@@ -41,7 +56,7 @@ namespace MainAssembly
                     var getVersionsAsync = getUpdateInfoAsync.GetVersionsAsync();
                     getVersionsAsync.completed += RemoveUnusedFile;
 
-                    UIHotUpdateCode.Instance.SetText("CheckUpdateVersion");
+                    UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckUpdateVersion.ToString());
                 }
                 else
                 {
@@ -60,6 +75,8 @@ namespace MainAssembly
         }
         private void RemoveUnusedFile(Request request)
         {
+            UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckUpdateVersion / (float)HotUpdateCodeStep.Max);
+
             var getVersionsAsync = request as VersionsRequest;
             if (getVersionsAsync.result == Request.Result.Success)
             {
@@ -91,7 +108,7 @@ namespace MainAssembly
                 removeAsync.completed += SaveVersion;
                 removeAsync.SendRequest();
 
-                UIHotUpdateCode.Instance.SetText("RemoveUnusedFile");
+                UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.RemoveUnusedFile.ToString());
             }
             else
             {
@@ -100,6 +117,8 @@ namespace MainAssembly
         }
         private void SaveVersion(Request request)
         {
+            UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.RemoveUnusedFile / (float)HotUpdateCodeStep.Max);
+
             latestVersion.Save(Assets.GetDownloadDataPath(Versions.Filename));
             Assets.Versions = latestVersion;
             latestVersion = null;
@@ -114,10 +133,12 @@ namespace MainAssembly
             var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync(include);
             getDownloadSizeAsync.completed += StartDownloadHotUpdateConfig;
 
-            UIHotUpdateCode.Instance.SetText("CheckDownloadHotUpdateConfig");
+            UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckDownloadHotUpdateConfig.ToString());
         }
         private void StartDownloadHotUpdateConfig(Request request)
         {
+            UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckDownloadHotUpdateConfig / (float)HotUpdateCodeStep.Max);
+
             var getDownloadSizeAsync = request as GetDownloadSizeRequest;
             if (getDownloadSizeAsync.downloadSize > 0)
             {
@@ -137,8 +158,11 @@ namespace MainAssembly
             var downloadSize = Utility.FormatBytes(downloadRequestBatch.downloadSize);
             var bandwidth = Utility.FormatBytes(downloadRequestBatch.bandwidth);
 
-            UIHotUpdateCode.Instance.SetText($"Download：{downloadedBytes}/{downloadSize} {bandwidth}/s");
-            UIHotUpdateCode.Instance.SetSlider(downloadRequestBatch.progress);
+            UIHotUpdateCode.Instance.SetText($"{HotUpdateCodeStep.DownloadingHotUpdateConfig}：{downloadedBytes}/{downloadSize} {bandwidth}/s");
+            float f = (float)HotUpdateCodeStep.CheckDownloadHotUpdateConfig / (float)HotUpdateCodeStep.Max;
+            float w = (HotUpdateCodeStep.DownloadingHotUpdateConfig - HotUpdateCodeStep.CheckDownloadHotUpdateConfig) / (float)HotUpdateCodeStep.Max;
+            f += downloadRequestBatch.progress * w;
+            UIHotUpdateCode.Instance.SetSlider(f);
         }
         private void DownloadHotUpdateConfigFinish(DownloadRequestBatch download)
         {
@@ -150,13 +174,15 @@ namespace MainAssembly
         {
             int loadId = -1;
             AssetManager.Instance.Load<TextAsset>(ref loadId, "HotUpdateConfig", CheckDownloadHotUpdateRes);
-            UIHotUpdateCode.Instance.SetText("LoadHotUpdateConfig");
+            UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.LoadHotUpdateConfig.ToString());
         }
         #endregion
 
         #region Res
         private void CheckDownloadHotUpdateRes(int id, Object asset)
         {
+            UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.LoadHotUpdateConfig / (float)HotUpdateCodeStep.Max);
+
             AssetManager.Instance.Unload(id);
             TextAsset ta = asset as TextAsset;
             var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
@@ -166,10 +192,12 @@ namespace MainAssembly
             var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync(include.ToArray());
             getDownloadSizeAsync.completed += StartDownloadHotUpdateRes;
 
-            UIHotUpdateCode.Instance.SetText("CheckDownloadHotUpdateRes");
+            UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckDownloadHotUpdateRes.ToString());
         }
         private void StartDownloadHotUpdateRes(Request request)
         {
+            UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckDownloadHotUpdateRes / (float)HotUpdateCodeStep.Max);
+
             var getDownloadSizeAsync = request as GetDownloadSizeRequest;
             if (getDownloadSizeAsync.downloadSize > 0)
             {
@@ -189,8 +217,11 @@ namespace MainAssembly
             var downloadSize = Utility.FormatBytes(downloadRequestBatch.downloadSize);
             var bandwidth = Utility.FormatBytes(downloadRequestBatch.bandwidth);
 
-            UIHotUpdateCode.Instance.SetText($"Download：{downloadedBytes}/{downloadSize} {bandwidth}/s");
-            UIHotUpdateCode.Instance.SetSlider(downloadRequestBatch.progress);
+            UIHotUpdateCode.Instance.SetText($"{HotUpdateCodeStep.DownloadingHotUpdateRes}：{downloadedBytes}/{downloadSize} {bandwidth}/s");
+            float f = (float)HotUpdateCodeStep.CheckDownloadHotUpdateRes / (float)HotUpdateCodeStep.Max;
+            float w = (HotUpdateCodeStep.DownloadingHotUpdateRes - HotUpdateCodeStep.CheckDownloadHotUpdateRes) / (float)HotUpdateCodeStep.Max;
+            f += downloadRequestBatch.progress * w;
+            UIHotUpdateCode.Instance.SetSlider(f);
         }
         private void DownloadHotUpdateResFinish(DownloadRequestBatch download)
         {
