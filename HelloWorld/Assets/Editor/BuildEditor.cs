@@ -36,7 +36,7 @@ public class BuildEditor
     private static void HideSubScripts(bool b)
     {
         string source = Application.dataPath + "\\Scripts\\SubScripts";
-        string dest = Environment.CurrentDirectory + "\\Temp\\SubScripts";
+        string dest = Application.dataPath + "\\Scripts\\.SubScripts";
         if (b)
         {
             if (Directory.Exists(dest)) Directory.Delete(dest, true);
