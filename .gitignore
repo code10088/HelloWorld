@@ -4,6 +4,8 @@
 /HelloWorld/HotAssembly/.vs
 /HelloWorld/HotAssembly/bin
 /HelloWorld/HotAssembly/obj
+/HelloWorld/HotAssembly/Properties
+/HelloWorld/HotAssembly/*.csproj
 /HelloWorld/HybridCLRData
 /HelloWorld/Library
 /HelloWorld/Logs
