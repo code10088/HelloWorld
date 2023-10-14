@@ -22,13 +22,13 @@ namespace HotAssembly
             component.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
             component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
             component.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
+            pool.Init($"{ZResConst.ResUIPrefabPath}TestBullet.prefab");
         }
         public override async UniTask OnEnable(params object[] param)
         {
             await base.OnEnable(param);
             GameDebug.Log("UITest OnEnable");
             await UniTask.Delay(1000);
-            pool.Init($"{ZResConst.ResUIPrefabPath}TestBullet.prefab");
         }
         protected override void PlayInitAni()
         {
@@ -50,6 +50,7 @@ namespace HotAssembly
         {
             base.OnDestroy();
             subUI.Close(true);
+            pool.Release();
             GameDebug.Log("UITest OnDestroy");
         }
 
