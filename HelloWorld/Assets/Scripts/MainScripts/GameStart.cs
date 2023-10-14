@@ -72,7 +72,7 @@ namespace MainAssembly
             m.Invoke(o, null);
 #else
             int loadId = -1;
-            AssetManager.Instance.Load<TextAsset>(ref loadId, "HotAssembly", StartHotAssembly);
+            AssetManager.Instance.Load<TextAsset>(ref loadId, "Assets/ZRes/Assembly/HotAssembly.bytes", StartHotAssembly);
 #endif
         }
         private void StartHotAssembly(int id, Object asset)
