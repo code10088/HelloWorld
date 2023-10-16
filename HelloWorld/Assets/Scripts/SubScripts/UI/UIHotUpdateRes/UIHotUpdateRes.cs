@@ -8,6 +8,7 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(UIObj);
+            component.bgRectTransform.anchorMin = UIManager.anchorMinFull;
         }
         public override void OnDestroy()
         {

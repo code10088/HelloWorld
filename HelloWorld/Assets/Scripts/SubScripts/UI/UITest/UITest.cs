@@ -14,7 +14,7 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(UIObj);
-            //component.bgRectTransform.anchorMin = UIManager.anchorMinFull;
+            component.bgRectTransform.anchorMin = UIManager.anchorMinFull;
             component.closeBtnUIButton.onClick.AddListener(OnClose);
             component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
             component.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);

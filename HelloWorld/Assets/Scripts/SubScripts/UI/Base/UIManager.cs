@@ -31,7 +31,7 @@ namespace HotAssembly
             eventSystem = temp.GetComponent<EventSystem>();
             //适配
             anchorMin.x = Screen.safeArea.x / Screen.width;
-            anchorMinFull.x = anchorMin.x == 0 ? 0 : 1 / anchorMin.x;
+            if (anchorMin.x > 0) anchorMinFull.x = -Screen.safeArea.x / Screen.safeArea.width;
         }
         public void OpenUI(UIType type, Action<bool> open = null, params object[] param)
         {
