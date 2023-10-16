@@ -4,6 +4,7 @@ namespace HotAssembly
     public partial class UITestComponent
     {
         public GameObject obj;
+        public UnityEngine.RectTransform bgRectTransform = null;
         public UIButton closeBtnUIButton = null;
         public SuperScrollView.LoopListView2 loopLoopListView2 = null;
         public SuperScrollView.LoopListViewItem2 itemLoopListViewItem2 = null;
@@ -19,17 +20,18 @@ namespace HotAssembly
         {
             this.obj = obj;
             ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);
-            closeBtnUIButton = allData[0].exportComponent[0] as UIButton;
-            loopLoopListView2 = allData[1].exportComponent[0] as SuperScrollView.LoopListView2;
-            itemLoopListViewItem2 = allData[2].exportComponent[0] as SuperScrollView.LoopListViewItem2;
-            subRootObj = allData[4].gameObject;
-            openSubBtnUIButton = allData[5].exportComponent[0] as UIButton;
-            openMsgBtnUIButton = allData[6].exportComponent[0] as UIButton;
-            openSDKBtnUIButton = allData[7].exportComponent[0] as UIButton;
-            loadSpriteUIButton = allData[8].exportComponent[0] as UIButton;
-            imageImage = allData[9].exportComponent[0] as UnityEngine.UI.Image;
-            poolEnqueueUIButton = allData[10].exportComponent[0] as UIButton;
-            poolDequeueUIButton = allData[11].exportComponent[0] as UIButton;
+            bgRectTransform = allData[0].exportComponent[0] as UnityEngine.RectTransform;
+            closeBtnUIButton = allData[1].exportComponent[0] as UIButton;
+            loopLoopListView2 = allData[2].exportComponent[0] as SuperScrollView.LoopListView2;
+            itemLoopListViewItem2 = allData[3].exportComponent[0] as SuperScrollView.LoopListViewItem2;
+            subRootObj = allData[5].gameObject;
+            openSubBtnUIButton = allData[6].exportComponent[0] as UIButton;
+            openMsgBtnUIButton = allData[7].exportComponent[0] as UIButton;
+            openSDKBtnUIButton = allData[8].exportComponent[0] as UIButton;
+            loadSpriteUIButton = allData[9].exportComponent[0] as UIButton;
+            imageImage = allData[10].exportComponent[0] as UnityEngine.UI.Image;
+            poolEnqueueUIButton = allData[11].exportComponent[0] as UIButton;
+            poolDequeueUIButton = allData[12].exportComponent[0] as UIButton;
         }
     }
     public partial class UITestItem : LoopItemData

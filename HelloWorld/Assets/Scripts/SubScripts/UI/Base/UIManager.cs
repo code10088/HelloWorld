@@ -13,6 +13,9 @@ namespace HotAssembly
         public Transform tUIRoot;
         public Camera UICamera;
         private EventSystem eventSystem;
+        private Vector2 anchorMin = Vector2.zero;
+        public static Vector2 anchorMinFull = Vector2.zero;
+
         public static int layer = 0;
         private List<UIItem> loadUI = new List<UIItem>();
         private List<UIItem> curUI = new List<UIItem>();
@@ -26,6 +29,9 @@ namespace HotAssembly
             UICamera = temp.GetComponent<Camera>();
             temp = GameObject.FindWithTag("EventSystem");
             eventSystem = temp.GetComponent<EventSystem>();
+            //适配
+            anchorMin.x = Screen.safeArea.x / Screen.width;
+            anchorMinFull.x = anchorMin.x == 0 ? 0 : 1 / anchorMin.x;
         }
         public void OpenUI(UIType type, Action<bool> open = null, params object[] param)
         {
@@ -204,7 +210,7 @@ namespace HotAssembly
                     baseObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, Instance.tUIRoot) as GameObject;
                     RectTransform rt = baseObj.GetComponent<RectTransform>();
                     rt.anchoredPosition3D = Vector3.zero;
-                    rt.anchorMin = Vector2.zero;
+                    rt.anchorMin = Instance.anchorMin;
                     rt.anchorMax = Vector2.one;
                     rt.sizeDelta = Vector2.zero;
                     baseObj.SetActive(false);
