@@ -11,6 +11,7 @@
     <type fullname="LoadAssetItem" preserve="all" />
     <type fullname="LoadGameObjectItem" preserve="all" />
     <type fullname="LoopItemData" preserve="all" />
+    <type fullname="MainAssembly.UIHotUpdateCode" preserve="all" />
     <type fullname="NetMsgDispatch" preserve="all" />
     <type fullname="NetMsgItem" preserve="all" />
     <type fullname="SDKManager" preserve="all" />

@@ -71,6 +71,9 @@ namespace HotAssembly
         private void SDKInit()
         {
             SDKManager.Instance.InitSDK();
+            Debug.LogError(Screen.width);
+            Debug.LogError(Screen.height);
+            Debug.LogError(Screen.safeArea);
         }
         private void LoadSprite()
         {
