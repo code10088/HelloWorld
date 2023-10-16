@@ -126,8 +126,8 @@ public class ExportComponentScript
                 Dictionary<string, int> tempNameDic = new Dictionary<string, int>();
                 for (int k = 0; k < tempComponent.exportComponent.Length; k++)
                 {
-                    MonoBehaviour tempBehaviour = tempComponent.exportComponent[k];
-                    if (tempBehaviour == null)
+                    Component temp = tempComponent.exportComponent[k];
+                    if (temp == null)
                     {
                         string tempName = tempComponent.name + "Obj";
                         if (tempNameDic.ContainsKey(tempName))
@@ -144,7 +144,7 @@ public class ExportComponentScript
                     }
                     else
                     {
-                        string tempStr = tempBehaviour.GetType().ToString();
+                        string tempStr = temp.GetType().ToString();
                         string tempName = tempStr.Substring(tempStr.LastIndexOf(".") + 1);
                         tempName = tempComponent.name + tempName;
                         if (tempNameDic.ContainsKey(tempName))
@@ -171,8 +171,8 @@ public class ExportComponentScript
                 Dictionary<string, int> tempNameDic = new Dictionary<string, int>();
                 for (int k = 0; k < tempComponent.exportComponent.Length; k++)
                 {
-                    MonoBehaviour tempBehaviour = tempComponent.exportComponent[k];
-                    if (tempBehaviour == null)
+                    Component temp = tempComponent.exportComponent[k];
+                    if (temp == null)
                     {
                         string tempName = tempComponent.name + "Obj";
                         if (tempNameDic.ContainsKey(tempName))
@@ -189,7 +189,7 @@ public class ExportComponentScript
                     }
                     else
                     {
-                        string tempStr = tempBehaviour.GetType().ToString();
+                        string tempStr = temp.GetType().ToString();
                         string tempName = tempStr.Substring(tempStr.LastIndexOf(".") + 1);
                         tempName = tempComponent.name + tempName;
                         if (tempNameDic.ContainsKey(tempName))

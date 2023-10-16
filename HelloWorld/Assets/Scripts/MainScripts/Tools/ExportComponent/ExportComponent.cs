@@ -2,5 +2,5 @@
 
 public class ExportComponent : MonoBehaviour
 {
-    public MonoBehaviour[] exportComponent;
+    public Component[] exportComponent;
 }
