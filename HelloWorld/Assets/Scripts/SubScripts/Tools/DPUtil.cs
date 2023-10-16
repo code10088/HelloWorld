@@ -91,31 +91,31 @@ namespace HotAssembly
 #else
             if (SystemInfo.graphicsDeviceVendorID == 32902)
             {
-                tempLv = DevicePerformanceLevel.Low;
+                tempLv = DPLevel.Low;
             }
             else if (SystemInfo.processorCount <= 4)
             {
-                tempLv = DevicePerformanceLevel.Low;
+                tempLv = DPLevel.Low;
             }
             else
             {
 #if UNITY_IPHONE
             int systemMemorySize = SystemInfo.systemMemorySize;
             if (systemMemorySize >= 4000)
-                tempLv = DevicePerformanceLevel.High;
+                tempLv = DPLevel.High;
             else if (systemMemorySize >= 2000)
-                tempLv = DevicePerformanceLevel.Mid;
+                tempLv = DPLevel.Mid;
             else
-                tempLv = DevicePerformanceLevel.Low;
+                tempLv = DPLevel.Low;
 #elif UNITY_ANDROID
             int graphicsMemorySize = SystemInfo.graphicsMemorySize;
             int systemMemorySize = SystemInfo.systemMemorySize;
             if (graphicsMemorySize >= 2000 && systemMemorySize >= 6000)
-                tempLv = DevicePerformanceLevel.High;
+                tempLv = DPLevel.High;
             else if (graphicsMemorySize >= 1000 && systemMemorySize >= 4000)
-                tempLv = DevicePerformanceLevel.Mid;
+                tempLv = DPLevel.Mid;
             else
-                tempLv = DevicePerformanceLevel.Low;
+                tempLv = DPLevel.Low;
 #endif
             }
 #endif
@@ -138,7 +138,7 @@ namespace HotAssembly
             {
                 if (graphicsDevice.Contains(deviceInfo[i].Name))
                 {
-                    tempLv = (DevicePerformanceLevel)deviceInfo[i].Lv;
+                    tempLv = (DPLevel)deviceInfo[i].Lv;
                     break;
                 }
             }
@@ -162,7 +162,7 @@ namespace HotAssembly
             {
                 if (deviceModel.Contains(deviceInfo[i].Name))
                 {
-                    tempLv = (DevicePerformanceLevel)deviceInfo[i].Lv;
+                    tempLv = (DPLevel)deviceInfo[i].Lv;
                     break;
                 }
             }
