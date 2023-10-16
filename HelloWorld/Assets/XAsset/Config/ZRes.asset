@@ -64,6 +64,11 @@ MonoBehaviour:
       addressMode: 0
       filter: 
       bundle: 
+    - asset: Assets/ZRes/UI/Texture
+      bundleMode: 1
+      addressMode: 0
+      filter: 
+      bundle: 
     - asset: Assets/ZRes/Audio
       bundleMode: 1
       addressMode: 0
