@@ -4,7 +4,6 @@ namespace MainAssembly
     public partial class UIHotUpdateCodeComponent
     {
         public GameObject obj;
-        public UnityEngine.UI.RawImage bgRawImage = null;
         public UnityEngine.UI.Slider sliderSlider = null;
         public TMPro.TextMeshProUGUI tipsTextMeshProUGUI = null;
         public GameObject messageBoxObj = null;
@@ -16,14 +15,13 @@ namespace MainAssembly
         {
             this.obj = obj;
             ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);
-            bgRawImage = allData[0].exportComponent[0] as UnityEngine.UI.RawImage;
-            sliderSlider = allData[1].exportComponent[0] as UnityEngine.UI.Slider;
-            tipsTextMeshProUGUI = allData[2].exportComponent[0] as TMPro.TextMeshProUGUI;
-            messageBoxObj = allData[3].gameObject;
-            titleTextMeshProUGUI = allData[4].exportComponent[0] as TMPro.TextMeshProUGUI;
-            contentTextMeshProUGUI = allData[5].exportComponent[0] as TMPro.TextMeshProUGUI;
-            sureButton = allData[6].exportComponent[0] as UnityEngine.UI.Button;
-            cancelButton = allData[7].exportComponent[0] as UnityEngine.UI.Button;
+            sliderSlider = allData[0].exportComponent[0] as UnityEngine.UI.Slider;
+            tipsTextMeshProUGUI = allData[1].exportComponent[0] as TMPro.TextMeshProUGUI;
+            messageBoxObj = allData[2].gameObject;
+            titleTextMeshProUGUI = allData[3].exportComponent[0] as TMPro.TextMeshProUGUI;
+            contentTextMeshProUGUI = allData[4].exportComponent[0] as TMPro.TextMeshProUGUI;
+            sureButton = allData[5].exportComponent[0] as UnityEngine.UI.Button;
+            cancelButton = allData[6].exportComponent[0] as UnityEngine.UI.Button;
         }
     }
 }
