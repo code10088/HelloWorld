@@ -1,4 +1,5 @@
 using cfg;
+using MainAssembly;
 using System;
 using UnityEngine;
 using xasset;
@@ -15,10 +16,15 @@ namespace HotAssembly
         public void StartUpdate(Action finish)
         {
             hotUpdateResFinish = finish;
-            if (Assets.RealtimeMode) UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, CheckUpdateInfo);
+            UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, CheckPlayMode);
+        }
+        private void CheckPlayMode(bool success)
+        {
+            UIHotUpdateCode.Instance.Destroy();
+            if (Assets.RealtimeMode) CheckUpdateInfo();
             else UpdateFinish();
         }
-        private void CheckUpdateInfo(bool success = true)
+        private void CheckUpdateInfo()
         {
             var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync();
             getDownloadSizeAsync.completed += StartDownload;

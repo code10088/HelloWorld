@@ -45,6 +45,9 @@ namespace MainAssembly
         public void Finish()
         {
             AssetManager.Instance.Unload(loadId);
+        }
+        public void Destroy()
+        {
             Destroy(gameObject);
         }
     }
