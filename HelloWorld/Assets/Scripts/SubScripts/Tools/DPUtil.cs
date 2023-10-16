@@ -3,26 +3,16 @@ using UnityEngine;
 
 namespace HotAssembly
 {
-    public enum DevicePerformanceLevel
+    public enum DPLevel
     {
         Null = 0,
         Low,
         Mid,
         High
     }
-    public class DevicePerformanceUtil
+    public class DPUtil
     {
-        public delegate DevicePerformanceLevel CustomPerformance();
-        public delegate void FrameRateChange(int targetFrameRate);
-        public delegate void ScreenResolutionChange(int width, int heigth);
-        public delegate void QualityChange(int quality);
-        public delegate void ShadowChange(int quality);
-        public static event CustomPerformance customPerformance;
-        public static event FrameRateChange frameRateChange;
-        public static event ScreenResolutionChange screenResolutionChange;
-        public static event QualityChange qualityChange;
-        public static event ShadowChange shadowChange;
-
+        public static DPLevel dpl;
         public static int DeviceScreenWidth;
         public static int DeviceScreenHeight;
 
@@ -42,10 +32,10 @@ namespace HotAssembly
         /// </summary>
         public static void Recommend()
         {
-            DevicePerformanceLevel deviceLv = GetDeviceLevel();
+            DPLevel deviceLv = GetDeviceLevel();
             switch (deviceLv)
             {
-                case DevicePerformanceLevel.Low:
+                case DPLevel.Low:
                     SetQualitySettings(-1, "Low");
                     SetFrameRate(30);
                     SetScreenResolution(1);
@@ -55,7 +45,7 @@ namespace HotAssembly
                     SetShadowLv(0);
                     SetMasterTextureLimit(0);
                     break;
-                case DevicePerformanceLevel.Mid:
+                case DPLevel.Mid:
                     SetQualitySettings(-1, "Medium");
                     SetFrameRate(30);
                     SetScreenResolution(1);
@@ -65,7 +55,7 @@ namespace HotAssembly
                     SetShadowLv(1);
                     SetMasterTextureLimit(0);
                     break;
-                case DevicePerformanceLevel.High:
+                case DPLevel.High:
                     SetQualitySettings(-1, "High");
                     SetFrameRate(30);
                     SetScreenResolution(1);
@@ -81,24 +71,23 @@ namespace HotAssembly
         /// 推荐分级
         /// </summary>
         /// <returns></returns>
-        public static DevicePerformanceLevel GetDeviceLevel()
+        public static DPLevel GetDeviceLevel()
         {
-            DevicePerformanceLevel deviceLv = DevicePerformanceLevel.Null;
-            if (customPerformance != null) deviceLv = customPerformance();
-            if (deviceLv == DevicePerformanceLevel.Null) deviceLv = GetDeviceModelLevel();
-            if (deviceLv == DevicePerformanceLevel.Null) deviceLv = GetDeviceGPULevel();
-            if (deviceLv == DevicePerformanceLevel.Null) deviceLv = GetDeviceCPULevel();
+            DPLevel deviceLv = DPLevel.Null;
+            if (deviceLv == DPLevel.Null) deviceLv = GetDeviceModelLevel();
+            if (deviceLv == DPLevel.Null) deviceLv = GetDeviceGPULevel();
+            if (deviceLv == DPLevel.Null) deviceLv = GetDeviceCPULevel();
             return deviceLv;
         }
         /// <summary>
         /// CPU
         /// </summary>
         /// <returns></returns>
-        private static DevicePerformanceLevel GetDeviceCPULevel()
+        private static DPLevel GetDeviceCPULevel()
         {
-            DevicePerformanceLevel tempLv = DevicePerformanceLevel.High;
+            DPLevel tempLv = DPLevel.High;
 #if UNITY_EDITOR
-            tempLv = DevicePerformanceLevel.High;
+            tempLv = DPLevel.High;
 #else
             if (SystemInfo.graphicsDeviceVendorID == 32902)
             {
@@ -137,11 +126,11 @@ namespace HotAssembly
         /// </summary>
         /// <param name="lv"></param>
         /// <returns></returns>
-        private static DevicePerformanceLevel GetDeviceGPULevel()
+        private static DPLevel GetDeviceGPULevel()
         {
-            DevicePerformanceLevel tempLv = DevicePerformanceLevel.Null;
+            DPLevel tempLv = DPLevel.Null;
 #if UNITY_EDITOR
-            tempLv = DevicePerformanceLevel.High;
+            tempLv = DPLevel.High;
 #else
             var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
             var graphicsDevice = SystemInfo.graphicsDeviceName.ToLower();
@@ -161,11 +150,11 @@ namespace HotAssembly
         /// </summary>
         /// <param name="lv"></param>
         /// <returns></returns>
-        private static DevicePerformanceLevel GetDeviceModelLevel()
+        private static DPLevel GetDeviceModelLevel()
         {
-            DevicePerformanceLevel tempLv = DevicePerformanceLevel.Null;
+            DPLevel tempLv = DPLevel.Null;
 #if UNITY_EDITOR
-            tempLv = DevicePerformanceLevel.High;
+            tempLv = DPLevel.High;
 #else
             var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
             var deviceModel = SystemInfo.deviceModel.ToLower();
@@ -186,6 +175,7 @@ namespace HotAssembly
             else if (string.IsNullOrEmpty(qualityName)) qualityName = QualitySettings.names[qualityLv];
             QualitySettings.SetQualityLevel(qualityLv);
             PlayerPrefs.SetInt("Quality_Level", qualityLv);
+            dpl = (DPLevel)qualityLv;
 
             int frameRate = PlayerPrefs.GetInt("Quality_FrameRate", -1);
             if (frameRate >= 0) SetFrameRate(frameRate);
@@ -209,8 +199,6 @@ namespace HotAssembly
             //QualitySettings.softParticles = false;
             ////各向异性
             //QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
-            ////如果启用，公告牌将面向摄像机位置而不是摄像机方向
-            //QualitySettings.billboardsFaceCameraPosition = false;
             ////高低模切换缓冲
             //QualitySettings.lodBias = 2;
             //QualitySettings.particleRaycastBudget = 0;
@@ -226,7 +214,6 @@ namespace HotAssembly
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = targetFrameRate;
             PlayerPrefs.SetInt("Quality_FrameRate", targetFrameRate);
-            if (frameRateChange != null) frameRateChange(targetFrameRate);
             GameSetting.updateTimeSliceS = 1.0f / targetFrameRate;
             xasset.Scheduler.AutoslicingTimestep = GameSetting.updateTimeSliceS;
         }
@@ -244,7 +231,6 @@ namespace HotAssembly
             int height = Mathf.CeilToInt(DeviceScreenHeight * rate);
             Screen.SetResolution(width, height, true);
             PlayerPrefs.SetFloat("Quality_ScreenResolution", rate);
-            if (screenResolutionChange != null) screenResolutionChange(width, height);
         }
         /// <summary>
         /// 抗锯齿
@@ -293,7 +279,6 @@ namespace HotAssembly
                     break;
             }
             PlayerPrefs.SetInt("Quality_GraphicsQuality", quality);
-            if (qualityChange != null) qualityChange(quality);
         }
         /// <summary>
         /// 阴影
@@ -302,7 +287,6 @@ namespace HotAssembly
         {
             QualitySettings.shadows = (ShadowQuality)quality;
             PlayerPrefs.SetInt("Quality_Shadow", quality);
-            if (shadowChange != null) shadowChange(quality);
         }
         /// <summary>
         /// 0_完整分辨率，1_1/2分辨率，2_1/4分辨率，3_1/8分辨率

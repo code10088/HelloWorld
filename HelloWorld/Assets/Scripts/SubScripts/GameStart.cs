@@ -18,7 +18,7 @@ namespace HotAssembly
         }
         private void InitSetting() 
         {
-            DevicePerformanceUtil.Init();
+            DPUtil.Init();
             global::NetMsgDispatch.Instance.Init();
             EnterMainScene();
         }
