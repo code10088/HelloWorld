@@ -93,7 +93,6 @@
     <type fullname="System.Action`3" preserve="all" />
     <type fullname="System.Activator" preserve="all" />
     <type fullname="System.Array" preserve="all" />
-    <type fullname="System.AsyncCallback" preserve="all" />
     <type fullname="System.BitConverter" preserve="all" />
     <type fullname="System.Boolean" preserve="all" />
     <type fullname="System.Collections.Generic.Dictionary`2" preserve="all" />
@@ -110,13 +109,11 @@
     <type fullname="System.Enum" preserve="all" />
     <type fullname="System.Exception" preserve="all" />
     <type fullname="System.Func`3" preserve="all" />
-    <type fullname="System.IAsyncResult" preserve="all" />
     <type fullname="System.IDisposable" preserve="all" />
     <type fullname="System.IO.MemoryStream" preserve="all" />
     <type fullname="System.IO.Stream" preserve="all" />
     <type fullname="System.Int32" preserve="all" />
     <type fullname="System.Math" preserve="all" />
-    <type fullname="System.MulticastDelegate" preserve="all" />
     <type fullname="System.Object" preserve="all" />
     <type fullname="System.ParamArrayAttribute" preserve="all" />
     <type fullname="System.Predicate`1" preserve="all" />
@@ -143,7 +140,6 @@
     <type fullname="System.Single" preserve="all" />
     <type fullname="System.String" preserve="all" />
     <type fullname="System.Threading.CancellationToken" preserve="all" />
-    <type fullname="System.Threading.Interlocked" preserve="all" />
     <type fullname="System.Type" preserve="all" />
   </assembly>
   <assembly fullname="protobuf-net">
