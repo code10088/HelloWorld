@@ -9,7 +9,8 @@ namespace HotAssembly
     public class ConfigManager : Singletion<ConfigManager>
     {
         private Tables gameConfigs;
-        private int configCounter = 0;
+        private int count = 0;
+        private int total = 0;
         private Action finish;
 
         public Tables GameConfigs => gameConfigs;
@@ -19,15 +20,21 @@ namespace HotAssembly
             if (gameConfigs == null) gameConfigs = new Tables();
             this.finish = finish;
             var fis = typeof(Tables).GetFields();
-            configCounter = fis.Length;
-            for (int i = 0; i < configCounter; i++) new ConfigItem().Load(fis[i], Finish);
+            total = fis.Length;
+            for (int i = 0; i < total; i++) new ConfigItem().Load(fis[i], Finish);
         }
         private void Finish()
         {
-            if (--configCounter == 0)
+            if (++count == total)
             {
                 finish?.Invoke();
                 AsyncManager.Instance.GCCollect();
+            }
+            else
+            {
+                var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
+                hotUpdateRes.SetText("Loading Config");
+                hotUpdateRes.SetSlider((float)count / total);
             }
         }
         public void InitSpecial(string name, Action finish)

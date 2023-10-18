@@ -80,7 +80,6 @@ namespace HotAssembly
         {
             if (loadScene.Count > 0) for (int i = 0; i < loadScene.Count; i++) loadScene[i].ProgressActionInvoke();
             else TimeManager.Instance.StopTimer(timerId);
-
         }
 
 

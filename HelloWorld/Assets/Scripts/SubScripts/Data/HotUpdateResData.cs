@@ -1,5 +1,4 @@
 using cfg;
-using MainAssembly;
 using System;
 using UnityEngine;
 using xasset;
@@ -16,11 +15,6 @@ namespace HotAssembly
         public void StartUpdate(Action finish)
         {
             hotUpdateResFinish = finish;
-            UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, CheckPlayMode);
-        }
-        private void CheckPlayMode(bool success)
-        {
-            UIHotUpdateCode.Instance.Destroy();
             if (Assets.RealtimeMode) CheckUpdateInfo();
             else UpdateFinish();
         }
@@ -85,7 +79,6 @@ namespace HotAssembly
         }
         private void UpdateFinish()
         {
-            UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             hotUpdateResFinish?.Invoke();
             hotUpdateResFinish = null;
         }

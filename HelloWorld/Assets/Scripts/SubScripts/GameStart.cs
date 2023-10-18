@@ -1,4 +1,5 @@
 ﻿using cfg;
+using MainAssembly;
 
 namespace HotAssembly
 {
@@ -6,10 +7,15 @@ namespace HotAssembly
     {
         public void Init()
         {
-            ConfigManager.Instance.InitSpecial("TbUIConfig", StartHotUpdateRes);
+            ConfigManager.Instance.InitSpecial("TbUIConfig", OpenUIHotUpdateRes);
         }
-        private void StartHotUpdateRes()
+        private void OpenUIHotUpdateRes()
         {
+            UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, StartHotUpdateRes);
+        }
+        private void StartHotUpdateRes(bool success)
+        {
+            UIHotUpdateCode.Instance.Destroy();
             DataManager.Instance.HotUpdateResData.StartUpdate(InitConfig);
         }
         private void InitConfig()
@@ -18,6 +24,7 @@ namespace HotAssembly
         }
         private void InitSetting() 
         {
+            UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             DPUtil.Init();
             global::NetMsgDispatch.Instance.Init();
             EnterMainScene();
