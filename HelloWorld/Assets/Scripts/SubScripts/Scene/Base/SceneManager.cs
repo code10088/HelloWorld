@@ -10,7 +10,6 @@ namespace HotAssembly
     {
         public GameObject SceneRoot;
         public Transform tSceneRoot;
-        public Camera SceneCamera;
         private int from = -1;
         private List<SceneItem> loadScene = new List<SceneItem>();
         private List<SceneItem> curScene = new List<SceneItem>();
@@ -21,8 +20,6 @@ namespace HotAssembly
         {
             SceneRoot = GameObject.FindWithTag("SceneRoot");
             tSceneRoot = SceneRoot.transform;
-            var temp = GameObject.FindWithTag("MainCamera");
-            SceneCamera = temp.GetComponent<Camera>();
         }
         /// <summary>
         /// 

@@ -12,6 +12,7 @@ namespace HotAssembly
             base.Init();
             component.Init(UIObj);
             component.openUITestBtnUIButton.onClick.AddListener(OnOpenUITest);
+            component.openUISettingUIButton.onClick.AddListener(OnOpenUISetting);
         }
         public override async UniTask OnEnable(params object[] param)
         {
@@ -42,6 +43,10 @@ namespace HotAssembly
         private void OnOpenUITest()
         {
             UIManager.Instance.OpenUI(UIType.UITest);
+        }
+        private void OnOpenUISetting()
+        {
+            UIManager.Instance.OpenUI(UIType.UISetting);
         }
     }
 }

@@ -43,30 +43,40 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.Comparer<int>
 	// System.Collections.Generic.Comparer<object>
 	// System.Collections.Generic.Dictionary.Enumerator<int,object>
+	// System.Collections.Generic.Dictionary.Enumerator<object,ES3Internal.ES3Data>
 	// System.Collections.Generic.Dictionary.Enumerator<object,object>
 	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<int,object>
+	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<object,ES3Internal.ES3Data>
 	// System.Collections.Generic.Dictionary.KeyCollection.Enumerator<object,object>
 	// System.Collections.Generic.Dictionary.KeyCollection<int,object>
+	// System.Collections.Generic.Dictionary.KeyCollection<object,ES3Internal.ES3Data>
 	// System.Collections.Generic.Dictionary.KeyCollection<object,object>
 	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<int,object>
+	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<object,ES3Internal.ES3Data>
 	// System.Collections.Generic.Dictionary.ValueCollection.Enumerator<object,object>
 	// System.Collections.Generic.Dictionary.ValueCollection<int,object>
+	// System.Collections.Generic.Dictionary.ValueCollection<object,ES3Internal.ES3Data>
 	// System.Collections.Generic.Dictionary.ValueCollection<object,object>
 	// System.Collections.Generic.Dictionary<int,object>
+	// System.Collections.Generic.Dictionary<object,ES3Internal.ES3Data>
 	// System.Collections.Generic.Dictionary<object,object>
+	// System.Collections.Generic.EqualityComparer<ES3Internal.ES3Data>
 	// System.Collections.Generic.EqualityComparer<int>
 	// System.Collections.Generic.EqualityComparer<object>
 	// System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<int,object>>
+	// System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<object,ES3Internal.ES3Data>>
 	// System.Collections.Generic.ICollection<System.Collections.Generic.KeyValuePair<object,object>>
 	// System.Collections.Generic.ICollection<int>
 	// System.Collections.Generic.ICollection<object>
 	// System.Collections.Generic.IComparer<int>
 	// System.Collections.Generic.IComparer<object>
 	// System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int,object>>
+	// System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<object,ES3Internal.ES3Data>>
 	// System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<object,object>>
 	// System.Collections.Generic.IEnumerable<int>
 	// System.Collections.Generic.IEnumerable<object>
 	// System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<int,object>>
+	// System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<object,ES3Internal.ES3Data>>
 	// System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<object,object>>
 	// System.Collections.Generic.IEnumerator<int>
 	// System.Collections.Generic.IEnumerator<object>
@@ -75,6 +85,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.IList<int>
 	// System.Collections.Generic.IList<object>
 	// System.Collections.Generic.KeyValuePair<int,object>
+	// System.Collections.Generic.KeyValuePair<object,ES3Internal.ES3Data>
 	// System.Collections.Generic.KeyValuePair<object,object>
 	// System.Collections.Generic.List.Enumerator<int>
 	// System.Collections.Generic.List.Enumerator<object>
@@ -82,6 +93,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Collections.Generic.List<object>
 	// System.Collections.Generic.ObjectComparer<int>
 	// System.Collections.Generic.ObjectComparer<object>
+	// System.Collections.Generic.ObjectEqualityComparer<ES3Internal.ES3Data>
 	// System.Collections.Generic.ObjectEqualityComparer<int>
 	// System.Collections.Generic.ObjectEqualityComparer<object>
 	// System.Collections.Generic.Queue.Enumerator<object>
@@ -97,6 +109,9 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 	// System.Runtime.CompilerServices.ConditionalWeakTable.CreateValueCallback<object,object>
 	// System.Runtime.CompilerServices.ConditionalWeakTable.Enumerator<object,object>
 	// System.Runtime.CompilerServices.ConditionalWeakTable<object,object>
+	// UnityEngine.Events.InvokableCall<byte>
+	// UnityEngine.Events.UnityAction<byte>
+	// UnityEngine.Events.UnityEvent<byte>
 	// }}
 
 	public void RefMethods()
@@ -106,6 +121,20 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder.AwaitUnsafeOnCompleted<Cysharp.Threading.Tasks.UniTask.Awaiter,object>(Cysharp.Threading.Tasks.UniTask.Awaiter&,object&)
 		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder.AwaitUnsafeOnCompleted<Cysharp.Threading.Tasks.YieldAwaitable.Awaiter,object>(Cysharp.Threading.Tasks.YieldAwaitable.Awaiter&,object&)
 		// System.Void Cysharp.Threading.Tasks.CompilerServices.AsyncUniTaskMethodBuilder.Start<object>(object&)
+		// int ES3.Deserialize<int>(byte[],ES3Settings)
+		// int ES3.Load<int>(string,int,ES3Settings)
+		// int ES3.Load<int>(string,string,int)
+		// System.Void ES3.Save<int>(string,int,ES3Settings)
+		// System.Void ES3.Save<int>(string,int,string)
+		// byte[] ES3.Serialize<int>(int,ES3Settings)
+		// int ES3File.Load<int>(string,int)
+		// System.Void ES3File.Save<int>(string,int)
+		// int ES3Reader.Read<int>(ES3Types.ES3Type)
+		// int ES3Reader.Read<int>(string,int)
+		// int ES3Reader.ReadObject<int>(ES3Types.ES3Type)
+		// System.Type ES3Reader.ReadTypeFromHeader<int>()
+		// object ES3Types.ES3Type.Read<int>(ES3Reader)
+		// System.Void ES3Writer.Write<int>(string,object)
 		// string Luban.StringUtil.CollectionToString<int>(System.Collections.Generic.IEnumerable<int>)
 		// object ProtoBuf.Meta.TypeModel.ActivatorCreate<object>()
 		// object ProtoBuf.Meta.TypeModel.CreateInstance<object>(ProtoBuf.ISerializationContext,ProtoBuf.Serializers.ISerializer<object>)
@@ -125,8 +154,7 @@ public class AOTGenericReferences : UnityEngine.MonoBehaviour
 		// object ProtoBuf.ProtoReader.State.ReadWrapped<object>(ProtoBuf.Serializers.SerializerFeatures,object,ProtoBuf.Serializers.ISerializer<object>)
 		// object ProtoBuf.Serializer.Deserialize<object>(System.IO.Stream)
 		// object[] System.Array.Empty<object>()
-		// int System.Array.FindIndex<object>(object[],System.Predicate<object>)
-		// int System.Array.FindIndex<object>(object[],int,int,System.Predicate<object>)
+		// object UnityEngine.Component.GetComponent<object>()
 		// object UnityEngine.Component.GetComponentInParent<object>()
 		// object UnityEngine.GameObject.GetComponent<object>()
 		// object[] UnityEngine.GameObject.GetComponentsInChildren<object>(bool)

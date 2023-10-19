@@ -1,77 +1,41 @@
-using System;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace HotAssembly
 {
     public enum DPLevel
     {
-        Null = 0,
+        Null = -1,
         Low,
         Mid,
         High
     }
     public class DPUtil
     {
-        public static DPLevel dpl;
+        public static DPLevel dpl => (DPLevel)QualityLv;
+        public static int QualityLv => qualityLv & 0x0003;
+        public static int FrameRate => (qualityLv & 0x000C) >> 2;
+        public static int ScreenResolution => (qualityLv & 0x0030) >> 4;
+        public static int MasterTextureLimit => (qualityLv & 0x0040) >> 6;
+        public static int AntiLv => (qualityLv & 0x0080) >> 7;
+        public static int Shadow => (qualityLv & 0x0100) >> 8;
+        public static int SoftShadow => (qualityLv & 0x0200) >> 9;
+        public static int ShadowLv => (qualityLv & 0x0C00) >> 10;
+        public static int HDR => (qualityLv & 0x1000) >> 12;
+        public static int PostProcess => (qualityLv & 0x2000) >> 13;
+        public static int GraphicsQualityLv => (qualityLv & 0xC000) >> 14;
+
         public static int DeviceScreenWidth;
         public static int DeviceScreenHeight;
 
-        /// <summary>
-        /// 游戏初始化
-        /// </summary>
-        public static void Init()
-        {
-            DeviceScreenWidth = Screen.width;
-            DeviceScreenHeight = Screen.height;
-            int qualityLv = PlayerPrefs.GetInt("Quality_Level", -1);
-            if (qualityLv < 0) Recommend();
-            else SetQualitySettings(qualityLv);
-        }
-        /// <summary>
-        /// 推荐配置/恢复默认
-        /// </summary>
-        public static void Recommend()
-        {
-            DPLevel deviceLv = GetDeviceLevel();
-            switch (deviceLv)
-            {
-                case DPLevel.Low:
-                    SetQualitySettings(-1, "Low");
-                    SetFrameRate(30);
-                    SetScreenResolution(1);
-                    SetAntiLv(0);
-                    SetPostProcess(false);
-                    SetGraphicsQualityLv(0);
-                    SetShadowLv(0);
-                    SetMasterTextureLimit(0);
-                    break;
-                case DPLevel.Mid:
-                    SetQualitySettings(-1, "Medium");
-                    SetFrameRate(30);
-                    SetScreenResolution(1);
-                    SetAntiLv(0);
-                    SetPostProcess(true);
-                    SetGraphicsQualityLv(1);
-                    SetShadowLv(1);
-                    SetMasterTextureLimit(0);
-                    break;
-                case DPLevel.High:
-                    SetQualitySettings(-1, "High");
-                    SetFrameRate(30);
-                    SetScreenResolution(1);
-                    SetAntiLv(4);
-                    SetPostProcess(true);
-                    SetGraphicsQualityLv(2);
-                    SetShadowLv(2);
-                    SetMasterTextureLimit(0);
-                    break;
-            }
-        }
+        private static int qualityLv = 0;
+
+        #region 推荐分级
         /// <summary>
         /// 推荐分级
         /// </summary>
         /// <returns></returns>
-        public static DPLevel GetDeviceLevel()
+        private static DPLevel GetDeviceLevel()
         {
             DPLevel deviceLv = DPLevel.Null;
             if (deviceLv == DPLevel.Null) deviceLv = GetDeviceModelLevel();
@@ -169,99 +133,207 @@ namespace HotAssembly
 #endif
             return tempLv;
         }
-        public static void SetQualitySettings(int qualityLv = -1, string qualityName = "")
-        {
-            if (qualityLv < 0) qualityLv = Array.FindIndex(QualitySettings.names, (a) => { return a == qualityName; });
-            else if (string.IsNullOrEmpty(qualityName)) qualityName = QualitySettings.names[qualityLv];
-            QualitySettings.SetQualityLevel(qualityLv);
-            PlayerPrefs.SetInt("Quality_Level", qualityLv);
-            dpl = (DPLevel)qualityLv;
+        #endregion
 
-            int frameRate = PlayerPrefs.GetInt("Quality_FrameRate", -1);
-            if (frameRate >= 0) SetFrameRate(frameRate);
-            int resolution = PlayerPrefs.GetInt("Quality_ScreenResolution", -1);
-            if (resolution >= 0) SetScreenResolution(resolution);
-            int anti = PlayerPrefs.GetInt("Quality_Anti", -1);
-            if (anti >= 0) SetAntiLv(anti);
-            int postProcess = PlayerPrefs.GetInt("Quality_PostProcess", -1);
-            if (postProcess >= 0) SetPostProcess(postProcess > 0);
-            int graphics = PlayerPrefs.GetInt("Quality_GraphicsQuality", -1);
-            if (graphics >= 0) SetGraphicsQualityLv(graphics);
-            int shadow = PlayerPrefs.GetInt("Quality_Shadow", -1);
-            if (shadow >= 0) SetShadowLv(shadow);
-            int textureLimit = PlayerPrefs.GetInt("Quality_TextureLimit", -1);
-            if (textureLimit >= 0) SetMasterTextureLimit(textureLimit);
-            ////像素灯的最大数量
-            //QualitySettings.pixelLightCount = 2;
-            ////反射探针
-            //QualitySettings.realtimeReflectionProbes = false;
-            ////特效软粒子
-            //QualitySettings.softParticles = false;
-            ////各向异性
-            //QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
-            ////高低模切换缓冲
-            //QualitySettings.lodBias = 2;
-            //QualitySettings.particleRaycastBudget = 0;
-            //QualitySettings.skinWeights = SkinWeights.FourBones;
+        /// <summary>
+        /// 游戏初始化
+        /// </summary>
+        public static void Init()
+        {
+            DeviceScreenWidth = Screen.width;
+            DeviceScreenHeight = Screen.height;
+            qualityLv = ES3.Load(ES3Const.ZPLQuality, ES3Const.ZPLQualityPath, 0);
+            if (qualityLv > 0)
+            {
+                SetQualitySettings(QualityLv);
+                SetFrameRate(FrameRate);
+                SetScreenResolution(ScreenResolution);
+                SetMasterTextureLimit(MasterTextureLimit);
+                SetAntiLv(AntiLv);
+                SetShadow(Shadow);
+                SetSoftShadow(SoftShadow);
+                SetShadowLv(ShadowLv);
+                SetHDR(HDR);
+                SetPostProcess(PostProcess);
+                SetGraphicsQualityLv(GraphicsQualityLv);
+            }
+            else
+            {
+                DPLevel deviceLv = GetDeviceLevel();
+                switch (deviceLv)
+                {
+                    case DPLevel.Low:
+                        SetQualitySettings(0);
+                        SetFrameRate(0);
+                        SetScreenResolution(0);
+                        SetMasterTextureLimit(0);
+                        SetAntiLv(0);
+                        SetShadow(0);
+                        SetSoftShadow(0);
+                        SetShadowLv(0);
+                        SetHDR(0);
+                        SetPostProcess(0);
+                        SetGraphicsQualityLv(0);
+                        break;
+                    case DPLevel.Mid:
+                        SetQualitySettings(1);
+                        SetFrameRate(1);
+                        SetScreenResolution(0);
+                        SetMasterTextureLimit(0);
+                        SetAntiLv(1);
+                        SetShadow(1);
+                        SetSoftShadow(0);
+                        SetShadowLv(1);
+                        SetHDR(0);
+                        SetPostProcess(0);
+                        SetGraphicsQualityLv(1);
+                        break;
+                    case DPLevel.High:
+                        SetQualitySettings(2);
+                        SetFrameRate(2);
+                        SetScreenResolution(0);
+                        SetMasterTextureLimit(0);
+                        SetAntiLv(1);
+                        SetShadow(1);
+                        SetSoftShadow(1);
+                        SetShadowLv(2);
+                        SetHDR(1);
+                        SetPostProcess(1);
+                        SetGraphicsQualityLv(2);
+                        break;
+                }
+            }
+        }
+        /// <summary>
+        /// 恢复默认
+        /// 恢复默认
+        /// </summary>
+        public static void Recommand()
+        {
+            ES3.Save(ES3Const.ZPLQuality, 0, ES3Const.ZPLQualityPath);
+            Init();
         }
 
         /// <summary>
-        /// 帧率
+        /// 画面质量 0,1,2
         /// </summary>
-        /// <param name="targetFrameRate"></param>
-        public static void SetFrameRate(int targetFrameRate)
+        public static void SetQualitySettings(int lv)
+        {
+            QualitySettings.SetQualityLevel(lv);
+            qualityLv = qualityLv & 0xFFFC | Mathf.Clamp(lv, 0, 2);
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+        }
+        /// <summary>
+        /// 帧率 0,1,2
+        /// </summary>
+        public static void SetFrameRate(int lv)
         {
             QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = targetFrameRate;
-            PlayerPrefs.SetInt("Quality_FrameRate", targetFrameRate);
-            GameSetting.updateTimeSliceS = 1.0f / targetFrameRate;
+            if (lv == 0) Application.targetFrameRate = 30;
+            else if (lv == 1) Application.targetFrameRate = 45;
+            else if (lv == 2) Application.targetFrameRate = 60;
+            qualityLv = qualityLv & 0xFFF3 | Mathf.Clamp(lv, 0, 2) << 2;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            GameSetting.updateTimeSliceS = 1.0f / lv;
             xasset.Scheduler.AutoslicingTimestep = GameSetting.updateTimeSliceS;
         }
         /// <summary>
-        /// 分辨率
+        /// 分辨率 0,1,2
         /// </summary>
-        /// <param name="resolution">0.5,0.8,1</param>
-        public static void SetScreenResolution(float rate)
+        public static void SetScreenResolution(int lv)
         {
-            //string activity = string.Format("com.{0}.{1}.MainActivity", Application.companyName, Application.productName);
-            //AndroidJavaClass jc = new AndroidJavaClass(activity);
-            //AndroidJavaObject jo = jc.CallStatic<AndroidJavaObject>("Instance");
-            //int resolution = jo.Call<int>("GetScreenWidthHeight");
-            int width = Mathf.CeilToInt(DeviceScreenWidth * rate);
-            int height = Mathf.CeilToInt(DeviceScreenHeight * rate);
+            float r = 1;
+            if (lv == 0) r = 1f;
+            else if (lv == 1) r = 0.8f;
+            else if (lv == 2) r = 0.5f;
+            int width = Mathf.CeilToInt(DeviceScreenWidth * r);
+            int height = Mathf.CeilToInt(DeviceScreenHeight * r);
             Screen.SetResolution(width, height, true);
-            PlayerPrefs.SetFloat("Quality_ScreenResolution", rate);
+            qualityLv = qualityLv & 0xFFCF | Mathf.Clamp(lv, 0, 2) << 4;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }
         /// <summary>
-        /// 抗锯齿
+        /// 贴图分辨率 0,1
         /// </summary>
-        /// <param name="lv">0,2,4</param>
+        public static void SetMasterTextureLimit(int lv)
+        {
+            //0:贴图1/1大小 1:贴图1/2大小 2:贴图1/4大小 3:贴图1/8大小
+            QualitySettings.masterTextureLimit = lv;
+            qualityLv = qualityLv & 0xFFBF | Mathf.Clamp(lv, 0, 1) << 6;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+        }
+        /// <summary>
+        /// 抗锯齿 0,1
+        /// </summary>
         public static void SetAntiLv(int lv)
         {
-            if (lv == 2) QualitySettings.antiAliasing = 2;
-            else if (lv == 4) QualitySettings.antiAliasing = 4;
-            else QualitySettings.antiAliasing = 0;
-            PlayerPrefs.SetInt("Quality_Anti", lv);
+            if (lv == 0) QualitySettings.antiAliasing = 0;
+            else QualitySettings.antiAliasing = 4;
+            qualityLv = qualityLv & 0xFF7F | Mathf.Clamp(lv, 0, 1) << 7;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }
         /// <summary>
-        /// 后处理
+        /// 阴影开关 0,1
         /// </summary>
-        /// <param name="state"></param>
-        public static void SetPostProcess(bool state)
+        public static void SetShadow(int lv)
         {
-#if PostProcess
-            UnityEngine.Rendering.PostProcessing.PostProcessManager.instance.SetActive(state);
-#endif
-            PlayerPrefs.SetInt("Quality_PostProcess", state ? 1 : 0);
+            var uac = Camera.main.GetComponent<UniversalAdditionalCameraData>();
+            uac.renderShadows = lv == 1;
+            qualityLv = qualityLv & 0xFEFF | Mathf.Clamp(lv, 0, 1) << 8;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }
         /// <summary>
-        /// 画质：低、中、高
+        /// 软阴影 0,1
         /// </summary>
-        /// <param name="quality">0,1,2</param>
-        public static void SetGraphicsQualityLv(int quality)
+        public static void SetSoftShadow(int lv)
         {
-            switch (quality)
+            if (lv == 0) QualitySettings.shadows = UnityEngine.ShadowQuality.HardOnly;
+            else QualitySettings.shadows = UnityEngine.ShadowQuality.All;
+            qualityLv = qualityLv & 0xFDFF | Mathf.Clamp(lv, 0, 1) << 9;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+        }
+        /// <summary>
+        /// 阴影质量 0,1,2
+        /// </summary>
+        public static void SetShadowLv(int lv)
+        {
+            if (lv == 0) QualitySettings.shadowResolution = UnityEngine.ShadowResolution.Low;
+            else if (lv == 1) QualitySettings.shadowResolution = UnityEngine.ShadowResolution.Medium;
+            else if (lv == 2) QualitySettings.shadowResolution = UnityEngine.ShadowResolution.High;
+            qualityLv = qualityLv & 0xF3FF | Mathf.Clamp(lv, 0, 2) << 10;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+        }
+        /// <summary>
+        /// HDR 0,1
+        /// </summary>
+        public static void SetHDR(int lv)
+        {
+            Camera.main.allowHDR = lv == 1;
+            qualityLv = qualityLv & 0xEFFF | Mathf.Clamp(lv, 0, 1) << 12;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+        }
+        /// <summary>
+        /// 后处理 0,1
+        /// </summary>
+        public static void SetPostProcess(int lv)
+        {
+            var uac = Camera.main.GetComponent<UniversalAdditionalCameraData>();
+            uac.renderPostProcessing = lv == 1;
+            qualityLv = qualityLv & 0xDFFF | Mathf.Clamp(lv, 0, 1) << 13;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+        }
+        /// <summary>
+        /// shader计算 0,1,2
+        /// </summary>
+        public static void SetGraphicsQualityLv(int lv)
+        {
+            switch (lv)
             {
+                case 0:
+                    Shader.EnableKeyword("LowQuality");
+                    Shader.DisableKeyword("MediumQuality");
+                    Shader.DisableKeyword("HighQuality");
+                    break;
                 case 1:
                     Shader.DisableKeyword("LowQuality");
                     Shader.EnableKeyword("MediumQuality");
@@ -272,29 +344,9 @@ namespace HotAssembly
                     Shader.DisableKeyword("MediumQuality");
                     Shader.EnableKeyword("HighQuality");
                     break;
-                default:
-                    Shader.EnableKeyword("LowQuality");
-                    Shader.DisableKeyword("MediumQuality");
-                    Shader.DisableKeyword("HighQuality");
-                    break;
             }
-            PlayerPrefs.SetInt("Quality_GraphicsQuality", quality);
-        }
-        /// <summary>
-        /// 阴影
-        /// </summary>
-        public static void SetShadowLv(int quality)
-        {
-            QualitySettings.shadows = (ShadowQuality)quality;
-            PlayerPrefs.SetInt("Quality_Shadow", quality);
-        }
-        /// <summary>
-        /// 0_完整分辨率，1_1/2分辨率，2_1/4分辨率，3_1/8分辨率
-        /// </summary>
-        public static void SetMasterTextureLimit(int lv)
-        {
-            QualitySettings.masterTextureLimit = lv;
-            PlayerPrefs.SetInt("Quality_TextureLimit", lv);
+            qualityLv = qualityLv & 0x3FFF | Mathf.Clamp(lv, 0, 2) << 14;
+            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }
     }
 }

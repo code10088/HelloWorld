@@ -3,7 +3,9 @@
   <assembly fullname="Assembly-CSharp">
     <type fullname="AssetManager" preserve="all" />
     <type fullname="AsyncManager" preserve="all" />
+    <type fullname="ES3" preserve="all" />
     <type fullname="ExportComponent" preserve="all" />
+    <type fullname="FileUtils" preserve="all" />
     <type fullname="GameDebug" preserve="all" />
     <type fullname="GameObjectPoolItem" preserve="all" />
     <type fullname="GameObjectPool`1" preserve="all" />
@@ -43,6 +45,9 @@
     <type fullname="Cysharp.Threading.Tasks.YieldAwaitable" preserve="all" />
     <type fullname="Cysharp.Threading.Tasks.YieldAwaitable/Awaiter" preserve="all" />
   </assembly>
+  <assembly fullname="Unity.RenderPipelines.Universal.Runtime">
+    <type fullname="UnityEngine.Rendering.Universal.UniversalAdditionalCameraData" preserve="all" />
+  </assembly>
   <assembly fullname="Unity.TextMeshPro">
     <type fullname="TMPro.TMP_Text" preserve="all" />
     <type fullname="TMPro.TextMeshProUGUI" preserve="all" />
@@ -53,11 +58,12 @@
     <type fullname="UnityEngine.Camera" preserve="all" />
     <type fullname="UnityEngine.Component" preserve="all" />
     <type fullname="UnityEngine.Events.UnityAction" preserve="all" />
+    <type fullname="UnityEngine.Events.UnityAction`1" preserve="all" />
     <type fullname="UnityEngine.Events.UnityEvent" preserve="all" />
+    <type fullname="UnityEngine.Events.UnityEvent`1" preserve="all" />
     <type fullname="UnityEngine.GameObject" preserve="all" />
     <type fullname="UnityEngine.Mathf" preserve="all" />
     <type fullname="UnityEngine.Object" preserve="all" />
-    <type fullname="UnityEngine.PlayerPrefs" preserve="all" />
     <type fullname="UnityEngine.QualitySettings" preserve="all" />
     <type fullname="UnityEngine.Quaternion" preserve="all" />
     <type fullname="UnityEngine.Random" preserve="all" />
@@ -66,6 +72,7 @@
     <type fullname="UnityEngine.Screen" preserve="all" />
     <type fullname="UnityEngine.Shader" preserve="all" />
     <type fullname="UnityEngine.ShadowQuality" preserve="all" />
+    <type fullname="UnityEngine.ShadowResolution" preserve="all" />
     <type fullname="UnityEngine.SkinnedMeshRenderer" preserve="all" />
     <type fullname="UnityEngine.Sprite" preserve="all" />
     <type fullname="UnityEngine.SystemInfo" preserve="all" />
@@ -82,6 +89,8 @@
     <type fullname="UnityEngine.UI.Image" preserve="all" />
     <type fullname="UnityEngine.UI.RawImage" preserve="all" />
     <type fullname="UnityEngine.UI.Slider" preserve="all" />
+    <type fullname="UnityEngine.UI.Toggle" preserve="all" />
+    <type fullname="UnityEngine.UI.Toggle/ToggleEvent" preserve="all" />
   </assembly>
   <assembly fullname="UnityEngine.UIModule">
     <type fullname="UnityEngine.Canvas" preserve="all" />

@@ -76,6 +76,9 @@
 	<Reference Include="UniTask">
       <HintPath>..\Library\ScriptAssemblies\UniTask.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Runtime">
+      <HintPath>..\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>..\Library\ScriptAssemblies\Unity.TextMeshPro.dll</HintPath>
     </Reference>
