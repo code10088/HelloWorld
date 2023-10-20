@@ -16,6 +16,7 @@ namespace MainAssembly
             Application.runInBackground = true;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             AssetManager.Instance.Init(OpenDebug);
+            ES3.Init();
         }
         private void OpenDebug()
         {
