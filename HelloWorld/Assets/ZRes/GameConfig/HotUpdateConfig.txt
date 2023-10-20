@@ -3,7 +3,8 @@
 	[
 		"Assets/ZRes/Assembly/mscorlib.bytes",
 		"Assets/ZRes/Assembly/protobuf-net.bytes",
-		"Assets/ZRes/Assembly/UniTask.bytes"
+		"Assets/ZRes/Assembly/UniTask.bytes",
+		"Assets/ZRes/Assembly/ES3.bytes",
 	],
 	"HotUpdateRes":
 	[
