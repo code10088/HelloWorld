@@ -19,5 +19,7 @@
 /Build/HelloWorld*
 /Build/build.log
 
+/HelloWorld/Assets/HybridCLRData
 /HelloWorld/Assets/StreamingAssets
 /HelloWorld/Assets/XAsset/Config/PackedAssets.asset
+/HelloWorld/Assets/ZRes/Assembly
