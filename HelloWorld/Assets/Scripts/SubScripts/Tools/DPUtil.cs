@@ -253,7 +253,6 @@ namespace HotAssembly
             int width = Mathf.CeilToInt(DeviceScreenWidth * r);
             int height = Mathf.CeilToInt(DeviceScreenHeight * r);
             Screen.SetResolution(width, height, true);
-            QualitySettings.resolutionScalingFixedDPIFactor = r;
             qualityLv = qualityLv & 0xFFCF | Mathf.Clamp(lv, 0, 2) << 4;
             ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }
