@@ -222,6 +222,10 @@ namespace HotAssembly
             QualitySettings.SetQualityLevel(lv);
             qualityLv = qualityLv & 0xFFFC | Mathf.Clamp(lv, 0, 2);
             ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            SetMasterTextureLimit(MasterTextureLimit);
+            SetAntiLv(AntiLv);
+            SetSoftShadow(SoftShadow);
+            SetShadowLv(ShadowLv);
         }
         /// <summary>
         /// 帧率 0,1,2
