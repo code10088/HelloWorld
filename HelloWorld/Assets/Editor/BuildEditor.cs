@@ -7,6 +7,9 @@ using xasset;
 using HybridCLR.Editor.Commands;
 using System;
 using System.Collections.Generic;
+using COSXML;
+using COSXML.Auth;
+using COSXML.Model.Object;
 
 public class BuildEditor
 {
@@ -65,6 +68,7 @@ public class BuildEditor
         HotAssemblyCompile.Generate();
         HybridCLRGenerate();
         XAssetBuild();
+        UploadBundles2CDN();
     }
 
     [MenuItem("Tools/CopyConfig", false, (int)ToolsMenuSort.CopyConfig)]
@@ -112,5 +116,34 @@ public class BuildEditor
         //Builder.BuildUpdateInfo(versions, hash, file.Length);
         Builder.BuildPlayerAssets(versions);
         File.Copy($"{Settings.PlatformCachePath}/updateinfo.json", $"{Settings.PlatformDataPath}/updateinfo.json", true);
+    }
+    [MenuItem("Tools/UploadBundles2CDN", false, (int)ToolsMenuSort.UploadBundles2CDN)]
+    public static void UploadBundles2CDN()
+    {
+        CosXmlConfig config = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
+        string secretId = "AKIDHSjP5iQG1byLl3mNnnolv3879KYj2OpJ";
+        string secretKey = "jKnx21ADT1OfkpyGRSLHPVXgjkhllfS6";
+        long durationSecond = 600;
+        QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(secretId, secretKey, durationSecond);
+        CosXml cosXml = new CosXmlServer(config, qCloudCredentialProvider);
+
+        string bucket = "assets-1321503079";
+        int dir = Settings.PlatformDataPath.IndexOf("Bundles");
+        List<FileInfo> fileList = new List<FileInfo>();
+        FileUtils.GetAllFilePath(Settings.PlatformDataPath, fileList);
+        for (int i = 0; i < fileList.Count; i++)
+        {
+            string path = fileList[i].FullName;
+            string key = path.Substring(dir).Replace("\\", "/");
+            PutObjectRequest request = new PutObjectRequest(bucket, key, path);
+            PutObjectResult result = cosXml.PutObject(request);
+            if (!result.IsSuccessful())
+            {
+                Debug.Log("UploadBundleFail£º" + path);
+                Debug.Log(result.GetResultInfo());
+                return;
+            }
+        }
+        Debug.Log("UploadBundleSuccess");
     }
 }
