@@ -10,7 +10,6 @@ namespace HotAssembly
     {
         public GameObject SceneRoot;
         public Transform tSceneRoot;
-        private int from = -1;
         private List<SceneItem> loadScene = new List<SceneItem>();
         private List<SceneItem> curScene = new List<SceneItem>();
         private List<SceneItem> cacheScene = new List<SceneItem>();
@@ -29,12 +28,14 @@ namespace HotAssembly
         /// <param name="progress"></param>
         /// <param name="param"></param>
         /// <returns>唯一id</returns>
-        public int OpenScene(int id, Action<bool> open = null, Action<float> progress = null, params object[] param)
+        public int OpenScene(SceneType type, Action<bool> open = null, Action<float> progress = null, params object[] param)
         {
             SceneItem item;
-            int tempIndex = cacheScene.FindIndex(a => a.ConfigID == id);
-            if (tempIndex < 0) item = new SceneItem(id);
+            int tempIndex = cacheScene.FindIndex(a => a.Type == type);
+            if (tempIndex < 0) item = new SceneItem(type);
             else item = cacheScene[tempIndex];
+            SceneType from = SceneType.SceneBase;
+            if (curScene.Count > 0) from = curScene[curScene.Count - 1].Type;
             item.SetParam(from, open, progress, param);
             if (tempIndex >= 0) cacheScene.RemoveAt(tempIndex);
             loadScene.Add(item);
@@ -42,9 +43,17 @@ namespace HotAssembly
             if (timerId < 0) timerId = TimeManager.Instance.StartTimer(-1, 1, UpdateProgress);
             return item.ID;
         }
+        private void InitScene()
+        {
+            while (loadScene.Count > 0 && loadScene[0].State)
+            {
+                loadScene[0].Init();
+                loadScene.RemoveAt(0);
+            }
+        }
         public void CloseScene(int id)
         {
-            int tempIndex = loadScene.FindIndex(a => a.ID == id);
+            int tempIndex = loadScene.FindLastIndex(a => a.ID == id);
             if (tempIndex >= 0)
             {
                 SceneItem item = loadScene[tempIndex];
@@ -55,7 +64,7 @@ namespace HotAssembly
                 return;
             }
 
-            tempIndex = curScene.FindIndex(a => a.ID == id);
+            tempIndex = curScene.FindLastIndex(a => a.ID == id);
             if (tempIndex >= 0)
             {
                 SceneItem item = curScene[tempIndex];
@@ -65,26 +74,67 @@ namespace HotAssembly
                 return;
             }
         }
-        private void InitScene()
+        public void CloseScene(SceneType type)
         {
-            while (loadScene.Count > 0 && loadScene[0].State)
+            int tempIndex = loadScene.FindLastIndex(a => a.Type == type);
+            if (tempIndex >= 0)
             {
-                loadScene[0].Init();
-                loadScene.RemoveAt(0);
+                SceneItem item = loadScene[tempIndex];
+                item.Release();
+                item.OpenActionInvoke(false);
+                loadScene.RemoveAt(tempIndex);
+                cacheScene.Add(item);
+                return;
+            }
+
+            tempIndex = curScene.FindLastIndex(a => a.Type == type);
+            if (tempIndex >= 0)
+            {
+                SceneItem item = curScene[tempIndex];
+                item.Release();
+                curScene.RemoveAt(tempIndex);
+                cacheScene.Add(item);
+                return;
             }
         }
+        public SceneBase GetScene(int id)
+        {
+            var result = curScene.FindLast(a => a.ID == id);
+            return result == null ? null : result.BaseScene;
+        }
+        public SceneBase GetScene(SceneType type)
+        {
+            var result = curScene.FindLast(a => a.Type == type);
+            return result == null ? null : result.BaseScene;
+        }
+        public bool HasOpen(int id)
+        {
+            int tempIndex = loadScene.FindLastIndex(a => a.ID == id);
+            if (tempIndex >= 0) return true;
+            tempIndex = curScene.FindLastIndex(a => a.ID == id);
+            if (tempIndex >= 0) return true;
+            return false;
+        }
+        public bool HasOpen(SceneType type)
+        {
+            int tempIndex = loadScene.FindLastIndex(a => a.Type == type);
+            if (tempIndex >= 0) return true;
+            tempIndex = curScene.FindLastIndex(a => a.Type == type);
+            if (tempIndex >= 0) return true;
+            return false;
+        }
+
         public void UpdateProgress(float f)
         {
             if (loadScene.Count > 0) for (int i = 0; i < loadScene.Count; i++) loadScene[i].ProgressActionInvoke();
             else TimeManager.Instance.StopTimer(timerId);
         }
 
-
         private class SceneItem
         {
             private static int uniqueId = 0;
             private int id;
-            private int from;
+            private SceneType from;
             private int loadId;
             private SceneConfig config;
             private SceneBase baseScene;
@@ -98,16 +148,16 @@ namespace HotAssembly
             private int timerId = -1;
 
             public int ID => id;
-            public int ConfigID => config.ID;
+            public SceneType Type => config.SceneType;
             public SceneBase BaseScene => baseScene;
             public bool State => state > 0;
 
-            public SceneItem(int _id)
+            public SceneItem(SceneType type)
             {
                 id = ++uniqueId;
-                config = ConfigManager.Instance.GameConfigs.TbSceneConfig[_id];
+                config = ConfigManager.Instance.GameConfigs.TbSceneConfig[type];
             }
-            public void SetParam(int _from, Action<bool> _open = null, Action<float> _progress = null, params object[] _param)
+            public void SetParam(SceneType _from, Action<bool> _open = null, Action<float> _progress = null, params object[] _param)
             {
                 from = _from;
                 open = _open;
@@ -141,7 +191,7 @@ namespace HotAssembly
                     baseObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, Instance.tSceneRoot) as GameObject;
                     baseObj.SetActive(false);
                 }
-                releaseTime = Mathf.Lerp(releaseTime, 60f, 0.1f);
+                releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMax, 0.1f);
                 Instance.InitScene();
             }
             public void Init()
@@ -149,7 +199,7 @@ namespace HotAssembly
                 if (state == 1)
                 {
                     baseObj.SetActive(true);
-                    Type t = Type.GetType("HotAssembly." + config.SceneType);
+                    Type t = System.Type.GetType("HotAssembly." + config.Name);
                     baseScene = Activator.CreateInstance(t) as SceneBase;
                     baseScene.InitScene(baseObj, id, from, config, param);
                     Instance.curScene.Add(this);

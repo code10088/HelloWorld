@@ -106,42 +106,20 @@ namespace HotAssembly
         }
         public UIBase GetUI(UIType type)
         {
-            for (int i = 0; i < curUI.Count; i++)
-            {
-                if (curUI[i].Type == type)
-                {
-                    return curUI[i].BaseUI;
-                }
-            }
-            return null;
+            var result = curUI.Find(a => a.Type == type);
+            return result == null ? null : result.BaseUI;
         }
         private UIType GetFromUI(UIType type)
         {
-            for (int i = curUI.Count - 1; i >= 0; i--)
-            {
-                if(curUI[i].Type != type && curUI[i].Config.UIWindowType != UIWindowType.Tips)
-                {
-                    return curUI[i].Type;
-                }
-            }
-            return UIType.UIMain;
+            var result = curUI.FindLast(a => a.Type != type && a.UIWindowType != UIWindowType.Tips);
+            return result == null ? UIType.UIMain : result.Type;
         }
         public bool HasOpen(UIType type)
         {
-            for (int i = 0; i < loadUI.Count; i++)
-            {
-                if (loadUI[i].Type == type)
-                {
-                    return true;
-                }
-            }
-            for (int i = 0; i < curUI.Count; i++)
-            {
-                if (curUI[i].Type == type)
-                {
-                    return true;
-                }
-            }
+            int tempIndex = loadUI.FindIndex(a => a.Type == type);
+            if (tempIndex >= 0) return true;
+            tempIndex = curUI.FindIndex(a => a.Type == type);
+            if (tempIndex >= 0) return true;
             return false;
         }
 
@@ -153,7 +131,6 @@ namespace HotAssembly
 
         private class UIItem
         {
-            private UIType type;
             private UIType from;
             private int loadId;
             private UIConfig config;
@@ -166,14 +143,13 @@ namespace HotAssembly
             private float releaseTime = 10f;
             private int timerId = -1;
 
-            public UIType Type => type;
+            public UIType Type => config.UIType;
+            public UIWindowType UIWindowType => config.UIWindowType;
             public UIBase BaseUI => baseUI;
-            public UIConfig Config => config;
             public bool State => state > 0;
 
             public UIItem(UIType type)
             {
-                this.type = type;
                 config = ConfigManager.Instance.GameConfigs.TbUIConfig[type];
             }
             public void SetParam(UIType from, Action<bool> open = null, params object[] param)
@@ -224,9 +200,9 @@ namespace HotAssembly
                 if (state == 1)
                 {
                     baseObj.SetActive(true);
-                    Type t = System.Type.GetType("HotAssembly." + type);
+                    Type t = System.Type.GetType("HotAssembly." + config.Name);
                     baseUI = Activator.CreateInstance(t) as UIBase;
-                    baseUI.InitUI(baseObj, type, from, config, param);
+                    baseUI.InitUI(baseObj, from, config, param);
                     Instance.curUI.Add(this);
                     OpenActionInvoke(true);
                     state = 3;

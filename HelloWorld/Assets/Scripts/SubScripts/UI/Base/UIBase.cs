@@ -11,18 +11,15 @@ namespace HotAssembly
     public class UIBase
     {
         protected GameObject UIObj;
-        protected UIType type;
         protected UIType from;
         protected UIConfig config;
-        protected bool active = false;
         protected Canvas[] layerRecord1;
         protected int[] layerRecord2;
         protected UIParticle[] layerRecord3;
         private List<int> loaders = new List<int>();
-        public void InitUI(GameObject UIObj, UIType type, UIType from, UIConfig config, params object[] param)
+        public void InitUI(GameObject UIObj, UIType from, UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;
-            this.type = type;
             this.from = from;
             this.config = config;
             Init();
@@ -37,7 +34,6 @@ namespace HotAssembly
         }
         public virtual async UniTask OnEnable(params object[] param)
         {
-            active = true;
             RefreshUILayer();
             PlayInitAni();
             await UniTask.Yield();
@@ -67,7 +63,6 @@ namespace HotAssembly
         }
         public virtual void OnDisable()
         {
-            active = false;
             for (int i = 0; i < loaders.Count; i++) AssetManager.Instance.Unload(loaders[i]);
         }
         public virtual void OnDestroy()
@@ -78,7 +73,7 @@ namespace HotAssembly
         }
         protected void OnClose()
         {
-            UIManager.Instance.CloseUI(type);
+            UIManager.Instance.CloseUI(config.UIType);
         }
         protected void OnReture()
         {

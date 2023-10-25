@@ -5,7 +5,7 @@ namespace HotAssembly
     public class TestScene : SceneBase
     {
         private TestSceneComponent component = new TestSceneComponent();
-        protected override void InitComponent()
+        protected override void Init()
         {
             component.Init(SceneObj);
         }

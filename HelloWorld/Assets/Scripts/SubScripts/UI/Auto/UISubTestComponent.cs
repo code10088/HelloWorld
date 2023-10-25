@@ -4,12 +4,12 @@ namespace HotAssembly
     public partial class UISubTestComponent
     {
         public GameObject obj;
-        public UnityEngine.UI.Button buttonButton = null;
+        public UIButton buttonUIButton = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
             ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);
-            buttonButton = allData[0].exportComponent[0] as UnityEngine.UI.Button;
+            buttonUIButton = allData[0].exportComponent[0] as UIButton;
         }
     }
 }

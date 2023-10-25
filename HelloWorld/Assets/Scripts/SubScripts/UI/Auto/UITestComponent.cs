@@ -16,6 +16,8 @@ namespace HotAssembly
         public UnityEngine.UI.Image imageImage = null;
         public UIButton poolEnqueueUIButton = null;
         public UIButton poolDequeueUIButton = null;
+        public UIButton openSceneUIButton = null;
+        public UIButton closeSceneUIButton = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
@@ -32,6 +34,8 @@ namespace HotAssembly
             imageImage = allData[10].exportComponent[0] as UnityEngine.UI.Image;
             poolEnqueueUIButton = allData[11].exportComponent[0] as UIButton;
             poolDequeueUIButton = allData[12].exportComponent[0] as UIButton;
+            openSceneUIButton = allData[13].exportComponent[0] as UIButton;
+            closeSceneUIButton = allData[14].exportComponent[0] as UIButton;
         }
     }
     public partial class UITestItem : LoopItemData

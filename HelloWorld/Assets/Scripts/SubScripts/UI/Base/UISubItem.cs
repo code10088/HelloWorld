@@ -101,22 +101,22 @@ namespace HotAssembly
         }
         #endregion
 
-        private bool subactive = false;
-        public bool Active => subactive;
+        private bool active = false;
+        public bool Active => active;
 
         public void SetActive(Transform parent, bool state, Action<bool> open = null, params object[] param)
         {
-            if (state && !subactive) Open(parent, open, param);
-            else if (!state && subactive) Close();
+            if (state && !active) Open(parent, open, param);
+            else if (!state && active) Close();
         }
         public void Open(Transform parent, Action<bool> open = null, params object[] param)
         {
-            subactive = true;
+            active = true;
             Load(parent, open, param);
         }
         public void Close(bool immediate = false)
         {
-            subactive = false;
+            active = false;
             Release(immediate);
         }
         protected override void RefreshUILayer()

@@ -1,3 +1,4 @@
+using cfg;
 using Cysharp.Threading.Tasks;
 using SuperScrollView;
 using UnityEngine;
@@ -22,6 +23,8 @@ namespace HotAssembly
             component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
             component.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
             component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
+            component.openSceneUIButton.onClick.AddListener(OpenScene);
+            component.closeSceneUIButton.onClick.AddListener(CloseScene);
             component.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
             pool.Init($"{ZResConst.ResUIPrefabPath}TestBullet.prefab");
         }
@@ -89,6 +92,14 @@ namespace HotAssembly
         private void DelectBullet()
         {
             pool.Enqueue(pool.Use[0]);
+        }
+        private void OpenScene()
+        {
+            SceneManager.Instance.OpenScene(SceneType.TestScene);
+        }
+        private void CloseScene()
+        {
+            SceneManager.Instance.CloseScene(SceneType.TestScene);
         }
 
         LoopListViewItem2 OnGetItemByIndex(LoopListView2 listView, int index)

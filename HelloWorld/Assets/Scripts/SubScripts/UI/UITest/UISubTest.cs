@@ -11,7 +11,7 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(UIObj);
-            component.buttonButton.onClick.AddListener(OnClickClose);
+            component.buttonUIButton.onClick.AddListener(OnClickClose);
         }
         public override async UniTask OnEnable(params object[] param)
         {

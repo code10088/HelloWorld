@@ -31,9 +31,9 @@ namespace HotAssembly
         }
         private void EnterMainScene()
         {
-            SceneManager.Instance.OpenScene(1, a => GameDebug.Log(a));
-            SceneManager.Instance.CloseScene(1);
-            SceneManager.Instance.OpenScene(1, a => GameDebug.Log(a));
+            int id = SceneManager.Instance.OpenScene(SceneType.TestScene, a => GameDebug.Log(a));
+            SceneManager.Instance.CloseScene(id);
+            SceneManager.Instance.OpenScene(SceneType.TestScene, a => GameDebug.Log(a));
             UIManager.Instance.OpenUI(UIType.UIMain);
             UIManager.Instance.CloseUI(UIType.UIMain);
             UIManager.Instance.OpenUI(UIType.UIMain);

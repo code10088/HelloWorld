@@ -7,19 +7,19 @@ namespace HotAssembly
     public class SceneBase
     {
         protected GameObject SceneObj;
-        protected int curId;
-        protected int fromId;
+        protected int id;
+        protected SceneType from;
         protected SceneConfig config;
-        public virtual void InitScene(GameObject _SceneObj, int id, int from, SceneConfig _config, params object[] param)
+        public virtual void InitScene(GameObject _SceneObj, int _id, SceneType _from, SceneConfig _config, params object[] param)
         {
             SceneObj = _SceneObj;
-            curId = id;
-            fromId = from;
+            id = _id;
+            from = _from;
             config = _config;
-            InitComponent();
+            Init();
             OnEnable(param);
         }
-        protected virtual void InitComponent()
+        protected virtual void Init()
         {
 
         }
@@ -34,6 +34,15 @@ namespace HotAssembly
         public virtual void OnDestroy()
         {
 
+        }
+        protected void OnClose()
+        {
+            SceneManager.Instance.CloseScene(id);
+        }
+        protected void OnReture()
+        {
+            OnClose();
+            SceneManager.Instance.OpenScene(from);
         }
     }
 }

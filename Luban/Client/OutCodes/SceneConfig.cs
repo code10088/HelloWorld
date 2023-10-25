@@ -16,8 +16,8 @@ public sealed partial class SceneConfig : Luban.BeanBase
 {
     public SceneConfig(ByteBuf _buf) 
     {
-        ID = _buf.ReadInt();
         SceneType = (SceneType)_buf.ReadInt();
+        Name = _buf.ReadString();
         PrefabPath = _buf.ReadString();
     }
 
@@ -26,8 +26,11 @@ public sealed partial class SceneConfig : Luban.BeanBase
         return new SceneConfig(_buf);
     }
 
-    public readonly int ID;
     public readonly SceneType SceneType;
+    /// <summary>
+    /// 名字
+    /// </summary>
+    public readonly string Name;
     /// <summary>
     /// 资源名字
     /// </summary>
@@ -46,8 +49,8 @@ public sealed partial class SceneConfig : Luban.BeanBase
     public override string ToString()
     {
         return "{ "
-        + "ID:" + ID + ","
         + "SceneType:" + SceneType + ","
+        + "Name:" + Name + ","
         + "PrefabPath:" + PrefabPath + ","
         + "}";
     }
