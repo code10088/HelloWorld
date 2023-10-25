@@ -1,0 +1,14 @@
+{
+  "name": "net.codestage.advanced-fps-counter",
+  "displayName": "Code Stage Advanced FPS Counter",
+  "version": "1.5.2",
+  "unity": "2017.4",
+  "description": "Advanced FPS Counter is a simple and flexible in-game frames per second counter with advanced features, made to let you monitor stats of your game right on the target device.",
+  "keywords": ["FPS", "Memory", "Stats", "Counter"],
+  "category": "Tools",
+  "author": {
+    "name": "Dmitriy Yukhanov",
+    "email": "support@codestage.net",
+    "url": "https://codestage.net"
+  }
+}

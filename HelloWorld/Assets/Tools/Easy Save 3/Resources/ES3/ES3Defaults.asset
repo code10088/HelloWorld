@@ -31,6 +31,7 @@ MonoBehaviour:
     serializationDepthLimit: 64
     assemblyNames:
     - Assembly-CSharp
+    - CodeStage.AFPSCounter.Runtime
     - ES3
     - HybridCLR.Runtime
     - IngameDebugConsole.Runtime

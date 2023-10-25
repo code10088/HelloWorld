@@ -23,15 +23,13 @@ namespace MainAssembly
 #if DEBUG
             GameDebug.showLog = true;
             int loadId = -1;
-            AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/IngameDebugConsole.prefab", (a,b)=>
-            {
-                Instantiate(b);
-                HotUpdate();
-            });
+            AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/IngameDebugConsole.prefab", (a,b)=> Instantiate(b));
+            loadId = -1;
+            AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/AdvancedFPSCounter.prefab", (a,b)=> Instantiate(b));
 #elif RELEASE
             GameDebug.showLog = false;
-            HotUpdate()
 #endif
+            HotUpdate();
         }
         private void HotUpdate()
         {

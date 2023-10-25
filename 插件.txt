@@ -18,3 +18,4 @@ shader编辑器：Amplify Shader Editor、Amplify Shader Pack
 绳子：Obi Rope
 模型切片粉碎：RayFire for Unity
 防作弊：Anti-Cheat Toolkit
+fps：Advanced FPS Counter、Graphy(github)

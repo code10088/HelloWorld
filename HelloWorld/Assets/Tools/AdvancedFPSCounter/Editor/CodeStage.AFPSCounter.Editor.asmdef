@@ -1,0 +1,10 @@
+{
+    "name": "CodeStage.AFPSCounter.Editor",
+    "references": [
+        "CodeStage.AFPSCounter.Runtime"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": []
+}
