@@ -1,4 +1,6 @@
+using System.Reflection;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 namespace HotAssembly
@@ -10,6 +12,18 @@ namespace HotAssembly
         Mid,
         High
     }
+    /// <summary>
+    /// build-in管线：
+    ///     所有设置都在QualitySetting
+    /// urp管线：
+    ///     所有设置都在UniversalRendererData上但不支持运行时修改
+    ///     部分设置暴露在Camera属性上
+    ///     部分设置通过反射方式修改
+    /// 当前urp方案：
+    ///     QualitySetting保留高中低三挡设置相同
+    ///     UniversalRendererData保留高中低三挡设置相同
+    ///     设置通过Camera或反射修改
+    /// </summary>
     public class DPUtil
     {
         public static DPLevel dpl => (DPLevel)QualityLv;
@@ -271,8 +285,7 @@ namespace HotAssembly
         /// </summary>
         public static void SetAntiLv(int lv)
         {
-            if (lv == 0) QualitySettings.antiAliasing = 0;
-            else QualitySettings.antiAliasing = 4;
+            Camera.main.allowMSAA = lv == 1;
             qualityLv = qualityLv & 0xFF7F | Mathf.Clamp(lv, 0, 1) << 7;
             ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }
@@ -291,8 +304,8 @@ namespace HotAssembly
         /// </summary>
         public static void SetSoftShadow(int lv)
         {
-            if (lv == 0) QualitySettings.shadows = UnityEngine.ShadowQuality.HardOnly;
-            else QualitySettings.shadows = UnityEngine.ShadowQuality.All;
+            var softShadow = typeof(UniversalRenderPipelineAsset).GetField("m_SoftShadowsSupported", BindingFlags.Instance | BindingFlags.NonPublic);
+            softShadow.SetValue(GraphicsSettings.currentRenderPipeline, lv == 1);
             qualityLv = qualityLv & 0xFDFF | Mathf.Clamp(lv, 0, 1) << 9;
             ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }
@@ -301,9 +314,23 @@ namespace HotAssembly
         /// </summary>
         public static void SetShadowLv(int lv)
         {
-            if (lv == 0) QualitySettings.shadowResolution = UnityEngine.ShadowResolution.Low;
-            else if (lv == 1) QualitySettings.shadowResolution = UnityEngine.ShadowResolution.Medium;
-            else if (lv == 2) QualitySettings.shadowResolution = UnityEngine.ShadowResolution.High;
+            var resolution = typeof(UniversalRenderPipelineAsset).GetField("m_MainLightShadowmapResolution", BindingFlags.Instance | BindingFlags.NonPublic);
+            var cascade = typeof(UniversalRenderPipelineAsset).GetField("m_ShadowCascadeCount", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (lv == 0)
+            {
+                cascade.SetValue(GraphicsSettings.currentRenderPipeline, 2);
+                resolution.SetValue(GraphicsSettings.currentRenderPipeline, UnityEngine.Rendering.Universal.ShadowResolution._1024);
+            }
+            else if (lv == 1)
+            {
+                cascade.SetValue(GraphicsSettings.currentRenderPipeline, 3);
+                resolution.SetValue(GraphicsSettings.currentRenderPipeline, UnityEngine.Rendering.Universal.ShadowResolution._1024);
+            }
+            else if (lv == 2)
+            {
+                cascade.SetValue(GraphicsSettings.currentRenderPipeline, 4);
+                resolution.SetValue(GraphicsSettings.currentRenderPipeline, UnityEngine.Rendering.Universal.ShadowResolution._1024);
+            }
             qualityLv = qualityLv & 0xF3FF | Mathf.Clamp(lv, 0, 2) << 10;
             ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }
