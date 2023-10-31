@@ -264,10 +264,10 @@ namespace HotAssembly
             if (lv == 0) r = 1f;
             else if (lv == 1) r = 0.8f;
             else if (lv == 2) r = 0.5f;
-            int width = Mathf.CeilToInt(DeviceScreenWidth * r);
-            int height = Mathf.CeilToInt(DeviceScreenHeight * r);
-            Screen.SetResolution(width, height, true);
-            ScalableBufferManager.ResizeBuffers(0.1f, 0.1f);
+            //int width = Mathf.CeilToInt(DeviceScreenWidth * r);
+            //int height = Mathf.CeilToInt(DeviceScreenHeight * r);
+            //Screen.SetResolution(width, height, true);
+            ScalableBufferManager.ResizeBuffers(r, r);
             qualityLv = qualityLv & 0xFFCF | Mathf.Clamp(lv, 0, 2) << 4;
             ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }
