@@ -3,7 +3,7 @@ using UnityEditor;
 
 public class DupWithoutRename 
 {
-	[MenuItem("GameObject/CopyNoSuffix %#d")]
+	[MenuItem("GameObject/Tools/CopyNoSuffix &d")]
 	public static void CopyNoSuffix()
 	{
 		foreach (Transform t in Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable))
@@ -26,6 +26,21 @@ public class DupWithoutRename
 			newObject.transform.position = t.position;
 			newObject.transform.rotation = t.rotation;
 			Undo.RegisterCreatedObjectUndo(newObject, "CopyNoSuffix");
+		}
+	}
+	[MenuItem("GameObject/Tools/Rename &r")]
+	public static void Rename()
+	{
+		var array = Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable);
+		if (array.Length > 1)
+        {
+			System.Array.Sort(array, (a, b) => a.GetSiblingIndex() - b.GetSiblingIndex());
+			string name = array[0].name;
+            for (int i = 0; i < array.Length; i++)
+            {
+				array[i].name = name + (i + 1);
+				Undo.RegisterCompleteObjectUndo(array[i], "Rename");
+			}
 		}
 	}
 }
