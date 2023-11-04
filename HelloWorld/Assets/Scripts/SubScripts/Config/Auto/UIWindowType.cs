@@ -13,8 +13,8 @@ namespace cfg
 { 
     public enum UIWindowType
     {
-        Normal = 1,
-        Tips = 2,
+        Normal = 0,
+        Tips = 1,
     }
 
 } 

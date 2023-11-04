@@ -15,6 +15,7 @@ namespace HotAssembly
         private EventSystem eventSystem;
         private Vector2 anchorMin = Vector2.zero;
         public static Vector2 anchorMinFull = Vector2.zero;
+        public Dictionary<UIWindowType, Transform> Layers;
 
         public static int layer = 0;
         private List<UIItem> loadUI = new List<UIItem>();
@@ -32,6 +33,10 @@ namespace HotAssembly
             //适配
             anchorMin.x = Screen.safeArea.x / Screen.width;
             if (anchorMin.x > 0) anchorMinFull.x = -Screen.safeArea.x / Screen.safeArea.width;
+            //层级
+            var names = Enum.GetNames(typeof(UIWindowType));
+            Layers = new Dictionary<UIWindowType, Transform>();
+            for (int i = 0; i < names.Length; i++) Layers[(UIWindowType)i] = tUIRoot.Find(names[i]);
         }
         public void OpenUI(UIType type, Action<bool> open = null, params object[] param)
         {
@@ -183,7 +188,7 @@ namespace HotAssembly
                 else if (state == 0)
                 {
                     state = 1;
-                    baseObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, Instance.tUIRoot) as GameObject;
+                    baseObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, Instance.Layers[config.UIWindowType]) as GameObject;
                     RectTransform rt = baseObj.GetComponent<RectTransform>();
                     rt.anchoredPosition3D = Vector3.zero;
                     rt.anchorMin = Instance.anchorMin;

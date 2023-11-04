@@ -45,6 +45,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Normal
+    uniqueID: 1292405199
+    locked: 0
+  - name: Tips
+    uniqueID: 3136472029
+    locked: 0
   - name: Mask
     uniqueID: 804123311
     locked: 0
