@@ -14,7 +14,7 @@ namespace cfg
     public enum UIType
     {
         UITest = 1,
-        UIMessageBox = 2,
+        UICommonBox = 2,
         UIHotUpdateRes = 3,
         UIMain = 4,
         UISetting = 5,

@@ -1,8 +1,5 @@
-﻿namespace MainAssembly
+﻿public class NetMsgId
 {
-    public class NetMsgId
-    {
-        public const ushort Min = 0;
-        public const ushort Max = 1000;
-    }
+    public const ushort Min = 0;
+    public const ushort Max = 1000;
 }

@@ -116,7 +116,7 @@ namespace HotAssembly
         }
         private UIType GetFromUI(UIType type)
         {
-            var result = curUI.FindLast(a => a.Type != type && a.UIWindowType != UIWindowType.Tips);
+            var result = curUI.FindLast(a => a.Type != type && a.UIWindowType < UIWindowType.Tips);
             return result == null ? UIType.UIMain : result.Type;
         }
         public bool HasOpen(UIType type)

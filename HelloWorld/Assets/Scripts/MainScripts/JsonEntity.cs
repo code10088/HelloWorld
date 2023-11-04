@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 
-namespace MainAssembly
+public class HotUpdateConfig
 {
-    public class HotUpdateConfig
-    {
-        public List<string> Metadata { get; set; }
-        public List<string> HotUpdateRes { get; set; }
-    }
+    public List<string> Metadata { get; set; }
+    public List<string> HotUpdateRes { get; set; }
 }

@@ -1,5 +1,4 @@
 ﻿using cfg;
-using MainAssembly;
 
 namespace HotAssembly
 {

@@ -29,13 +29,13 @@ namespace HotAssembly
             if (getDownloadSizeAsync.downloadSize > 0)
             {
                 var downloadSize = Utility.FormatBytes(getDownloadSizeAsync.downloadSize);
-                UIMessageBoxParam param = new UIMessageBoxParam();
-                param.type = UIMessageBoxType.SureAndCancel;
+                UICommonBoxParam param = new UICommonBoxParam();
+                param.type = UICommonBoxType.SureAndCancel;
                 param.title = "Tips";
                 param.content = downloadSize;
                 param.sure = a => StartDownload(getDownloadSizeAsync);
                 param.cancel = a => Application.Quit();
-                UIManager.Instance.OpenMessageBox(param);
+                UIManager.Instance.OpenCommonBox(param);
             }
             else
             {
@@ -68,13 +68,13 @@ namespace HotAssembly
             }
             else
             {
-                UIMessageBoxParam param = new UIMessageBoxParam();
-                param.type = UIMessageBoxType.SureAndCancel;
+                UICommonBoxParam param = new UICommonBoxParam();
+                param.type = UICommonBoxType.SureAndCancel;
                 param.title = "Tips";
                 param.content = "Retry";
                 param.sure = a => CheckUpdateInfo();
                 param.cancel = a => Application.Quit();
-                UIManager.Instance.OpenMessageBox(param);
+                UIManager.Instance.OpenCommonBox(param);
             }
         }
         private void UpdateFinish()

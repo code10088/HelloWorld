@@ -11,6 +11,6 @@
 		"Assets/ZRes/Assembly/HotAssembly.bytes",
 		"Assets/ZRes/DataConfig/tbuiconfig.bytes",
 		"Assets/ZRes/UI/Prefab/UIHotUpdateRes.prefab",
-		"Assets/ZRes/UI/Prefab/UIMessageBox.prefab"
+		"Assets/ZRes/UI/Prefab/UICommonBox.prefab"
 	]
 }

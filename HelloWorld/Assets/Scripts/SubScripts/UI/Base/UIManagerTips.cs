@@ -5,19 +5,19 @@ namespace HotAssembly
 {
     public partial class UIManager
     {
-        private Queue<UIMessageBoxParam> messageBoxQueue = new Queue<UIMessageBoxParam>();
-        public void OpenMessageBox(UIMessageBoxParam param)
+        private Queue<UICommonBoxParam> commonBoxQueue = new Queue<UICommonBoxParam>();
+        public void OpenCommonBox(UICommonBoxParam param)
         {
-            messageBoxQueue.Enqueue(param);
-            CheckMessageBox();
+            commonBoxQueue.Enqueue(param);
+            CheckCommonBox();
         }
-        public void CheckMessageBox()
+        public void CheckCommonBox()
         {
-            bool open = HasOpen(UIType.UIMessageBox);
+            bool open = HasOpen(UIType.UICommonBox);
             if (open) return;
-            if (messageBoxQueue.Count == 0) return;
-            var param = messageBoxQueue.Dequeue();
-            OpenUI(UIType.UIMessageBox, param: param);
+            if (commonBoxQueue.Count == 0) return;
+            var param = commonBoxQueue.Dequeue();
+            OpenUI(UIType.UICommonBox, param: param);
         }
     }
 }

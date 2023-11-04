@@ -60,12 +60,12 @@ namespace HotAssembly
 
         private void OnOpenMessage()
         {
-            UIMessageBoxParam param = new UIMessageBoxParam();
-            param.type = UIMessageBoxType.SureAndCancel;
+            UICommonBoxParam param = new UICommonBoxParam();
+            param.type = UICommonBoxType.SureAndCancel;
             param.title = "Tips";
             param.content = "Content";
             param.sure = a => OnOpenMessage();
-            UIManager.Instance.OpenMessageBox(param);
+            UIManager.Instance.OpenCommonBox(param);
         }
         private void OnOpenSub()
         {

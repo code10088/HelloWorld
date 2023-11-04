@@ -2150,7 +2150,7 @@ GameObject:
   - component: {fileID: 4048200444397177051}
   - component: {fileID: 2762404508644764667}
   m_Layer: 5
-  m_Name: MessageBox
+  m_Name: CommonBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

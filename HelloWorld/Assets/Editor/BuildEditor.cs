@@ -97,7 +97,7 @@ public class BuildEditor
         HideSubScripts(true);
         PrebuildCommand.GenerateAll();
         TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/ZRes/GameConfig/HotUpdateConfig.txt");
-        var config = JsonConvert.DeserializeObject<MainAssembly.HotUpdateConfig>(ta.text);
+        var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
         string stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
         for (int i = 0; i < config.Metadata.Count; i++)
         {
