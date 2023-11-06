@@ -4,7 +4,7 @@ namespace HotAssembly
     public partial class UICommonBoxComponent
     {
         public GameObject obj;
-        public UnityEngine.RectTransform bg1RectTransform = null;
+        public UnityEngine.RectTransform bgRectTransform = null;
         public TMPro.TextMeshProUGUI titleTextMeshProUGUI = null;
         public TMPro.TextMeshProUGUI contentTextMeshProUGUI = null;
         public UIButton sure1UIButton = null;
@@ -14,7 +14,7 @@ namespace HotAssembly
         {
             this.obj = obj;
             ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);
-            bg1RectTransform = allData[0].exportComponent[0] as UnityEngine.RectTransform;
+            bgRectTransform = allData[0].exportComponent[0] as UnityEngine.RectTransform;
             titleTextMeshProUGUI = allData[1].exportComponent[0] as TMPro.TextMeshProUGUI;
             contentTextMeshProUGUI = allData[2].exportComponent[0] as TMPro.TextMeshProUGUI;
             sure1UIButton = allData[3].exportComponent[0] as UIButton;

@@ -12,7 +12,7 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(UIObj);
-            component.bg1RectTransform.anchorMin = UIManager.anchorMinFull;
+            component.bgRectTransform.anchorMin = UIManager.anchorMinFull;
             component.sure1UIButton.onClick.AddListener(OnClickSure1);
             component.sure2UIButton.onClick.AddListener(OnClickSure2);
             component.cancelUIButton.onClick.AddListener(OnClickCancel);
