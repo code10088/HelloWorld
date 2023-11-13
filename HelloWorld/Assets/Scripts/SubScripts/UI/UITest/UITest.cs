@@ -19,6 +19,7 @@ namespace HotAssembly
             component.closeBtnUIButton.onClick.AddListener(OnClose);
             component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
             component.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);
+            component.openTipsBtnUIButton.onClick.AddListener(OnOpenTips);
             component.openSDKBtnUIButton.onClick.AddListener(SDKInit);
             component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
             component.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
@@ -66,6 +67,10 @@ namespace HotAssembly
             param.content = "Content";
             param.sure = a => OnOpenMessage();
             UIManager.Instance.OpenCommonBox(param);
+        }
+        private void OnOpenTips()
+        {
+            UIManager.Instance.ShowTips(Time.realtimeSinceStartup.ToString());
         }
         private void OnOpenSub()
         {

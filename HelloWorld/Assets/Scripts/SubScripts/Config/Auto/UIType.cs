@@ -18,6 +18,7 @@ namespace cfg
         UIHotUpdateRes = 3,
         UIMain = 4,
         UISetting = 5,
+        UICommonTips = 6,
     }
 
 } 

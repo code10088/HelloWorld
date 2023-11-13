@@ -11,6 +11,7 @@ namespace HotAssembly
         public GameObject subRootObj = null;
         public UIButton openSubBtnUIButton = null;
         public UIButton openMsgBtnUIButton = null;
+        public UIButton openTipsBtnUIButton = null;
         public UIButton openSDKBtnUIButton = null;
         public UIButton loadSpriteUIButton = null;
         public UnityEngine.UI.Image imageImage = null;
@@ -29,13 +30,14 @@ namespace HotAssembly
             subRootObj = allData[5].gameObject;
             openSubBtnUIButton = allData[6].exportComponent[0] as UIButton;
             openMsgBtnUIButton = allData[7].exportComponent[0] as UIButton;
-            openSDKBtnUIButton = allData[8].exportComponent[0] as UIButton;
-            loadSpriteUIButton = allData[9].exportComponent[0] as UIButton;
-            imageImage = allData[10].exportComponent[0] as UnityEngine.UI.Image;
-            poolEnqueueUIButton = allData[11].exportComponent[0] as UIButton;
-            poolDequeueUIButton = allData[12].exportComponent[0] as UIButton;
-            openSceneUIButton = allData[13].exportComponent[0] as UIButton;
-            closeSceneUIButton = allData[14].exportComponent[0] as UIButton;
+            openTipsBtnUIButton = allData[8].exportComponent[0] as UIButton;
+            openSDKBtnUIButton = allData[9].exportComponent[0] as UIButton;
+            loadSpriteUIButton = allData[10].exportComponent[0] as UIButton;
+            imageImage = allData[11].exportComponent[0] as UnityEngine.UI.Image;
+            poolEnqueueUIButton = allData[12].exportComponent[0] as UIButton;
+            poolDequeueUIButton = allData[13].exportComponent[0] as UIButton;
+            openSceneUIButton = allData[14].exportComponent[0] as UIButton;
+            closeSceneUIButton = allData[15].exportComponent[0] as UIButton;
         }
     }
     public partial class UITestItem : LoopItemData
