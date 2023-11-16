@@ -9,7 +9,7 @@ git pull
 
 taskkill /f /im Unity.exe
 
-set path=D:\HelloWorld\Build\%date:~0,4%%date:~5,2%%date:~8,2%_%time:~0,2%%time:~3,2%%time:~6,2%
+set path=D:\HelloWorld\Build\%date:~3,4%%date:~8,2%%date:~11,2%_%time:~0,2%%time:~3,2%%time:~6,2%
 if %2==BuildEditor.BuildPlayer (md %path%)
 
 "C:/Program Files/Unity2021.3.25/Editor/Unity.exe" ^
