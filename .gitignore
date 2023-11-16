@@ -16,7 +16,7 @@
 /HelloWorld/*.csproj
 /HelloWorld/*.sln
 
-/Build/HelloWorld*
+/Build/202*
 /Build/build.log
 
 /HelloWorld/Assets/HybridCLRData
