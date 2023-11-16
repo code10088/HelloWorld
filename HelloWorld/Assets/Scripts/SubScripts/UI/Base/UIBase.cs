@@ -72,11 +72,11 @@ namespace HotAssembly
             layerRecord2 = null;
             layerRecord3 = null;
         }
-        protected void OnClose()
+        protected virtual void OnClose()
         {
             UIManager.Instance.CloseUI(config.UIType);
         }
-        protected void OnReture()
+        protected virtual void OnReture()
         {
             OnClose();
             UIManager.Instance.OpenUI(from);

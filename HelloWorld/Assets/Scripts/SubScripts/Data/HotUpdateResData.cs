@@ -35,7 +35,7 @@ namespace HotAssembly
                 param.content = downloadSize;
                 param.sure = a => StartDownload(getDownloadSizeAsync);
                 param.cancel = a => Application.Quit();
-                UIManager.Instance.OpenCommonBox(param);
+                UICommonBox.OpenCommonBox(param);
             }
             else
             {
@@ -74,7 +74,7 @@ namespace HotAssembly
                 param.content = "Retry";
                 param.sure = a => CheckUpdateInfo();
                 param.cancel = a => Application.Quit();
-                UIManager.Instance.OpenCommonBox(param);
+                UICommonBox.OpenCommonBox(param);
             }
         }
         private void UpdateFinish()

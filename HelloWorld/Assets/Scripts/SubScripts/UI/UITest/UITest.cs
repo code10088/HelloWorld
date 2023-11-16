@@ -66,11 +66,11 @@ namespace HotAssembly
             param.title = "Tips";
             param.content = "Content";
             param.sure = a => OnOpenMessage();
-            UIManager.Instance.OpenCommonBox(param);
+            UICommonBox.OpenCommonBox(param);
         }
         private void OnOpenTips()
         {
-            UIManager.Instance.ShowTips(Time.realtimeSinceStartup.ToString());
+            UICommonTips.ShowTips(Time.realtimeSinceStartup.ToString());
         }
         private void OnOpenSub()
         {

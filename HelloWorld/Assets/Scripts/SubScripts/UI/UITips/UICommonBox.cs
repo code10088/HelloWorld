@@ -1,11 +1,14 @@
+using cfg;
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace HotAssembly
 {
     public class UICommonBox : UIBase
     {
         private UICommonBoxComponent component = new UICommonBoxComponent();
+        private static Queue<UICommonBoxParam> commonBoxQueue = new Queue<UICommonBoxParam>();
         private UICommonBoxParam commonBoxParam;
 
         protected override void Init()
@@ -36,25 +39,39 @@ namespace HotAssembly
                 component.cancelUIButton.gameObject.SetActive(true);
             }
         }
+        protected override void OnClose()
+        {
+            base.OnClose();
+            Check();
+        }
+
         private void OnClickSure1()
         {
             commonBoxParam.sure?.Invoke(commonBoxParam.sureParam);
-            CheckCommonBox();
+            OnClose();
         }
         private void OnClickSure2()
         {
             commonBoxParam.sure?.Invoke(commonBoxParam.sureParam);
-            CheckCommonBox();
+            OnClose();
         }
         private void OnClickCancel()
         {
             commonBoxParam.cancel?.Invoke(commonBoxParam.cancelParam);
-            CheckCommonBox();
-        }
-        private void CheckCommonBox()
-        {
             OnClose();
-            UIManager.Instance.CheckCommonBox();
+        }
+
+        public static void OpenCommonBox(UICommonBoxParam param)
+        {
+            commonBoxQueue.Enqueue(param);
+            Check();
+        }
+        private static void Check()
+        {
+            if (commonBoxQueue.Count == 0) return;
+            if (UIManager.Instance.HasOpen(UIType.UICommonBox)) return;
+            var param = commonBoxQueue.Dequeue();
+            UIManager.Instance.OpenUI(UIType.UICommonBox, param: param);
         }
     }
     public enum UICommonBoxType
