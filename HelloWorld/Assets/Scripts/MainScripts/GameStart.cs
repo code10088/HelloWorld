@@ -13,20 +13,18 @@ public class GameStart : MonoBehaviour
     {
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-        AssetManager.Instance.Init(OpenDebug);
+        AssetManager.Instance.Init(CheckDebug);
         ES3.Init();
     }
-    private void OpenDebug()
+    private void CheckDebug()
     {
-#if DEBUG
-        GameDebug.showLog = true;
-        int loadId = -1;
-        AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/IngameDebugConsole.prefab", (a, b) => Instantiate(b));
-        loadId = -1;
-        AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/AdvancedFPSCounter.prefab", (a, b) => Instantiate(b));
-#elif RELEASE
-        GameDebug.showLog = false;
-#endif
+        if (GameDebug.GDebug)
+        {
+            int loadId = -1;
+            AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/IngameDebugConsole.prefab", (a, b) => Instantiate(b));
+            loadId = -1;
+            AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/AdvancedFPSCounter.prefab", (a, b) => Instantiate(b));
+        }
         HotUpdate();
     }
     private void HotUpdate()

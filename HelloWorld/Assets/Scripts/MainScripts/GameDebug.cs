@@ -2,7 +2,13 @@
 
 public class GameDebug
 {
+#if RELEASE
+    public static bool GDebug = false;
+    public static bool showLog = false;
+#else
+    public static bool GDebug = true;
     public static bool showLog = true;
+#endif
     public static void Log(object message)
     {
         if (showLog) Debug.Log(message);
