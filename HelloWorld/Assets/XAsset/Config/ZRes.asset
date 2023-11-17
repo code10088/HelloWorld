@@ -19,7 +19,7 @@ MonoBehaviour:
     optimizeDependencies: 0
     options: 12544
   groups:
-  - name: 
+  - name: Base
     id: 0
     enabled: 1
     deliveryMode: 2
@@ -41,6 +41,11 @@ MonoBehaviour:
       bundle: 
     - asset: Assets/ZRes/Font
       bundleMode: 4
+      addressMode: 3
+      filter: 
+      bundle: 
+    - asset: Assets/ZRes/Audio
+      bundleMode: 1
       addressMode: 0
       filter: 
       bundle: 
@@ -69,9 +74,10 @@ MonoBehaviour:
       addressMode: 0
       filter: 
       bundle: 
-    - asset: Assets/ZRes/Audio
-      bundleMode: 1
-      addressMode: 0
-      filter: 
-      bundle: 
+    desc: 
+  - name: Test
+    id: 0
+    enabled: 1
+    deliveryMode: 2
+    assets: []
     desc: 

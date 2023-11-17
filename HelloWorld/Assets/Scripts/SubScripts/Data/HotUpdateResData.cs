@@ -20,7 +20,7 @@ namespace HotAssembly
         }
         private void CheckUpdateInfo()
         {
-            var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync();
+            var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync(ZResConst.ResGroup_Base);
             getDownloadSizeAsync.completed += StartDownload;
         }
         private void StartDownload(Request request)
