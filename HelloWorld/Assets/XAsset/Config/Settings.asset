@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4386c364978186d4491c8866005cfdca, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
-  playMode: 2
+  playMode: 0
   player:
     assetsSplitMode: 2
     updatable: 1
