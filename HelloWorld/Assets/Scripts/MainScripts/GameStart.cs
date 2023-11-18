@@ -46,6 +46,7 @@ public class GameStart : MonoBehaviour
     }
     private void LoadMetadataForAOTAssembly(string[] path, Object[] assets)
     {
+        GameDebug.LogError(1);
         for (int i = 0; i < assets.Length; i++)
         {
             if (assets[i] != null)
@@ -54,8 +55,10 @@ public class GameStart : MonoBehaviour
                 RuntimeApi.LoadMetadataForAOTAssembly(ta.bytes, HomologousImageMode.SuperSet);
             }
         }
+        GameDebug.LogError(2);
         AssetManager.Instance.Unload(loadId);
         StartHotAssembly();
+        GameDebug.LogError(3);
     }
     private void StartHotAssembly()
     {
@@ -66,12 +69,14 @@ public class GameStart : MonoBehaviour
         MethodInfo m = t.GetMethod("Init");
         m.Invoke(o, null);
 #else
+        GameDebug.LogError(4);
         int loadId = -1;
         AssetManager.Instance.Load<TextAsset>(ref loadId, "Assets/ZRes/Assembly/HotAssembly.bytes", StartHotAssembly);
 #endif
     }
     private void StartHotAssembly(int id, Object asset)
     {
+        GameDebug.LogError(5);
         AssetManager.Instance.Unload(id);
         TextAsset ta = asset as TextAsset;
         var hotAssembly = Assembly.Load(ta.bytes);
@@ -80,6 +85,7 @@ public class GameStart : MonoBehaviour
         object o = p.GetMethod.Invoke(null, null);
         MethodInfo m = t.GetMethod("Init");
         m.Invoke(o, null);
+        GameDebug.LogError(6);
     }
     private void Update()
     {
