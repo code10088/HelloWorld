@@ -23,3 +23,6 @@
 /HelloWorld/Assets/StreamingAssets
 /HelloWorld/Assets/XAsset/Config/PackedAssets.asset
 /HelloWorld/Assets/ZRes/Assembly
+
+/SDK/.gradle
+/SDK/.idea
