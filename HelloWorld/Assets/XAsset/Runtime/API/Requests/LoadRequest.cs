@@ -44,11 +44,25 @@ namespace xasset
         {
         }
 
+        // private ActionRequest _completeRequest;
+
         protected void LoadAsync()
         {
             if (refCount > 0)
             {
                 if (isDone) ActionRequest.CallAsync(Complete);
+                // {
+                //     if (_completeRequest == null)
+                //     {
+                //         _completeRequest = ActionRequest.Create();
+                //         _completeRequest.reuse = false;
+                //         
+                //     }
+                //
+                //     _completeRequest.Reset();
+                //     _completeRequest.action = Complete;
+                //     _completeRequest.SendRequest();
+                // }
             }
             else
             {
@@ -65,6 +79,9 @@ namespace xasset
         {
             Logger.D($"Unload {GetType().Name} {path}.");
             OnDispose(); 
+            // if (_completeRequest == null) return;
+            // ActionRequest.Recycle(_completeRequest);
+            // _completeRequest = null;
         }
 
         public virtual bool CanRecycle()

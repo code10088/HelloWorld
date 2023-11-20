@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "5c750e9c0280530ca8a3d7be01e229029a1df569"
+      "hash": "febff1c658fa9d76726f3aa25f26ec6d35c1e2e6"
     },
     "com.code-philosophy.luban": {
       "version": "https://github.com/focus-creative-games/luban_unity.git",
@@ -19,7 +19,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "cfe509a55602ba5be6df7fa0468b10298b8a053d"
+      "hash": "5cc97c7f0085624b6ef57853d70b404440060cef"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -58,7 +58,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.21",
+      "version": "2.0.22",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -174,7 +174,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "be8bee9fb8506b4b55d9f0e4d30ae3f39313d0a4"
+      "hash": "3984f638763f7842760c9d616ec7f715169a5337"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
