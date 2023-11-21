@@ -36,11 +36,6 @@ MonoBehaviour:
     - HybridCLR.Runtime
     - IngameDebugConsole.Runtime
     - Luban.Runtime
-    - UniTask
-    - UniTask.Addressables
-    - UniTask.DOTween
-    - UniTask.Linq
-    - UniTask.TextMeshPro
     - xasset
     - xasset.editor
     showAdvancedSettings: 0
