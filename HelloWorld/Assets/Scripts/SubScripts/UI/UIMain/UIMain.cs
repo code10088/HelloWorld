@@ -1,5 +1,4 @@
 using cfg;
-using Cysharp.Threading.Tasks;
 
 namespace HotAssembly
 {
@@ -14,11 +13,10 @@ namespace HotAssembly
             component.openUITestBtnUIButton.onClick.AddListener(OnOpenUITest);
             component.openUISettingUIButton.onClick.AddListener(OnOpenUISetting);
         }
-        public override async UniTask OnEnable(params object[] param)
+        public override void OnEnable(params object[] param)
         {
-            await base.OnEnable(param);
+            base.OnEnable(param);
             GameDebug.Log("UITest OnEnable");
-            await UniTask.Delay(1000);
         }
         protected override void PlayInitAni()
         {

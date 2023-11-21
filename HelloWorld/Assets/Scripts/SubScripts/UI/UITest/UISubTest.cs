@@ -1,5 +1,3 @@
-using Cysharp.Threading.Tasks;
-
 namespace HotAssembly
 {
     public class UISubTest : UISubItem
@@ -13,9 +11,9 @@ namespace HotAssembly
             component.Init(UIObj);
             component.buttonUIButton.onClick.AddListener(OnClickClose);
         }
-        public override async UniTask OnEnable(params object[] param)
+        public override void OnEnable(params object[] param)
         {
-            await base.OnEnable(param);
+            base.OnEnable(param);
             GameDebug.Log("UISubTest OnEnable");
         }
         protected override void PlayInitAni()

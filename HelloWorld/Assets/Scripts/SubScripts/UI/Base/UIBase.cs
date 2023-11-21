@@ -1,7 +1,6 @@
 ﻿using cfg;
 using UnityEngine;
 using UnityExtensions.Tween;
-using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
@@ -32,11 +31,10 @@ namespace HotAssembly
             for (int i = 0; i < layerRecord1.Length; i++) layerRecord2[i] = layerRecord1[i].sortingOrder;
             layerRecord3 = UIObj.GetComponentsInChildren<UIParticle>(true);
         }
-        public virtual async UniTask OnEnable(params object[] param)
+        public virtual void OnEnable(params object[] param)
         {
             RefreshUILayer();
             PlayInitAni();
-            await UniTask.Yield();
         }
         protected virtual void RefreshUILayer()
         {

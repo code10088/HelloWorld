@@ -1,5 +1,4 @@
 using cfg;
-using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 
@@ -20,9 +19,9 @@ namespace HotAssembly
             component.sure2UIButton.onClick.AddListener(OnClickSure2);
             component.cancelUIButton.onClick.AddListener(OnClickCancel);
         }
-        public override async UniTask OnEnable(params object[] param)
+        public override void OnEnable(params object[] param)
         {
-            await base.OnEnable(param);
+            base.OnEnable(param);
             commonBoxParam = param[0] as UICommonBoxParam;
             component.titleTextMeshProUGUI.text = commonBoxParam.title;
             component.contentTextMeshProUGUI.text = commonBoxParam.content;

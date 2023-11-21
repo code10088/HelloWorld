@@ -1,6 +1,4 @@
-﻿using Cysharp.Threading.Tasks;
-
-namespace HotAssembly
+﻿namespace HotAssembly
 {
     public class TestScene : SceneBase
     {
@@ -9,9 +7,9 @@ namespace HotAssembly
         {
             component.Init(SceneObj);
         }
-        public override async UniTask OnEnable(params object[] param)
+        public override void OnEnable(params object[] param)
         {
-            await base.OnEnable(param);
+            base.OnEnable(param);
             GameDebug.Log("TestScene OnEnable");
         }
         public override void OnDisable()

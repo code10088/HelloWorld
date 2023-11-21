@@ -1,6 +1,3 @@
-using Cysharp.Threading.Tasks;
-using UnityEngine;
-
 namespace HotAssembly
 {
     public class UISetting : UIBase
@@ -35,9 +32,9 @@ namespace HotAssembly
             component.graphicsQualityLv1Toggle.onValueChanged.AddListener(OnClickGraphicsQualityLv1);
             component.graphicsQualityLv2Toggle.onValueChanged.AddListener(OnClickGraphicsQualityLv2);
         }
-        public override async UniTask OnEnable(params object[] param)
+        public override void OnEnable(params object[] param)
         {
-            await base.OnEnable(param);
+            base.OnEnable(param);
             int lv = DPUtil.QualityLv;
             if (lv == 0) component.qualitySettings0Toggle.isOn = true;
             else if (lv == 1) component.qualitySettings1Toggle.isOn = true;
