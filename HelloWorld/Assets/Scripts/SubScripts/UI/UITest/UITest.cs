@@ -77,7 +77,7 @@ namespace HotAssembly
         }
         private void SDKInit()
         {
-            SDKManager.Instance.InitSDK();
+            SDK.Instance.InitSDK();
         }
         private void LoadSprite()
         {
