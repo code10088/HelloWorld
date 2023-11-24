@@ -5,14 +5,22 @@ using Object = UnityEngine.Object;
 using Newtonsoft.Json;
 using HybridCLR;
 
-public class GameStart : MonoBehaviour
+public class GameStart : MonoSingleton<GameStart>
 {
     private int loadId;
 
-    private void Start()
+    [RuntimeInitializeOnLoadMethod]
+    private static void _()
+    {
+        Instance.__();
+    }
+    public void __()
     {
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+    }
+    private void Start()
+    {
         AssetManager.Instance.Init(CheckDebug);
         ES3.Init();
     }

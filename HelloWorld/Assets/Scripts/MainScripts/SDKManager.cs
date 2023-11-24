@@ -1,17 +1,11 @@
 using System;
 using UnityEngine;
 
-public class SDKManager : MonoBehaviour
+public class SDKManager : MonoSingleton<SDKManager>
 {
-    public static SDKManager Instance;
     private AndroidJavaObject androidActivity;
     private bool initResult = false;
 
-    private void Start()
-    {
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
     public void InitSDK()
     {
 #if UNITY_ANDROID
