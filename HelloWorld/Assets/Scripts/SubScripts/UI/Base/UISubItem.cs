@@ -126,6 +126,7 @@ namespace HotAssembly
             {
                 if (layerRecord1[i] != null)
                 {
+                    layerRecord1[i].sortingLayerName = canvas.sortingLayerName;
                     layerRecord1[i].sortingOrder = canvas.sortingOrder + layerRecord2[i];
                 }
             }

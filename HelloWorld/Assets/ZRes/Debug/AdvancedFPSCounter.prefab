@@ -47,7 +47,7 @@ MonoBehaviour:
   fpsCounter:
     enabled: 1
     anchor: 0
-    color: {r: 0.33333334, g: 0.85490197, b: 0.4, a: 1}
+    color: {r: 0.33333334, g: 0.85490197, b: 0.4, a: 0.5019608}
     style: 1
     updateInterval: 0.5
     warningLevelValue: 50
@@ -61,10 +61,10 @@ MonoBehaviour:
     averageFoldout: 0
     average: 1
     averageMilliseconds: 1
-    averageNewLine: 1
+    averageNewLine: 0
     averageSamples: 50
     minMaxFoldout: 0
-    minMax: 1
+    minMax: 0
     minMaxMilliseconds: 0
     minMaxNewLine: 1
     minMaxTwoLines: 0
@@ -72,13 +72,13 @@ MonoBehaviour:
     render: 1
     renderNewLine: 1
     renderAutoAdd: 1
-    colorWarning: {r: 0.9254902, g: 0.8784314, b: 0.34509805, a: 1}
-    colorCritical: {r: 0.9764706, g: 0.35686275, b: 0.35686275, a: 1}
-    colorRender: {r: 0.654902, g: 0.43137255, b: 0.81960785, a: 1}
+    colorWarning: {r: 0.9254902, g: 0.8784314, b: 0.34509805, a: 0.5019608}
+    colorCritical: {r: 0.9764706, g: 0.35686275, b: 0.35686275, a: 0.5019608}
+    colorRender: {r: 0.654902, g: 0.43137255, b: 0.81960785, a: 0.5019608}
   memoryCounter:
     enabled: 1
     anchor: 0
-    color: {r: 0.91764706, g: 0.93333334, b: 0.39607844, a: 1}
+    color: {r: 0.91764706, g: 0.93333334, b: 0.39607844, a: 0.5019608}
     style: 1
     updateInterval: 1
     precise: 1
@@ -116,7 +116,7 @@ MonoBehaviour:
   forceFrameRate: 0
   forcedFrameRate: -1
   background: 1
-  backgroundColor: {r: 0, g: 0, b: 0, a: 0.5882353}
+  backgroundColor: {r: 0, g: 0, b: 0, a: 0.2}
   backgroundPadding: 5
   shadow: 0
   shadowColor: {r: 0, g: 0, b: 0, a: 0.784}
