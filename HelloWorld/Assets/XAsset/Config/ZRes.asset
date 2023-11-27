@@ -34,11 +34,6 @@ MonoBehaviour:
       addressMode: 0
       filter: 
       bundle: 
-    - asset: Assets/ZRes/Debug
-      bundleMode: 3
-      addressMode: 0
-      filter: 
-      bundle: 
     - asset: Assets/ZRes/Font
       bundleMode: 4
       addressMode: 3
@@ -71,6 +66,17 @@ MonoBehaviour:
       bundle: 
     - asset: Assets/ZRes/UI/Texture
       bundleMode: 1
+      addressMode: 0
+      filter: 
+      bundle: 
+    desc: 
+  - name: Debug
+    id: 0
+    enabled: 1
+    deliveryMode: 2
+    assets:
+    - asset: Assets/ZRes/Debug
+      bundleMode: 0
       addressMode: 0
       filter: 
       bundle: 
