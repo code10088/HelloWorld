@@ -19,6 +19,7 @@ namespace HotAssembly
         public UIButton poolDequeueUIButton = null;
         public UIButton openSceneUIButton = null;
         public UIButton closeSceneUIButton = null;
+        public UIButton coroutineBtnUIButton = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
@@ -38,6 +39,7 @@ namespace HotAssembly
             poolDequeueUIButton = allData[13].exportComponent[0] as UIButton;
             openSceneUIButton = allData[14].exportComponent[0] as UIButton;
             closeSceneUIButton = allData[15].exportComponent[0] as UIButton;
+            coroutineBtnUIButton = allData[16].exportComponent[0] as UIButton;
         }
     }
     public partial class UITestItem : LoopItemData

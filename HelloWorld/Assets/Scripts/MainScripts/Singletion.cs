@@ -16,7 +16,7 @@ public abstract class Singletion<T> where T : new()
         }
     }
 }
-public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
+public abstract class MonoSingletion<T> : MonoBehaviour where T : MonoSingletion<T>
 {
     private static T instance = null;
     public static T Instance

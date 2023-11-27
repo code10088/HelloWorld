@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class SDK : MonoSingleton<SDK>
+public class SDK : MonoSingletion<SDK>
 {
     private AndroidJavaObject androidActivity;
     private bool initResult = false;

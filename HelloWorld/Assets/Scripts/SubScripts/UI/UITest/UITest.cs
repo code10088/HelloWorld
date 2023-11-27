@@ -1,5 +1,6 @@
 using cfg;
 using SuperScrollView;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace HotAssembly
@@ -25,6 +26,7 @@ namespace HotAssembly
             component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
             component.openSceneUIButton.onClick.AddListener(OpenScene);
             component.closeSceneUIButton.onClick.AddListener(CloseScene);
+            component.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
             component.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
             pool.Init($"{ZResConst.ResUIPrefabPath}TestBullet.prefab");
         }
@@ -103,6 +105,20 @@ namespace HotAssembly
         private void CloseScene()
         {
             SceneManager.Instance.CloseScene(SceneType.TestScene);
+        }
+        private void TestCoroutine()
+        {
+            var a = _TestCoroutine();
+            CoroutineManager.Instance.Start(a);
+            Debug.LogError(1);
+        }
+        private IEnumerator<Coroutine> _TestCoroutine()
+        {
+            Debug.LogError(0);
+            yield return new WaitForFrame(1);
+            Debug.LogError(2);
+            yield return new WaitForSeconds(1);
+            Debug.LogError(3);
         }
 
         LoopListViewItem2 OnGetItemByIndex(LoopListView2 listView, int index)

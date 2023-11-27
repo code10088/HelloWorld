@@ -5,7 +5,7 @@ using Object = UnityEngine.Object;
 using Newtonsoft.Json;
 using HybridCLR;
 
-public class GameStart : MonoSingleton<GameStart>
+public class GameStart : MonoSingletion<GameStart>
 {
     private int loadId;
 
