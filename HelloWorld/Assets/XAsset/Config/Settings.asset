@@ -18,7 +18,7 @@ MonoBehaviour:
     updatable: 1
     updateInfoURL: https://assets-1321503079.cos.ap-beijing.myqcloud.com/Bundles
     downloadURL: https://assets-1321503079.cos.ap-beijing.myqcloud.com/Bundles
-    playerURL: https://assets-1321503079.cos.ap-beijing.myqcloud.com
+    playerURL: http://192.168.7.133/Build
     logLevel: 0
     maxDownloads: 5
     maxRetryTimes: 3
