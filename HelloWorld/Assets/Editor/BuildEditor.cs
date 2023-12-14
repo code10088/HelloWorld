@@ -40,6 +40,7 @@ public class BuildEditor
         HideSubScripts(true);
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path, EditorUserBuildSettings.activeBuildTarget, options);
         HideSubScripts(false);
+        UploadFile2CDN(string.Empty, path);
     }
     private static void HideSubScripts(bool b)
     {
@@ -142,5 +143,26 @@ public class BuildEditor
             }
         }
         Debug.Log("UploadBundleSuccess");
+    }
+    public static void UploadFile2CDN(string key, string path)
+    {
+        CosXmlConfig config = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
+        string secretId = "AKIDHSjP5iQG1byLl3mNnnolv3879KYj2OpJ";
+        string secretKey = "jKnx21ADT1OfkpyGRSLHPVXgjkhllfS6";
+        long durationSecond = 600;
+        QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(secretId, secretKey, durationSecond);
+        CosXml cosXml = new CosXmlServer(config, qCloudCredentialProvider);
+
+        string bucket = "assets-1321503079";
+        key = key.Replace("\\", "/");
+        PutObjectRequest request = new PutObjectRequest(bucket, key, path);
+        PutObjectResult result = cosXml.PutObject(request);
+        if (!result.IsSuccessful())
+        {
+            Debug.Log("UploadFileFail£º" + path);
+            Debug.Log(result.GetResultInfo());
+            return;
+        }
+        Debug.Log("UploadFileSuccess£º" + path);
     }
 }
