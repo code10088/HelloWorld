@@ -16,4 +16,4 @@ taskkill /f /im Unity.exe
 -logFile "D:/HelloWorld/Build/build.log" ^
 -executeMethod %2 ^
 --version:%3 ^
---develop:%4
+--release:%4
