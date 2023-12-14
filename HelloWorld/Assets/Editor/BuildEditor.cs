@@ -16,30 +16,27 @@ public class BuildEditor
     [MenuItem("Tools/BuildPlayer", false, (int)ToolsMenuSort.BuildPlayer)]
     public static void BuildPlayer()
     {
+        string path = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
+        path = $"{path}\\Build\\{DateTime.Now.ToString("yyyyMMdd_HHmmss")}\\HelloWorld.apk";
+        Directory.CreateDirectory(Path.GetDirectoryName(path));
+        PlayerSettings.bundleVersion = "1.0.0";
+        BuildOptions options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
         string[] args = Environment.GetCommandLineArgs();
-        string path = string.Empty;
-        BuildOptions options = BuildOptions.None;
         for (int i = 0; i < args.Length; i++)
         {
-            if (args[i].StartsWith("--path:"))
-            {
-                path = args[i].Replace("--path:", string.Empty);
-                Debug.Log(args[i]);
-            }
-            else if (args[i].StartsWith("--version:"))
+            if (args[i].StartsWith("--version:"))
             {
                 PlayerSettings.bundleVersion = args[i].Replace("--version:", string.Empty);
                 Debug.Log(args[i]);
             }
-            else if (args[i].StartsWith("--develop:"))
+            else if (args[i].StartsWith("--release:"))
             {
-                bool b = bool.Parse(args[i].Replace("--develop:", string.Empty));
-                if (b) options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
+                bool b = bool.Parse(args[i].Replace("--release:", string.Empty));
+                if (b) options = BuildOptions.None;
                 Debug.Log(args[i]);
             }
         }
         BuildBundles();
-        //BuildOptions options = EditorUserBuildSettings.development ? BuildOptions.Development : BuildOptions.None;
         HideSubScripts(true);
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path, EditorUserBuildSettings.activeBuildTarget, options);
         HideSubScripts(false);
