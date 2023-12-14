@@ -40,7 +40,7 @@ public class BuildEditor
         HideSubScripts(true);
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path, EditorUserBuildSettings.activeBuildTarget, options);
         HideSubScripts(false);
-        UploadFile2CDN(string.Empty, path);
+        UploadFile2CDN("HelloWorld.apk", path);
     }
     private static void HideSubScripts(bool b)
     {
