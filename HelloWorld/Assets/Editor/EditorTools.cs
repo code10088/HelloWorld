@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-public class CopyGameObject
+public class EditorTools
 {
-	[MenuItem("GameObject/Tools/CopyGameObjectAutoIndex &d")]
+	[MenuItem("Tools/Editor/CopyAutoIndex &d")]
 	public static void Copy()
 	{
 		foreach (Transform t in Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable))
@@ -37,7 +37,22 @@ public class CopyGameObject
 			newObject.transform.position = t.position;
 			newObject.transform.rotation = t.rotation;
 			newObject.transform.SetSiblingIndex(sibling+1);
-			Undo.RegisterCreatedObjectUndo(newObject, "CopyGameObjectAutoIndex");
+			Undo.RegisterCreatedObjectUndo(newObject, "CopyAutoIndex");
 		}
+	}
+	[MenuItem("Tools/Editor/EditorFastForward %RIGHT")]
+	public static void FastForward()
+    {
+		Time.timeScale = Time.timeScale * 2;
+	}
+	[MenuItem("Tools/Editor/EditorFastRewind %LEFT")]
+	public static void FastRewind()
+	{
+		Time.timeScale = Time.timeScale / 2;
+	}
+	[MenuItem("Tools/Editor/EditorFastNormal %DOWN")]
+	public static void FastNormal()
+	{
+		Time.timeScale = 1;
 	}
 }
