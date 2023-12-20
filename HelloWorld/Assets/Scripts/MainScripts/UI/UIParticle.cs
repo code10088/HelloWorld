@@ -9,7 +9,6 @@ public class UIParticle : MonoBehaviour
     private int sortingOrder;
 
     //²Ã¼ôÌØÐ§RectTransform.Scale.z=0
-    public bool mask = false;
     private RectTransform rt;
     private MaterialPropertyBlock mpb;
     private void Awake()
@@ -28,9 +27,9 @@ public class UIParticle : MonoBehaviour
         {
             if (ps[i].sortingOrder < 10) layerRecord[i] = ps[i].sortingOrder;
         }
-        if (mask)
+        var sr = GetComponentInParent<ScrollRect>();
+        if (sr)
         {
-            var sr = GetComponentInParent<ScrollRect>();
             rt = sr.GetComponent<RectTransform>();
             mpb = new MaterialPropertyBlock();
         }
@@ -46,7 +45,7 @@ public class UIParticle : MonoBehaviour
             ps[i].sortingLayerName = sortingLayerName;
             ps[i].sortingOrder = sortingOrder + layerRecord[i];
         }
-        if (mask)
+        if (rt)
         {
             Vector3[] corners = new Vector3[4];
             rt.GetWorldCorners(corners);
