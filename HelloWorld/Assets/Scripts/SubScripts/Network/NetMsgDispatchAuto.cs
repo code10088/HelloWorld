@@ -6,23 +6,32 @@ namespace HotAssembly
 {
     public partial class NetMsgDispatch
     {
-        public void Deserialize(byte[] bytes)
+        public bool Deserialize(byte[] bytes)
         {
-            var id = BitConverter.ToUInt16(bytes, 0);
-            //protobuf-net/net462/System.Memory.dll和unity内置mscorlib.dll的Memory版本不一致
-            //无法添加对protobuf-net/net462/System.Memory.dll的引用
-            //var mm = new Memory<byte>(bytes, 2, bytes.Length - 2);
-            IExtensible msg = null;
-            var mm = new MemoryStream(bytes, 2, bytes.Length - 2);
-            switch (id)
+            try
             {
-                case NetMsgId.Min: msg = Serializer.Deserialize<ProtoTest.Person>(mm); break;
+                var id = BitConverter.ToUInt16(bytes, 0);
+                //protobuf-net/net462/System.Memory.dll和unity内置mscorlib.dll的Memory版本不一致
+                //无法添加对protobuf-net/net462/System.Memory.dll的引用
+                //var mm = new Memory<byte>(bytes, 2, bytes.Length - 2);
+                IExtensible msg = null;
+                var mm = new MemoryStream(bytes, 2, bytes.Length - 2);
+                switch (id)
+                {
+                    case NetMsgId.Min: msg = Serializer.Deserialize<ProtoTest.Person>(mm); break;
+                }
+                mm.Dispose();
+                var item = new NetMsgItem();
+                item.id = id;
+                item.msg = msg;
+                global::NetMsgDispatch.Instance.Add(item);
+                return true;
             }
-            mm.Dispose();
-            var item = new NetMsgItem();
-            item.id = id;
-            item.msg = msg;
-            global::NetMsgDispatch.Instance.Add(item);
+            catch (Exception e)
+            {
+                GameDebug.LogError(e.Message);
+                return false;
+            }
         }
     }
 }
