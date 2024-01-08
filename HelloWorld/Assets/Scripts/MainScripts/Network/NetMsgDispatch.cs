@@ -6,7 +6,7 @@ public class NetMsgDispatch : Singletion<NetMsgDispatch>
 {
     private Queue<NetMsgItem> msgPool = new Queue<NetMsgItem>();
     public Action<NetMsgItem> dispatch;
-    public Action<byte[]> deserialize;
+    public Func<byte[], bool> deserialize;
 
     public void Init()
     {
@@ -23,9 +23,10 @@ public class NetMsgDispatch : Singletion<NetMsgDispatch>
             }
         }
     }
-    public void Deserialize(byte[] bytes)
+    public bool Deserialize(byte[] bytes)
     {
-        deserialize?.Invoke(bytes);
+        bool? b = deserialize?.Invoke(bytes);
+        return b.HasValue && b.Value;
     }
     public void Add(NetMsgItem item)
     {

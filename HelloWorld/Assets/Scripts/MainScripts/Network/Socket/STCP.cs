@@ -228,7 +228,8 @@ public class STCP
     }
     private void Deserialize(byte[] bytes)
     {
-        NetMsgDispatch.Instance.Deserialize(bytes);
+        bool success = NetMsgDispatch.Instance.Deserialize(bytes);
+        if (!success) Reconect();
     }
     #endregion
 
