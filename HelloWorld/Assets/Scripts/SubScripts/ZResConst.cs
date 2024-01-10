@@ -11,6 +11,8 @@ namespace HotAssembly
         public static readonly string ResScenePath = "Assets/ZRes/Scene/";
         public static readonly string ResUIPrefabPath = "Assets/ZRes/UI/Prefab/";
         public static readonly string ResUITexturePath = "Assets/ZRes/UI/Texture/";
+        public static readonly string ResUIEffectPath = "Assets/ZRes/UI/Effect/";
+        public static readonly string ResSceneEffectPath = "Assets/ZRes/Effect/";
 
         //UIAtlas
         public static readonly string ResUIAtlasTestPath = "Assets/ZRes/UI/Atlas/Test/";

@@ -15,7 +15,8 @@ namespace HotAssembly
         protected Canvas[] layerRecord1;
         protected int[] layerRecord2;
         protected UIParticle[] layerRecord3;
-        private List<int> loaders = new List<int>();
+        private List<int> loader1 = new List<int>();
+        private List<LoadGameObjectItem> loader2 = new List<LoadGameObjectItem>();
         public void InitUI(GameObject UIObj, UIType from, UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;
@@ -62,13 +63,18 @@ namespace HotAssembly
         }
         public virtual void OnDisable()
         {
-            for (int i = 0; i < loaders.Count; i++) AssetManager.Instance.Unload(loaders[i]);
+            for (int i = 0; i < loader1.Count; i++) AssetManager.Instance.Unload(loader1[i]);
+            for (int i = 0; i < loader2.Count; i++) loader2[i].SetActive(false);
+            loader1.Clear();
         }
         public virtual void OnDestroy()
         {
             layerRecord1 = null;
             layerRecord2 = null;
             layerRecord3 = null;
+            for (int i = 0; i < loader2.Count; i++) loader2[i].Release();
+            loader1 = null;
+            loader2 = null;
         }
         protected virtual void OnClose()
         {
@@ -85,7 +91,7 @@ namespace HotAssembly
         {
             int loadId = -1;
             AssetManager.Instance.Load<Sprite>(ref loadId, $"{atlas}{name}.png", (a, b) => image.sprite = (Sprite)b);
-            loaders.Add(loadId);
+            loader1.Add(loadId);
         }
         /// <summary>
         /// 背景图
@@ -95,7 +101,7 @@ namespace HotAssembly
         {
             int loadId = -1;
             AssetManager.Instance.Load<Texture>(ref loadId, $"{ZResConst.ResUITexturePath}{path}.png", (a, b) => image.texture = (Texture)b);
-            loaders.Add(loadId);
+            loader1.Add(loadId);
         }
         /// <summary>
         /// 加载Prefab
@@ -105,7 +111,15 @@ namespace HotAssembly
         {
             int loadId = -1;
             AssetManager.Instance.Load<GameObject>(ref loadId, $"{ZResConst.ResUIPrefabPath}{path}.prefab", (a, b) => finish?.Invoke((GameObject)b));
-            loaders.Add(loadId);
+            loader1.Add(loadId);
+        }
+        protected void AddEffect(string path, Transform parent)
+        {
+            path = $"{ZResConst.ResUIEffectPath}{path}.prefab";
+            var item = new LoadGameObjectItem();
+            item.Init(path, parent);
+            item.SetActive(true);
+            loader2.Add(item);
         }
         protected GameObject Instantiate(GameObject obj, Transform parent = null)
         {
