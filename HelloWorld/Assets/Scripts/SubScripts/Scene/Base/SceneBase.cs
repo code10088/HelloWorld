@@ -22,19 +22,19 @@ namespace HotAssembly
         }
         protected virtual void Init()
         {
-            AssetManager.Instance.Load<Material>(ref skyboxLoadId, config.SkyBoxPath, (a, b) => RenderSettings.skybox = (Material)b);
+
         }
         public virtual void OnEnable(params object[] param)
         {
-
+            AssetManager.Instance.Load<Material>(ref skyboxLoadId, config.SkyBoxPath, (a, b) => RenderSettings.skybox = (Material)b);
         }
         public virtual void OnDisable()
         {
-
+            AssetManager.Instance.Unload(skyboxLoadId);
         }
         public virtual void OnDestroy()
         {
-            AssetManager.Instance.Unload(skyboxLoadId);
+
         }
         protected void OnClose()
         {
