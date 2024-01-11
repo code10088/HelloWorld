@@ -800,6 +800,8 @@ MonoBehaviour:
   receiveExceptionLogs: 1
   captureLogTimestamps: 0
   alwaysDisplayTimestamps: 0
+  maxLogCount: 2147483647
+  logsToRemoveAfterMaxLogCount: 16
   queuedLogLimit: 256
   clearCommandAfterExecution: 1
   commandHistorySize: 15

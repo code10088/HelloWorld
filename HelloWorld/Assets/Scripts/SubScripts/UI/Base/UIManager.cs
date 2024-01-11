@@ -188,7 +188,9 @@ namespace HotAssembly
                 else if (state == 0)
                 {
                     state = 1;
-                    baseObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, Instance.Layers[config.UIWindowType]) as GameObject;
+                    baseObj = Object.Instantiate(asset, Instance.Layers[config.UIWindowType]) as GameObject;
+                    baseObj.transform.localPosition = Vector3.zero;
+                    baseObj.transform.localRotation = Quaternion.identity;
                     RectTransform rt = baseObj.GetComponent<RectTransform>();
                     rt.anchoredPosition3D = Vector3.zero;
                     rt.anchorMin = Instance.anchorMin;

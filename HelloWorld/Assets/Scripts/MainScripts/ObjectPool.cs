@@ -24,13 +24,13 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
         item.SetActive(false);
         cache.Add(item);
     }
-    public T Dequeue(Action<object[], GameObject> action = null, params object[] param)
+    public T Dequeue(Transform parent, Action<object[], GameObject> action = null, params object[] param)
     {
         T temp = null;
         if (cache.Count > 0) temp = cache[0];
         if (temp != null) cache.RemoveAt(0);
         else temp = new T();
-        temp.Init(Delete, action, param);
+        temp.Init(parent, Delete, action, param);
         temp.SetActive(true);
         use.Add(temp);
         wait.Add(temp);
@@ -88,6 +88,7 @@ public class GameObjectPoolItem
 {
     private static int uniqueId = 0;
     private int itemId = -1;
+    private Transform parent;
     protected GameObject obj;
     private int timerId = -1;
 
@@ -100,9 +101,10 @@ public class GameObjectPoolItem
     /// <summary>
     /// «Î π”√GameObjectPool
     /// </summary>
-    public void Init(Action<int> release, Action<object[], GameObject> action, params object[] param)
+    public void Init(Transform parent, Action<int> release, Action<object[], GameObject> action, params object[] param)
     {
         itemId = ++uniqueId;
+        this.parent = parent;
         this.release = release;
         this.action = action;
         this.param = param;
@@ -145,7 +147,9 @@ public class GameObjectPoolItem
     /// </summary>
     public void Instantiate(Object asset)
     {
-        if (obj == null) obj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity) as GameObject;
+        if (obj == null) obj = Object.Instantiate(asset, parent) as GameObject;
+        obj.transform.localPosition = Vector3.zero;
+        obj.transform.localRotation = Quaternion.identity;
         obj.SetActive(true);
         LoadFinish();
     }

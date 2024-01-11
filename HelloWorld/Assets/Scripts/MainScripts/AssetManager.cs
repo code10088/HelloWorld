@@ -193,7 +193,9 @@ public class LoadGameObjectItem
         else
         {
             state = 3;
-            obj = Object.Instantiate(_asset, Vector3.zero, Quaternion.identity, parent) as GameObject;
+            obj = Object.Instantiate(_asset, parent) as GameObject;
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
             Finish(0, obj);
         }
     }

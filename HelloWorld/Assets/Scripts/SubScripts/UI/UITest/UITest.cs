@@ -9,7 +9,6 @@ namespace HotAssembly
     {
         private UITestComponent component = new UITestComponent();
         private UISubTest subUI = new UISubTest("UISubTest");
-        private GameObjectPool<GameObjectPoolItem> pool = new GameObjectPool<GameObjectPoolItem>();
 
         protected override void Init()
         {
@@ -28,7 +27,6 @@ namespace HotAssembly
             component.closeSceneUIButton.onClick.AddListener(CloseScene);
             component.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
             component.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
-            pool.Init($"{ZResConst.ResUIPrefabPath}TestBullet.prefab");
         }
         public override void OnEnable(params object[] param)
         {
@@ -55,7 +53,6 @@ namespace HotAssembly
         {
             base.OnDestroy();
             subUI.Close(true);
-            pool.Release();
             GameDebug.Log("UITest OnDestroy");
         }
 
@@ -89,14 +86,13 @@ namespace HotAssembly
         }
         private void LoadBulletFromPool()
         {
-            pool.Dequeue((a, b) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
-            pool.Dequeue((a, b) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
-            pool.Enqueue(pool.Use[0]);
-            pool.Dequeue((a, b) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
+            TestScene ts = SceneManager.Instance.GetScene(SceneType.TestScene) as TestScene;
+            ts.LoadBulletFromPool();
         }
         private void DelectBullet()
         {
-            pool.Enqueue(pool.Use[0]);
+            TestScene ts = SceneManager.Instance.GetScene(SceneType.TestScene) as TestScene;
+            ts.DelectBullet();
         }
         private void OpenScene()
         {
