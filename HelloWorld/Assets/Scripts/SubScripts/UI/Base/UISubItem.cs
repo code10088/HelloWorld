@@ -53,7 +53,10 @@ namespace HotAssembly
             else if (state == 0)
             {
                 state = 3;
-                UIObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, parent) as GameObject;
+                UIObj = Object.Instantiate(asset, parent) as GameObject;
+                UIObj.transform.localPosition = Vector3.zero;
+                UIObj.transform.localRotation = Quaternion.identity;
+                UIObj.transform.localScale = Vector3.one;
                 RectTransform rt = UIObj.GetComponent<RectTransform>();
                 rt.anchoredPosition3D = Vector3.zero;
                 rt.anchorMin = Vector2.zero;
@@ -73,6 +76,7 @@ namespace HotAssembly
         }
         private void Release(bool immediate = false)
         {
+            if (state == 0) return;
             UIObj?.SetActive(false);
             OnDisable();
             if (immediate) _Release();

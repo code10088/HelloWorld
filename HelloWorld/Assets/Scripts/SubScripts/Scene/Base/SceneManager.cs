@@ -188,7 +188,10 @@ namespace HotAssembly
                 else if (state == 0)
                 {
                     state = 1;
-                    baseObj = Object.Instantiate(asset, Vector3.zero, Quaternion.identity, Instance.tSceneRoot) as GameObject;
+                    baseObj = Object.Instantiate(asset, Instance.tSceneRoot) as GameObject;
+                    baseObj.transform.localPosition = Vector3.zero;
+                    baseObj.transform.localRotation = Quaternion.identity;
+                    baseObj.transform.localScale = Vector3.one;
                     baseObj.SetActive(false);
                 }
                 releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMax, 0.1f);

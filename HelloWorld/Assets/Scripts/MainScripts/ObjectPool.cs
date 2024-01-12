@@ -150,6 +150,7 @@ public class GameObjectPoolItem
         if (obj == null) obj = Object.Instantiate(asset, parent) as GameObject;
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
+        obj.transform.localScale = Vector3.one;
         obj.SetActive(true);
         LoadFinish();
     }

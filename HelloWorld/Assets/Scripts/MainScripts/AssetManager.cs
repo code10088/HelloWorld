@@ -196,6 +196,7 @@ public class LoadGameObjectItem
             obj = Object.Instantiate(_asset, parent) as GameObject;
             obj.transform.localPosition = Vector3.zero;
             obj.transform.localRotation = Quaternion.identity;
+            obj.transform.localScale = Vector3.one;
             Finish(0, obj);
         }
     }
