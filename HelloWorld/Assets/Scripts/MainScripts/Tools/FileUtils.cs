@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
-public class FileUtils : Singletion<FileUtils>
+public static class FileUtils
 {
     public static string PlatformPath
     {

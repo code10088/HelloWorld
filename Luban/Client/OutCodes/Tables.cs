@@ -17,6 +17,9 @@ public partial class Tables
     public TbDeviceInfo TbDeviceInfo = new TbDeviceInfo();
     public TbSceneConfig TbSceneConfig = new TbSceneConfig();
     public TbPlayerAvatarPart TbPlayerAvatarPart = new TbPlayerAvatarPart();
+    public TbTrigger TbTrigger = new TbTrigger();
+    public TbTriggerCondition TbTriggerCondition = new TbTriggerCondition();
+    public TbTriggerAction TbTriggerAction = new TbTriggerAction();
 }
 
 }
