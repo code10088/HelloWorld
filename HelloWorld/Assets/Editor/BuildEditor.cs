@@ -13,29 +13,14 @@ using COSXML.Model.Object;
 
 public class BuildEditor
 {
+    private static BuildOptions options = BuildOptions.None;
+
     [MenuItem("Tools/BuildPlayer", false, (int)ToolsMenuSort.BuildPlayer)]
     public static void BuildPlayer()
     {
         string path = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
         path = $"{path}\\Build\\{DateTime.Now.ToString("yyyyMMdd_HHmmss")}\\HelloWorld.apk";
         Directory.CreateDirectory(Path.GetDirectoryName(path));
-        PlayerSettings.bundleVersion = "1.0.0";
-        BuildOptions options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
-        string[] args = Environment.GetCommandLineArgs();
-        for (int i = 0; i < args.Length; i++)
-        {
-            if (args[i].StartsWith("--version:"))
-            {
-                PlayerSettings.bundleVersion = args[i].Replace("--version:", string.Empty);
-                Debug.Log(args[i]);
-            }
-            else if (args[i].StartsWith("--release:"))
-            {
-                bool b = bool.Parse(args[i].Replace("--release:", string.Empty));
-                if (b) options = BuildOptions.None;
-                Debug.Log(args[i]);
-            }
-        }
         BuildBundles();
         HideSubScripts(true);
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path, EditorUserBuildSettings.activeBuildTarget, options);
@@ -57,6 +42,25 @@ public class BuildEditor
             Directory.Move(dest, source);
         }
         AssetDatabase.Refresh();
+    }
+    private static void CheckArgs()
+    {
+        options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
+        string[] args = Environment.GetCommandLineArgs();
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i].StartsWith("--version:"))
+            {
+                PlayerSettings.bundleVersion = args[i].Replace("--version:", string.Empty);
+                Debug.Log(args[i]);
+            }
+            else if (args[i].StartsWith("--release:"))
+            {
+                bool b = bool.Parse(args[i].Replace("--release:", string.Empty));
+                if (b) options = BuildOptions.None;
+                Debug.Log(args[i]);
+            }
+        }
     }
 
     [MenuItem("Tools/BuildBundles", false, (int)ToolsMenuSort.BuildBundles)]
@@ -108,6 +112,7 @@ public class BuildEditor
     [MenuItem("Tools/XAssetBuild", false, (int)ToolsMenuSort.XAssetBuild)]
     public static void XAssetBuild()
     {
+        CheckArgs();
         MenuItems.BuildBundles();
         var versions = Utility.LoadFromFile<Versions>(Settings.GetCachePath(Versions.BundleFilename));
         //BuildUpdateInfo在BuildBundles时已经更新
