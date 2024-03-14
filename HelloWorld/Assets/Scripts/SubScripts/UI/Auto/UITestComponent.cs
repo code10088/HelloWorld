@@ -20,6 +20,8 @@ namespace HotAssembly
         public UIButton openSceneUIButton = null;
         public UIButton closeSceneUIButton = null;
         public UIButton coroutineBtnUIButton = null;
+        public UIButton addTriggerBtnUIButton = null;
+        public UIButton excuteTriggerBtnUIButton = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
@@ -40,6 +42,8 @@ namespace HotAssembly
             openSceneUIButton = allData[14].exportComponent[0] as UIButton;
             closeSceneUIButton = allData[15].exportComponent[0] as UIButton;
             coroutineBtnUIButton = allData[16].exportComponent[0] as UIButton;
+            addTriggerBtnUIButton = allData[17].exportComponent[0] as UIButton;
+            excuteTriggerBtnUIButton = allData[18].exportComponent[0] as UIButton;
         }
     }
     public partial class UITestItem : LoopItemData

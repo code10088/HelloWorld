@@ -1,20 +1,17 @@
 using cfg;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace HotAssembly
 {
-	public class TriggerActionBase
+	public abstract class TriggerActionBase
 	{
+		protected TriggerBase trigger;
 		protected TriggerAction config;
-		public TriggerActionBase(TriggerAction _config)
+
+		public void Init(TriggerBase _trigger, TriggerAction _config)
 		{
+			trigger = _trigger;
 			config = _config;
 		}
-		public void Init()
-		{
-
-		}
+		public abstract void Excute();
 	}
 }

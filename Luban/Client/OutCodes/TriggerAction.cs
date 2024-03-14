@@ -18,7 +18,6 @@ public sealed partial class TriggerAction : Luban.BeanBase
     {
         ID = _buf.ReadInt();
         TriggerType = _buf.ReadString();
-        Priority = _buf.ReadInt();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Param = new System.Collections.Generic.List<float>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { float _e0;  _e0 = _buf.ReadFloat(); Param.Add(_e0);}}
     }
 
@@ -33,10 +32,6 @@ public sealed partial class TriggerAction : Luban.BeanBase
     /// </summary>
     public readonly string TriggerType;
     /// <summary>
-    /// 优先级
-    /// </summary>
-    public readonly int Priority;
-    /// <summary>
     /// 触发行为参数
     /// </summary>
     public readonly System.Collections.Generic.List<float> Param;
@@ -49,7 +44,6 @@ public sealed partial class TriggerAction : Luban.BeanBase
         
         
         
-        
     }
 
     public override string ToString()
@@ -57,7 +51,6 @@ public sealed partial class TriggerAction : Luban.BeanBase
         return "{ "
         + "ID:" + ID + ","
         + "TriggerType:" + TriggerType + ","
-        + "Priority:" + Priority + ","
         + "Param:" + Luban.StringUtil.CollectionToString(Param) + ","
         + "}";
     }

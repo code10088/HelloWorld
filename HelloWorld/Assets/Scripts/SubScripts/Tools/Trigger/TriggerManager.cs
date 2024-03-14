@@ -8,7 +8,7 @@ namespace HotAssembly
 	{
 		private Dictionary<TriggerMode, List<TriggerBase>> triggers = new Dictionary<TriggerMode, List<TriggerBase>>();
 
-		public void AddTrigger(int configId, Func<bool> condition, Action action1, Action action2)
+		public void AddTrigger(int configId, Func<bool> condition = null, Action action1 = null, Action action2 = null)
         {
 			var config = ConfigManager.Instance.GameConfigs.TbTrigger[configId];
 			if (triggers.TryGetValue(config.TriggerMode, out List<TriggerBase> list))
@@ -30,7 +30,7 @@ namespace HotAssembly
 			}
 
 			TriggerBase temp = GetTriggerObject(config.TriggerType);
-			temp.Init(config, condition, action1, action2);
+			temp.Init(this, config, condition, action1, action2);
 
 			bool mark = true;
             for (int i = 0; i < list.Count; i++)
@@ -50,8 +50,8 @@ namespace HotAssembly
             //return Activator.CreateInstance(t) as TriggerBase;
             switch (type)
             {
-				case "Trigger_Normal": return new Trigger_Normal();
-				default: return new Trigger_Normal();
+				//case "Trigger_Normal": return new Trigger_Normal();
+				default: return new TriggerBase();
 			}
 		}
 		public void RemoveTrigger(int triggerId)
@@ -87,10 +87,16 @@ namespace HotAssembly
         {
 			if (triggers.TryGetValue(triggerMode, out List<TriggerBase> list))
 			{
+				List<int> remove = new List<int>();
 				for (int i = 0; i < list.Count; i++)
 				{
-					list[i].Excute(param);
+					bool b = list[i].Excute(param);
+					if (b) remove.Add(list[i].TriggerID);
 				}
+                for (int i = 0; i < remove.Count; i++)
+                {
+					RemoveTrigger(remove[i]);
+                }
 			}
 		}
 	}

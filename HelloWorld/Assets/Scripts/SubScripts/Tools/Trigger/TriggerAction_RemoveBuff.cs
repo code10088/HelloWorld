@@ -7,7 +7,9 @@ namespace HotAssembly
 {
 	public class TriggerAction_RemoveBuff : TriggerActionBase
 	{
-		public TriggerAction_RemoveBuff(TriggerAction _config) : base(_config) { }
-
-	}
+        public override void Excute()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

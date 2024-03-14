@@ -1,13 +1,19 @@
 using cfg;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace HotAssembly
 {
 	public class TriggerAction_ExcuteTrigger : TriggerActionBase
 	{
-		public TriggerAction_ExcuteTrigger(TriggerAction _config) : base(_config) { }
+        private TriggerManager triggerManager;
 
-	}
+        public void Init(TriggerManager _triggerManager)
+        {
+            triggerManager = _triggerManager;
+        }
+
+        public override void Excute()
+        {
+            triggerManager.ExcuteTrigger((TriggerMode)config.Param[0]);
+        }
+    }
 }

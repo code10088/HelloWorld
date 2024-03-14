@@ -26,6 +26,8 @@ namespace HotAssembly
             component.openSceneUIButton.onClick.AddListener(OpenScene);
             component.closeSceneUIButton.onClick.AddListener(CloseScene);
             component.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
+            component.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
+            component.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
             component.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
         }
         public override void OnEnable(params object[] param)
@@ -106,15 +108,24 @@ namespace HotAssembly
         {
             var a = _TestCoroutine();
             CoroutineManager.Instance.Start(a);
-            Debug.LogError(1);
+            GameDebug.Log(1);
         }
         private IEnumerator<Coroutine> _TestCoroutine()
         {
-            Debug.LogError(0);
+            GameDebug.Log(0);
             yield return new WaitForFrame(1);
-            Debug.LogError(2);
+            GameDebug.Log(2);
             yield return new WaitForSeconds(1);
-            Debug.LogError(3);
+            GameDebug.Log(3);
+        }
+        public TriggerManager triggerManager = new TriggerManager();
+        private void AddTrigger()
+        {
+            triggerManager.AddTrigger(1, action1: delegate { GameDebug.Log("T"); }, action2: delegate { GameDebug.Log("F"); });
+        }
+        private void ExcuteTrigger()
+        {
+            triggerManager.ExcuteTrigger(TriggerMode.Attack);
         }
 
         LoopListViewItem2 OnGetItemByIndex(LoopListView2 listView, int index)

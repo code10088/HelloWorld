@@ -25,10 +25,6 @@ public sealed partial class Trigger : Luban.BeanBase
         Count1 = _buf.ReadInt();
         Count2Type = (CommonHandleType1)_buf.ReadInt();
         Count2 = _buf.ReadInt();
-        Count3Type = (CommonHandleType1)_buf.ReadInt();
-        Count3 = _buf.ReadInt();
-        Count4Type = (CommonHandleType1)_buf.ReadInt();
-        Count4 = _buf.ReadInt();
         TotalTime = _buf.ReadFloat();
         CDTime = _buf.ReadFloat();
         Condition = _buf.ReadString();
@@ -63,7 +59,7 @@ public sealed partial class Trigger : Luban.BeanBase
     /// </summary>
     public readonly CommonHandleType1 Count1Type;
     /// <summary>
-    /// 可触发次数 正
+    /// 可触发次数 正<br/>0无限次触发<br/>-1不触发
     /// </summary>
     public readonly int Count1;
     /// <summary>
@@ -71,25 +67,9 @@ public sealed partial class Trigger : Luban.BeanBase
     /// </summary>
     public readonly CommonHandleType1 Count2Type;
     /// <summary>
-    /// 可触发次数 反
+    /// 可触发次数 反<br/>0无限次触发<br/>-1不触发
     /// </summary>
     public readonly int Count2;
-    /// <summary>
-    /// 达到次数处理方式
-    /// </summary>
-    public readonly CommonHandleType1 Count3Type;
-    /// <summary>
-    /// 累积次数 正
-    /// </summary>
-    public readonly int Count3;
-    /// <summary>
-    /// 达到次数处理方式
-    /// </summary>
-    public readonly CommonHandleType1 Count4Type;
-    /// <summary>
-    /// 累积次数 反
-    /// </summary>
-    public readonly int Count4;
     /// <summary>
     /// 生效时间
     /// </summary>
@@ -130,10 +110,6 @@ public sealed partial class Trigger : Luban.BeanBase
         
         
         
-        
-        
-        
-        
     }
 
     public override string ToString()
@@ -148,10 +124,6 @@ public sealed partial class Trigger : Luban.BeanBase
         + "Count1:" + Count1 + ","
         + "Count2Type:" + Count2Type + ","
         + "Count2:" + Count2 + ","
-        + "Count3Type:" + Count3Type + ","
-        + "Count3:" + Count3 + ","
-        + "Count4Type:" + Count4Type + ","
-        + "Count4:" + Count4 + ","
         + "TotalTime:" + TotalTime + ","
         + "CDTime:" + CDTime + ","
         + "Condition:" + Condition + ","

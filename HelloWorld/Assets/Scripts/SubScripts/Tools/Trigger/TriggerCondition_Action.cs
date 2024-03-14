@@ -1,24 +1,19 @@
-using cfg;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace HotAssembly
 {
 	public class TriggerCondition_Action : TriggerConditionBase
 	{
-		public TriggerCondition_Action(TriggerCondition _config) : base(_config) { }
+		private Func<bool> condition;
 
-        public void Init(Func<bool> _condition)
+		public void Init(Func<bool> _condition)
 		{
-
+			condition = _condition;
 		}
 
 		public override bool CheckCondition()
 		{
-			throw new NotImplementedException();
+			return condition != null && condition.Invoke();
 		}
-
 	}
 }

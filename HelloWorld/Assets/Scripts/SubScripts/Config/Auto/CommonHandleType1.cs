@@ -15,6 +15,7 @@ namespace cfg
     {
         Move = 1,
         Reset = 2,
+        Keep = 3,
     }
 
 } 
