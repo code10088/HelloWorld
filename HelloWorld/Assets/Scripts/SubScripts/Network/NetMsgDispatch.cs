@@ -1,11 +1,42 @@
-﻿namespace HotAssembly
+﻿using ProtoBuf;
+using System.Collections.Generic;
+
+namespace HotAssembly
 {
     public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
     {
+        class NetMsgItem
+        {
+            public ushort id;
+            public IExtensible msg;
+        }
+        private Queue<NetMsgItem> msgPool = new Queue<NetMsgItem>();
+
         public void Init()
         {
-            global::NetMsgDispatch.Instance.dispatch = Dispatch;
-            global::NetMsgDispatch.Instance.deserialize = Deserialize;
+            SocketManager.Instance.SetDeserialize(Deserialize);
+            Updater.Instance.StartUpdate(Update);
+        }
+        public void Add(ushort id, IExtensible msg)
+        {
+            lock (msgPool)
+            {
+                var item = new NetMsgItem();
+                item.id = id;
+                item.msg = msg;
+                msgPool.Enqueue(item);
+            }
+        }
+        private void Update()
+        {
+            while (msgPool.Count > 0)
+            {
+                lock (msgPool)
+                {
+                    NetMsgItem msg = msgPool.Dequeue();
+                    Dispatch(msg);
+                }
+            }
         }
         private void Dispatch(NetMsgItem msg)
         {

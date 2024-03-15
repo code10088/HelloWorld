@@ -18,13 +18,10 @@ namespace HotAssembly
                 var mm = new MemoryStream(bytes, 2, bytes.Length - 2);
                 switch (id)
                 {
-                    case NetMsgId.Min: msg = Serializer.Deserialize<ProtoTest.Person>(mm); break;
+                    case 0: msg = Serializer.Deserialize<ProtoTest.Person>(mm); break;
                 }
                 mm.Dispose();
-                var item = new NetMsgItem();
-                item.id = id;
-                item.msg = msg;
-                global::NetMsgDispatch.Instance.Add(item);
+                Add(id, msg);
                 return true;
             }
             catch (Exception e)

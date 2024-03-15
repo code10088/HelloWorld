@@ -131,7 +131,7 @@ public class SKCP
     }
     private void Receive(byte[] buffer)
     {
-        bool success = NetMsgDispatch.Instance.Deserialize(buffer);
+        bool success = SocketManager.Instance.Deserialize(buffer);
         if (!success) Reconect();
     }
     #endregion

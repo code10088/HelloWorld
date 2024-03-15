@@ -25,7 +25,6 @@ namespace HotAssembly
         {
             UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             DPUtil.Init();
-            global::NetMsgDispatch.Instance.Init();
             EnterMainScene();
         }
         private void EnterMainScene()

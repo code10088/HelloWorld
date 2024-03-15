@@ -2,7 +2,6 @@
 {
     public class NetMsgId
     {
-        public const ushort Min = 1000;
-        public const ushort Max = 5000;
+        public const ushort Min = 0;
     }
 }
