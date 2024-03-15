@@ -119,7 +119,7 @@ namespace HotAssembly
 				conditions.Add(a, temp);
 			}
 			conditionKeys = new List<int>(conditions.Keys);
-			conditionKeys.Sort((a,b)=> { return a - b; });
+			conditionKeys.Sort((a,b)=> { return b - a; });
 		}
 		private void InitAction(Action _action1, Action _action2)
         {
