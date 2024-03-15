@@ -107,12 +107,13 @@ namespace HotAssembly
 						break;
 					case "TriggerCondition_Random":
 						var random = new TriggerCondition_Random();
-						random.Init(this, conditionConfig);
+						random.Init(conditionConfig);
 						temp = random;
 						break;
 					case "TriggerCondition_AccCount":
 						var acc = new TriggerCondition_AccCount();
-						acc.Init(this, conditionConfig);
+						acc.Init(conditionConfig);
+						acc.Init(this);
 						temp = acc;
 						break;
 				}
@@ -136,30 +137,30 @@ namespace HotAssembly
 				{
 					case "TriggerAction_AddTrigger":
 						var addTrigger = new TriggerAction_AddTrigger();
-						addTrigger.Init(this, actionConfig);
+						addTrigger.Init(actionConfig);
 						addTrigger.Init(triggerManager);
 						temp = addTrigger;
 						break;
 					case "TriggerAction_RemoveTrigger":
 						var removeTrigger = new TriggerAction_RemoveTrigger();
-						removeTrigger.Init(this, actionConfig);
+						removeTrigger.Init(actionConfig);
 						removeTrigger.Init(triggerManager);
 						temp = removeTrigger;
 						break;
 					case "TriggerAction_ExcuteTrigger":
 						var excuteTrigger = new TriggerAction_ExcuteTrigger();
-						excuteTrigger.Init(this, actionConfig);
+						excuteTrigger.Init(actionConfig);
 						excuteTrigger.Init(triggerManager);
 						temp = excuteTrigger;
 						break;
 					case "TriggerAction_AddBuff":
 						var addBuff = new TriggerAction_AddBuff();
-						addBuff.Init(this, actionConfig);
+						addBuff.Init(actionConfig);
 						temp = addBuff;
 						break;
 					case "TriggerAction_RemoveBuff":
 						var removeBuff = new TriggerAction_RemoveBuff();
-						removeBuff.Init(this, actionConfig);
+						removeBuff.Init(actionConfig);
 						temp = removeBuff;
 						break;
 					case "TriggerAction_Action":
