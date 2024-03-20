@@ -12,18 +12,18 @@ using Luban;
 
 namespace cfg
 {
-public sealed partial class TriggerCondition : Luban.BeanBase
+public sealed partial class BuffCondition : Luban.BeanBase
 {
-    public TriggerCondition(ByteBuf _buf) 
+    public BuffCondition(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        TriggerType = _buf.ReadString();
+        BuffType = _buf.ReadString();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Param = new System.Collections.Generic.List<float>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { float _e0;  _e0 = _buf.ReadFloat(); Param.Add(_e0);}}
     }
 
-    public static TriggerCondition DeserializeTriggerCondition(ByteBuf _buf)
+    public static BuffCondition DeserializeBuffCondition(ByteBuf _buf)
     {
-        return new TriggerCondition(_buf);
+        return new BuffCondition(_buf);
     }
 
     /// <summary>
@@ -33,13 +33,13 @@ public sealed partial class TriggerCondition : Luban.BeanBase
     /// <summary>
     /// 触发器类型
     /// </summary>
-    public readonly string TriggerType;
+    public readonly string BuffType;
     /// <summary>
     /// 触发条件参数
     /// </summary>
     public readonly System.Collections.Generic.List<float> Param;
    
-    public const int __ID__ = -2050659741;
+    public const int __ID__ = -294250008;
     public override int GetTypeId() => __ID__;
 
     public  void ResolveRef(Tables tables)
@@ -53,7 +53,7 @@ public sealed partial class TriggerCondition : Luban.BeanBase
     {
         return "{ "
         + "ID:" + ID + ","
-        + "TriggerType:" + TriggerType + ","
+        + "BuffType:" + BuffType + ","
         + "Param:" + Luban.StringUtil.CollectionToString(Param) + ","
         + "}";
     }

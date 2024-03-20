@@ -1,17 +1,21 @@
+using cfg;
+
 namespace HotAssembly
 {
-	public class TriggerAction_RemoveTrigger : TriggerActionBase
+	public class TriggerAction_RemoveTrigger : ActionBase
 	{
         private TriggerManager triggerManager;
+
+        public TriggerAction_RemoveTrigger(ActionConfig _config) : base(_config) { }
 
         public void Init(TriggerManager _triggerManager)
         {
             triggerManager = _triggerManager;
         }
 
-        public override void Excute()
+        public override void Excute(params object[] param)
         {
-            triggerManager.RemoveTriggerByConfig((int)config.Param[0]);
+            triggerManager.RemoveTriggerByConfig(config.IntParam[0]);
         }
     }
 }

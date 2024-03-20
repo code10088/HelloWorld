@@ -5,33 +5,32 @@ using System;
 
 namespace HotAssembly
 {
-	public class TriggerBase
+	public class TriggerItem
 	{
 		private static int uniqueId = 0;
-		private readonly string[] splitStr = new string[] { "(", ")", "!", "&&", "||" };
 
 		private TriggerManager triggerManager;
 		private int id;
 		private TriggerMode triggerMode;
 		private Trigger config;
 
-		private int count = 0;//执行次数
-		private int count1 = 0;//已触发次数
-		private int count2 = 0;//已触发次数
+		private int excuteCount = 0;//执行次数
+		private int triggerCount1 = 0;//已触发次数
+		private int triggerCount2 = 0;//已触发次数
 		private float totalEndTime = 0;
 		private float cdEndTime = 0;
 		private List<int> conditionKeys;
-		private Dictionary<int, TriggerConditionBase> conditions = new Dictionary<int, TriggerConditionBase>();
-		private List<TriggerActionBase> actionList1 = new List<TriggerActionBase>();//正触发行为
-		private List<TriggerActionBase> actionList2 = new List<TriggerActionBase>();//反触发行为
+		private Dictionary<int, ConditionBase> conditions = new Dictionary<int, ConditionBase>();
+		private List<ActionBase> actionList1 = new List<ActionBase>();//正触发行为
+		private List<ActionBase> actionList2 = new List<ActionBase>();//反触发行为
 
 		public int TriggerID => id;
 		public int ConfigId => config.ID;
 		public TriggerMode TriggerMode => triggerMode;
 		public int Priority => config.Priority;//越大越先执行
-		public int ExcuteCount => count;
+		public int ExcuteCount => excuteCount;
 
-		public virtual void Init(TriggerManager _triggerManager, Trigger _config, Func<bool> _condition, Action _action1, Action _action2)
+		public void Init(TriggerManager _triggerManager, Trigger _config, Func<bool> _condition, Action _action1, Action _action2)
         {
 			triggerManager = _triggerManager;
 			id = ++uniqueId;
@@ -42,31 +41,31 @@ namespace HotAssembly
 			totalEndTime = Time.realtimeSinceStartup + config.TotalTime;
 			cdEndTime = 0;
 		}
-		public virtual bool Excute(params object[] param)
+		public bool Excute(params object[] param)
 		{
 			if (config.TotalTime > 0 && Time.realtimeSinceStartup > totalEndTime) return true;
 			if (config.CDTime > 0 && Time.realtimeSinceStartup < cdEndTime) return false;
-			count++;
+			excuteCount++;
 			string str = config.Condition;
 			for (int i = 0; i < conditionKeys.Count; i++)
 			{
 				int id = conditionKeys[i];
-				bool b = conditions[id].CheckCondition();
+				bool b = conditions[id].CheckCondition(param);
 				str = str.Replace(id.ToString(), b ? "t" : "f");
 			}
 			if (Utils.ParseBoolStr(str))
 			{
 				if (config.Count1 >= 0)
 				{
-					for (int i = 0; i < actionList1.Count; i++) actionList1[i].Excute();
+					for (int i = 0; i < actionList1.Count; i++) actionList1[i].Excute(param);
 					cdEndTime = Time.realtimeSinceStartup + config.CDTime;
 
 					//触发次数
-					count1++;
-					if (config.Count1 > 0 && count1 >= config.Count1)
+					triggerCount1++;
+					if (config.Count1 > 0 && triggerCount1 >= config.Count1)
 					{
 						if (config.Count1Type == CommonHandleType1.Move) return true;
-						else if (config.Count1Type == CommonHandleType1.Reset) count1 = 0;
+						else if (config.Count1Type == CommonHandleType1.Reset) triggerCount1 = 0;
 					}
 				}
 			}
@@ -74,15 +73,15 @@ namespace HotAssembly
 			{
 				if (config.Count2 >= 0)
 				{
-					for (int i = 0; i < actionList2.Count; i++) actionList2[i].Excute();
+					for (int i = 0; i < actionList2.Count; i++) actionList2[i].Excute(param);
 					cdEndTime = Time.realtimeSinceStartup + config.CDTime;
 
 					//触发次数
-					count2++;
-					if (config.Count2 > 0 && count2 >= config.Count2)
+					triggerCount2++;
+					if (config.Count2 > 0 && triggerCount2 >= config.Count2)
 					{
 						if (config.Count2Type == CommonHandleType1.Move) return true;
-						else if (config.Count2Type == CommonHandleType1.Reset) count2 = 0;
+						else if (config.Count2Type == CommonHandleType1.Reset) triggerCount2 = 0;
 					}
 				}
 			}
@@ -91,36 +90,31 @@ namespace HotAssembly
 
 		private void InitCondition(Func<bool> _condition)
         {
-			var strs = config.Condition.Split(splitStr, StringSplitOptions.RemoveEmptyEntries);
-			for (int i = 0; i < strs.Length; i++)
+			conditionKeys = Utils.SplitBoolStr(config.Condition);
+			for (int i = 0; i < conditionKeys.Count; i++)
 			{
-				int a = int.Parse(strs[i]);
+				int a = conditionKeys[i];
 				if (conditions.ContainsKey(a)) continue;
-				TriggerConditionBase temp = null;
-				var conditionConfig = ConfigManager.Instance.GameConfigs.TbTriggerCondition[a];
-				switch (conditionConfig.TriggerType)
+				ConditionBase temp = null;
+				var conditionConfig = ConfigManager.Instance.GameConfigs.TbConditionConfig[a];
+				switch (conditionConfig.ConditionType)
 				{
-					case "TriggerCondition_Action":
-						var action = new TriggerCondition_Action();
+					case "Condition_Action":
+						var action = new Condition_Action(conditionConfig);
 						action.Init(_condition);
 						temp = action;
 						break;
 					case "TriggerCondition_Random":
-						var random = new TriggerCondition_Random();
-						random.Init(conditionConfig);
-						temp = random;
+						temp = new TriggerCondition_Random(conditionConfig);
 						break;
 					case "TriggerCondition_AccCount":
-						var acc = new TriggerCondition_AccCount();
-						acc.Init(conditionConfig);
+						var acc = new TriggerCondition_AccCount(conditionConfig);
 						acc.Init(this);
 						temp = acc;
 						break;
 				}
 				conditions.Add(a, temp);
 			}
-			conditionKeys = new List<int>(conditions.Keys);
-			conditionKeys.Sort((a,b)=> { return b - a; });
 		}
 		private void InitAction(Action _action1, Action _action2)
         {
@@ -129,44 +123,40 @@ namespace HotAssembly
 			actionList.AddRange(config.Action2);
 			for (int i = 0; i < actionList.Count; i++)
 			{
-				TriggerActionBase temp = null;
+				ActionBase temp = null;
 				int index = i - config.Action1.Count;
 				int actionId = index < 0 ? config.Action1[i] : config.Action2[index];
-				var actionConfig = ConfigManager.Instance.GameConfigs.TbTriggerAction[actionId];
-				switch (actionConfig.TriggerType)
+				var actionConfig = ConfigManager.Instance.GameConfigs.TbActionConfig[actionId];
+				switch (actionConfig.ActionType)
 				{
+					case "Action_Action":
+						var action = new Action_Action(actionConfig);
+						action.Init(index < 0 ? _action1 : _action2);
+						temp = action;
+						break;
+					case "Action_Debug":
+						temp = new Action_Debug(actionConfig);
+						break;
 					case "TriggerAction_AddTrigger":
-						var addTrigger = new TriggerAction_AddTrigger();
-						addTrigger.Init(actionConfig);
+						var addTrigger = new TriggerAction_AddTrigger(actionConfig);
 						addTrigger.Init(triggerManager);
 						temp = addTrigger;
 						break;
 					case "TriggerAction_RemoveTrigger":
-						var removeTrigger = new TriggerAction_RemoveTrigger();
-						removeTrigger.Init(actionConfig);
+						var removeTrigger = new TriggerAction_RemoveTrigger(actionConfig);
 						removeTrigger.Init(triggerManager);
 						temp = removeTrigger;
 						break;
 					case "TriggerAction_ExcuteTrigger":
-						var excuteTrigger = new TriggerAction_ExcuteTrigger();
-						excuteTrigger.Init(actionConfig);
+						var excuteTrigger = new TriggerAction_ExcuteTrigger(actionConfig);
 						excuteTrigger.Init(triggerManager);
 						temp = excuteTrigger;
 						break;
 					case "TriggerAction_AddBuff":
-						var addBuff = new TriggerAction_AddBuff();
-						addBuff.Init(actionConfig);
-						temp = addBuff;
+						temp = new TriggerAction_AddBuff(actionConfig);
 						break;
 					case "TriggerAction_RemoveBuff":
-						var removeBuff = new TriggerAction_RemoveBuff();
-						removeBuff.Init(actionConfig);
-						temp = removeBuff;
-						break;
-					case "TriggerAction_Action":
-						var action = new TriggerAction_Action();
-						action.Init(index < 0 ? _action1 : _action2);
-						temp = action;
+						temp = new TriggerAction_RemoveBuff(actionConfig);
 						break;
 				}
 				if (index < 0) actionList1.Add(temp);

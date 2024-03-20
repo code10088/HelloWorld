@@ -9,6 +9,7 @@ namespace HotAssembly
     {
         private UITestComponent component = new UITestComponent();
         private UISubTest subUI = new UISubTest("UISubTest");
+        private int updateId = -1;
 
         protected override void Init()
         {
@@ -33,6 +34,7 @@ namespace HotAssembly
         public override void OnEnable(params object[] param)
         {
             base.OnEnable(param);
+            updateId = Updater.Instance.StartUpdate(buffManager.Update);
             GameDebug.Log("UITest OnEnable");
         }
         protected override void PlayInitAni()
@@ -49,6 +51,7 @@ namespace HotAssembly
         {
             base.OnDisable();
             subUI.Close();
+            Updater.Instance.StopUpdate(updateId);
             GameDebug.Log("UITest OnDisable");
         }
         public override void OnDestroy()
@@ -119,13 +122,16 @@ namespace HotAssembly
             GameDebug.Log(3);
         }
         public TriggerManager triggerManager = new TriggerManager();
+        public BuffManager buffManager = new BuffManager();
         private void AddTrigger()
         {
             triggerManager.AddTrigger(1, action1: delegate { GameDebug.Log("T"); }, action2: delegate { GameDebug.Log("F"); });
+            triggerManager.AddTrigger(3);
         }
         private void ExcuteTrigger()
         {
             triggerManager.ExcuteTrigger(TriggerMode.Attack);
+            triggerManager.ExcuteTrigger(TriggerMode.AddBuff, buffManager);
         }
 
         LoopListViewItem2 OnGetItemByIndex(LoopListView2 listView, int index)

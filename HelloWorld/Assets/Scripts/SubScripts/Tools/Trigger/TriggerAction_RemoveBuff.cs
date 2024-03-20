@@ -1,15 +1,15 @@
 using cfg;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace HotAssembly
 {
-	public class TriggerAction_RemoveBuff : TriggerActionBase
-	{
-        public override void Excute()
+	public class TriggerAction_RemoveBuff : ActionBase
+    {
+        public TriggerAction_RemoveBuff(ActionConfig _config) : base(_config) { }
+
+        public override void Excute(params object[] param)
         {
-            throw new System.NotImplementedException();
+            BuffManager buffManager = param[0] as BuffManager;
+            buffManager.RemoveBuffByConfig(config.IntParam[0]);
         }
     }
 }

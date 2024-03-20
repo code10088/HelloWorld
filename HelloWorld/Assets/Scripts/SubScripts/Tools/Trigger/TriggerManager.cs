@@ -6,12 +6,12 @@ namespace HotAssembly
 {
 	public class TriggerManager
 	{
-		private Dictionary<TriggerMode, List<TriggerBase>> triggers = new Dictionary<TriggerMode, List<TriggerBase>>();
+		private Dictionary<TriggerMode, List<TriggerItem>> triggers = new Dictionary<TriggerMode, List<TriggerItem>>();
 
 		public void AddTrigger(int configId, Func<bool> condition = null, Action action1 = null, Action action2 = null)
         {
 			var config = ConfigManager.Instance.GameConfigs.TbTrigger[configId];
-			if (triggers.TryGetValue(config.TriggerMode, out List<TriggerBase> list))
+			if (triggers.TryGetValue(config.TriggerMode, out List<TriggerItem> list))
             {
 				if (config.Limit > 0)
 				{
@@ -25,11 +25,11 @@ namespace HotAssembly
 			}
             else
             {
-				list = new List<TriggerBase>();
+				list = new List<TriggerItem>();
 				triggers.Add(config.TriggerMode, list);
 			}
 
-			TriggerBase temp = GetTriggerObject(config.TriggerType);
+			TriggerItem temp = new TriggerItem();
 			temp.Init(this, config, condition, action1, action2);
 
 			bool mark = true;
@@ -44,28 +44,16 @@ namespace HotAssembly
             }
 			if (mark) list.Add(temp);
 		}
-		private TriggerBase GetTriggerObject(string type)
-        {
-            //Type t = Type.GetType("HotAssembly." + type);
-            //return Activator.CreateInstance(t) as TriggerBase;
-            switch (type)
-            {
-				//case "Trigger_Normal": return new Trigger_Normal();
-				default: return new TriggerBase();
-			}
-		}
 		public void RemoveTrigger(int triggerId)
         {
             foreach (var item in triggers)
             {
-				List<TriggerBase> list = item.Value;
-				for (int i = list.Count - 1; i >= 0; i--)
-                {
-					if(list[i].TriggerID == triggerId)
-                    {
-						list.RemoveAt(i);
-						return;
-                    }
+				List<TriggerItem> list = item.Value;
+				int index = list.FindIndex(a => a.TriggerID == triggerId);
+				if (index >= 0)
+				{
+					list.RemoveAt(index);
+					return;
 				}
             }
         }
@@ -73,19 +61,13 @@ namespace HotAssembly
         {
 			foreach (var item in triggers)
 			{
-				List<TriggerBase> list = item.Value;
-				for (int i = list.Count - 1; i >= 0; i--)
-				{
-					if (list[i].ConfigId == configId)
-					{
-						list.RemoveAt(i);
-					}
-				}
+				List<TriggerItem> list = item.Value;
+				list.RemoveAll(a => a.ConfigId == configId);
 			}
 		}
 		public void ExcuteTrigger(TriggerMode triggerMode, params object[] param)
         {
-			if (triggers.TryGetValue(triggerMode, out List<TriggerBase> list))
+			if (triggers.TryGetValue(triggerMode, out List<TriggerItem> list))
 			{
 				List<int> remove = new List<int>();
 				for (int i = 0; i < list.Count; i++)

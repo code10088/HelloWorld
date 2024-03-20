@@ -1,17 +1,21 @@
+using cfg;
+
 namespace HotAssembly
 {
-	public class TriggerCondition_AccCount : TriggerConditionBase
+	public class TriggerCondition_AccCount : ConditionBase
     {
-        private TriggerBase trigger;
+        private TriggerItem trigger;
 
-        public void Init(TriggerBase _trigger)
+        public TriggerCondition_AccCount(ConditionConfig _config) : base(_config) { }
+
+        public void Init(TriggerItem _trigger)
         {
             trigger = _trigger;
         }
 
-        public override bool CheckCondition()
+        public override bool CheckCondition(params object[] param)
         {
-            return trigger.ExcuteCount >= config.Param[0];
+            return trigger.ExcuteCount >= config.IntParam[0];
         }
     }
 }
