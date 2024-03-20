@@ -18,8 +18,9 @@ public partial class Tables
     public TbSceneConfig TbSceneConfig = new TbSceneConfig();
     public TbPlayerAvatarPart TbPlayerAvatarPart = new TbPlayerAvatarPart();
     public TbTrigger TbTrigger = new TbTrigger();
-    public TbTriggerCondition TbTriggerCondition = new TbTriggerCondition();
-    public TbTriggerAction TbTriggerAction = new TbTriggerAction();
+    public TbConditionConfig TbConditionConfig = new TbConditionConfig();
+    public TbActionConfig TbActionConfig = new TbActionConfig();
+    public TbBuff TbBuff = new TbBuff();
 }
 
 }

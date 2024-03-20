@@ -12,10 +12,10 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbTriggerAction : TbBase
+public partial class TbBuff : TbBase
 {
-    private readonly System.Collections.Generic.Dictionary<int, TriggerAction> _dataMap = new System.Collections.Generic.Dictionary<int, TriggerAction>();
-    private readonly System.Collections.Generic.List<TriggerAction> _dataList = new System.Collections.Generic.List<TriggerAction>();
+    private readonly System.Collections.Generic.Dictionary<int, Buff> _dataMap = new System.Collections.Generic.Dictionary<int, Buff>();
+    private readonly System.Collections.Generic.List<Buff> _dataList = new System.Collections.Generic.List<Buff>();
     
     public void Deserialize(byte[] bytes)
     {
@@ -24,19 +24,19 @@ public partial class TbTriggerAction : TbBase
         ByteBuf _buf = new ByteBuf(bytes);
         for(int n = _buf.ReadSize() ; n > 0 ; --n)
         {
-            TriggerAction _v;
-            _v = TriggerAction.DeserializeTriggerAction(_buf);
+            Buff _v;
+            _v = Buff.DeserializeBuff(_buf);
             _dataList.Add(_v);
             _dataMap.Add(_v.ID, _v);
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, TriggerAction> DataMap => _dataMap;
-    public System.Collections.Generic.List<TriggerAction> DataList => _dataList;
+    public System.Collections.Generic.Dictionary<int, Buff> DataMap => _dataMap;
+    public System.Collections.Generic.List<Buff> DataList => _dataList;
 
-    public TriggerAction GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
-    public TriggerAction Get(int key) => _dataMap[key];
-    public TriggerAction this[int key] => _dataMap[key];
+    public Buff GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public Buff Get(int key) => _dataMap[key];
+    public Buff this[int key] => _dataMap[key];
 
     public void ResolveRef(Tables tables)
     {

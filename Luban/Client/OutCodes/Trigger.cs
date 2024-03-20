@@ -17,7 +17,6 @@ public sealed partial class Trigger : Luban.BeanBase
     public Trigger(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        TriggerType = _buf.ReadString();
         TriggerMode = (TriggerMode)_buf.ReadInt();
         Priority = _buf.ReadInt();
         Limit = _buf.ReadInt();
@@ -38,10 +37,6 @@ public sealed partial class Trigger : Luban.BeanBase
     }
 
     public readonly int ID;
-    /// <summary>
-    /// 触发器类型
-    /// </summary>
-    public readonly string TriggerType;
     /// <summary>
     /// 触发模式
     /// </summary>
@@ -79,7 +74,7 @@ public sealed partial class Trigger : Luban.BeanBase
     /// </summary>
     public readonly float CDTime;
     /// <summary>
-    /// 条件组合()!&amp;|0 <br/>最外层必须为括号<br/>非括号内的执行优先级从后往前
+    /// 条件组合
     /// </summary>
     public readonly string Condition;
     /// <summary>
@@ -109,14 +104,12 @@ public sealed partial class Trigger : Luban.BeanBase
         
         
         
-        
     }
 
     public override string ToString()
     {
         return "{ "
         + "ID:" + ID + ","
-        + "TriggerType:" + TriggerType + ","
         + "TriggerMode:" + TriggerMode + ","
         + "Priority:" + Priority + ","
         + "Limit:" + Limit + ","
