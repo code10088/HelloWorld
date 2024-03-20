@@ -727,7 +727,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 1002
+  m_SortingOrder: 1001
   m_TargetDisplay: 0
 --- !u!114 &11440770
 MonoBehaviour:
@@ -786,8 +786,10 @@ MonoBehaviour:
   enableHorizontalResizing: 0
   resizeFromRight: 1
   minimumWidth: 240
-  enablePopup: 1
-  startInPopupMode: 1
+  logWindowOpacity: 1
+  popupOpacity: 1
+  popupVisibility: 0
+  popupVisibilityLogFilter: -1
   startMinimized: 0
   toggleWithKey: 1
   toggleKey: 96
@@ -3075,6 +3077,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 224000011255372986}
+  - component: {fileID: 114913451135716890}
   - component: {fileID: 222000010912077860}
   - component: {fileID: 114000013324539428}
   - component: {fileID: 114000010993257018}
@@ -3107,6 +3110,18 @@ RectTransform:
   m_AnchoredPosition: {x: -32, y: 0}
   m_SizeDelta: {x: -64, y: 36}
   m_Pivot: {x: 0.5, y: 0}
+--- !u!114 &114913451135716890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000013131456698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 049982f63fd78c042851caecd952f3f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &222000010912077860
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3561,6 +3576,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 224927884203097686}
+  - component: {fileID: 114705835229318780}
   - component: {fileID: 222677458225366564}
   - component: {fileID: 114677982133495580}
   - component: {fileID: 114664465529608634}
@@ -3594,6 +3610,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &114705835229318780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197649202466618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 049982f63fd78c042851caecd952f3f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &222677458225366564
 CanvasRenderer:
   m_ObjectHideFlags: 0
