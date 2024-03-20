@@ -8,9 +8,10 @@ namespace HotAssembly
 	public class BuffItem
 	{
 		private static int uniqueId = 0;
+		private int id;
+		private bool endMark = false;
 
 		private BuffManager buffManager;
-		private int id;
 		private Buff config;
 
 		private int excuteCount = 0;//执行次数
@@ -22,6 +23,7 @@ namespace HotAssembly
 		private List<ActionBase> actionList = new List<ActionBase>();
 
 		public int BuffID => id;
+		public bool EndMark => endMark;
 		public int ConfigId => config.ID;
 		public int Priority => config.Priority;//越大越先执行
 		public int ExcuteCount => excuteCount;
@@ -37,10 +39,21 @@ namespace HotAssembly
 			totalEndTime = Time.realtimeSinceStartup + config.TotalTime;
 			cdEndTime = 0;
 		}
-		public bool Excute()
+		public void Excute()
 		{
-			if (config.TotalTime > 0 && Time.realtimeSinceStartup > totalEndTime) return true;
-			if (config.CDTime > 0 && Time.realtimeSinceStartup < cdEndTime) return false;
+			if (endMark)
+			{
+				return;
+			}
+			if (config.TotalTime > 0 && Time.realtimeSinceStartup > totalEndTime)
+			{
+				Remove();
+				return;
+			}
+			if (config.CDTime > 0 && Time.realtimeSinceStartup < cdEndTime)
+			{
+				return;
+			}
 			excuteCount++;
 			string str = config.Condition;
 			for (int i = 0; i < conditionKeys.Count; i++)
@@ -60,12 +73,15 @@ namespace HotAssembly
 					triggerCount++;
 					if (config.Count > 0 && triggerCount >= config.Count)
 					{
-						if (config.CountType == CommonHandleType1.Move) return true;
+						if (config.CountType == CommonHandleType1.Move) Remove();
 						else if (config.CountType == CommonHandleType1.Reset) triggerCount = 0;
 					}
 				}
 			}
-			return false;
+		}
+		public void Remove()
+		{
+			endMark = true;
 		}
 
 		private void InitCondition(Func<bool> _condition)

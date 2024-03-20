@@ -49,11 +49,13 @@ namespace HotAssembly
             foreach (var item in triggers)
             {
 				List<TriggerItem> list = item.Value;
-				int index = list.FindIndex(a => a.TriggerID == triggerId);
-				if (index >= 0)
-				{
-					list.RemoveAt(index);
-					return;
+                for (int i = 0; i < list.Count; i++)
+                {
+					if (list[i].TriggerID == triggerId)
+					{
+						list[i].Remove();
+						return;
+					}
 				}
             }
         }
@@ -62,23 +64,29 @@ namespace HotAssembly
 			foreach (var item in triggers)
 			{
 				List<TriggerItem> list = item.Value;
-				list.RemoveAll(a => a.ConfigId == configId);
+				for (int i = 0; i < list.Count; i++)
+				{
+					if (list[i].ConfigId == configId)
+					{
+						list[i].Remove();
+					}
+				}
 			}
 		}
 		public void ExcuteTrigger(TriggerMode triggerMode, params object[] param)
         {
 			if (triggers.TryGetValue(triggerMode, out List<TriggerItem> list))
 			{
-				List<int> remove = new List<int>();
 				for (int i = 0; i < list.Count; i++)
 				{
-					bool b = list[i].Excute(param);
-					if (b) remove.Add(list[i].TriggerID);
+					var temp = list[i];
+					temp.Excute(param);
+					if (temp.EndMark)
+					{
+						list.RemoveAt(i);
+						i--;
+					}
 				}
-                for (int i = 0; i < remove.Count; i++)
-                {
-					RemoveTrigger(remove[i]);
-                }
 			}
 		}
 	}

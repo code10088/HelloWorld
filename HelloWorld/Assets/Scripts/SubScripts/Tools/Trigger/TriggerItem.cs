@@ -8,9 +8,10 @@ namespace HotAssembly
 	public class TriggerItem
 	{
 		private static int uniqueId = 0;
+		private int id;
+		private bool endMark = false;
 
 		private TriggerManager triggerManager;
-		private int id;
 		private TriggerMode triggerMode;
 		private Trigger config;
 
@@ -25,6 +26,7 @@ namespace HotAssembly
 		private List<ActionBase> actionList2 = new List<ActionBase>();//反触发行为
 
 		public int TriggerID => id;
+		public bool EndMark => endMark;
 		public int ConfigId => config.ID;
 		public TriggerMode TriggerMode => triggerMode;
 		public int Priority => config.Priority;//越大越先执行
@@ -41,10 +43,21 @@ namespace HotAssembly
 			totalEndTime = Time.realtimeSinceStartup + config.TotalTime;
 			cdEndTime = 0;
 		}
-		public bool Excute(params object[] param)
+		public void Excute(params object[] param)
 		{
-			if (config.TotalTime > 0 && Time.realtimeSinceStartup > totalEndTime) return true;
-			if (config.CDTime > 0 && Time.realtimeSinceStartup < cdEndTime) return false;
+			if (endMark)
+			{
+				return;
+			}
+			if (config.TotalTime > 0 && Time.realtimeSinceStartup > totalEndTime)
+			{
+				Remove();
+				return;
+			}
+			if (config.CDTime > 0 && Time.realtimeSinceStartup < cdEndTime)
+			{
+				return;
+			}
 			excuteCount++;
 			string str = config.Condition;
 			for (int i = 0; i < conditionKeys.Count; i++)
@@ -64,7 +77,7 @@ namespace HotAssembly
 					triggerCount1++;
 					if (config.Count1 > 0 && triggerCount1 >= config.Count1)
 					{
-						if (config.Count1Type == CommonHandleType1.Move) return true;
+						if (config.Count1Type == CommonHandleType1.Move) Remove();
 						else if (config.Count1Type == CommonHandleType1.Reset) triggerCount1 = 0;
 					}
 				}
@@ -80,12 +93,15 @@ namespace HotAssembly
 					triggerCount2++;
 					if (config.Count2 > 0 && triggerCount2 >= config.Count2)
 					{
-						if (config.Count2Type == CommonHandleType1.Move) return true;
+						if (config.Count2Type == CommonHandleType1.Move) Remove();
 						else if (config.Count2Type == CommonHandleType1.Reset) triggerCount2 = 0;
 					}
 				}
 			}
-			return false;
+		}
+		public void Remove()
+        {
+			endMark = true;
 		}
 
 		private void InitCondition(Func<bool> _condition)
