@@ -260,7 +260,7 @@ public class STCP
                 int l = source.Length;
                 byte[] result = new byte[6 + l];
                 //消息长度
-                byte[] temp = BitConverter.GetBytes(l);
+                byte[] temp = BitConverter.GetBytes(2 + l);
                 Buffer.BlockCopy(temp, 0, result, 0, 4);
                 //消息ID
                 temp = BitConverter.GetBytes(id);
