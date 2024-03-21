@@ -12,7 +12,6 @@ namespace HotAssembly
 		private bool endMark = false;
 
 		private TriggerManager triggerManager;
-		private TriggerMode triggerMode;
 		private Trigger config;
 
 		private int excuteCount = 0;//执行次数
@@ -28,7 +27,6 @@ namespace HotAssembly
 		public int TriggerID => id;
 		public bool EndMark => endMark;
 		public int ConfigId => config.ID;
-		public TriggerMode TriggerMode => triggerMode;
 		public int Priority => config.Priority;//越大越先执行
 		public int ExcuteCount => excuteCount;
 
