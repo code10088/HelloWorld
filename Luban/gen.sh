@@ -1,7 +1,6 @@
 #!/bin/bash
 
 LUBAN_DLL=Tools/Luban/Luban.dll
-CONF_ROOT=Datas
 
 dotnet $LUBAN_DLL \
     -t client \

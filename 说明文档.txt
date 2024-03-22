@@ -12,6 +12,7 @@ Luban
 	修改gen.bat路径问题
 	仿照.bat添加.sh
 	修改Tools/Luban/Templates/cs_bin模板(查看log)
+	对比projects/Csharp_Unity_bin/Packages包中的luban对应条目
 	
 XAsset
 	经测试并非官网所说的根据文件做的依赖

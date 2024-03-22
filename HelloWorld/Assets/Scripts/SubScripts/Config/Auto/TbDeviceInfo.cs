@@ -49,3 +49,4 @@ public partial class TbDeviceInfo : TbBase
 }
 
 }
+

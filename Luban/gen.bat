@@ -1,5 +1,4 @@
 set LUBAN_DLL=Tools\Luban\Luban.dll
-set CONF_ROOT=Datas
 
 dotnet %LUBAN_DLL% ^
     -t client ^
