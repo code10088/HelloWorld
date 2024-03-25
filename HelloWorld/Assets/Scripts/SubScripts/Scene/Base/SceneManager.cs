@@ -163,6 +163,7 @@ namespace HotAssembly
                 open = _open;
                 param = _param;
                 progress = _progress;
+                UIManager.Instance.OpenUI(UIType.UISceneLoading);
             }
             public void Load()
             {
@@ -223,11 +224,14 @@ namespace HotAssembly
             }
             public void OpenActionInvoke(bool success)
             {
+                UIManager.Instance.CloseUI(UIType.UISceneLoading);
                 open?.Invoke(success);
             }
             public void ProgressActionInvoke()
             {
-                if (progress != null) progress(AssetManager.Instance.GetProgerss(loadId));
+                float f = AssetManager.Instance.GetProgerss(loadId);
+                EventManager.Instance.FireEvent(EventType.SetSceneLoadingProgress, "Loading Scene", f);
+                if (progress != null) progress(f);
             }
             public void Release(bool immediate = false)
             {

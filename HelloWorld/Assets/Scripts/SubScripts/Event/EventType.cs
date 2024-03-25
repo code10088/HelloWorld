@@ -3,5 +3,7 @@
     public enum EventType
     {
         Test,
+        SetSceneLoadingBg,
+        SetSceneLoadingProgress,
     }
 }

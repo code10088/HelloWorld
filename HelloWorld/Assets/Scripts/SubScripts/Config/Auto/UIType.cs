@@ -19,6 +19,7 @@ namespace cfg
         UIMain = 4,
         UISetting = 5,
         UICommonTips = 6,
+        UISceneLoading = 7,
     }
 
 } 

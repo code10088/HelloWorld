@@ -32,9 +32,9 @@ namespace HotAssembly
             }
             else
             {
-                var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
-                hotUpdateRes.SetText("Loading Config");
-                hotUpdateRes.SetSlider((float)count / total);
+                string str = "Loading Config";
+                float progress = (float)count / total;
+                EventManager.Instance.FireEvent(EventType.SetSceneLoadingProgress, str, progress);
             }
         }
         public void InitSpecial(string name, Action finish)

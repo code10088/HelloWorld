@@ -15,15 +15,19 @@ namespace HotAssembly
         private void StartHotUpdateRes(bool success)
         {
             UIHotUpdateCode.Instance.Destroy();
-            DataManager.Instance.HotUpdateResData.StartUpdate(InitConfig);
+            DataManager.Instance.HotUpdateResData.StartUpdate(OpenUILoading);
         }
-        private void InitConfig()
+        private void OpenUILoading()
         {
+            UIManager.Instance.OpenUI(UIType.UISceneLoading, InitConfig);
+        }
+        private void InitConfig(bool success)
+        {
+            UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             ConfigManager.Instance.Init(InitSetting);
         }
         private void InitSetting() 
         {
-            UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             DPUtil.Init();
             EnterMainScene();
         }
