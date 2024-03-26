@@ -55,18 +55,12 @@ namespace HotAssembly
             }
             public void Add(Action<object> function)
             {
+                eventBindFunction -= function;
                 eventBindFunction += function;
             }
             public void Remove(Action<object> function)
             {
-                try
-                {
-                    eventBindFunction -= function;
-                }
-                catch (Exception ex)
-                {
-                    GameDebug.LogError(ex + "：卸载不存在事件");
-                }
+                eventBindFunction -= function;
             }
             public void Handle()
             {
