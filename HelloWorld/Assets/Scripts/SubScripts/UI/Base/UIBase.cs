@@ -80,11 +80,6 @@ namespace HotAssembly
         {
             UIManager.Instance.CloseUI(config.UIType);
         }
-        protected virtual void OnReture()
-        {
-            OnClose();
-            UIManager.Instance.OpenUI(from);
-        }
 
         #region 扩展方法
         protected void SetSprite(Image image, string atlas, string name)
