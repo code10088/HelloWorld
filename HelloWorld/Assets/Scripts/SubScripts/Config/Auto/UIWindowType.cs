@@ -15,6 +15,7 @@ namespace cfg
     {
         Normal = 0,
         Tips = 1,
+        Guide = 2,
     }
 
 } 

@@ -89,6 +89,11 @@ MonoBehaviour:
       addressMode: 0
       filter: 
       bundle: 
+    - asset: Assets/ZRes/UI/Material
+      bundleMode: 0
+      addressMode: 0
+      filter: 
+      bundle: 
     - asset: Assets/ZRes/UI/Effect/Prefab
       bundleMode: 1
       addressMode: 0

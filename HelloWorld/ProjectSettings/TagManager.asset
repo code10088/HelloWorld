@@ -51,6 +51,9 @@ TagManager:
   - name: Tips
     uniqueID: 3136472029
     locked: 0
-  - name: Mask
+  - name: Guide
     uniqueID: 804123311
+    locked: 0
+  - name: Mask
+    uniqueID: 1103086809
     locked: 0

@@ -5,5 +5,6 @@
         Test,
         SetSceneLoadingBg,
         SetSceneLoadingProgress,
+        RefreshGuide,
     }
 }

@@ -21,6 +21,7 @@ public partial class Tables
     public TbConditionConfig TbConditionConfig = new TbConditionConfig();
     public TbActionConfig TbActionConfig = new TbActionConfig();
     public TbBuff TbBuff = new TbBuff();
+    public TbGuide TbGuide = new TbGuide();
 }
 
 }

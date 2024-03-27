@@ -11,11 +11,10 @@
 
 namespace cfg
 { 
-    public enum UIWindowType
+    public enum GuideMaskType
     {
-        Normal = 0,
-        Tips = 1,
-        Guide = 2,
+        Circle = 1,
+        Rect = 2,
     }
 
 } 

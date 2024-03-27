@@ -20,6 +20,7 @@ namespace cfg
         UISetting = 5,
         UICommonTips = 6,
         UISceneLoading = 7,
+        UIGuide = 8,
     }
 
 } 

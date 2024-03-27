@@ -29,6 +29,7 @@ namespace HotAssembly
             component.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
             component.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
             component.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
+            component.guideUIButton.onClick.AddListener(StartGuide);
             component.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
         }
         public override void OnEnable(params object[] param)
@@ -132,6 +133,10 @@ namespace HotAssembly
         {
             triggerManager.ExcuteTrigger(TriggerMode.Attack);
             triggerManager.ExcuteTrigger(TriggerMode.AddBuff, buffManager);
+        }
+        private void StartGuide()
+        {
+            DataManager.Instance.GuideData.StartGuide(1);
         }
 
         LoopListViewItem2 OnGetItemByIndex(LoopListView2 listView, int index)

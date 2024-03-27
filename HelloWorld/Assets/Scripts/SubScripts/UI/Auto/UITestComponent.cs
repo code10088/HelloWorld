@@ -22,6 +22,7 @@ namespace HotAssembly
         public UIButton coroutineBtnUIButton = null;
         public UIButton addTriggerBtnUIButton = null;
         public UIButton excuteTriggerBtnUIButton = null;
+        public UIButton guideUIButton = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
@@ -44,6 +45,7 @@ namespace HotAssembly
             coroutineBtnUIButton = allData[16].exportComponent[0] as UIButton;
             addTriggerBtnUIButton = allData[17].exportComponent[0] as UIButton;
             excuteTriggerBtnUIButton = allData[18].exportComponent[0] as UIButton;
+            guideUIButton = allData[19].exportComponent[0] as UIButton;
         }
     }
     public partial class UITestItem : LoopItemData
