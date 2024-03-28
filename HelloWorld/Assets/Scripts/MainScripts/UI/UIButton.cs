@@ -3,9 +3,10 @@ using UnityEngine.UI;
 
 public class UIButton : Button
 {
+    public string soundPath = "Frequence/Button3";
     public override void OnPointerClick(PointerEventData eventData)
     {
-        AudioManager.Instance.PlaySound("Frequence/Button3");
+        if (!string.IsNullOrEmpty(soundPath)) AudioManager.Instance.PlaySound(soundPath);
         base.OnPointerClick(eventData);
     }
 }
