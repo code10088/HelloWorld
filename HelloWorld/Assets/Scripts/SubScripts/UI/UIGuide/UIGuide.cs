@@ -54,15 +54,14 @@ namespace HotAssembly
         private void Update()
         {
             var t = DataManager.Instance.GuideData.GetGuideT();
-            Vector3 p = t == null ? Vector3.zero : t.position;
+            Vector3 p = t == null ? Vector3.back : t.position;
             if (p == record) return;
 
             record = p;
-            if (cfg.MaskType == 0) mat.SetColor("_Color", new Color(0, 0, 0, 0));
+            if (t == null || cfg.MaskType == 0) mat.SetColor("_Color", new Color(0, 0, 0, 0));
             else mat.SetColor("_Color", new Color(0, 0, 0, 0.6f));
             if (cfg.MaskType == 1) mat.EnableKeyword("CIRCLE");
             else mat.DisableKeyword("CIRCLE");
-            if (t == null) return;
 
             component.maskRectTransform.GetWorldCorners(corners);
             v1 = UIManager.Instance.UICamera.WorldToScreenPoint(corners[0]);
