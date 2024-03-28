@@ -10,6 +10,11 @@ namespace HotAssembly
         private int updateId = -1;
 
         private Vector3 record = Vector3.zero;
+        private Vector3[] corners = new Vector3[4];
+        private Vector3 v1 = Vector3.zero;
+        private Vector3 v2 = Vector3.zero;
+        private Vector3 v3 = Vector3.zero;
+        private Vector3 v4 = Vector3.zero;
         private Material mat = null;
 
         protected override void Init()
@@ -59,24 +64,38 @@ namespace HotAssembly
             else mat.DisableKeyword("CIRCLE");
             if (t == null) return;
 
-            var corners = new Vector3[4];
             component.maskRectTransform.GetWorldCorners(corners);
-            var v1 = UIManager.Instance.UICamera.WorldToScreenPoint(corners[0]);
-            var v2 = UIManager.Instance.UICamera.WorldToScreenPoint(corners[2]);
-            var v3 = UIManager.Instance.UICamera.WorldToScreenPoint(new Vector3(p.x - cfg.Width / 2, p.y - cfg.Height / 2, p.z));
-            var v4 = UIManager.Instance.UICamera.WorldToScreenPoint(new Vector3(p.x + cfg.Width / 2, p.y + cfg.Height / 2, p.z));
+            v1 = UIManager.Instance.UICamera.WorldToScreenPoint(corners[0]);
+            v2 = UIManager.Instance.UICamera.WorldToScreenPoint(corners[2]);
+            v3 = UIManager.Instance.UICamera.WorldToScreenPoint(new Vector3(p.x - cfg.Width / 2, p.y - cfg.Height / 2, p.z));
+            v4 = UIManager.Instance.UICamera.WorldToScreenPoint(new Vector3(p.x + cfg.Width / 2, p.y + cfg.Height / 2, p.z));
             mat.SetVector("_Center", (v3 + v4) / 2 - (v1 + v2) / 2);
             mat.SetFloat("_Width", (v4.x - v3.x) / 2);
             mat.SetFloat("_Height", (v4.y - v3.y) / 2);
         }
         private void Next()
         {
+            component.maskImage.raycastTarget = false;
+            StandaloneInputModule.Click(Input.mousePosition);
+            component.maskImage.raycastTarget = true;
             DataManager.Instance.GuideData.Next();
         }
         private void OnClickMask()
         {
-            if (cfg.MaskType > 0) return;
-            if (cfg.ClickRange > 0) return;
+            if (cfg.MaskType == 0)
+            {
+                Next();
+                return;
+            }
+            if (cfg.ClickRange == 0)
+            {
+                Next();
+                return;
+            }
+            if (Input.mousePosition.x < v3.x) return;
+            if (Input.mousePosition.x > v4.x) return;
+            if (Input.mousePosition.y < v3.y) return;
+            if (Input.mousePosition.y > v4.y) return;
             Next();
         }
         private void OnClickSkip()

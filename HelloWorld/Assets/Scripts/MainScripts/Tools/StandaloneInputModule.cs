@@ -13,6 +13,6 @@ public class StandaloneInputModule : UnityEngine.EventSystems.StandaloneInputMod
         bool released;
         bool pressed;
         var pointer = sim.GetTouchPointerEventData(touch, out pressed, out released);
-        sim.ProcessTouchPress(pointer, pressed, released);
+        sim.ProcessTouchPress(pointer, true, true);
     }
 }
