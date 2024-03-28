@@ -68,13 +68,12 @@ Shader "URP/GuideClip"
             {
                 half4 c = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, o.uv);
 #if CIRCLE
-                c.a *= lerp(0, 1, (distance(o.worldPos.xy, _Center) - _Width) / _Height);
+                c.a *= smoothstep(0, 1, (distance(o.worldPos.xy, _Center) - _Width) / _Height);
 #else
                 float2 dis = o.worldPos.xy - _Center;
                 c.a *= step(step(abs(dis.x), _Width), step(_Height, abs(dis.y)));
 #endif
-                c.rgb *= _Color.rgb;
-                return c;
+                return c * _Color;
             }
             ENDHLSL
         }
