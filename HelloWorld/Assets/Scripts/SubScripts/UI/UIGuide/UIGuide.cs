@@ -50,6 +50,7 @@ namespace HotAssembly
             //cfg.Is3D
 
             component.skipBtnObj.SetActive(cfg.CanSkip > 0);
+            Update();
         }
         private void Update()
         {
