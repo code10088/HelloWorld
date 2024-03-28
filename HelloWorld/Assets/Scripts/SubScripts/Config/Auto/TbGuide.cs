@@ -38,13 +38,6 @@ public partial class TbGuide : TbBase
     public Guide Get(int key) => _dataMap[key];
     public Guide this[int key] => _dataMap[key];
 
-    public void ResolveRef(Tables tables)
-    {
-        foreach(var _v in _dataList)
-        {
-            _v.ResolveRef(tables);
-        }
-    }
 
 }
 

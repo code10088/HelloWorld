@@ -38,13 +38,6 @@ public partial class TbSceneConfig : TbBase
     public SceneConfig Get(SceneType key) => _dataMap[key];
     public SceneConfig this[SceneType key] => _dataMap[key];
 
-    public void ResolveRef(Tables tables)
-    {
-        foreach(var _v in _dataList)
-        {
-            _v.ResolveRef(tables);
-        }
-    }
 
 }
 

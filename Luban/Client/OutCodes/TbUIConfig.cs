@@ -38,13 +38,6 @@ public partial class TbUIConfig : TbBase
     public UIConfig Get(UIType key) => _dataMap[key];
     public UIConfig this[UIType key] => _dataMap[key];
 
-    public void ResolveRef(Tables tables)
-    {
-        foreach(var _v in _dataList)
-        {
-            _v.ResolveRef(tables);
-        }
-    }
 
 }
 

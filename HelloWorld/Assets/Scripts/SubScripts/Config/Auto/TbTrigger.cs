@@ -38,13 +38,6 @@ public partial class TbTrigger : TbBase
     public Trigger Get(int key) => _dataMap[key];
     public Trigger this[int key] => _dataMap[key];
 
-    public void ResolveRef(Tables tables)
-    {
-        foreach(var _v in _dataList)
-        {
-            _v.ResolveRef(tables);
-        }
-    }
 
 }
 

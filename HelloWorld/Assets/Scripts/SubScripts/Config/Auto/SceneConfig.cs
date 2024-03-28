@@ -44,14 +44,6 @@ public sealed partial class SceneConfig : Luban.BeanBase
     public const int __ID__ = 935827150;
     public override int GetTypeId() => __ID__;
 
-    public  void ResolveRef(Tables tables)
-    {
-        
-        
-        
-        
-    }
-
     public override string ToString()
     {
         return "{ "

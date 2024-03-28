@@ -42,13 +42,6 @@ public sealed partial class DeviceInfo : Luban.BeanBase
     public const int __ID__ = -1520650172;
     public override int GetTypeId() => __ID__;
 
-    public  void ResolveRef(Tables tables)
-    {
-        
-        
-        
-    }
-
     public override string ToString()
     {
         return "{ "

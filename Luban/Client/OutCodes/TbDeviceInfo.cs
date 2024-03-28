@@ -38,13 +38,6 @@ public partial class TbDeviceInfo : TbBase
     public DeviceInfo Get(string key) => _dataMap[key];
     public DeviceInfo this[string key] => _dataMap[key];
 
-    public void ResolveRef(Tables tables)
-    {
-        foreach(var _v in _dataList)
-        {
-            _v.ResolveRef(tables);
-        }
-    }
 
 }
 

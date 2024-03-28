@@ -49,15 +49,6 @@ public sealed partial class ActionConfig : Luban.BeanBase
     public const int __ID__ = 1209614648;
     public override int GetTypeId() => __ID__;
 
-    public  void ResolveRef(Tables tables)
-    {
-        
-        
-        
-        
-        
-    }
-
     public override string ToString()
     {
         return "{ "
