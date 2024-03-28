@@ -23,6 +23,7 @@ public sealed partial class Guide : Luban.BeanBase
         ClickRange = _buf.ReadByte();
         Width = _buf.ReadInt();
         Height = _buf.ReadInt();
+        Interactable = _buf.ReadBool();
         CanSkip = _buf.ReadByte();
     }
 
@@ -51,6 +52,10 @@ public sealed partial class Guide : Luban.BeanBase
     /// </summary>
     public readonly int Height;
     /// <summary>
+    /// 穿透点击
+    /// </summary>
+    public readonly bool Interactable;
+    /// <summary>
     /// 0:不可跳过<br/>1:调到下一步<br/>2:全部跳过
     /// </summary>
     public readonly byte CanSkip;
@@ -60,6 +65,7 @@ public sealed partial class Guide : Luban.BeanBase
 
     public  void ResolveRef(Tables tables)
     {
+        
         
         
         
@@ -80,6 +86,7 @@ public sealed partial class Guide : Luban.BeanBase
         + "ClickRange:" + ClickRange + ","
         + "Width:" + Width + ","
         + "Height:" + Height + ","
+        + "Interactable:" + Interactable + ","
         + "CanSkip:" + CanSkip + ","
         + "}";
     }

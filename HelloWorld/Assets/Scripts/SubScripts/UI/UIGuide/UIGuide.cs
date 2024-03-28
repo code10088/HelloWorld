@@ -73,22 +73,17 @@ namespace HotAssembly
             mat.SetFloat("_Width", (v4.x - v3.x) / 2);
             mat.SetFloat("_Height", (v4.y - v3.y) / 2);
         }
-        private void Next()
-        {
-            component.maskImage.raycastTarget = false;
-            StandaloneInputModule.Click(Input.mousePosition);
-            component.maskImage.raycastTarget = true;
-            DataManager.Instance.GuideData.Next();
-        }
         private void OnClickMask()
         {
             if (cfg.MaskType == 0)
             {
+                CheckClick();
                 Next();
                 return;
             }
             if (cfg.ClickRange == 0)
             {
+                CheckClick();
                 Next();
                 return;
             }
@@ -96,7 +91,19 @@ namespace HotAssembly
             if (Input.mousePosition.x > v4.x) return;
             if (Input.mousePosition.y < v3.y) return;
             if (Input.mousePosition.y > v4.y) return;
+            CheckClick();
             Next();
+        }
+        private void CheckClick()
+        {
+            if (!cfg.Interactable) return;
+            component.maskImage.raycastTarget = false;
+            StandaloneInputModule.Click(Input.mousePosition);
+            component.maskImage.raycastTarget = true;
+        }
+        private void Next()
+        {
+            DataManager.Instance.GuideData.Next();
         }
         private void OnClickSkip()
         {
