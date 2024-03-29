@@ -17,15 +17,22 @@ MonoBehaviour:
   MatchList:
   - ZRes/Texture
   IgnoreList: []
-  sRGB: 1
-  AlphaSource: 1
-  AlphaIsTransparency: 0
-  IgnorePNGFileGamma: 0
-  GeneratePhysicsShape: 0
+  TextureType: 0
   NPOTScale: 1
-  ReadWrite: 0
   StreamingMipmaps: 0
   VirtualTextureOnly: 0
+  SpriteMode: 1
+  PackingTag: 
+  PixelsPerUnit: 100
+  MeshType: 1
+  ExtrudeEdges: 1
+  spritePivot: {x: 0, y: 0}
+  GeneratePhysicsShape: 0
+  sRGB: 1
+  AlphaSource: 1
+  AlphaIsTransparency: 1
+  IgnorePNGFileGamma: 0
+  ReadWrite: 0
   GenerateMipMaps: 0
   BorderMipMaps: 0
   MipMapFiltering: 0
@@ -33,12 +40,6 @@ MonoBehaviour:
   FadeoutMipMaps: 0
   FilterMode: 1
   AnisoLevel: 1
-  PlatformsRegexList:
-  - Default
-  - PC
-  - Android
-  - iOS
-  - WebGL
   MaxSize: 2048
   ResizeAlgorithm: 0
   PCRGBFormat: 10

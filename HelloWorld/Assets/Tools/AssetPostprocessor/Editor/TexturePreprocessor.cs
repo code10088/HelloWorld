@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Linq;
+﻿using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -25,16 +24,24 @@ namespace AssetPreprocessor.Scripts.Editor
             TexturePreprocessorConfig config = configs[0];
             TextureImporterSettings dest = new TextureImporterSettings();
             textureImporter.ReadTextureSettings(dest);
+            dest.spriteMeshType = config.MeshType;
+            dest.spriteExtrude = config.ExtrudeEdges;
             dest.spriteGenerateFallbackPhysicsShape = config.GeneratePhysicsShape;
             textureImporter.SetTextureSettings(dest);
+
+            textureImporter.textureType = config.TextureType;
+            textureImporter.npotScale = config.NPOTScale;
+            textureImporter.streamingMipmaps = config.StreamingMipmaps;
+            textureImporter.vtOnly = config.VirtualTextureOnly;
+            textureImporter.spriteImportMode = config.SpriteMode;
+            textureImporter.spritePackingTag = config.PackingTag;
+            textureImporter.spritePixelsPerUnit = config.PixelsPerUnit;
+            textureImporter.spritePivot = config.spritePivot;
             textureImporter.sRGBTexture = config.sRGB;
             textureImporter.alphaSource = config.AlphaSource;
             textureImporter.alphaIsTransparency = config.AlphaIsTransparency;
             textureImporter.ignorePngGamma = config.IgnorePNGFileGamma;
-            textureImporter.npotScale = config.NPOTScale;
             textureImporter.isReadable = config.ReadWrite;
-            textureImporter.streamingMipmaps = config.StreamingMipmaps;
-            textureImporter.vtOnly = config.VirtualTextureOnly;
             textureImporter.mipmapEnabled = config.GenerateMipMaps;
             textureImporter.borderMipmap = config.BorderMipMaps;
             textureImporter.mipmapFilter = config.MipMapFiltering;

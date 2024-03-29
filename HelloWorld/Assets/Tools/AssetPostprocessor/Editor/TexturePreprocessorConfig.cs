@@ -8,16 +8,28 @@ namespace AssetPreprocessor.Scripts.Editor
     public class TexturePreprocessorConfig : BasePreprocessorConfig
     {
         [Header("贴图设置")]
-        public bool sRGB = true;
-        public TextureImporterAlphaSource AlphaSource = TextureImporterAlphaSource.FromInput;
-        public bool AlphaIsTransparency = false;
-        public bool IgnorePNGFileGamma = false;
-        public bool GeneratePhysicsShape = false;
-        [Header("Advanced")]
+        public TextureImporterType TextureType = TextureImporterType.Default;
+
+        [Header("Default")]
         public TextureImporterNPOTScale NPOTScale = TextureImporterNPOTScale.ToNearest;
-        public bool ReadWrite = false;
         public bool StreamingMipmaps = false;
         public bool VirtualTextureOnly = false;
+
+        [Header("Sprite")]
+        public SpriteImportMode SpriteMode = SpriteImportMode.Single;
+        public string PackingTag = string.Empty;
+        public float PixelsPerUnit = 100;
+        public SpriteMeshType MeshType = SpriteMeshType.Tight;
+        public uint ExtrudeEdges = 1;
+        public Vector2 spritePivot = Vector2.zero;
+        public bool GeneratePhysicsShape = false;
+
+        [Header("Common")]
+        public bool sRGB = true;
+        public TextureImporterAlphaSource AlphaSource = TextureImporterAlphaSource.FromInput;
+        public bool AlphaIsTransparency = true;
+        public bool IgnorePNGFileGamma = false;
+        public bool ReadWrite = false;
         public bool GenerateMipMaps = false;
         public bool BorderMipMaps = false;
         public TextureImporterMipFilter MipMapFiltering = TextureImporterMipFilter.BoxFilter;
@@ -26,7 +38,7 @@ namespace AssetPreprocessor.Scripts.Editor
 
         [Header("FilterMode")]
         public FilterMode FilterMode = FilterMode.Bilinear;
-        public int AnisoLevel = 0;
+        public int AnisoLevel = 1;
 
         [Header("格式")]
         public int MaxSize = 2048;
