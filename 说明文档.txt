@@ -58,3 +58,6 @@ Occlusion Culling
 LOD
 	消耗内存换性能
 GPU地形大世界地形解决方案
+
+SpriteAtlas
+	无法使用自动导入设置，common是已调好的设置参数，新建SpriteAtlas时copy后修改文件夹即可
