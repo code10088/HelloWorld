@@ -1,11 +1,10 @@
+using System;
 using UnityEngine;
 
 public class UIGuideCollect : MonoBehaviour
 {
-    public delegate void AddGuideT(int id, Transform t);
-    public delegate void RemoveGuideT(int id);
-    public static AddGuideT Add;
-    public static RemoveGuideT Remove;
+    public static Action<int, Transform> Add;
+    public static Action<int> Remove;
     public int[] guideID;
 
     private void OnEnable()
