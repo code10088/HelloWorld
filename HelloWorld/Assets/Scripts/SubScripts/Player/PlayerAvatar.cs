@@ -76,10 +76,10 @@ namespace HotAssembly
                 partCfg = ConfigManager.Instance.GameConfigs.TbPlayerAvatarPart.Get(partId);
                 Init(partCfg.PrefabPath, avatar.modelT);
             }
-            protected override void Finish(int state, GameObject obj)
+            protected override void Finish(GameObject obj)
             {
-                if (state < 0) return;
-                if (state == 0) Combine(obj);
+                if (obj == null) return;
+                Combine(obj);
                 finish(partCfg.ID);
             }
             /// <summary>

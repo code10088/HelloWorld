@@ -139,10 +139,10 @@ public class LoadGameObjectItem
     private float timer = 0;
     private int timerId = -1;
 
-    private Action<int, object[], GameObject> action;
+    private Action<GameObject, object[]> action;
     protected object[] param;
 
-    public void Init(string path, Transform parent, Action<int, object[], GameObject> action = null, params object[] param)
+    public void Init(string path, Transform parent, Action<GameObject, object[]> action = null, params object[] param)
     {
         this.path = path;
         this.parent = parent;
@@ -174,7 +174,7 @@ public class LoadGameObjectItem
         else
         {
             obj.SetActive(true);
-            Finish(1, obj);
+            Finish(obj);
         }
     }
     private void LoadFinish(int id, Object _asset)
@@ -182,13 +182,13 @@ public class LoadGameObjectItem
         if (_asset == null)
         {
             Release();
-            Finish(-1, null);
+            Finish(null);
         }
         else if (state > 3)
         {
             asset = _asset;
             state |= 1;
-            Finish(-1, null);
+            Finish(null);
         }
         else
         {
@@ -197,17 +197,12 @@ public class LoadGameObjectItem
             obj.transform.localPosition = Vector3.zero;
             obj.transform.localRotation = Quaternion.identity;
             obj.transform.localScale = Vector3.one;
-            Finish(0, obj);
+            Finish(obj);
         }
     }
-    /// <summary>
-    /// state=-1：未加载成功或加载过程中卸载
-    /// state=0：第一次成功加载
-    /// state=1：缓存
-    /// </summary>
-    protected virtual void Finish(int state, GameObject obj)
+    protected virtual void Finish(GameObject obj)
     {
-        action?.Invoke(state, param, obj);
+        action?.Invoke(obj, param);
     }
     private void Delay()
     {
@@ -247,10 +242,10 @@ public class LoadAssetItem
     private float timer = 0;
     private int timerId = -1;
 
-    private Action<object[], Object> action;
+    private Action<Object, object[]> action;
     protected object[] param;
 
-    public void Init(string path, Action<object[], Object> action = null, params object[] param)
+    public void Init(string path, Action<Object, object[]> action = null, params object[] param)
     {
         this.path = path;
         this.action = action;
@@ -286,14 +281,9 @@ public class LoadAssetItem
             else Finish(asset);
         }
     }
-    /// <summary>
-    /// state=-1：未加载成功或加载过程中卸载
-    /// state=0：第一次成功加载
-    /// state=1：缓存
-    /// </summary>
     protected virtual void Finish(Object asset)
     {
-        action?.Invoke(param, asset);
+        action?.Invoke(asset, param);
     }
     public void Delay()
     {
