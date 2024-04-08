@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root Version="v2.0.0">
+  <Common ShowPackageView="False" ShowEditorAlias="True" UniqueBundleName="False" />
+  <Package PackageName="All" PackageDesc="" AutoAddressable="True" LocationToLower="False" IncludeAssetGUID="False" IgnoreDefaultType="False">
+    <Group GroupActiveRule="EnableGroup" GroupName="Base" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/ZRes/Assembly" CollectGUID="6f2f791eb5afe084299cec8367ea62e6" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/DataConfig" CollectGUID="feac96268987cdc43ae829631f1229ae" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/Font" CollectGUID="b814a5cf54a4e004cb307590bb575608" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackTopDirectory" FilterRule="CollectUserData" UserData=".asset" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/Audio" CollectGUID="45e75a30810540646893cf6bd06b2ad8" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectUserData" UserData=".mp3" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/GameConfig" CollectGUID="a86f22da9507702429febaaade33c10a" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/Scene/Prefab" CollectGUID="76b782cae3e53be41adacd9a5ec40ac4" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/Scene/CommonTexture" CollectGUID="295515cf7f194734791e8eb1b8fe28cc" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackCollector" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/Scene/Effect/Prefab" CollectGUID="1442ad786098b9b458f1a97a87fcc628" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/Scene/Effect/CommonTexture" CollectGUID="2f2a43019bbc0f24f889a6ebb546d320" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackCollector" FilterRule="CollectUserData" UserData=".png" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/Scene/Skybox/Material" CollectGUID="23802c0b34fc1344ba6b947cb3652717" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/UI/Atlas" CollectGUID="4cf2455786f188a4db6bba82db5c58f3" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackTopDirectory" FilterRule="CollectUserData" UserData=".png;.spriteatlas" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/UI/Prefab" CollectGUID="8a73dcd03fcc3bd40bf316d677ff3adf" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/UI/Texture" CollectGUID="b4e116756f2553f4e86770f68eb9b414" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectUserData" UserData=".png" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/UI/Material" CollectGUID="0b2b9d4fe3dffad4eae317a8ac796efe" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackCollector" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/UI/Effect/Prefab" CollectGUID="fed8509302d035c4cbb9ebe2ccf5be61" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackSeparately" FilterRule="CollectAll" UserData="" AssetTags="" />
+      <Collector CollectPath="Assets/ZRes/UI/Effect/CommonTexture" CollectGUID="0dbedf96f0896e6478cd3585a6f237ed" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackCollector" FilterRule="CollectUserData" UserData=".png" AssetTags="" />
+    </Group>
+    <Group GroupActiveRule="EnableGroup" GroupName="Debug" GroupDesc="" AssetTags="">
+      <Collector CollectPath="Assets/ZRes/Debug" CollectGUID="1b23e03772edccc499da18cb9bd0346c" CollectType="MainAssetCollector" AddressRule="AddressDisable" PackRule="PackCollector" FilterRule="CollectAll" UserData="" AssetTags="" />
+    </Group>
+    <Group GroupActiveRule="EnableGroup" GroupName="Test" GroupDesc="" AssetTags="" />
+  </Package>
+</root>

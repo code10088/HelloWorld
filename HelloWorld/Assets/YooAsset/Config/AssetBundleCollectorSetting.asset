@@ -1,0 +1,177 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 185f6993d5150494d98da50e26cb1c25, type: 3}
+  m_Name: AssetBundleCollectorSetting
+  m_EditorClassIdentifier: 
+  ShowPackageView: 0
+  ShowEditorAlias: 1
+  UniqueBundleName: 0
+  Packages:
+  - PackageName: All
+    PackageDesc: 
+    EnableAddressable: 1
+    LocationToLower: 0
+    IncludeAssetGUID: 0
+    IgnoreDefaultType: 0
+    AutoCollectShaders: 1
+    Groups:
+    - GroupName: Base
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/ZRes/Assembly
+        CollectorGUID: 6f2f791eb5afe084299cec8367ea62e6
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/DataConfig
+        CollectorGUID: feac96268987cdc43ae829631f1229ae
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/Font
+        CollectorGUID: b814a5cf54a4e004cb307590bb575608
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackTopDirectory
+        FilterRuleName: CollectUserData
+        AssetTags: 
+        UserData: .asset
+      - CollectPath: Assets/ZRes/Audio
+        CollectorGUID: 45e75a30810540646893cf6bd06b2ad8
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectUserData
+        AssetTags: 
+        UserData: .mp3
+      - CollectPath: Assets/ZRes/GameConfig
+        CollectorGUID: a86f22da9507702429febaaade33c10a
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/Scene/Prefab
+        CollectorGUID: 76b782cae3e53be41adacd9a5ec40ac4
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/Scene/CommonTexture
+        CollectorGUID: 295515cf7f194734791e8eb1b8fe28cc
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackCollector
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/Scene/Effect/Prefab
+        CollectorGUID: 1442ad786098b9b458f1a97a87fcc628
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/Scene/Effect/CommonTexture
+        CollectorGUID: 2f2a43019bbc0f24f889a6ebb546d320
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackCollector
+        FilterRuleName: CollectUserData
+        AssetTags: 
+        UserData: .png
+      - CollectPath: Assets/ZRes/Scene/Skybox/Material
+        CollectorGUID: 23802c0b34fc1344ba6b947cb3652717
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/UI/Atlas
+        CollectorGUID: 4cf2455786f188a4db6bba82db5c58f3
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackTopDirectory
+        FilterRuleName: CollectUserData
+        AssetTags: 
+        UserData: .png;.spriteatlas
+      - CollectPath: Assets/ZRes/UI/Prefab
+        CollectorGUID: 8a73dcd03fcc3bd40bf316d677ff3adf
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/UI/Texture
+        CollectorGUID: b4e116756f2553f4e86770f68eb9b414
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectUserData
+        AssetTags: 
+        UserData: .png
+      - CollectPath: Assets/ZRes/UI/Material
+        CollectorGUID: 0b2b9d4fe3dffad4eae317a8ac796efe
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackCollector
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/UI/Effect/Prefab
+        CollectorGUID: fed8509302d035c4cbb9ebe2ccf5be61
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+      - CollectPath: Assets/ZRes/UI/Effect/CommonTexture
+        CollectorGUID: 0dbedf96f0896e6478cd3585a6f237ed
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackCollector
+        FilterRuleName: CollectUserData
+        AssetTags: 
+        UserData: .png
+    - GroupName: Debug
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/ZRes/Debug
+        CollectorGUID: 1b23e03772edccc499da18cb9bd0346c
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackCollector
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
+    - GroupName: Test
+      GroupDesc: 
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors: []
