@@ -1,6 +1,5 @@
 public enum ToolsMenuSort
 {
-    BuildPlayer,
     BuildBundles,
     CopyConfig,
     HotAssemblyCompile,
