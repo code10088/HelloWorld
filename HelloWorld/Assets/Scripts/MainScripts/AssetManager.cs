@@ -40,7 +40,7 @@ public class AssetManager : Singletion<AssetManager>
         parameters.BreakpointResumeFileSize = 102400;
         parameters.BuildinQueryServices = new QueryServices();
         parameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-        var operation = defaultPackage.InitializeAsync(parameters);
+        var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
 #else
         string defaultHostServer = GameSetting.Instance.CDNVersion;
@@ -52,7 +52,7 @@ public class AssetManager : Singletion<AssetManager>
         parameters.BuildinQueryServices = new QueryServices();
         parameters.DecryptionServices = new DecryptionServices();
         parameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-        var operation = defaultPackage.InitializeAsync(parameters);
+        var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
 #endif
     }

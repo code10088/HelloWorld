@@ -103,8 +103,8 @@
     <Reference Include="UnityEngine.UIModule">
       <HintPath>EditorInstallPath\Data\Managed\UnityEngine\UnityEngine.UIModule.dll</HintPath>
     </Reference>
-    <Reference Include="xasset">
-      <HintPath>..\Library\ScriptAssemblies\xasset.dll</HintPath>
+    <Reference Include="YooAsset">
+      <HintPath>..\Library\ScriptAssemblies\YooAsset.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
