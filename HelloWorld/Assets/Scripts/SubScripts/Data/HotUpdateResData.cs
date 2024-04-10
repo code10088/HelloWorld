@@ -1,81 +1,64 @@
 using cfg;
 using System;
 using UnityEngine;
-using xasset;
+using YooAsset;
 
 namespace HotAssembly
 {
     public class HotUpdateResData : Database
     {
         private Action hotUpdateResFinish;
-        private DownloadRequestBatch downloadRequestBatch;
+        private ResourceDownloaderOperation downloaderOperation;
         private int timerId = -1;
 
         public void Clear() { }
         public void StartUpdate(Action finish)
         {
             hotUpdateResFinish = finish;
-            if (Assets.RealtimeMode) CheckUpdateInfo();
-            else UpdateFinish();
+#if UNITY_EDITOR && !HotUpdateDebug
+            UpdateFinish();
+#else
+            CheckDownloadHotUpdateRes();
+#endif
         }
-        private void CheckUpdateInfo()
+        private void CheckDownloadHotUpdateRes()
         {
-            var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync(ZResConst.ResGroup_Base);
-            getDownloadSizeAsync.completed += StartDownload;
-        }
-        private void StartDownload(Request request)
-        {
-            var getDownloadSizeAsync = request as GetDownloadSizeRequest;
-            if (getDownloadSizeAsync.downloadSize > 0)
+            downloaderOperation = AssetManager.Package.CreateResourceDownloader(GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeout);
+            if (downloaderOperation.TotalDownloadBytes > 0)
             {
-                var downloadSize = Utility.FormatBytes(getDownloadSizeAsync.downloadSize);
+                string content = $"更新资源大小 {downloaderOperation.TotalDownloadBytes/1024f} Kb";
                 UICommonBoxParam param = new UICommonBoxParam();
                 param.type = UICommonBoxType.SureAndCancel;
                 param.title = "Tips";
-                param.content = downloadSize;
-                param.sure = a => StartDownload(getDownloadSizeAsync);
+                param.content = content;
+                param.sure = a => StartDownload();
                 param.cancel = a => Application.Quit();
                 UICommonBox.OpenCommonBox(param);
             }
             else
             {
+                downloaderOperation.CancelDownload();
                 UpdateFinish();
             }
         }
-        private void StartDownload(GetDownloadSizeRequest getDownloadSizeAsync)
+        private void StartDownload()
         {
-            var downloadAsync = getDownloadSizeAsync.DownloadAsync();
-            downloadRequestBatch = downloadAsync as DownloadRequestBatch;
-            downloadRequestBatch.completed += UpdateFinish;
+            downloaderOperation.Completed += CheckDownloadHotUpdateRes;
+            downloaderOperation.BeginDownload();
+
             timerId = TimeManager.Instance.StartTimer(0, 1, Downloading);
+        }
+        private void CheckDownloadHotUpdateRes(AsyncOperationBase o)
+        {
+            TimeManager.Instance.StopTimer(timerId);
+            if (o.Status == EOperationStatus.Succeed) UpdateFinish();
+            else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckDownloadHotUpdateRes);
         }
         private void Downloading(float t)
         {
-            var downloadedBytes = Utility.FormatBytes(downloadRequestBatch.downloadedBytes);
-            var downloadSize = Utility.FormatBytes(downloadRequestBatch.downloadSize);
-            var bandwidth = Utility.FormatBytes(downloadRequestBatch.bandwidth);
-
             var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
-            hotUpdateRes.SetText($"Download：{downloadedBytes}/{downloadSize} {bandwidth}/s");
-            hotUpdateRes.SetSlider(downloadRequestBatch.progress);
-        }
-        private void UpdateFinish(DownloadRequestBatch download)
-        {
-            TimeManager.Instance.StopTimer(timerId);
-            if (download.result == DownloadRequestBase.Result.Success)
-            {
-                UpdateFinish();
-            }
-            else
-            {
-                UICommonBoxParam param = new UICommonBoxParam();
-                param.type = UICommonBoxType.SureAndCancel;
-                param.title = "Tips";
-                param.content = "Retry";
-                param.sure = a => CheckUpdateInfo();
-                param.cancel = a => Application.Quit();
-                UICommonBox.OpenCommonBox(param);
-            }
+            hotUpdateRes.SetText($"HotUpdateRes：{downloaderOperation.CurrentDownloadBytes}/{downloaderOperation.TotalDownloadBytes}");
+            hotUpdateRes.SetSlider(downloaderOperation.Progress);
         }
         private void UpdateFinish()
         {

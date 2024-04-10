@@ -1,7 +1,9 @@
+using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using YooAsset;
 
 namespace HotAssembly
 {
@@ -252,8 +254,9 @@ namespace HotAssembly
             else if (lv == 2) Application.targetFrameRate = 60;
             qualityLv = qualityLv & 0xFFF3 | Mathf.Clamp(lv, 0, 2) << 2;
             ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
-            GameSetting.updateTimeSliceS = 1.0f / lv;
-            xasset.Scheduler.AutoslicingTimestep = GameSetting.updateTimeSliceS;
+            GameSetting.updateTimeSliceS = 1.0f / Application.targetFrameRate;
+            GameSetting.updateTimeSliceMS = 1000 / Application.targetFrameRate;
+            YooAssets.SetOperationSystemMaxTimeSlice(GameSetting.updateTimeSliceS);
         }
         /// <summary>
         /// 分辨率 0,1,2

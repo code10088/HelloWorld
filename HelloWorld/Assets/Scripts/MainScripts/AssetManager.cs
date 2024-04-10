@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using xasset;
+using YooAsset;
 using Object = UnityEngine.Object;
 
 public class AssetManager : Singletion<AssetManager>
@@ -10,14 +10,53 @@ public class AssetManager : Singletion<AssetManager>
     private static Dictionary<int, AssetItem> total = new();
     private static Queue<AssetItem> cache = new();
     private static int uniqueId = 0;
+
+    private static ResourcePackage package;
     private Action initFinish;
+
+    public const string PackageName = "All";
+    public static ResourcePackage Package => package;
 
     public void Init(Action action)
     {
         initFinish = action;
-        Assets.InitializeAsync(InitFinish);
+        YooAssets.Initialize();
+        package = YooAssets.CreatePackage(PackageName);
+#if UNITY_EDITOR && !HotUpdateDebug
+        var parameters = new EditorSimulateModeParameters();
+        var path = EditorSimulateModeHelper.SimulateBuild(EDefaultBuildPipeline.BuiltinBuildPipeline, PackageName);
+        parameters.CacheBootVerifyLevel = EVerifyLevel.Middle;
+        parameters.AutoDestroyAssetProvider = true;
+        parameters.BreakpointResumeFileSize = 102400;
+        parameters.SimulateManifestFilePath = path;
+        var operation = package.InitializeAsync(parameters);
+        operation.Completed += InitFinish;
+#elif UNITY_WEBGL
+        string defaultHostServer = GameSetting.Instance.CDNVersion;
+        string fallbackHostServer = GameSetting.Instance.CDNVersion;
+        var parameters = new WebPlayModeParameters();
+        parameters.CacheBootVerifyLevel = EVerifyLevel.Middle;
+        parameters.AutoDestroyAssetProvider = true;
+        parameters.BreakpointResumeFileSize = 102400;
+        parameters.BuildinQueryServices = new QueryServices();
+        parameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
+        var operation = defaultPackage.InitializeAsync(parameters);
+        operation.Completed += InitFinish;
+#else
+        string defaultHostServer = GameSetting.Instance.CDNVersion;
+        string fallbackHostServer = GameSetting.Instance.CDNVersion;
+        var parameters = new HostPlayModeParameters();
+        parameters.CacheBootVerifyLevel = EVerifyLevel.Middle;
+        parameters.AutoDestroyAssetProvider = true;
+        parameters.BreakpointResumeFileSize = 102400;
+        parameters.BuildinQueryServices = new QueryServices();
+        parameters.DecryptionServices = new DecryptionServices();
+        parameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
+        var operation = defaultPackage.InitializeAsync(parameters);
+        operation.Completed += InitFinish;
+#endif
     }
-    private void InitFinish(Request completed)
+    private void InitFinish(AsyncOperationBase operation)
     {
         initFinish?.Invoke();
     }
@@ -100,30 +139,30 @@ public class AssetManager : Singletion<AssetManager>
     {
         private int itemId = -1;
         private Action<int, Object> action;
-        private AssetRequest ar;
+        private AssetHandle ah;
         public int ItemID => itemId;
-        public float Progress => ar == null ? 0 : ar.progress;
+        public float Progress => ah == null ? 0 : ah.Progress;
 
         public void Init<T>(string path, Action<int, Object> action) where T : Object
         {
             itemId = ++uniqueId;
             this.action = action;
-            ar = Asset.LoadAsync(path, typeof(T));
-            if (ar == null) Finish(null);
-            else ar.completed += Finish;
+            ah = package.LoadAssetAsync<T>(path);
+            if (ah == null) Finish(null);
+            else ah.Completed += Finish;
         }
-        private void Finish(Request request)
+        private void Finish(AssetHandle _ah)
         {
-            Object asset = ar == null ? null : ar.asset;
+            Object asset = ah == null ? null : ah.AssetObject;
             action?.Invoke(itemId, asset);
         }
         public void Unload()
         {
             cache.Enqueue(this);
-            if (ar == null) return;
-            ar.completed -= Finish;
-            ar.Release();
-            ar = null;
+            if (ah == null) return;
+            ah.Completed -= Finish;
+            ah.Release();
+            ah = null;
             action = null;
         }
     }

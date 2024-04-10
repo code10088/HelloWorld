@@ -5,6 +5,6 @@ public enum ToolsMenuSort
     CopyConfig,
     HotAssemblyCompile,
     HybridCLRGenerate,
-    XAssetBuild,
+    YooAssetBuild,
     UploadBundles2CDN,
 }

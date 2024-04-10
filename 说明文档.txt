@@ -33,8 +33,9 @@ XAsset
 	
 YooAsset
 	使用对比工具
-	EnableSharePackRule = false
 	DefaultFilterRule添加CollectUserData
+	修改OperationSystem的计时方式
+	屏蔽[MenuItem("YooAsset/AssetBundle Builder", false, 102)]
 	
 ECS+Job+Brust
 	ECS主要优势在于网络同步数据回滚

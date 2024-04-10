@@ -1,172 +1,111 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
-using xasset;
+using YooAsset;
 using Object = UnityEngine.Object;
+using System.Text;
 
 public class HotUpdateCode : Singletion<HotUpdateCode>
 {
     enum HotUpdateCodeStep
     {
-        CheckUpdateInfo = 5,
-        CheckUpdateVersion = 10,
-        RemoveUnusedFile = 20,
-        CheckDownloadHotUpdateConfig = 25,
-        DownloadingHotUpdateConfig = 50,
-        LoadHotUpdateConfig = 55,
-        CheckDownloadHotUpdateRes = 60,
+        CheckVersion = 10,
+        CheckPackageManifest = 20,
+        DownloadingHotUpdateConfig = 30,
+        LoadHotUpdateConfig = 35,
         DownloadingHotUpdateRes = 100,
         Max = 100,
     }
 
     private Action hotUpdateCodeFinish;
-    private Versions latestVersion;
-    private DownloadRequestBatch downloadRequestBatch;
+    private string resVersion;
+    private ResourceDownloaderOperation downloaderOperation;
     private int timerId = -1;
 
     public void StartUpdate(Action finish)
     {
         hotUpdateCodeFinish = finish;
-        if (Assets.RealtimeMode) CheckUpdateInfo();
-        else UpdateFinish();
+#if UNITY_EDITOR && !HotUpdateDebug
+        UpdateFinish();
+#else
+        CheckVersion();
+#endif
     }
 
     #region Version
-    private void CheckUpdateInfo()
+    private void CheckVersion()
     {
-        var getUpdateInfoAsync = Assets.GetUpdateInfoAsync();
-        getUpdateInfoAsync.completed += CheckUpdateVersion;
+        Downloader.Instance.Download($"{GameSetting.Instance.CDNPlatform}/VersionConfig.txt", string.Empty, CheckVersion);
 
-        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckUpdateInfo.ToString());
+        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckVersion.ToString());
     }
-    private void CheckUpdateVersion(Request request)
+    private void CheckVersion(string url, byte[] result)
     {
-        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckUpdateInfo / (float)HotUpdateCodeStep.Max);
+        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckVersion / (float)HotUpdateCodeStep.Max);
 
-        var getUpdateInfoAsync = request as GetUpdateInfoRequest;
-        if (getUpdateInfoAsync.result == Request.Result.Success)
+        if (result == null)
         {
-            var updateVersion = System.Version.Parse(getUpdateInfoAsync.info.version);
-            var playerVersion = System.Version.Parse(Assets.PlayerAssets.version);
-            if (updateVersion.Minor == playerVersion.Minor)
+            UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckVersion);
+        }
+        else
+        {
+            string version = Encoding.UTF8.GetString(result);
+            var config = JsonConvert.DeserializeObject<VersionConfig>(version);
+            int index = config.AppVersions.FindIndex(a => a == Application.version);
+            if (index < 0)
             {
-                var getVersionsAsync = getUpdateInfoAsync.GetVersionsAsync();
-                getVersionsAsync.completed += RemoveUnusedFile;
-
-                UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckUpdateVersion.ToString());
+                Application.OpenURL($"{GameSetting.Instance.CDNPlatform}/{GameSetting.AppName}");
+                Application.Quit();
             }
             else
             {
-                Application.OpenURL(getUpdateInfoAsync.info.playerURL);
-                Application.Quit();
+                resVersion = config.ResVersions[index];
+                CheckPackageManifest();
             }
-        }
-        else if (getUpdateInfoAsync.error.Contains("Nothing"))
-        {
-            CheckDownloadHotUpdateConfig();
-        }
-        else
-        {
-            UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckUpdateInfo);
         }
     }
-    private void RemoveUnusedFile(Request request)
+    private void CheckPackageManifest()
     {
-        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckUpdateVersion / (float)HotUpdateCodeStep.Max);
+        var operation = AssetManager.Package.UpdatePackageManifestAsync(resVersion, true);
+        operation.Completed += CheckPackageManifest;
 
-        var getVersionsAsync = request as VersionsRequest;
-        if (getVersionsAsync.result == Request.Result.Success)
-        {
-            latestVersion = getVersionsAsync.versions;
-            var bundles = new HashSet<string>();
-            foreach (var item in latestVersion.data)
-            {
-                bundles.Add(item.file);
-                foreach (var bundle in item.manifest.bundles)
-                    bundles.Add(bundle.file);
-            }
-
-            var files = new List<string>();
-            foreach (var item in Assets.Versions.data)
-            {
-                if (!bundles.Contains(item.file))
-                    files.Add(item.file);
-                foreach (var bundle in item.manifest.bundles)
-                    if (!bundles.Contains(bundle.file))
-                        files.Add(item.file);
-            }
-
-            var removeAsync = new RemoveRequest();
-            foreach (var file in files)
-            {
-                var path = Assets.GetDownloadDataPath(file);
-                removeAsync.files.Add(path);
-            }
-            removeAsync.completed += SaveVersion;
-            removeAsync.SendRequest();
-
-            UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.RemoveUnusedFile.ToString());
-        }
-        else
-        {
-            UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckUpdateInfo);
-        }
+        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckPackageManifest.ToString());
     }
-    private void SaveVersion(Request request)
+    private void CheckPackageManifest(AsyncOperationBase o)
     {
-        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.RemoveUnusedFile / (float)HotUpdateCodeStep.Max);
+        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckPackageManifest / (float)HotUpdateCodeStep.Max);
 
-        latestVersion.Save(Assets.GetDownloadDataPath(Versions.Filename));
-        Assets.Versions = latestVersion;
-        latestVersion = null;
-        CheckDownloadHotUpdateConfig();
+        if (o.Status == EOperationStatus.Succeed) CheckDownloadHotUpdateConfig();
+        else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckPackageManifest);
     }
     #endregion
 
     #region Config
     private void CheckDownloadHotUpdateConfig()
     {
-        string[] include = new string[] { "Assets/ZRes/GameConfig/HotUpdateConfig.txt" };
-        var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync(include);
-        getDownloadSizeAsync.completed += StartDownloadHotUpdateConfig;
+        string path = "Assets/ZRes/GameConfig/HotUpdateConfig.txt";
+        downloaderOperation = AssetManager.Package.CreateBundleDownloader(path, 1, GameSetting.retryTime, GameSetting.timeout);
+        downloaderOperation.Completed += CheckDownloadHotUpdateConfig;
+        downloaderOperation.BeginDownload();
+        timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateConfig);
 
-        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckDownloadHotUpdateConfig.ToString());
+        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateConfig.ToString());
     }
-    private void StartDownloadHotUpdateConfig(Request request)
+    private void CheckDownloadHotUpdateConfig(AsyncOperationBase o)
     {
-        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckDownloadHotUpdateConfig / (float)HotUpdateCodeStep.Max);
+        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.DownloadingHotUpdateConfig / (float)HotUpdateCodeStep.Max);
 
-        var getDownloadSizeAsync = request as GetDownloadSizeRequest;
-        if (getDownloadSizeAsync.downloadSize > 0)
-        {
-            var downloadAsync = getDownloadSizeAsync.DownloadAsync();
-            downloadRequestBatch = downloadAsync as DownloadRequestBatch;
-            downloadRequestBatch.completed += DownloadHotUpdateConfigFinish;
-            timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateConfig);
-        }
-        else
-        {
-            LoadHotUpdateConfig();
-        }
+        TimeManager.Instance.StopTimer(timerId);
+        if (o.Status == EOperationStatus.Succeed) LoadHotUpdateConfig();
+        else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckDownloadHotUpdateConfig);
     }
     private void DownloadingHotUpdateConfig(float t)
     {
-        var downloadedBytes = Utility.FormatBytes(downloadRequestBatch.downloadedBytes);
-        var downloadSize = Utility.FormatBytes(downloadRequestBatch.downloadSize);
-        var bandwidth = Utility.FormatBytes(downloadRequestBatch.bandwidth);
-
-        UIHotUpdateCode.Instance.SetText($"{HotUpdateCodeStep.DownloadingHotUpdateConfig}：{downloadedBytes}/{downloadSize} {bandwidth}/s");
-        float f = (float)HotUpdateCodeStep.CheckDownloadHotUpdateConfig / (float)HotUpdateCodeStep.Max;
-        float w = (HotUpdateCodeStep.DownloadingHotUpdateConfig - HotUpdateCodeStep.CheckDownloadHotUpdateConfig) / (float)HotUpdateCodeStep.Max;
-        f += downloadRequestBatch.progress * w;
+        UIHotUpdateCode.Instance.SetText($"{HotUpdateCodeStep.DownloadingHotUpdateConfig}：{downloaderOperation.CurrentDownloadBytes}/{downloaderOperation.TotalDownloadBytes}");
+        float f = (float)HotUpdateCodeStep.CheckPackageManifest / (float)HotUpdateCodeStep.Max;
+        float w = (HotUpdateCodeStep.DownloadingHotUpdateConfig - HotUpdateCodeStep.CheckPackageManifest) / (float)HotUpdateCodeStep.Max;
+        f += downloaderOperation.Progress * w;
         UIHotUpdateCode.Instance.SetSlider(f);
-    }
-    private void DownloadHotUpdateConfigFinish(DownloadRequestBatch download)
-    {
-        TimeManager.Instance.StopTimer(timerId);
-        if (download.result == DownloadRequestBase.Result.Success) LoadHotUpdateConfig();
-        else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckDownloadHotUpdateConfig);
     }
     private void LoadHotUpdateConfig()
     {
@@ -184,48 +123,35 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         AssetManager.Instance.Unload(id);
         TextAsset ta = asset as TextAsset;
         var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
-        List<string> include = new List<string>();
-        include.AddRange(config.Metadata);
-        include.AddRange(config.HotUpdateRes);
-        var getDownloadSizeAsync = Assets.Versions.GetDownloadSizeAsync(include.ToArray());
-        getDownloadSizeAsync.completed += StartDownloadHotUpdateRes;
+        int count1 = config.Metadata.Count;
+        int count2 = count1 + config.HotUpdateRes.Count;
+        string[] paths = new string[count2];
+        for (int i = 0; i < count2; i++)
+        {
+            paths[i] = i < count1 ? config.Metadata[i] : config.HotUpdateRes[i - count1];
+        }
+        downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeout);
+        downloaderOperation.Completed += CheckDownloadHotUpdateRes;
+        downloaderOperation.BeginDownload();
+        timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateRes);
 
-        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckDownloadHotUpdateRes.ToString());
+        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateRes.ToString());
     }
-    private void StartDownloadHotUpdateRes(Request request)
+    private void CheckDownloadHotUpdateRes(AsyncOperationBase o)
     {
-        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckDownloadHotUpdateRes / (float)HotUpdateCodeStep.Max);
+        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.DownloadingHotUpdateRes / (float)HotUpdateCodeStep.Max);
 
-        var getDownloadSizeAsync = request as GetDownloadSizeRequest;
-        if (getDownloadSizeAsync.downloadSize > 0)
-        {
-            var downloadAsync = getDownloadSizeAsync.DownloadAsync();
-            downloadRequestBatch = downloadAsync as DownloadRequestBatch;
-            downloadRequestBatch.completed += DownloadHotUpdateResFinish;
-            timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateRes);
-        }
-        else
-        {
-            UpdateFinish();
-        }
+        TimeManager.Instance.StopTimer(timerId);
+        if (o.Status == EOperationStatus.Succeed) UpdateFinish();
+        else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", LoadHotUpdateConfig);
     }
     private void DownloadingHotUpdateRes(float t)
     {
-        var downloadedBytes = Utility.FormatBytes(downloadRequestBatch.downloadedBytes);
-        var downloadSize = Utility.FormatBytes(downloadRequestBatch.downloadSize);
-        var bandwidth = Utility.FormatBytes(downloadRequestBatch.bandwidth);
-
-        UIHotUpdateCode.Instance.SetText($"{HotUpdateCodeStep.DownloadingHotUpdateRes}：{downloadedBytes}/{downloadSize} {bandwidth}/s");
-        float f = (float)HotUpdateCodeStep.CheckDownloadHotUpdateRes / (float)HotUpdateCodeStep.Max;
-        float w = (HotUpdateCodeStep.DownloadingHotUpdateRes - HotUpdateCodeStep.CheckDownloadHotUpdateRes) / (float)HotUpdateCodeStep.Max;
-        f += downloadRequestBatch.progress * w;
+        UIHotUpdateCode.Instance.SetText($"{HotUpdateCodeStep.DownloadingHotUpdateRes}：{downloaderOperation.CurrentDownloadBytes}/{downloaderOperation.TotalDownloadBytes}");
+        float f = (float)HotUpdateCodeStep.LoadHotUpdateConfig / (float)HotUpdateCodeStep.Max;
+        float w = (HotUpdateCodeStep.DownloadingHotUpdateRes - HotUpdateCodeStep.LoadHotUpdateConfig) / (float)HotUpdateCodeStep.Max;
+        f += downloaderOperation.Progress * w;
         UIHotUpdateCode.Instance.SetSlider(f);
-    }
-    private void DownloadHotUpdateResFinish(DownloadRequestBatch download)
-    {
-        TimeManager.Instance.StopTimer(timerId);
-        if (download.result == DownloadRequestBase.Result.Success) UpdateFinish();
-        else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", LoadHotUpdateConfig);
     }
     #endregion
 

@@ -11,7 +11,7 @@ namespace YooAsset.Editor
 {
     public class AssetBundleBuilderWindow : EditorWindow
     {
-        [MenuItem("YooAsset/AssetBundle Builder", false, 102)]
+        //[MenuItem("YooAsset/AssetBundle Builder", false, 102)]
         public static void OpenWindow()
         {
             AssetBundleBuilderWindow window = GetWindow<AssetBundleBuilderWindow>("AssetBundle Builder", true, WindowsDefine.DockedWindowTypes);

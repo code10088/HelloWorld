@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
+using UnityEngine;
 
 public class Downloader : Singletion<Downloader>, SingletionInterface
 {
@@ -14,9 +13,9 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
 
     public void Init()
     {
-        
+
     }
-    public void Download(string url, string path, Action<string, byte[]> finish, Action<string, float, float> update = null, int timeout = 5)
+    public void Download(string url, string path, Action<string, byte[]> finish, Action<string, float, float> update = null, int timeout = 10)
     {
         all.Add(new HttpItem(url, path, finish, update, timeout));
         if (updateId < 0) updateId = Updater.Instance.StartUpdate(UpdateProgress);
@@ -29,7 +28,7 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
     }
     public void CheckHttpQueue()
     {
-        if (count < GameSetting.httpLimit && all.Count > 0)
+        if (count < GameSetting.downloadLimit && all.Count > 0)
         {
             HttpItem item = all[0];
             all.RemoveAt(0);
@@ -148,17 +147,7 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
                     fs.Flush();
                     result = new byte[fs.Length];
                     fs.Read(result, 0, result.Length);
-                    MD5 md5 = new MD5CryptoServiceProvider();
-                    byte[] hash = md5.ComputeHash(fs);
                     fs.Dispose();
-                    string name = Path.GetFileName(path);
-                    StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < hash.Length; i++) sb.Append(hash[i].ToString("x2"));
-                    if (!name.Equals(sb.ToString()))
-                    {
-                        File.Delete(path);
-                        Request(null);
-                    }
                 }
             }
             else
@@ -166,7 +155,7 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
                 hwb.Dispose();
                 hwr.Abort();
                 result = null;
-                if (++retry > 3) return;
+                if (++retry > GameSetting.retryTime) return;
                 Request(null);
             }
         }

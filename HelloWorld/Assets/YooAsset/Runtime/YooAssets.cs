@@ -204,16 +204,24 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 设置异步系统参数，每帧执行消耗的最大时间切片（单位：毫秒）
+        /// 设置异步系统参数，每帧执行消耗的最大时间切片（单位：秒）
         /// </summary>
-        public static void SetOperationSystemMaxTimeSlice(long milliseconds)
+        public static void SetOperationSystemMaxTimeSlice(float seconds)
         {
-            if (milliseconds < 10)
+            if (seconds < 10)
             {
-                milliseconds = 10;
-                YooLogger.Warning($"MaxTimeSlice minimum value is 10 milliseconds.");
+                seconds = 10;
+                YooLogger.Warning($"MaxTimeSlice minimum value is 10 seconds.");
             }
-            OperationSystem.MaxTimeSlice = milliseconds;
+            OperationSystem.MaxTimeSlice = seconds;
+        }
+
+        /// <summary>
+        /// 异步系统参数
+        /// </summary>
+        public static void SetOperationSystemFrameTime(float seconds)
+        {
+            OperationSystem.FrameTime = seconds;
         }
 
         /// <summary>

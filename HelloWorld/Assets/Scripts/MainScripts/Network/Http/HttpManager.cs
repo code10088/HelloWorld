@@ -8,7 +8,7 @@ public class HttpManager : Singletion<HttpManager>
     private List<HttpItem> all = new List<HttpItem>();
     private int count = 0;
 
-    public void Post(string url, byte[] send, Action<byte[]> receive, int timeout = 5)
+    public void Post(string url, byte[] send, Action<byte[]> receive, int timeout = 10)
     {
         all.Add(new HttpItem(url, send, receive, timeout));
         CheckHttpQueue();
@@ -65,7 +65,7 @@ public class HttpManager : Singletion<HttpManager>
             {
                 hwb.Dispose();
                 result = null;
-                if (++retry > 3) return;
+                if (++retry > GameSetting.retryTime) return;
                 Request(null);
             }
         }

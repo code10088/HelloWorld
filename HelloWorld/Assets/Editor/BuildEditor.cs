@@ -2,30 +2,74 @@ using UnityEditor;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
-using xasset.editor;
-using xasset;
 using HybridCLR.Editor.Commands;
 using System;
 using System.Collections.Generic;
 using COSXML;
 using COSXML.Auth;
 using COSXML.Model.Object;
+using YooAsset.Editor;
+using System.Text;
 
 public class BuildEditor
 {
     private static BuildOptions options = BuildOptions.None;
+    private static string appversion = "1.0.0";
+    private static string resversion = "1.0.0.001";
+    private static string buildPath;
+    private static string buildPlayerPath;
+    private static BuiltinBuildParameters buildParameters;
 
     [MenuItem("Tools/BuildPlayer", false, (int)ToolsMenuSort.BuildPlayer)]
     public static void BuildPlayer()
     {
-        string path = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
-        path = $"{path}\\Build\\{DateTime.Now.ToString("yyyyMMdd_HHmmss")}\\HelloWorld.apk";
-        Directory.CreateDirectory(Path.GetDirectoryName(path));
+        SetBuildPath();
+        CheckArgs();
         BuildBundles();
+        SetBuildPlayerPath();
         HideSubScripts(true);
-        BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, path, EditorUserBuildSettings.activeBuildTarget, options);
+        BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
         HideSubScripts(false);
-        UploadFile2CDN("HelloWorld.apk", path);
+        UploadFile2CDN($"{buildParameters.BuildTarget}/{GameSetting.AppName}", buildPlayerPath);
+    }
+    private static void SetBuildPath()
+    {
+        buildPath = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
+        buildPath = $"{buildPath}\\Build";
+        Directory.CreateDirectory(Path.GetDirectoryName(buildPath));
+    }
+    private static void CheckArgs()
+    {
+        options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
+        string[] args = Environment.GetCommandLineArgs();
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i].StartsWith("--appversion:"))
+            {
+                appversion = args[i].Replace("--appversion:", string.Empty);
+                PlayerSettings.bundleVersion = appversion;
+                Debug.Log(appversion);
+
+                string str = File.ReadAllText($"{buildPath}/VersionConfig.txt", Encoding.UTF8);
+                var config = JsonConvert.DeserializeObject<VersionConfig>(str);
+                int index = config.AppVersions.FindIndex(a => a == Application.version);
+                if (index < 0) index = config.AppVersions.Count - 1;
+                resversion = config.ResVersions[index];
+                Debug.Log(resversion);
+            }
+            else if (args[i].StartsWith("--release:"))
+            {
+                bool b = bool.Parse(args[i].Replace("--release:", string.Empty));
+                if (b) options = BuildOptions.None;
+                Debug.Log(args[i]);
+            }
+        }
+    }
+    private static void SetBuildPlayerPath()
+    {
+        string time = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        buildPlayerPath = $"{buildPath}\\{buildParameters.BuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
+        Directory.CreateDirectory(Path.GetDirectoryName(buildPlayerPath));
     }
     private static void HideSubScripts(bool b)
     {
@@ -43,25 +87,6 @@ public class BuildEditor
         }
         AssetDatabase.Refresh();
     }
-    private static void CheckArgs()
-    {
-        options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
-        string[] args = Environment.GetCommandLineArgs();
-        for (int i = 0; i < args.Length; i++)
-        {
-            if (args[i].StartsWith("--version:"))
-            {
-                PlayerSettings.bundleVersion = args[i].Replace("--version:", string.Empty);
-                Debug.Log(args[i]);
-            }
-            else if (args[i].StartsWith("--release:"))
-            {
-                bool b = bool.Parse(args[i].Replace("--release:", string.Empty));
-                if (b) options = BuildOptions.None;
-                Debug.Log(args[i]);
-            }
-        }
-    }
 
     [MenuItem("Tools/BuildBundles", false, (int)ToolsMenuSort.BuildBundles)]
     public static void BuildBundles()
@@ -69,7 +94,7 @@ public class BuildEditor
         CopyConfig();
         HotAssemblyCompile.Generate();
         HybridCLRGenerate();
-        XAssetBuild();
+        YooAssetBuild();
         UploadBundles2CDN();
     }
 
@@ -109,16 +134,29 @@ public class BuildEditor
         }
         HideSubScripts(false);
     }
-    [MenuItem("Tools/XAssetBuild", false, (int)ToolsMenuSort.XAssetBuild)]
-    public static void XAssetBuild()
+    [MenuItem("Tools/YooAssetBuild", false, (int)ToolsMenuSort.YooAssetBuild)]
+    public static void YooAssetBuild()
     {
-        CheckArgs();
-        MenuItems.BuildBundles();
-        var versions = Utility.LoadFromFile<Versions>(Settings.GetCachePath(Versions.BundleFilename));
-        //BuildUpdateInfo在BuildBundles时已经更新
-        //Builder.BuildUpdateInfo(versions, hash, file.Length);
-        Builder.BuildPlayerAssets(versions);
-        File.Copy($"{Settings.PlatformCachePath}/updateinfo.json", $"{Settings.PlatformDataPath}/updateinfo.json", true);
+        buildParameters = new BuiltinBuildParameters();
+        buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
+        buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
+        buildParameters.BuildPipeline = EBuildPipeline.BuiltinBuildPipeline.ToString();
+        buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
+        buildParameters.BuildMode = EBuildMode.IncrementalBuild;
+        buildParameters.PackageName = AssetManager.PackageName;
+        buildParameters.PackageVersion = resversion;
+        buildParameters.EnableSharePackRule = false;
+        buildParameters.VerifyBuildingResult = true;
+        buildParameters.FileNameStyle = EFileNameStyle.HashName;
+        buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;
+        buildParameters.BuildinFileCopyParams = "Builtin";
+        buildParameters.EncryptionServices = new EncryptionServices();
+        buildParameters.CompressOption = ECompressOption.LZ4;
+
+        BuiltinBuildPipeline pipeline = new BuiltinBuildPipeline();
+        var buildResult = pipeline.Run(buildParameters, true);
+        if (buildResult.Success) Debug.Log("build success");
+        else Debug.LogError($"build fail:{buildResult.ErrorInfo}");
     }
     [MenuItem("Tools/UploadBundles2CDN", false, (int)ToolsMenuSort.UploadBundles2CDN)]
     public static void UploadBundles2CDN()
@@ -131,13 +169,13 @@ public class BuildEditor
         CosXml cosXml = new CosXmlServer(config, qCloudCredentialProvider);
 
         string bucket = "assets-1321503079";
-        int dir = Settings.PlatformDataPath.IndexOf("Bundles");
+        string packageOutputDir = buildParameters.GetPackageOutputDirectory();
         List<FileInfo> fileList = new List<FileInfo>();
-        FileUtils.GetAllFilePath(Settings.PlatformDataPath, fileList);
+        FileUtils.GetAllFilePath(packageOutputDir, fileList);
         for (int i = 0; i < fileList.Count; i++)
         {
             string path = fileList[i].FullName;
-            string key = path.Substring(dir).Replace("\\", "/");
+            string key = $"{buildParameters.BuildTarget}/{appversion}/{fileList[i].Name}";
             PutObjectRequest request = new PutObjectRequest(bucket, key, path);
             PutObjectResult result = cosXml.PutObject(request);
             if (!result.IsSuccessful())
@@ -148,6 +186,9 @@ public class BuildEditor
             }
         }
         Debug.Log("UploadBundleSuccess");
+
+        UploadFile2CDN($"{buildParameters.BuildTarget}/VersionConfig.txt", $"{buildPath}/VersionConfig.txt");
+        Debug.Log("UploadVersionConfigSuccess");
     }
     public static void UploadFile2CDN(string key, string path)
     {

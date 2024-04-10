@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using YooAsset;
 
 public class AsyncManager : Singletion<AsyncManager>
 {
@@ -40,7 +41,7 @@ public class AsyncManager : Singletion<AsyncManager>
     public void Update()
     {
         float t = Time.realtimeSinceStartup;
-        xasset.Scheduler._realtimeSinceStartup = t;
+        YooAssets.SetOperationSystemFrameTime(t);
         AsyncItem temp;
         for (int i = 0; i < list1.Count; i++)
         {

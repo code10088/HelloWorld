@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace YooAsset
 {
@@ -10,13 +9,12 @@ namespace YooAsset
         private static readonly List<AsyncOperationBase> _newList = new List<AsyncOperationBase>(1000);
 
         // 计时器相关
-        private static Stopwatch _watch;
-        private static long _frameTime;
+        public static float FrameTime { set; get; }
 
         /// <summary>
         /// 异步操作的最小时间片段
         /// </summary>
-        public static long MaxTimeSlice { set; get; } = long.MaxValue;
+        public static float MaxTimeSlice { set; get; } = float.MaxValue;
 
         /// <summary>
         /// 处理器是否繁忙
@@ -25,7 +23,7 @@ namespace YooAsset
         {
             get
             {
-                return _watch.ElapsedMilliseconds - _frameTime >= MaxTimeSlice;
+                return Time.realtimeSinceStartup - FrameTime >= MaxTimeSlice;
             }
         }
 
@@ -35,7 +33,6 @@ namespace YooAsset
         /// </summary>
         public static void Initialize()
         {
-            _watch = Stopwatch.StartNew();
         }
 
         /// <summary>
@@ -43,8 +40,6 @@ namespace YooAsset
         /// </summary>
         public static void Update()
         {
-            _frameTime = _watch.ElapsedMilliseconds;
-
             // 添加新增的异步操作
             if (_newList.Count > 0)
             {
@@ -99,8 +94,7 @@ namespace YooAsset
         {
             _operations.Clear();
             _newList.Clear();
-            _watch = null;
-            _frameTime = 0;
+            FrameTime = 0;
             MaxTimeSlice = long.MaxValue;
         }
 

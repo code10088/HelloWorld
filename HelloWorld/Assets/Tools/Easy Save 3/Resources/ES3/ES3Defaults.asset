@@ -36,8 +36,6 @@ MonoBehaviour:
     - HybridCLR.Runtime
     - IngameDebugConsole.Runtime
     - Luban.Runtime
-    - xasset
-    - xasset.editor
     - YooAsset
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
