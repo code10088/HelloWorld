@@ -73,21 +73,20 @@ public class BuildEditor
             if (args[i].StartsWith("--appversion:"))
             {
                 appversion = args[i].Replace("--appversion:", string.Empty);
-                PlayerSettings.bundleVersion = appversion;
-                Debug.Log(appversion);
-
                 string str = File.ReadAllText($"{BuildPath}/VersionConfig.txt", Encoding.UTF8);
                 var config = JsonConvert.DeserializeObject<VersionConfig>(str);
-                int index = config.AppVersions.FindIndex(a => a == Application.version);
+                int index = config.AppVersions.FindIndex(a => a == appversion);
                 if (index < 0) index = config.AppVersions.Count - 1;
+                appversion = config.AppVersions[index];
+                PlayerSettings.bundleVersion = appversion;
+                Debug.Log("appversion:" + appversion);
                 resversion = config.ResVersions[index];
-                Debug.Log(resversion);
+                Debug.Log("resversion:" + resversion);
             }
             else if (args[i].StartsWith("--release:"))
             {
                 bool b = bool.Parse(args[i].Replace("--release:", string.Empty));
                 if (b) options = BuildOptions.None;
-                Debug.Log(args[i]);
             }
         }
     }
@@ -174,15 +173,15 @@ public class BuildEditor
             PutObjectResult result = cosXml.PutObject(request);
             if (!result.IsSuccessful())
             {
-                Debug.Log("UploadBundleFail£º" + path);
-                Debug.Log(result.GetResultInfo());
+                Debug.LogError("upload bundle fail£º" + path);
+                Debug.LogError(result.GetResultInfo());
                 return;
             }
         }
-        Debug.Log("UploadBundleSuccess");
+        Debug.Log("upload bundle success");
 
         UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/VersionConfig.txt", $"{BuildPath}/VersionConfig.txt");
-        Debug.Log("UploadVersionConfigSuccess");
+        Debug.Log("upload version config success");
     }
     private static void UploadFile2CDN(string key, string path)
     {
@@ -199,11 +198,11 @@ public class BuildEditor
         PutObjectResult result = cosXml.PutObject(request);
         if (!result.IsSuccessful())
         {
-            Debug.Log("UploadFileFail£º" + path);
-            Debug.Log(result.GetResultInfo());
+            Debug.LogError("upload file fail:" + path);
+            Debug.LogError(result.GetResultInfo());
             return;
         }
-        Debug.Log("UploadFileSuccess£º" + path);
+        Debug.Log("upload file success:" + path);
     }
 
     private static void BuildPlayer()
