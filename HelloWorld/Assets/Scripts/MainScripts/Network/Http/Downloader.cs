@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using UnityEngine;
 
 public class Downloader : Singletion<Downloader>, SingletionInterface
 {
@@ -118,12 +117,12 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
         private void Request(object o)
         {
             var hwr = WebRequest.Create(url) as HttpWebRequest;
-            hwr.Timeout = timeout;
+            hwr.Timeout = timeout * 1000;
             hwr.Method = WebRequestMethods.File.DownloadFile;
             long saveLength = !string.IsNullOrEmpty(path) && File.Exists(path) ? new FileInfo(path).Length : 0;
             hwr.AddRange(saveLength);
             var hwb = hwr.GetResponse() as HttpWebResponse;
-            if (hwb.StatusCode == HttpStatusCode.OK)
+            if (hwb.StatusCode == HttpStatusCode.PartialContent)
             {
                 fileLength = hwb.ContentLength;
                 Stream stream = hwb.GetResponseStream();

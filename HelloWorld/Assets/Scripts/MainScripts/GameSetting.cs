@@ -9,10 +9,10 @@ public class GameSetting : Singletion<GameSetting>, SingletionInterface
     public static int httpLimit = 3;//小于threadLimit
     public static int downloadLimit = 5;//小于threadLimit
     public static int writeLimit = 3;//小于threadLimit
-    public static int recycleTime = 30;
-    public static float recycleTimeMax = 120;
+    public static int recycleTimeS = 30;
+    public static float recycleTimeMaxS = 120;
     public static int retryTime = 3;
-    public static int timeout = 10;
+    public static int timeoutS = 10;//秒
 
     //cdn
     private string cdn = "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
@@ -24,14 +24,14 @@ public class GameSetting : Singletion<GameSetting>, SingletionInterface
     public void Init()
     {
 #if UNITY_WEBGL
-        cdnPlatform = $"{cdn}/WebGL";
-        cdnVersion = $"{cdn}/WebGL/{Application.version}";
+        cdnPlatform = $"{cdn}/WebGL/";
+        cdnVersion = $"{cdn}/WebGL/{Application.version}/";
 #elif UNITY_ANDROID
-        cdnPlatform = $"{cdn}/Android";
-        cdnVersion = $"{cdn}/Android/{Application.version}";
+        cdnPlatform = $"{cdn}/Android/";
+        cdnVersion = $"{cdn}/Android/{Application.version}/";
 #elif UNITY_IOS
-        cdnPlatform = $"{cdn}/iOS";
-        cdnVersion = $"{cdn}/iOS/{Application.version}";
+        cdnPlatform = $"{cdn}/iOS/";
+        cdnVersion = $"{cdn}/iOS/{Application.version}/";
 #endif
     }
 

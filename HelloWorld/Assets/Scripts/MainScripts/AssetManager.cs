@@ -265,8 +265,8 @@ public class LoadGameObjectItem
     private void Recycle()
     {
         TimeManager.Instance.StopTimer(timerId);
-        timer += GameSetting.recycleTime;
-        timer = Math.Min(timer, GameSetting.recycleTimeMax);
+        timer += GameSetting.recycleTimeS;
+        timer = Math.Min(timer, GameSetting.recycleTimeMaxS);
         timerId = -1;
         state &= 3;
     }
@@ -343,8 +343,8 @@ public class LoadAssetItem
     private void Recycle()
     {
         TimeManager.Instance.StopTimer(timerId);
-        timer += GameSetting.recycleTime;
-        timer = Math.Min(timer, GameSetting.recycleTimeMax);
+        timer += GameSetting.recycleTimeS;
+        timer = Math.Min(timer, GameSetting.recycleTimeMaxS);
         timerId = -1;
         releaseMark = false;
     }

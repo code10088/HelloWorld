@@ -47,7 +47,7 @@ public class HttpManager : Singletion<HttpManager>
         private void Request(object o)
         {
             var hwr = WebRequest.Create(url) as HttpWebRequest;
-            hwr.Timeout = timeout;
+            hwr.Timeout = timeout * 1000;
             hwr.Method = WebRequestMethods.Http.Post;
             using (Stream stream = hwr.GetRequestStream())
             {

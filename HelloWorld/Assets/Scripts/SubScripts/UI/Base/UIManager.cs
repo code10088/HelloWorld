@@ -199,7 +199,7 @@ namespace HotAssembly
                     rt.sizeDelta = Vector2.zero;
                     baseObj.SetActive(false);
                 }
-                releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMax, 0.2f);
+                releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.2f);
                 Instance.SetEventSystemState(true);
                 Instance.InitUI();
             }

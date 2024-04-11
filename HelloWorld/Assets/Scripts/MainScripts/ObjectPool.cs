@@ -120,7 +120,7 @@ public class GameObjectPoolItem
     protected virtual void Delay()
     {
         obj?.SetActive(false);
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTime, finish: Release);
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
         param = null;
     }
     /// <summary>
@@ -260,7 +260,7 @@ public class AssetPoolItem
     }
     protected virtual void Delay()
     {
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTime, finish: Release);
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
         param = null;
     }
     /// <summary>

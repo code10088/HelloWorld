@@ -23,7 +23,7 @@ namespace HotAssembly
         }
         private void CheckDownloadHotUpdateRes()
         {
-            downloaderOperation = AssetManager.Package.CreateResourceDownloader(GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeout);
+            downloaderOperation = AssetManager.Package.CreateResourceDownloader(GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeoutS);
             if (downloaderOperation.TotalDownloadBytes > 0)
             {
                 string content = $"更新资源大小 {downloaderOperation.TotalDownloadBytes/1024f} Kb";

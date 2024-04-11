@@ -198,7 +198,7 @@ namespace HotAssembly
                     baseObj.transform.localScale = Vector3.one;
                     baseObj.SetActive(false);
                 }
-                releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMax, 0.1f);
+                releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.1f);
                 Instance.InitScene();
             }
             public void Init()

@@ -35,7 +35,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     #region Version
     private void CheckVersion()
     {
-        Downloader.Instance.Download($"{GameSetting.Instance.CDNPlatform}/VersionConfig.txt", string.Empty, CheckVersion);
+        Downloader.Instance.Download($"{GameSetting.Instance.CDNPlatform}VersionConfig.txt", string.Empty, CheckVersion);
 
         UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckVersion.ToString());
     }
@@ -54,7 +54,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
             int index = config.AppVersions.FindIndex(a => a == Application.version);
             if (index < 0)
             {
-                Application.OpenURL($"{GameSetting.Instance.CDNPlatform}/{GameSetting.AppName}");
+                Application.OpenURL($"{GameSetting.Instance.CDNPlatform}{GameSetting.AppName}");
                 Application.Quit();
             }
             else
@@ -84,7 +84,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     private void CheckDownloadHotUpdateConfig()
     {
         string path = "Assets/ZRes/GameConfig/HotUpdateConfig.txt";
-        downloaderOperation = AssetManager.Package.CreateBundleDownloader(path, 1, GameSetting.retryTime, GameSetting.timeout);
+        downloaderOperation = AssetManager.Package.CreateBundleDownloader(path, 1, GameSetting.retryTime, GameSetting.timeoutS);
         downloaderOperation.Completed += CheckDownloadHotUpdateConfig;
         downloaderOperation.BeginDownload();
         timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateConfig);
@@ -130,7 +130,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         {
             paths[i] = i < count1 ? config.Metadata[i] : config.HotUpdateRes[i - count1];
         }
-        downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeout);
+        downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeoutS);
         downloaderOperation.Completed += CheckDownloadHotUpdateRes;
         downloaderOperation.BeginDownload();
         timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateRes);

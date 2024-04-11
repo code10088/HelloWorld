@@ -208,11 +208,6 @@ namespace YooAsset
         /// </summary>
         public static void SetOperationSystemMaxTimeSlice(float seconds)
         {
-            if (seconds < 10)
-            {
-                seconds = 10;
-                YooLogger.Warning($"MaxTimeSlice minimum value is 10 seconds.");
-            }
             OperationSystem.MaxTimeSlice = seconds;
         }
 
