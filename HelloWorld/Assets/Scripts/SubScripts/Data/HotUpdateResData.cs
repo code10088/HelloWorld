@@ -1,6 +1,5 @@
 using cfg;
 using System;
-using UnityEngine;
 using YooAsset;
 
 namespace HotAssembly
@@ -28,11 +27,10 @@ namespace HotAssembly
             {
                 string content = $"更新资源大小 {downloaderOperation.TotalDownloadBytes/1024f} Kb";
                 UICommonBoxParam param = new UICommonBoxParam();
-                param.type = UICommonBoxType.SureAndCancel;
+                param.type = UICommonBoxType.Sure;
                 param.title = "Tips";
                 param.content = content;
                 param.sure = a => StartDownload();
-                param.cancel = a => Application.Quit();
                 UICommonBox.OpenCommonBox(param);
             }
             else
@@ -51,8 +49,19 @@ namespace HotAssembly
         private void CheckDownloadHotUpdateRes(AsyncOperationBase o)
         {
             TimeManager.Instance.StopTimer(timerId);
-            if (o.Status == EOperationStatus.Succeed) UpdateFinish();
-            else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckDownloadHotUpdateRes);
+            if (o.Status == EOperationStatus.Succeed)
+            {
+                UpdateFinish();
+            }
+            else
+            {
+                UICommonBoxParam param = new UICommonBoxParam();
+                param.type = UICommonBoxType.Sure;
+                param.title = "Tips";
+                param.content = "网络异常请重试";
+                param.sure = a => CheckDownloadHotUpdateRes();
+                UICommonBox.OpenCommonBox(param);
+            }
         }
         private void Downloading(float t)
         {
