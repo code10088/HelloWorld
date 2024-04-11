@@ -25,7 +25,7 @@ public class BuildEditor
             if (string.IsNullOrEmpty(buildPath))
             {
                 buildPath = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
-                buildPath = $"{buildPath}\\Build";
+                buildPath = $"{buildPath}/Build";
                 Directory.CreateDirectory(Path.GetDirectoryName(buildPath));
             }
             return buildPath;
@@ -39,8 +39,8 @@ public class BuildEditor
     }
     private static void HideSubScripts(bool b)
     {
-        string source = Application.dataPath + "\\Scripts\\SubScripts";
-        string dest = Application.dataPath + "\\Scripts\\.SubScripts";
+        string source = Application.dataPath + "/Scripts/SubScripts";
+        string dest = Application.dataPath + "/Scripts/.SubScripts";
         if (b)
         {
             if (Directory.Exists(dest)) Directory.Delete(dest, true);
@@ -95,17 +95,17 @@ public class BuildEditor
     {
         string path = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
         List<FileInfo> list = new List<FileInfo>();
-        FileUtils.GetAllFilePath($"{path}\\Luban\\Client\\OutCodes", list);
+        FileUtils.GetAllFilePath($"{path}/Luban/Client/OutCodes", list);
         for (int i = 0; i < list.Count; i++)
         {
-            string target = $"{Application.dataPath}\\Scripts\\SubScripts\\Config\\Auto\\{list[i].Name}";
+            string target = $"{Application.dataPath}/Scripts/SubScripts/Config/Auto/{list[i].Name}";
             File.Copy(list[i].FullName, target, true);
         }
         list.Clear();
-        FileUtils.GetAllFilePath($"{path}\\Luban\\Client\\OutBytes", list);
+        FileUtils.GetAllFilePath($"{path}/Luban/Client/OutBytes", list);
         for (int i = 0; i < list.Count; i++)
         {
-            string target = $"{Application.dataPath}\\ZRes\\DataConfig\\{list[i].Name}";
+            string target = $"{Application.dataPath}/ZRes/DataConfig/{list[i].Name}";
             File.Copy(list[i].FullName, target, true);
         }
         AssetDatabase.Refresh();
@@ -181,7 +181,6 @@ public class BuildEditor
         Debug.Log("upload bundle success");
 
         UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/VersionConfig.txt", $"{BuildPath}/VersionConfig.txt");
-        Debug.Log("upload version config success");
     }
     private static void UploadFile2CDN(string key, string path)
     {
