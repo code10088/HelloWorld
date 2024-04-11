@@ -88,7 +88,7 @@ namespace HotAssembly
         {
             SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
             SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
-            SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon3");
+            GameDebug.Log("SetSprite");
         }
         private void LoadBulletFromPool()
         {
