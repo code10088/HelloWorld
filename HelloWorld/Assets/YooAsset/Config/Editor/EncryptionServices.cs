@@ -6,10 +6,9 @@ public class EncryptionServices : IEncryptionServices
 {
     public EncryptResult Encrypt(EncryptFileInfo fileInfo)
     {
-        int offset = 8;
         var fileData = File.ReadAllBytes(fileInfo.FilePath);
-        var encryptedData = new byte[fileData.Length + offset];
-        Buffer.BlockCopy(fileData, 0, encryptedData, offset, fileData.Length);
+        var encryptedData = new byte[fileData.Length + 8];
+        Buffer.BlockCopy(fileData, 0, encryptedData, 8, fileData.Length);
 
         EncryptResult result = new EncryptResult();
         result.Encrypted = true;
