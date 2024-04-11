@@ -16,6 +16,7 @@ public class BuildEditor
     private static BuildOptions options = BuildOptions.None;
     private static string appversion = "1.0.0";
     private static string resversion = "1.0.0.001";
+    private static bool latestAppVersion = false;
     private static string buildPath;
 
     private static string BuildPath
@@ -66,7 +67,6 @@ public class BuildEditor
     }
     private static void CheckArgs()
     {
-        options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
         string[] args = Environment.GetCommandLineArgs();
         for (int i = 0; i < args.Length; i++)
         {
@@ -76,7 +76,8 @@ public class BuildEditor
                 string str = File.ReadAllText($"{BuildPath}/VersionConfig.txt", Encoding.UTF8);
                 var config = JsonConvert.DeserializeObject<VersionConfig>(str);
                 int index = config.AppVersions.FindIndex(a => a == appversion);
-                if (index < 0) index = config.AppVersions.Count - 1;
+                index = Math.Max(index, 0);
+                latestAppVersion = index == 0;
                 appversion = config.AppVersions[index];
                 PlayerSettings.bundleVersion = appversion;
                 Debug.Log("appversion:" + appversion);
@@ -86,7 +87,7 @@ public class BuildEditor
             else if (args[i].StartsWith("--release:"))
             {
                 bool b = bool.Parse(args[i].Replace("--release:", string.Empty));
-                if (b) options = BuildOptions.None;
+                if (!b) options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
             }
         }
     }
@@ -115,6 +116,7 @@ public class BuildEditor
     {
         HideSubScripts(true);
         PrebuildCommand.GenerateAll();
+        HideSubScripts(false);
         TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>("Assets/ZRes/GameConfig/HotUpdateConfig.txt");
         var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
         string stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
@@ -124,7 +126,6 @@ public class BuildEditor
             var name = Path.GetFileNameWithoutExtension(path);
             File.Copy($"{stripDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
         }
-        HideSubScripts(false);
     }
     [MenuItem("Tools/YooAssetBuild", false, (int)ToolsMenuSort.YooAssetBuild)]
     public static void YooAssetBuild()
@@ -171,14 +172,16 @@ public class BuildEditor
             string key = $"{EditorUserBuildSettings.activeBuildTarget}/{appversion}/{fileList[i].Name}";
             PutObjectRequest request = new PutObjectRequest(bucket, key, path);
             PutObjectResult result = cosXml.PutObject(request);
-            if (!result.IsSuccessful())
+            if (result.IsSuccessful())
+            {
+                Debug.Log("upload file success:" + path);
+            }
+            else
             {
                 Debug.LogError("upload bundle fail£º" + path);
                 Debug.LogError(result.GetResultInfo());
-                return;
             }
         }
-        Debug.Log("upload bundle success");
 
         UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/VersionConfig.txt", $"{BuildPath}/VersionConfig.txt");
     }
@@ -195,13 +198,15 @@ public class BuildEditor
         key = key.Replace("\\", "/");
         PutObjectRequest request = new PutObjectRequest(bucket, key, path);
         PutObjectResult result = cosXml.PutObject(request);
-        if (!result.IsSuccessful())
+        if (result.IsSuccessful())
+        {
+            Debug.Log("upload file success:" + path);
+        }
+        else
         {
             Debug.LogError("upload file fail:" + path);
             Debug.LogError(result.GetResultInfo());
-            return;
         }
-        Debug.Log("upload file success:" + path);
     }
 
     private static void BuildPlayer()
@@ -213,6 +218,6 @@ public class BuildEditor
         HideSubScripts(true);
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
         HideSubScripts(false);
-        UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{GameSetting.AppName}", buildPlayerPath);
+        if (latestAppVersion) UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{GameSetting.AppName}", buildPlayerPath);
     }
 }

@@ -5,7 +5,6 @@ public class UIHotUpdateCode : MonoBehaviour
 {
     public static UIHotUpdateCode Instance;
     public UIHotUpdateCodeComponent component = new UIHotUpdateCodeComponent();
-    private int loadId = -1;
     private Action retry;
 
     private void Awake()
@@ -39,10 +38,6 @@ public class UIHotUpdateCode : MonoBehaviour
     private void OnClickQuit()
     {
         Application.Quit();
-    }
-    public void Finish()
-    {
-        AssetManager.Instance.Unload(loadId);
     }
     public void Destroy()
     {

@@ -71,6 +71,7 @@ namespace HotAssembly
         }
         private void UpdateFinish()
         {
+            downloaderOperation = null;
             hotUpdateResFinish?.Invoke();
             hotUpdateResFinish = null;
         }

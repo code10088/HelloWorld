@@ -147,7 +147,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
 
     private void UpdateFinish()
     {
-        UIHotUpdateCode.Instance.Finish();
+        downloaderOperation = null;
         hotUpdateCodeFinish?.Invoke();
         hotUpdateCodeFinish = null;
     }
