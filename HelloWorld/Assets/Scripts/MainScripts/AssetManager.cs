@@ -26,7 +26,7 @@ public class AssetManager : Singletion<AssetManager>
         var parameters = new EditorSimulateModeParameters();
         var path = EditorSimulateModeHelper.SimulateBuild(EDefaultBuildPipeline.BuiltinBuildPipeline, PackageName);
         parameters.CacheBootVerifyLevel = EVerifyLevel.Middle;
-        parameters.AutoDestroyAssetProvider = true;
+        parameters.AutoDestroyAssetProvider = false;
         parameters.BreakpointResumeFileSize = 102400;
         parameters.SimulateManifestFilePath = path;
         var operation = package.InitializeAsync(parameters);
@@ -36,7 +36,7 @@ public class AssetManager : Singletion<AssetManager>
         string fallbackHostServer = GameSetting.Instance.CDNVersion;
         var parameters = new WebPlayModeParameters();
         parameters.CacheBootVerifyLevel = EVerifyLevel.Middle;
-        parameters.AutoDestroyAssetProvider = true;
+        parameters.AutoDestroyAssetProvider = false;
         parameters.BreakpointResumeFileSize = 102400;
         parameters.BuildinQueryServices = new QueryServices();
         parameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
@@ -47,7 +47,7 @@ public class AssetManager : Singletion<AssetManager>
         string fallbackHostServer = GameSetting.Instance.CDNVersion;
         var parameters = new HostPlayModeParameters();
         parameters.CacheBootVerifyLevel = EVerifyLevel.Middle;
-        parameters.AutoDestroyAssetProvider = true;
+        parameters.AutoDestroyAssetProvider = false;
         parameters.BreakpointResumeFileSize = 102400;
         parameters.BuildinQueryServices = new QueryServices();
         parameters.DecryptionServices = new DecryptionServices();
@@ -148,20 +148,19 @@ public class AssetManager : Singletion<AssetManager>
             itemId = ++uniqueId;
             this.action = action;
             ah = package.LoadAssetAsync<T>(path);
-            if (ah == null) Finish(null);
-            else ah.Completed += Finish;
+            ah.Completed += Finish;
         }
         private void Finish(AssetHandle _ah)
         {
-            Object asset = ah == null ? null : ah.AssetObject;
-            action?.Invoke(itemId, asset);
+            ah.Completed -= Finish;
+            action?.Invoke(itemId, ah.AssetObject);
         }
         public void Unload()
         {
             cache.Enqueue(this);
-            if (ah == null) return;
-            ah.Completed -= Finish;
             ah.Release();
+            var asset = ah.GetAssetInfo();
+            package.TryUnloadUnusedAsset(asset);
             ah = null;
             action = null;
         }

@@ -120,9 +120,9 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     {
         UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.LoadHotUpdateConfig / (float)HotUpdateCodeStep.Max);
 
-        AssetManager.Instance.Unload(id);
         TextAsset ta = asset as TextAsset;
         var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
+        AssetManager.Instance.Unload(id);
         int count1 = config.Metadata.Count;
         int count2 = count1 + config.HotUpdateRes.Count;
         string[] paths = new string[count2];

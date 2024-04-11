@@ -46,9 +46,9 @@ public class GameStart : MonoSingletion<GameStart>
     }
     private void LoadMetadataRes(int id, Object asset)
     {
-        AssetManager.Instance.Unload(id);
         TextAsset ta = asset as TextAsset;
         var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
+        AssetManager.Instance.Unload(id);
         string[] path = config.Metadata.ToArray();
         AssetManager.Instance.Load(ref loadId, path, LoadMetadataForAOTAssembly);
     }
@@ -67,7 +67,7 @@ public class GameStart : MonoSingletion<GameStart>
     }
     private void StartHotAssembly()
     {
-#if UNITY_EDITOR
+#if UNITY_EDITOR && !HotUpdateDebug
         Type t = Type.GetType("HotAssembly.GameStart");
         PropertyInfo p = t.BaseType.GetProperty("Instance");
         object o = p.GetMethod.Invoke(null, null);
@@ -80,9 +80,9 @@ public class GameStart : MonoSingletion<GameStart>
     }
     private void StartHotAssembly(int id, Object asset)
     {
-        AssetManager.Instance.Unload(id);
         TextAsset ta = asset as TextAsset;
         var hotAssembly = Assembly.Load(ta.bytes);
+        AssetManager.Instance.Unload(id);
         Type t = hotAssembly.GetType("HotAssembly.GameStart");
         PropertyInfo p = t.BaseType.GetProperty("Instance");
         object o = p.GetMethod.Invoke(null, null);
