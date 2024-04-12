@@ -37,6 +37,7 @@ YooAsset
 	修改OperationSystem的计时方式
 	屏蔽[MenuItem("YooAsset/AssetBundle Builder", false, 102)]
 	TaskCopyBuildinFiles添加写入BuildinFile.txt
+	BuildParameters检测输出目录是否存在，存在的情况下也可以打包，避免频繁修改VersionConfig文件
 	
 ECS+Job+Brust
 	ECS主要优势在于网络同步数据回滚

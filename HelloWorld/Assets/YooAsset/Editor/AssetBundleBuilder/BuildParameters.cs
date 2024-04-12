@@ -148,8 +148,7 @@ namespace YooAsset.Editor
                 string packageOutputDirectory = GetPackageOutputDirectory();
                 if (Directory.Exists(packageOutputDirectory))
                 {
-                    string message = BuildLogger.GetErrorMessage(ErrorCode.PackageOutputDirectoryExists, $"Package outout directory exists: {packageOutputDirectory}");
-                    throw new Exception(message);
+                    BuildLogger.Log($"Package outout directory exists: {packageOutputDirectory}");
                 }
             }
 
