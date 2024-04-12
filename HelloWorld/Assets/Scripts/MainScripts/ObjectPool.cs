@@ -119,9 +119,16 @@ public class GameObjectPoolItem
     }
     protected virtual void Delay()
     {
-        obj?.SetActive(false);
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
-        param = null;
+        if (obj == null)
+        {
+            Release();
+        }
+        else
+        {
+            obj.SetActive(false);
+            if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
+            param = null;
+        }
     }
     /// <summary>
     /// 请使用GameObjectPool
@@ -140,7 +147,7 @@ public class GameObjectPoolItem
     {
         TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
-        obj?.SetActive(true);
+        if (obj != null) obj.SetActive(true);
     }
     /// <summary>
     /// 请使用GameObjectPool

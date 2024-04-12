@@ -166,6 +166,9 @@ public class AssetManager : Singletion<AssetManager>
         }
     }
 }
+/// <summary>
+/// 父节点删除时必须Release，否则加载状态会错乱(虽有办法避免，但不卸载导致的资源常驻无法避免)
+/// </summary>
 public class LoadGameObjectItem
 {
     protected string path;
