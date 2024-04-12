@@ -42,7 +42,7 @@ public class GameStart : MonoSingletion<GameStart>
     private void LoadHotUpdateConfig()
     {
         int loadId = -1;
-        AssetManager.Instance.Load<TextAsset>(ref loadId, "Assets/ZRes/GameConfig/HotUpdateConfig.txt", LoadMetadataRes);
+        AssetManager.Instance.Load<TextAsset>(ref loadId, GameSetting.HotUpdateConfigPath, LoadMetadataRes);
     }
     private void LoadMetadataRes(int id, Object asset)
     {

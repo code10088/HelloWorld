@@ -13,6 +13,7 @@ public class GameSetting : Singletion<GameSetting>, SingletionInterface
     public static float recycleTimeMaxS = 120;
     public static int retryTime = 3;
     public static int timeoutS = 10;//√Î
+    public static string HotUpdateConfigPath = "Assets/ZRes/GameConfig/HotUpdateConfig.txt";
 
     //cdn
     private string cdn = "https://assets-1321503079.cos.ap-beijing.myqcloud.com";

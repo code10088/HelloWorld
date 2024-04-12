@@ -81,10 +81,9 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     #endregion
 
     #region Config
-    private string hotUpdateConfigPath = "Assets/ZRes/GameConfig/HotUpdateConfig.txt";
     private void CheckDownloadHotUpdateConfig()
     {
-        downloaderOperation = AssetManager.Package.CreateBundleDownloader(hotUpdateConfigPath, 1, GameSetting.retryTime, GameSetting.timeoutS);
+        downloaderOperation = AssetManager.Package.CreateBundleDownloader(GameSetting.HotUpdateConfigPath, 1, GameSetting.retryTime, GameSetting.timeoutS);
         downloaderOperation.Completed += CheckDownloadHotUpdateConfig;
         downloaderOperation.BeginDownload();
 
@@ -100,7 +99,8 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     private void LoadHotUpdateConfig()
     {
         int loadId = -1;
-        AssetManager.Instance.Load<TextAsset>(ref loadId, hotUpdateConfigPath, CheckDownloadHotUpdateRes);
+        AssetManager.Instance.Load<TextAsset>(ref loadId, GameSetting.HotUpdateConfigPath, CheckDownloadHotUpdateRes);
+
         UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.LoadHotUpdateConfig.ToString());
     }
     #endregion

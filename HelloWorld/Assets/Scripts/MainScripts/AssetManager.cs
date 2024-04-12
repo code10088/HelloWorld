@@ -11,10 +11,10 @@ public class AssetManager : Singletion<AssetManager>
     private static Queue<AssetItem> cache = new();
     private static int uniqueId = 0;
 
+    public const string PackageName = "All";
     private static ResourcePackage package;
     private Action initFinish;
 
-    public const string PackageName = "All";
     public static ResourcePackage Package => package;
 
     public void Init(Action action)
