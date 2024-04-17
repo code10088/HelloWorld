@@ -17,9 +17,17 @@ public class SKCP
     private Kcp<KcpSegment> kcp;
     private KcpReceiveItem kcpReceive;
     private Queue<KcpSendItem> sendPool = new Queue<KcpSendItem>();
+    private Queue<byte[]> receivePool = new Queue<byte[]>();
 
     private int connectTimer = -1;
     private bool connectMark = false;
+    private byte[] receiveBuffer = new byte[1024];
+    private byte[] headBuffer = new byte[4];
+    private byte[] bodyBuffer;
+    private int headPos = 0;
+    private int bodyPos = 0;
+    private int headLength = 4;
+    private int bodyLength = 0;
 
     public void Init(string ip, ushort port)
     {
@@ -97,18 +105,17 @@ public class SKCP
                     kcp.Send(nmb.Serialize());
                 }
             }
-
-            int len = 0;
-            while ((len = kcp.PeekSize()) > 0)
+            BeginReceive();
+            while (receivePool.Count > 0)
             {
                 if (!connectMark)
                 {
                     return;
                 }
-                var buffer = new byte[len];
-                if (kcp.Recv(buffer) >= 0)
+                lock (receivePool)
                 {
-                    Receive(buffer);
+                    byte[] bytes = receivePool.Dequeue();
+                    Deserialize(bytes);
                 }
             }
             if (!connectMark) return;
@@ -129,7 +136,57 @@ public class SKCP
     {
         kcp.Input(buffer.Span);
     }
-    private void Receive(byte[] buffer)
+    private void BeginReceive()
+    {
+        int len = 0;
+        while ((len = kcp.PeekSize()) > 0)
+        {
+            if (!connectMark)
+            {
+                return;
+            }
+            var buffer = new byte[len];
+            if (kcp.Recv(buffer) >= 0)
+            {
+                Parse(buffer);
+            }
+        }
+    }
+    private void Parse(byte[] buffer)
+    {
+        receiveBuffer = buffer;
+        int receiveLength = buffer.Length;
+        int receivePos = 0;
+        while (receivePos < receiveLength)
+        {
+            if (headPos < headLength)
+            {
+                int l = Math.Min(headLength - headPos, receiveLength - receivePos);
+                Buffer.BlockCopy(receiveBuffer, receivePos, headBuffer, headPos, l);
+                receivePos += l;
+                headPos += l;
+                if (headPos == headLength)
+                {
+                    bodyLength = BitConverter.ToInt32(headBuffer, 0);
+                    bodyBuffer = new byte[bodyLength];
+                }
+            }
+            else
+            {
+                int l = Math.Min(bodyLength - bodyPos, receiveLength - receivePos);
+                Buffer.BlockCopy(receiveBuffer, receivePos, bodyBuffer, bodyPos, l);
+                receivePos += l;
+                bodyPos += l;
+                if (bodyPos == bodyLength)
+                {
+                    lock (receivePool) receivePool.Enqueue(bodyBuffer);
+                    headPos = 0;
+                    bodyPos = 0;
+                }
+            }
+        }
+    }
+    private void Deserialize(byte[] buffer)
     {
         bool success = SocketManager.Instance.Deserialize(buffer);
         if (!success) Reconect();
