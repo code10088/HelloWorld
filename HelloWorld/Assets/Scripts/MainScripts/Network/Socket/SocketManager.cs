@@ -21,7 +21,7 @@ public class SocketManager : Singletion<SocketManager>
     {
         this.deserialize = deserialize;
     }
-    public void Create(SType st, string ip, ushort port)
+    public void Create(SType st, string ip, ushort port, uint connectId = 0)
     {
         if (st < SType.T2K)
         {
@@ -34,7 +34,7 @@ public class SocketManager : Singletion<SocketManager>
         {
             if (kcp.ContainsKey(st)) return;
             SKCP so = new SKCP();
-            so.Init(ip, port);
+            so.Init(ip, port, connectId);
             kcp.Add(st, so);
         }
     }

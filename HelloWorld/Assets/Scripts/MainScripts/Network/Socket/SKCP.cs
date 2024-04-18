@@ -10,60 +10,39 @@ using System.Threading;
 
 public class SKCP
 {
-    private string ip;
-    private ushort port;
+    private EndPoint endPoint;
     private Socket socket;
     private Thread thread;
     private Kcp<KcpSegment> kcp;
-    private KcpReceiveItem kcpReceive;
+    private KcpSend kcpSend;
+    private uint connectId;
     private Queue<KcpSendItem> sendPool = new Queue<KcpSendItem>();
-    private Queue<byte[]> receivePool = new Queue<byte[]>();
 
-    private int connectTimer = -1;
     private bool connectMark = false;
     private byte[] receiveBuffer = new byte[1024];
-    private byte[] headBuffer = new byte[4];
-    private byte[] bodyBuffer;
-    private int headPos = 0;
-    private int bodyPos = 0;
-    private int headLength = 4;
-    private int bodyLength = 0;
 
-    public void Init(string ip, ushort port)
+    public void Init(string ip, ushort port, uint connectId)
     {
-        this.ip = ip;
-        this.port = port;
-        kcpReceive = new KcpReceiveItem(Receive);
+        IPAddress address = IPAddress.Parse(ip);
+        endPoint = new IPEndPoint(address, port);
+        kcpSend = new KcpSend(Send);
+        this.connectId = connectId;
         Connect();
     }
 
     #region 连接
     private void Connect()
     {
-        IPAddress address = IPAddress.Parse(ip);
-        IPEndPoint endPoint = new IPEndPoint(address, port);
-        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Udp);
-        socket.BeginConnect(endPoint, ConnectCallback, null);
-        if (connectTimer < 0) connectTimer = TimeManager.Instance.StartTimer(10, finish: Reconect);
-    }
-    private void ConnectCallback(IAsyncResult ar)
-    {
-        TimeManager.Instance.StopTimer(connectTimer);
-        socket.EndConnect(ar);
-        if (ar.IsCompleted)
-        {
-            connectMark = true;
-            thread = new Thread(Handle);
-            thread.Start();
-            kcp = new Kcp<KcpSegment>(port, kcpReceive);
-            kcp.NoDelay(1, 10, 2, 1);
-            kcp.WndSize(64, 64);
-            kcp.SetMtu(512);
-        }
-        else
-        {
-            Reconect();
-        }
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        socket.Bind(endPoint);
+
+        kcp = new Kcp<KcpSegment>(connectId, kcpSend);
+        kcp.NoDelay(1, 10, 2, 1);
+        kcp.WndSize();
+        kcp.SetMtu();
+
+        thread = new Thread(Handle);
+        thread.Start();
     }
     /// <summary>
     /// 断线重连
@@ -83,7 +62,6 @@ public class SKCP
         kcp.Dispose();
         kcp = null;
         sendPool.Clear();
-        TimeManager.Instance.StopTimer(connectTimer);
     }
     #endregion
 
@@ -93,31 +71,8 @@ public class SKCP
         {
             kcp.Update(DateTime.UtcNow);
             if (!connectMark) return;
-            while (sendPool.Count > 0)
-            {
-                if (!connectMark)
-                {
-                    return;
-                }
-                lock (sendPool)
-                {
-                    KcpSendItem nmb = sendPool.Dequeue();
-                    kcp.Send(nmb.Serialize());
-                }
-            }
-            BeginReceive();
-            while (receivePool.Count > 0)
-            {
-                if (!connectMark)
-                {
-                    return;
-                }
-                lock (receivePool)
-                {
-                    byte[] bytes = receivePool.Dequeue();
-                    Deserialize(bytes);
-                }
-            }
+            Send();
+            Receive();
             if (!connectMark) return;
             Thread.Sleep(GameSetting.updateTimeSliceMS);
         }
@@ -129,15 +84,32 @@ public class SKCP
         KcpSendItem nmb = new KcpSendItem(id, msg);
         lock (sendPool) sendPool.Enqueue(nmb);
     }
+    private void Send()
+    {
+        while (sendPool.Count > 0)
+        {
+            if (!connectMark)
+            {
+                return;
+            }
+            lock (sendPool)
+            {
+                KcpSendItem nmb = sendPool.Dequeue();
+                nmb.Send(kcp);
+            }
+        }
+    }
+    private void Send(byte[] buffer)
+    {
+        socket.SendTo(buffer, endPoint);
+    }
     #endregion
 
     #region 接收
-    private void Receive(Memory<byte> buffer)
+    private void Receive()
     {
-        kcp.Input(buffer.Span);
-    }
-    private void BeginReceive()
-    {
+        int receiveLength = socket.ReceiveFrom(receiveBuffer, ref endPoint);
+        kcp.Input(receiveBuffer.AsSpan(0, receiveLength));
         int len = 0;
         while ((len = kcp.PeekSize()) > 0)
         {
@@ -148,41 +120,7 @@ public class SKCP
             var buffer = new byte[len];
             if (kcp.Recv(buffer) >= 0)
             {
-                Parse(buffer);
-            }
-        }
-    }
-    private void Parse(byte[] buffer)
-    {
-        receiveBuffer = buffer;
-        int receiveLength = buffer.Length;
-        int receivePos = 0;
-        while (receivePos < receiveLength)
-        {
-            if (headPos < headLength)
-            {
-                int l = Math.Min(headLength - headPos, receiveLength - receivePos);
-                Buffer.BlockCopy(receiveBuffer, receivePos, headBuffer, headPos, l);
-                receivePos += l;
-                headPos += l;
-                if (headPos == headLength)
-                {
-                    bodyLength = BitConverter.ToInt32(headBuffer, 0);
-                    bodyBuffer = new byte[bodyLength];
-                }
-            }
-            else
-            {
-                int l = Math.Min(bodyLength - bodyPos, receiveLength - receivePos);
-                Buffer.BlockCopy(receiveBuffer, receivePos, bodyBuffer, bodyPos, l);
-                receivePos += l;
-                bodyPos += l;
-                if (bodyPos == bodyLength)
-                {
-                    lock (receivePool) receivePool.Enqueue(bodyBuffer);
-                    headPos = 0;
-                    bodyPos = 0;
-                }
+                Deserialize(buffer);
             }
         }
     }
@@ -193,6 +131,18 @@ public class SKCP
     }
     #endregion
 
+    class KcpSend : IKcpCallback
+    {
+        private Action<byte[]> Out;
+        public KcpSend(Action<byte[]> _out)
+        {
+            Out = _out;
+        }
+        public void Output(IMemoryOwner<byte> buffer, int avalidLength)
+        {
+            using (buffer) Out(buffer.Memory.Slice(0, avalidLength).ToArray());
+        }
+    }
     class KcpSendItem
     {
         private ushort id;
@@ -202,7 +152,11 @@ public class SKCP
             this.id = id;
             this.msg = msg;
         }
-        public byte[] Serialize()
+        public void Send(Kcp<KcpSegment> kcp)
+        {
+            kcp.Send(Serialize());
+        }
+        private byte[] Serialize()
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -220,18 +174,6 @@ public class SKCP
                 Buffer.BlockCopy(source, 0, result, 6, l);
                 return result;
             }
-        }
-    }
-    class KcpReceiveItem : IKcpCallback
-    {
-        private Action<Memory<byte>> Out;
-        public KcpReceiveItem(Action<Memory<byte>> _out)
-        {
-            Out = _out;
-        }
-        public void Output(IMemoryOwner<byte> buffer, int avalidLength)
-        {
-            using (buffer) Out(buffer.Memory.Slice(0, avalidLength));
         }
     }
 }

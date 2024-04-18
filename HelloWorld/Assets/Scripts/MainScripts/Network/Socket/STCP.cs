@@ -8,12 +8,10 @@ using System.Threading;
 
 public class STCP
 {
-    private string ip;
-    private ushort port;
+    private EndPoint endPoint;
     private Socket socket;
     private Thread thread;
     private Queue<TcpSendItem> sendPool = new Queue<TcpSendItem>();
-    private Queue<byte[]> receivePool = new Queue<byte[]>();
 
     private int connectTimer = -1;
     private int receiveTimer = -1;
@@ -31,16 +29,14 @@ public class STCP
 
     public void Init(string ip, ushort port)
     {
-        this.ip = ip;
-        this.port = port;
+        IPAddress address = IPAddress.Parse(ip);
+        endPoint = new IPEndPoint(address, port);
         Connect();
     }
 
     #region 连接
     private void Connect()
     {
-        IPAddress address = IPAddress.Parse(ip);
-        IPEndPoint endPoint = new IPEndPoint(address, port);
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         socket.BeginConnect(endPoint, ConnectCallback, null);
         if (connectTimer < 0) connectTimer = TimeManager.Instance.StartTimer(10, finish: Reconect);
@@ -77,7 +73,6 @@ public class STCP
         socket.Close();
         socket = null;
         sendPool.Clear();
-        receivePool.Clear();
         TimeManager.Instance.StopTimer(connectTimer);
         TimeManager.Instance.StopTimer(receiveTimer);
         sendFailCount = 0;
@@ -95,44 +90,33 @@ public class STCP
         while (true)
         {
             if (!connectMark) return;
-            while (sendPool.Count > 0)
-            {
-                if (!connectMark)
-                {
-                    return;
-                }
-                lock (sendPool)
-                {
-                    TcpSendItem nmb = sendPool.Dequeue();
-                    nmb.Send(this);
-                }
-            }
-            BeginReceive();
-            while (receivePool.Count > 0)
-            {
-                if (!connectMark)
-                {
-                    return;
-                }
-                lock (receivePool)
-                {
-                    byte[] bytes = receivePool.Dequeue();
-                    Deserialize(bytes);
-                }
-            }
+            Send();
+            Receive();
             if (!connectMark) return;
             Thread.Sleep(GameSetting.updateTimeSliceMS);
         }
     }
 
     #region 发送
-    private void BeginSend(byte[] bytes, AsyncCallback callback)
+    public void Send(ushort id, IExtensible msg)
     {
-        socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, callback, null);
+        TcpSendItem nmb = new TcpSendItem(id, msg);
+        lock (sendPool) sendPool.Enqueue(nmb);
     }
-    private int EndSend(IAsyncResult ar)
+    private void Send()
     {
-        return socket.EndSend(ar);
+        while (sendPool.Count > 0)
+        {
+            if (!connectMark)
+            {
+                return;
+            }
+            lock (sendPool)
+            {
+                TcpSendItem nmb = sendPool.Dequeue();
+                nmb.Send(socket, Send);
+            }
+        }
     }
     private void Send(bool result, TcpSendItem nmb)
     {
@@ -150,15 +134,10 @@ public class STCP
             Reconect();
         }
     }
-    public void Send(ushort id, IExtensible msg)
-    {
-        TcpSendItem nmb = new TcpSendItem(id, msg);
-        lock (sendPool) sendPool.Enqueue(nmb);
-    }
     #endregion
 
     #region 接收
-    private void BeginReceive()
+    private void Receive()
     {
         if (receiveMark)
         {
@@ -219,7 +198,7 @@ public class STCP
                 bodyPos += l;
                 if (bodyPos == bodyLength)
                 {
-                    lock (receivePool) receivePool.Enqueue(bodyBuffer);
+                    Deserialize(bodyBuffer);
                     headPos = 0;
                     bodyPos = 0;
                 }
@@ -235,23 +214,26 @@ public class STCP
 
     class TcpSendItem
     {
-        private STCP so;
-        private int sendTimer = -1;
-        private int retryTime;
         private ushort id;
         private IExtensible msg;
+        private Socket socket;
+        private Action<bool, TcpSendItem> finish;
+        private int sendTimer = -1;
+        private int retryTime;
         public TcpSendItem(ushort id, IExtensible msg)
         {
             this.id = id;
             this.msg = msg;
         }
-        public void Send(STCP so)
+        public void Send(Socket socket, Action<bool, TcpSendItem> finish)
         {
-            this.so = so;
-            so.BeginSend(Serialize(msg), SendCallback);
+            this.socket = socket;
+            this.finish = finish;
+            byte[] bytes = Serialize();
+            socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, SendCallback, null);
             if (sendTimer < 0) sendTimer = TimeManager.Instance.StartTimer(10, finish: () => SendCallback(false));
         }
-        private byte[] Serialize(IExtensible msg)
+        private byte[] Serialize()
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -273,7 +255,7 @@ public class STCP
         private void SendCallback(IAsyncResult ar)
         {
             TimeManager.Instance.StopTimer(sendTimer);
-            int sendLength = so.EndSend(ar);
+            int sendLength = socket.EndSend(ar);
             SendCallback(sendLength > 0);
         }
         private void SendCallback(bool result)
@@ -281,12 +263,12 @@ public class STCP
             if (result)
             {
                 retryTime = 0;
-                so.Send(true, this);
+                finish(true, this);
             }
             else if (retryTime < 3)
             {
                 retryTime++;
-                so.Send(false, this);
+                finish(false, this);
             }
             else
             {
