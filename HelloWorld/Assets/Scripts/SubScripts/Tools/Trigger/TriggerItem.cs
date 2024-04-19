@@ -113,15 +113,15 @@ namespace HotAssembly
 				var conditionConfig = ConfigManager.Instance.GameConfigs.TbConditionConfig[a];
 				switch (conditionConfig.ConditionType)
 				{
-					case "Condition_Action":
+					case ConditionType.Condition_Action:
 						var action = new Condition_Action(conditionConfig);
 						action.Init(_condition);
 						temp = action;
 						break;
-					case "TriggerCondition_Random":
+					case ConditionType.TriggerCondition_Random:
 						temp = new TriggerCondition_Random(conditionConfig);
 						break;
-					case "TriggerCondition_AccCount":
+					case ConditionType.TriggerCondition_AccCount:
 						var acc = new TriggerCondition_AccCount(conditionConfig);
 						acc.Init(this);
 						temp = acc;
@@ -143,33 +143,33 @@ namespace HotAssembly
 				var actionConfig = ConfigManager.Instance.GameConfigs.TbActionConfig[actionId];
 				switch (actionConfig.ActionType)
 				{
-					case "Action_Action":
+					case ActionType.Action_Action:
 						var action = new Action_Action(actionConfig);
 						action.Init(index < 0 ? _action1 : _action2);
 						temp = action;
 						break;
-					case "Action_Debug":
+					case ActionType.Action_Debug:
 						temp = new Action_Debug(actionConfig);
 						break;
-					case "TriggerAction_AddTrigger":
+					case ActionType.TriggerAction_AddTrigger:
 						var addTrigger = new TriggerAction_AddTrigger(actionConfig);
 						addTrigger.Init(triggerManager);
 						temp = addTrigger;
 						break;
-					case "TriggerAction_RemoveTrigger":
+					case ActionType.TriggerAction_RemoveTrigger:
 						var removeTrigger = new TriggerAction_RemoveTrigger(actionConfig);
 						removeTrigger.Init(triggerManager);
 						temp = removeTrigger;
 						break;
-					case "TriggerAction_ExcuteTrigger":
+					case ActionType.TriggerAction_ExcuteTrigger:
 						var excuteTrigger = new TriggerAction_ExcuteTrigger(actionConfig);
 						excuteTrigger.Init(triggerManager);
 						temp = excuteTrigger;
 						break;
-					case "TriggerAction_AddBuff":
+					case ActionType.TriggerAction_AddBuff:
 						temp = new TriggerAction_AddBuff(actionConfig);
 						break;
-					case "TriggerAction_RemoveBuff":
+					case ActionType.TriggerAction_RemoveBuff:
 						temp = new TriggerAction_RemoveBuff(actionConfig);
 						break;
 				}

@@ -17,7 +17,7 @@ public sealed partial class ConditionConfig : Luban.BeanBase
     public ConditionConfig(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        ConditionType = _buf.ReadString();
+        ConditionType = (ConditionType)_buf.ReadInt();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);IntParam = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); IntParam.Add(_e0);}}
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);FloatParam = new System.Collections.Generic.List<float>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { float _e0;  _e0 = _buf.ReadFloat(); FloatParam.Add(_e0);}}
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);StrParam = new System.Collections.Generic.List<string>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { string _e0;  _e0 = _buf.ReadString(); StrParam.Add(_e0);}}
@@ -35,7 +35,7 @@ public sealed partial class ConditionConfig : Luban.BeanBase
     /// <summary>
     /// 触发器类型
     /// </summary>
-    public readonly string ConditionType;
+    public readonly ConditionType ConditionType;
     /// <summary>
     /// 触发条件参数
     /// </summary>

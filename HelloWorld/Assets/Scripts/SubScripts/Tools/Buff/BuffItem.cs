@@ -95,7 +95,7 @@ namespace HotAssembly
 				var conditionConfig = ConfigManager.Instance.GameConfigs.TbConditionConfig[a];
 				switch (conditionConfig.ConditionType)
 				{
-					case "Condition_Action":
+					case ConditionType.Condition_Action:
 						var action = new Condition_Action(conditionConfig);
 						action.Init(_condition);
 						temp = action;
@@ -113,15 +113,15 @@ namespace HotAssembly
 				var actionConfig = ConfigManager.Instance.GameConfigs.TbActionConfig[actionId];
 				switch (actionConfig.ActionType)
 				{
-					case "Action_Action":
+					case ActionType.Action_Action:
 						var action = new Action_Action(actionConfig);
 						action.Init(_action);
 						temp = action;
 						break;
-					case "Action_Debug":
+					case ActionType.Action_Debug:
 						temp = new Action_Debug(actionConfig);
 						break;
-					case "BuffAction_AddProp":
+					case ActionType.BuffAction_AddProp:
 						temp = new BuffAction_AddProp(actionConfig);
 						break;
 				}
