@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HotAssembly
 {
-    public class TestData : Database
+    public class TestData : DataBase
     {
         public List<TestItemData> testItemDatas = new List<TestItemData>()
         {

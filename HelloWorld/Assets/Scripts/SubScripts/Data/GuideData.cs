@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HotAssembly
 {
-    public class GuideData : Database
+    public class GuideData : DataBase
     {
         private int guideId;
         private Guide guideCfg;

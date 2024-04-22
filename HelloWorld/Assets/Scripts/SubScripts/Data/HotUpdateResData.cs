@@ -4,7 +4,7 @@ using YooAsset;
 
 namespace HotAssembly
 {
-    public class HotUpdateResData : Database
+    public class HotUpdateResData : DataBase
     {
         private Action hotUpdateResFinish;
         private ResourceDownloaderOperation downloaderOperation;

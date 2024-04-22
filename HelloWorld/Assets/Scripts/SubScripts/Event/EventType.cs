@@ -6,5 +6,7 @@
         SetSceneLoadingBg,
         SetSceneLoadingProgress,
         RefreshGuide,
+        RefreshActivity,
+        EndActivity,
     }
 }

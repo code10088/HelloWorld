@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace HotAssembly
 {
-	public class FunctionUnlock:Singletion<FunctionUnlock>
+	public class FunctionUnlock : Singletion<FunctionUnlock>
 	{
 		/// <summary>
 		/// ½ûÖ¹Æµ·±µ÷ÓÃ
 		/// </summary>
 		public bool CheckUnlock(FunctionUnlockType type)
-        {
+		{
 			var config = ConfigManager.Instance.GameConfigs.TbFunctionUnlockConfig[type];
 			string str = config.Condition;
 			var conditionKeys = Utils.SplitBoolStr(str);
