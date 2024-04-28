@@ -280,7 +280,7 @@ namespace HotAssembly
         public static void SetMasterTextureLimit(int lv)
         {
             //0:贴图1/1大小 1:贴图1/2大小 2:贴图1/4大小 3:贴图1/8大小
-            QualitySettings.masterTextureLimit = lv;
+            QualitySettings.globalTextureMipmapLimit = lv;
             qualityLv = qualityLv & 0xFFBF | Mathf.Clamp(lv, 0, 1) << 6;
             ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
         }

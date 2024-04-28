@@ -94,7 +94,7 @@ namespace UnityExtensions.Paths
                         using (var scope = ChangeCheckScope.New(path))
                         {
                             Handles.color = capSelectedColor;
-                            if (selectedTool == 0) back = Handles.FreeMoveHandle(back, Quaternion.identity, capSize * 2, snap, Handles.RectangleHandleCap);
+                            if (selectedTool == 0) back = Handles.FreeMoveHandle(back, capSize * 2, snap, Handles.RectangleHandleCap);
                             else if (selectedTool == 1) back = Handles.PositionHandle(back, path.transform.rotation);
                             if (scope.changed) path.SetNodeBackControlPoint(i, back);
                         }
@@ -118,7 +118,7 @@ namespace UnityExtensions.Paths
                         using (var scope = ChangeCheckScope.New(path))
                         {
                             Handles.color = capSelectedColor;
-                            if (selectedTool == 0) forward = Handles.FreeMoveHandle(forward, Quaternion.identity, capSize * 2, snap, Handles.RectangleHandleCap);
+                            if (selectedTool == 0) forward = Handles.FreeMoveHandle(forward, capSize * 2, snap, Handles.RectangleHandleCap);
                             else if (selectedTool == 1) forward = Handles.PositionHandle(forward, path.transform.rotation);
                             if (scope.changed) path.SetNodeForwardControlPoint(i, forward);
                         }
@@ -141,7 +141,7 @@ namespace UnityExtensions.Paths
                         using (var scope = ChangeCheckScope.New(path))
                         {
                             Handles.color = capSelectedColor;
-                            if (selectedTool == 0) middle = Handles.FreeMoveHandle(middle, Quaternion.identity, capSize * 2, snap, Handles.RectangleHandleCap);
+                            if (selectedTool == 0) middle = Handles.FreeMoveHandle(middle, capSize * 2, snap, Handles.RectangleHandleCap);
                             else if (selectedTool == 1) middle = Handles.PositionHandle(middle, path.transform.rotation);
                             if (scope.changed) path.SetNodePosition(i, middle);
                         }

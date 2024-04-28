@@ -26,11 +26,11 @@ namespace AssetPreprocessor.Scripts.Editor
             audioImporter.forceToMono = config.ForceToMono;
             audioImporter.loadInBackground = config.LoadInBackground;
             audioImporter.ambisonic = config.Ambisonic;
-            audioImporter.preloadAudioData = config.PreloadAudioData;
 
             audioImporter.defaultSampleSettings = new AudioImporterSampleSettings
             {
                 loadType = config.LoadType,
+                preloadAudioData = config.PreloadAudioData,
                 compressionFormat = config.CompressionFormat,
                 quality = config.Quality,
                 sampleRateSetting = config.SampleRateSetting,
@@ -39,6 +39,7 @@ namespace AssetPreprocessor.Scripts.Editor
             audioImporter.SetOverrideSampleSettings("PC", new AudioImporterSampleSettings
             {
                 loadType = config.LoadType,
+                preloadAudioData = config.PreloadAudioData,
                 compressionFormat = config.CompressionFormat,
                 quality = config.Quality,
                 sampleRateSetting = config.SampleRateSetting,
@@ -47,6 +48,7 @@ namespace AssetPreprocessor.Scripts.Editor
             audioImporter.SetOverrideSampleSettings("Android", new AudioImporterSampleSettings
             {
                 loadType = config.LoadType,
+                preloadAudioData = config.PreloadAudioData,
                 compressionFormat = config.CompressionFormat,
                 quality = config.Quality,
                 sampleRateSetting = config.SampleRateSetting,
@@ -55,6 +57,7 @@ namespace AssetPreprocessor.Scripts.Editor
             audioImporter.SetOverrideSampleSettings("iOS", new AudioImporterSampleSettings
             {
                 loadType = config.LoadType,
+                preloadAudioData = config.PreloadAudioData,
                 compressionFormat = config.CompressionFormat,
                 quality = config.Quality,
                 sampleRateSetting = config.SampleRateSetting,
@@ -63,6 +66,7 @@ namespace AssetPreprocessor.Scripts.Editor
             audioImporter.SetOverrideSampleSettings("WebGL", new AudioImporterSampleSettings
             {
                 loadType = config.LoadType,
+                preloadAudioData = config.PreloadAudioData,
                 compressionFormat = AudioCompressionFormat.AAC,
                 quality = config.Quality,
                 sampleRateSetting = config.SampleRateSetting,

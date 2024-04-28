@@ -79,7 +79,7 @@ namespace UnityExtensions.Paths
                         using (var scope = ChangeCheckScope.New(path))
                         {
                             Handles.color = capNormalColor;
-                            point = Handles.FreeMoveHandle(point, Quaternion.identity, capSize, snap, Handles.CircleHandleCap);
+                            point = Handles.FreeMoveHandle(point, capSize, snap, Handles.CircleHandleCap);
 
                             tension = MathUtilities.ClosestPointOnSegmentFactor(point, point1, point2);
                             //tension = (float)Math.Round(tension, 2);
@@ -115,7 +115,7 @@ namespace UnityExtensions.Paths
                         using (var scope = ChangeCheckScope.New(path))
                         {
                             Handles.color = capSelectedColor;
-                            if (selectedTool == 0) position = Handles.FreeMoveHandle(position, Quaternion.identity, capSize * 2, snap, Handles.RectangleHandleCap);
+                            if (selectedTool == 0) position = Handles.FreeMoveHandle(position, capSize * 2, snap, Handles.RectangleHandleCap);
                             else position = Handles.PositionHandle(position, path.transform.rotation);
                             if (scope.changed) path.SetNodePosition(i, position);
                         }
