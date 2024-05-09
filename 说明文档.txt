@@ -40,10 +40,14 @@ YooAsset
 	BuildParameters检测输出目录是否存在，存在的情况下也可以打包，避免频繁修改VersionConfig文件
 	
 ECS+Job+Brust
-	ECS主要优势在于网络同步数据回滚
 	ECS中Component数据都是值类型为了内存连续提高缓存命中率(List、Array引用连续内存分散，Array<值类型>内存连续)
 	Job多线程有些类似于computeShader
 	Brust只能在Job中使用
+	万人同屏：JobSystem+Brust+BatchRendererGroup(ECS目前阶段局限性太大)
+		https://www.wpsshop.cn/blog/UNITY/detail/36281
+		https://blog.csdn.net/final5788/article/details/132912995
+		https://blog.csdn.net/final5788/article/details/132953620
+		https://github.com/Unity-Technologies/brg-shooter
 	
 protobuf-net
 	github下载最新版，使用vs2022编译(如果编译失败尝试更新vs)
