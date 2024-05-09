@@ -9,7 +9,7 @@ git pull
 
 taskkill /f /im Unity.exe
 
-"C:/Program Files/Unity2021.3.25/Editor/Unity.exe" ^
+"C:/Program Files/Unity2022.3.26/Editor/Unity.exe" ^
 -quit ^
 -batchmode ^
 -projectPath "D:/HelloWorld/HelloWorld" ^
