@@ -92,7 +92,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   m_material: {fileID: 2100000, guid: e0a675a74c624254789c8d9b649e26b6, type: 2}
-  m_castShadows: 0
+  m_castShadows: 1
   m_motionSpeed: 0
   m_motionAmplitude: 2
   m_spacingFactor: 1
