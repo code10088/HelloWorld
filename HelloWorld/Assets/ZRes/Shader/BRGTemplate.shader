@@ -107,5 +107,5 @@ Shader "URP/BRGTemplate"
         }
     }
 
-    Fallback "Sprites/Default"
+    //Fallback "Universal Render Pipeline/Lit"
 }
