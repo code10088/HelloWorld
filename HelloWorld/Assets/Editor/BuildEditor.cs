@@ -127,7 +127,7 @@ public class BuildEditor
             File.Copy($"{stripDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
         }
     }
-    [MenuItem("Tools/YooAssetBuild", false, (int)ToolsMenuSort.YooAssetBuild)]
+    [MenuItem("Tools/YooAssetBuild (使用前确认appversion和resversion)", false, (int)ToolsMenuSort.YooAssetBuild)]
     public static void YooAssetBuild()
     {
         var buildParameters = new BuiltinBuildParameters();
@@ -151,7 +151,7 @@ public class BuildEditor
         if (buildResult.Success) Debug.Log("build success");
         else Debug.LogError($"build fail:{buildResult.ErrorInfo}");
     }
-    [MenuItem("Tools/UploadBundles2CDN", false, (int)ToolsMenuSort.UploadBundles2CDN)]
+    [MenuItem("Tools/UploadBundles2CDN (使用前确认appversion和resversion)", false, (int)ToolsMenuSort.UploadBundles2CDN)]
     public static void UploadBundles2CDN()
     {
         CosXmlConfig config = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
