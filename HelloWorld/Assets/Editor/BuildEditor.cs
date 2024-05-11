@@ -14,8 +14,8 @@ using System.Text;
 public class BuildEditor
 {
     private static BuildOptions options = BuildOptions.None;
-    private static string appversion = "1.0.0";
-    private static string resversion = "1.0.0.001";
+    private static string appversion = "1.2.0";
+    private static string resversion = "1.2.0.002";
     private static bool latestAppVersion = false;
     private static string buildPath;
 
