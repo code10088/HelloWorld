@@ -61,6 +61,7 @@ newtonjson
 	
 URP
 	Profiler显示urp Gfx.PresentFrame耗时高，并非GPU渲染耗时高，Gfx.PresentFrame=GPU渲染时间+WaitForTargetFPS时间
+	Unity.Profiling.ProfilerMarker.Begin对urp性能严重影响，务必添加宏UNITY_EDITOR判断
 	
 SuperScrollView调整
 	LoopListViewItem2中添加UIChildItem
