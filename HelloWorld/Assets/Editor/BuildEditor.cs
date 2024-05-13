@@ -14,8 +14,8 @@ using System.Text;
 public class BuildEditor
 {
     private static BuildOptions options = BuildOptions.None;
-    private static string appversion = "1.2.0";
-    private static string resversion = "1.2.0.002";
+    private static string appversion = string.Empty;
+    private static string resversion = string.Empty;
     private static bool latestAppVersion = false;
     private static string buildPath;
 
@@ -91,6 +91,7 @@ public class BuildEditor
             }
         }
     }
+
     [MenuItem("Tools/CopyConfig", false, (int)ToolsMenuSort.CopyConfig)]
     public static void CopyConfig()
     {
@@ -111,6 +112,7 @@ public class BuildEditor
         }
         AssetDatabase.Refresh();
     }
+
     [MenuItem("Tools/HybridCLRGenerate", false, (int)ToolsMenuSort.HybridCLRGenerate)]
     public static void HybridCLRGenerate()
     {
@@ -127,9 +129,11 @@ public class BuildEditor
             File.Copy($"{stripDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
         }
     }
-    [MenuItem("Tools/YooAssetBuild (使用前确认appversion和resversion)", false, (int)ToolsMenuSort.YooAssetBuild)]
+
+    [MenuItem("Tools/YooAssetBuild", false, (int)ToolsMenuSort.YooAssetBuild)]
     public static void YooAssetBuild()
     {
+        CheckAppVersion();
         var buildParameters = new BuiltinBuildParameters();
         buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
         buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
@@ -151,9 +155,21 @@ public class BuildEditor
         if (buildResult.Success) Debug.Log("build success");
         else Debug.LogError($"build fail:{buildResult.ErrorInfo}");
     }
-    [MenuItem("Tools/UploadBundles2CDN (使用前确认appversion和resversion)", false, (int)ToolsMenuSort.UploadBundles2CDN)]
+    private static void CheckAppVersion()
+    {
+        if (string.IsNullOrEmpty(appversion))
+        {
+            string str = File.ReadAllText($"{BuildPath}/VersionConfig.txt", Encoding.UTF8);
+            var config = JsonConvert.DeserializeObject<VersionConfig>(str);
+            appversion = config.AppVersions[0];
+            resversion = config.ResVersions[0];
+        }
+    }
+
+    [MenuItem("Tools/UploadBundles2CDN", false, (int)ToolsMenuSort.UploadBundles2CDN)]
     public static void UploadBundles2CDN()
     {
+        CheckAppVersion();
         CosXmlConfig config = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
         string secretId = "AKIDHSjP5iQG1byLl3mNnnolv3879KYj2OpJ";
         string secretKey = "jKnx21ADT1OfkpyGRSLHPVXgjkhllfS6";
