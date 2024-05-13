@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoroutineManager : Singletion<CoroutineManager>
+public class CoroutineManager : MonoSingletion<CoroutineManager>
 {
-    public int Start<T>(IEnumerator<T> enumerator, bool ignoreFrameTime = false) where T : IEnumerator
+    public int StartCoroutine<T>(IEnumerator<T> enumerator, bool ignoreFrameTime = false) where T : IEnumerator
     {
         CoroutineItem<T> temp = new();
         temp.Init(enumerator);

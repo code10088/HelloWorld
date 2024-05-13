@@ -111,7 +111,7 @@ namespace HotAssembly
         private void TestCoroutine()
         {
             var a = _TestCoroutine();
-            CoroutineManager.Instance.Start(a);
+            CoroutineManager.Instance.StartCoroutine(a);
             GameDebug.Log(1);
         }
         private IEnumerator<Coroutine> _TestCoroutine()

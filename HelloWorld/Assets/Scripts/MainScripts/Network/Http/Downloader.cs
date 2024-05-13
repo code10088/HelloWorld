@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using UnityEngine.Networking;
 
 public class Downloader : Singletion<Downloader>, SingletionInterface
 {
@@ -112,7 +114,11 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
         }
         public void Start()
         {
-            ThreadManager.Instance.StartThread(Request, Finish, priority:0);
+#if UNITY_WEBGL
+            CoroutineManager.Instance.StartCoroutine(Request());
+#else
+            ThreadManager.Instance.StartThread(Request, Finish, priority: 0);
+#endif
         }
         private void Request(object o)
         {
@@ -155,6 +161,51 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
                 hwr.Abort();
                 result = null;
                 if (++retry > GameSetting.retryTime) return;
+                Request(null);
+            }
+        }
+        private IEnumerator Request()
+        {
+            var uwr = UnityWebRequest.Head(url);
+            uwr.timeout = timeout * 1000;
+            yield return uwr.SendWebRequest();
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                fileLength = long.Parse(uwr.GetResponseHeader("Content-Length"));
+                result = new byte[fileLength];
+                uwr = UnityWebRequest.Get(url);
+                uwr.timeout = timeout * 1000;
+                long saveLength = !string.IsNullOrEmpty(path) && File.Exists(path) ? new FileInfo(path).Length : 0;
+                uwr.SetRequestHeader("Range", $"bytes={saveLength}-{fileLength}");
+                yield return uwr.SendWebRequest();
+
+                int l = 0;
+                while (l < fileLength)
+                {
+                    var data = uwr.downloadHandler.data;
+                    Buffer.BlockCopy(data, 0, result, l, data.Length);
+                    l += data.Length;
+                    downloadedLength = Math.Max(l, downloadedLength);//·ÀÖ¹½ø¶ÈÌõµ¹ÍË
+                    yield return 0;
+                }
+                uwr.Abort();
+
+                if (!string.IsNullOrEmpty(path))
+                {
+                    FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                    fs.Write(result, (int)saveLength, result.Length);
+                    fs.Flush();
+                    result = new byte[fs.Length];
+                    fs.Read(result, 0, result.Length);
+                    fs.Dispose();
+                }
+                Finish();
+            }
+            else
+            {
+                uwr.Abort();
+                result = null;
+                if (++retry > GameSetting.retryTime) yield break;
                 Request(null);
             }
         }

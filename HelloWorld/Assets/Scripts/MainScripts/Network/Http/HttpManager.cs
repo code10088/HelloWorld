@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using UnityEngine.Networking;
 
 public class HttpManager : Singletion<HttpManager>
 {
@@ -42,7 +44,11 @@ public class HttpManager : Singletion<HttpManager>
         }
         public void Start()
         {
+#if UNITY_WEBGL
+            CoroutineManager.Instance.StartCoroutine(Request());
+#else
             ThreadManager.Instance.StartThread(Request, Finish, priority: 0);
+#endif
         }
         private void Request(object o)
         {
@@ -66,6 +72,26 @@ public class HttpManager : Singletion<HttpManager>
                 hwb.Dispose();
                 result = null;
                 if (++retry > GameSetting.retryTime) return;
+                Request(null);
+            }
+        }
+        private IEnumerator Request()
+        {
+            var uwr = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST);
+            uwr.timeout = timeout * 1000;
+            uwr.uploadHandler = new UploadHandlerRaw(send);
+            yield return uwr.SendWebRequest();
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                result = uwr.downloadHandler.data;
+                uwr.Dispose();
+                Finish();
+            }
+            else
+            {
+                uwr.Dispose();
+                result = null;
+                if (++retry > GameSetting.retryTime) yield break;
                 Request(null);
             }
         }
