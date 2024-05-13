@@ -24,13 +24,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100000}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &11400000
 MonoBehaviour:
@@ -76,7 +76,7 @@ MonoBehaviour:
     colorCritical: {r: 0.9764706, g: 0.35686275, b: 0.35686275, a: 0.5019608}
     colorRender: {r: 0.654902, g: 0.43137255, b: 0.81960785, a: 0.5019608}
   memoryCounter:
-    enabled: 1
+    enabled: 0
     anchor: 0
     color: {r: 0.91764706, g: 0.93333334, b: 0.39607844, a: 0.5019608}
     style: 0
