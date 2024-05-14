@@ -40,11 +40,12 @@ public class AssetManager : Singletion<AssetManager>
         parameters.BreakpointResumeFileSize = 102400;
         parameters.BuildinQueryServices = new QueryServices();
         parameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-        var operation = package.InitializeAsync(parameters);
-        operation.Completed += InitFinish;
-#if UNITY_WECHAT_GAME && !UNITY_EDITOR
+#if WeChatGame && !UNITY_EDITOR
+        parameters.WechatQueryServices = new WechatQueryServices();
         YooAssets.SetCacheSystemDisableCacheOnWebGL();
 #endif
+        var operation = package.InitializeAsync(parameters);
+        operation.Completed += InitFinish;
 #else
         string defaultHostServer = GameSetting.Instance.CDNVersion;
         string fallbackHostServer = GameSetting.Instance.CDNVersion;
