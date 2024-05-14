@@ -36,6 +36,7 @@ MonoBehaviour:
     - HybridCLR.Runtime
     - IngameDebugConsole.Runtime
     - Luban.Runtime
+    - Wx
     - YooAsset
     showAdvancedSettings: 0
   addMgrToSceneAutomatically: 0
