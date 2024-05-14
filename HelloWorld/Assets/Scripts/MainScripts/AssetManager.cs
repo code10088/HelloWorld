@@ -42,6 +42,9 @@ public class AssetManager : Singletion<AssetManager>
         parameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
+#if UNITY_WECHAT_GAME && !UNITY_EDITOR
+        YooAssets.SetCacheSystemDisableCacheOnWebGL();
+#endif
 #else
         string defaultHostServer = GameSetting.Instance.CDNVersion;
         string fallbackHostServer = GameSetting.Instance.CDNVersion;
