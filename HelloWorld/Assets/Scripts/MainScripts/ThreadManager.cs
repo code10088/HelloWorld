@@ -14,6 +14,11 @@ public class ThreadManager : Singletion<ThreadManager>
     /// </summary>
     public int StartThread(Action<object> action, Action finish, object param = null, float time = 0, int priority = 1, bool ignoreFrameTime = false)
     {
+#if UNITY_WEBGL
+        action?.Invoke(param);
+        finish();
+        return -1;
+#else
         ThreadItem temp = cache.Count > 0 ? cache.Dequeue() : new();
         temp.Init(action, finish, param, time, priority, ignoreFrameTime);
         int index = wait.FindIndex(a => a.priority > priority);
@@ -21,6 +26,7 @@ public class ThreadManager : Singletion<ThreadManager>
         else wait.Add(temp);
         CheckThreadQueue();
         return temp.ItemID;
+#endif
     }
     private void StartThread()
     {
