@@ -75,3 +75,8 @@ GPU地形大世界地形解决方案
 
 SpriteAtlas
 	无法使用自动导入设置，common是已调好的设置参数，新建SpriteAtlas时copy后修改文件夹即可
+	
+WebGL
+	System.Net无法使用
+	socket库使用 https://github.com/sta/websocket-sharp 编译dll
+	
