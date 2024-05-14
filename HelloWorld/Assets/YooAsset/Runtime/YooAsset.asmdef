@@ -1,9 +1,7 @@
 {
     "name": "YooAsset",
     "rootNamespace": "",
-    "references": [
-        "GUID:5efd170ecd8084500bed5692932fe14e"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
