@@ -15,7 +15,7 @@ MonoBehaviour:
   ProjectConf:
     projectName: Start1993
     Appid: wxe75b79c84a17faed
-    CDN: https://assets-1321503079.cos.ap-beijing.myqcloud.com
+    CDN: https://assets-1321503079.cos.ap-beijing.myqcloud.com/WebGL
     assetLoadType: 0
     compressDataPackage: 0
     VideoUrl: 
