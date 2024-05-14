@@ -147,7 +147,11 @@ public class BuildEditor
         buildParameters.FileNameStyle = EFileNameStyle.HashName;
         buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;
         buildParameters.BuildinFileCopyParams = "Builtin";
+#if UNITY_WEBGL
+        buildParameters.EncryptionServices = null;
+#else
         buildParameters.EncryptionServices = new EncryptionServices();
+#endif
         buildParameters.CompressOption = ECompressOption.LZ4;
 
         BuiltinBuildPipeline pipeline = new BuiltinBuildPipeline();
