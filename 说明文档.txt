@@ -79,4 +79,4 @@ SpriteAtlas
 WebGL
 	System.Net无法使用
 	socket库使用 https://github.com/sta/websocket-sharp 编译dll
-	
+	colorspace使用gamma 或者 使用webgl2.0(beta)
