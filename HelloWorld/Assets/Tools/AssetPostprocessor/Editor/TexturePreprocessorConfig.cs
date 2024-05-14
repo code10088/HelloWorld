@@ -17,7 +17,6 @@ namespace AssetPreprocessor.Scripts.Editor
 
         [Header("Sprite")]
         public SpriteImportMode SpriteMode = SpriteImportMode.Single;
-        public string PackingTag = string.Empty;
         public float PixelsPerUnit = 100;
         public SpriteMeshType MeshType = SpriteMeshType.Tight;
         public uint ExtrudeEdges = 1;

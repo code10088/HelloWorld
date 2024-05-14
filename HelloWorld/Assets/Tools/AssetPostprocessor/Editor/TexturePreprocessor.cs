@@ -34,7 +34,6 @@ namespace AssetPreprocessor.Scripts.Editor
             textureImporter.streamingMipmaps = config.StreamingMipmaps;
             textureImporter.vtOnly = config.VirtualTextureOnly;
             textureImporter.spriteImportMode = config.SpriteMode;
-            textureImporter.spritePackingTag = config.PackingTag;
             textureImporter.spritePixelsPerUnit = config.PixelsPerUnit;
             textureImporter.spritePivot = config.spritePivot;
             textureImporter.sRGBTexture = config.sRGB;

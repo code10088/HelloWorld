@@ -41,5 +41,7 @@ public class GameSetting : Singletion<GameSetting>, SingletionInterface
         "HelloWorld.apk";
 #elif UNITY_IOS
         "HelloWorld.app";
+#else
+        string.Empty;
 #endif
 }
