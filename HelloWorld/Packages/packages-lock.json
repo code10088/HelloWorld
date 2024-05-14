@@ -145,7 +145,7 @@
       }
     },
     "com.unity.scriptablebuildpipeline": {
-      "version": "1.21.22",
+      "version": "2.1.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
