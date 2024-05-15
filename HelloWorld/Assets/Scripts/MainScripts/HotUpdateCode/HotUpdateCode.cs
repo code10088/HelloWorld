@@ -84,10 +84,18 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     private void CheckDownloadHotUpdateConfig()
     {
         downloaderOperation = AssetManager.Package.CreateBundleDownloader(GameSetting.HotUpdateConfigPath, 1, GameSetting.retryTime, GameSetting.timeoutS);
-        downloaderOperation.Completed += CheckDownloadHotUpdateConfig;
-        downloaderOperation.BeginDownload();
+        if (downloaderOperation.TotalDownloadBytes > 0)
+        {
+            downloaderOperation.Completed += CheckDownloadHotUpdateConfig;
+            downloaderOperation.BeginDownload();
 
-        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateConfig.ToString());
+            UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateConfig.ToString());
+        }
+        else
+        {
+            downloaderOperation.CancelDownload();
+            LoadHotUpdateConfig();
+        }
     }
     private void CheckDownloadHotUpdateConfig(AsyncOperationBase o)
     {
@@ -121,11 +129,19 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
             paths[i] = i < count1 ? config.Metadata[i] : config.HotUpdateRes[i - count1];
         }
         downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeoutS);
-        downloaderOperation.Completed += CheckDownloadHotUpdateRes;
-        downloaderOperation.BeginDownload();
-        timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateRes);
+        if (downloaderOperation.TotalDownloadBytes > 0)
+        {
+            downloaderOperation.Completed += CheckDownloadHotUpdateRes;
+            downloaderOperation.BeginDownload();
+            timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateRes);
 
-        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateRes.ToString());
+            UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateRes.ToString());
+        }
+        else
+        {
+            downloaderOperation.CancelDownload();
+            UpdateFinish();
+        }
     }
     private void CheckDownloadHotUpdateRes(AsyncOperationBase o)
     {
