@@ -22,7 +22,6 @@ public class GameStart : MonoSingletion<GameStart>
     private void Start()
     {
         AssetManager.Instance.Init(CheckDebug);
-        ES3.Init();
     }
     private void CheckDebug()
     {

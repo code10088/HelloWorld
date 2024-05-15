@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -29,22 +28,22 @@ namespace HotAssembly
     public class DPUtil
     {
         public static DPLevel dpl => (DPLevel)QualityLv;
-        public static int QualityLv => qualityLv & 0x0003;
-        public static int FrameRate => (qualityLv & 0x000C) >> 2;
-        public static int ScreenResolution => (qualityLv & 0x0030) >> 4;
-        public static int MasterTextureLimit => (qualityLv & 0x0040) >> 6;
-        public static int AntiLv => (qualityLv & 0x0080) >> 7;
-        public static int Shadow => (qualityLv & 0x0100) >> 8;
-        public static int SoftShadow => (qualityLv & 0x0200) >> 9;
-        public static int ShadowLv => (qualityLv & 0x0C00) >> 10;
-        public static int HDR => (qualityLv & 0x1000) >> 12;
-        public static int PostProcess => (qualityLv & 0x2000) >> 13;
-        public static int GraphicsQualityLv => (qualityLv & 0xC000) >> 14;
+        public static int QualityLv => quality & 0x0003;
+        public static int FrameRate => (quality & 0x000C) >> 2;
+        public static int ScreenResolution => (quality & 0x0030) >> 4;
+        public static int MasterTextureLimit => (quality & 0x0040) >> 6;
+        public static int AntiLv => (quality & 0x0080) >> 7;
+        public static int Shadow => (quality & 0x0100) >> 8;
+        public static int SoftShadow => (quality & 0x0200) >> 9;
+        public static int ShadowLv => (quality & 0x0C00) >> 10;
+        public static int HDR => (quality & 0x1000) >> 12;
+        public static int PostProcess => (quality & 0x2000) >> 13;
+        public static int GraphicsQualityLv => (quality & 0xC000) >> 14;
 
         public static int DeviceScreenWidth;
         public static int DeviceScreenHeight;
 
-        private static int qualityLv = 0;
+        private static int quality = 0;
 
         #region 推荐分级
         /// <summary>
@@ -158,8 +157,8 @@ namespace HotAssembly
         {
             DeviceScreenWidth = Screen.width;
             DeviceScreenHeight = Screen.height;
-            qualityLv = ES3.Load(ES3Const.ZPLQuality, ES3Const.ZPLQualityPath, 0);
-            if (qualityLv > 0)
+            quality = PlayerPrefs.GetInt(PlayerPrefsConst.DPQuality, 0);
+            if (quality > 0)
             {
                 SetQualitySettings(QualityLv);
                 SetFrameRate(FrameRate);
@@ -226,7 +225,7 @@ namespace HotAssembly
         /// </summary>
         public static void Recommand()
         {
-            ES3.Save(ES3Const.ZPLQuality, 0, ES3Const.ZPLQualityPath);
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, 0);
             Init();
         }
 
@@ -236,8 +235,8 @@ namespace HotAssembly
         public static void SetQualitySettings(int lv)
         {
             QualitySettings.SetQualityLevel(lv);
-            qualityLv = qualityLv & 0xFFFC | Mathf.Clamp(lv, 0, 2);
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xFFFC | Mathf.Clamp(lv, 0, 2);
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
             SetMasterTextureLimit(MasterTextureLimit);
             SetAntiLv(AntiLv);
             SetSoftShadow(SoftShadow);
@@ -252,8 +251,8 @@ namespace HotAssembly
             if (lv == 0) Application.targetFrameRate = 30;
             else if (lv == 1) Application.targetFrameRate = 45;
             else if (lv == 2) Application.targetFrameRate = 60;
-            qualityLv = qualityLv & 0xFFF3 | Mathf.Clamp(lv, 0, 2) << 2;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xFFF3 | Mathf.Clamp(lv, 0, 2) << 2;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
             GameSetting.updateTimeSliceS = 1.0f / Application.targetFrameRate;
             GameSetting.updateTimeSliceMS = 1000 / Application.targetFrameRate;
             YooAssets.SetOperationSystemMaxTimeSlice(GameSetting.updateTimeSliceS);
@@ -271,8 +270,8 @@ namespace HotAssembly
             //int height = Mathf.CeilToInt(DeviceScreenHeight * r);
             //Screen.SetResolution(width, height, true);
             ScalableBufferManager.ResizeBuffers(r, r);
-            qualityLv = qualityLv & 0xFFCF | Mathf.Clamp(lv, 0, 2) << 4;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xFFCF | Mathf.Clamp(lv, 0, 2) << 4;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
         }
         /// <summary>
         /// 贴图分辨率 0,1
@@ -281,8 +280,8 @@ namespace HotAssembly
         {
             //0:贴图1/1大小 1:贴图1/2大小 2:贴图1/4大小 3:贴图1/8大小
             QualitySettings.globalTextureMipmapLimit = lv;
-            qualityLv = qualityLv & 0xFFBF | Mathf.Clamp(lv, 0, 1) << 6;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xFFBF | Mathf.Clamp(lv, 0, 1) << 6;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
         }
         /// <summary>
         /// 抗锯齿 0,1
@@ -290,8 +289,8 @@ namespace HotAssembly
         public static void SetAntiLv(int lv)
         {
             Camera.main.allowMSAA = lv == 1;
-            qualityLv = qualityLv & 0xFF7F | Mathf.Clamp(lv, 0, 1) << 7;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xFF7F | Mathf.Clamp(lv, 0, 1) << 7;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
         }
         /// <summary>
         /// 阴影开关 0,1
@@ -300,8 +299,8 @@ namespace HotAssembly
         {
             var uac = Camera.main.GetComponent<UniversalAdditionalCameraData>();
             uac.renderShadows = lv == 1;
-            qualityLv = qualityLv & 0xFEFF | Mathf.Clamp(lv, 0, 1) << 8;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xFEFF | Mathf.Clamp(lv, 0, 1) << 8;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
         }
         /// <summary>
         /// 软阴影 0,1
@@ -310,8 +309,8 @@ namespace HotAssembly
         {
             var softShadow = typeof(UniversalRenderPipelineAsset).GetField("m_SoftShadowsSupported", BindingFlags.Instance | BindingFlags.NonPublic);
             softShadow.SetValue(GraphicsSettings.currentRenderPipeline, lv == 1);
-            qualityLv = qualityLv & 0xFDFF | Mathf.Clamp(lv, 0, 1) << 9;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xFDFF | Mathf.Clamp(lv, 0, 1) << 9;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
         }
         /// <summary>
         /// 阴影质量 0,1,2
@@ -335,8 +334,8 @@ namespace HotAssembly
                 cascade.SetValue(GraphicsSettings.currentRenderPipeline, 4);
                 resolution.SetValue(GraphicsSettings.currentRenderPipeline, UnityEngine.Rendering.Universal.ShadowResolution._1024);
             }
-            qualityLv = qualityLv & 0xF3FF | Mathf.Clamp(lv, 0, 2) << 10;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xF3FF | Mathf.Clamp(lv, 0, 2) << 10;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
         }
         /// <summary>
         /// HDR 0,1
@@ -344,8 +343,8 @@ namespace HotAssembly
         public static void SetHDR(int lv)
         {
             Camera.main.allowHDR = lv == 1;
-            qualityLv = qualityLv & 0xEFFF | Mathf.Clamp(lv, 0, 1) << 12;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xEFFF | Mathf.Clamp(lv, 0, 1) << 12;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
         }
         /// <summary>
         /// 后处理 0,1
@@ -354,8 +353,8 @@ namespace HotAssembly
         {
             var uac = Camera.main.GetComponent<UniversalAdditionalCameraData>();
             uac.renderPostProcessing = lv == 1;
-            qualityLv = qualityLv & 0xDFFF | Mathf.Clamp(lv, 0, 1) << 13;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0xDFFF | Mathf.Clamp(lv, 0, 1) << 13;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
         }
         /// <summary>
         /// shader计算 0,1,2
@@ -380,8 +379,8 @@ namespace HotAssembly
                     Shader.EnableKeyword("HighQuality");
                     break;
             }
-            qualityLv = qualityLv & 0x3FFF | Mathf.Clamp(lv, 0, 2) << 14;
-            ES3.Save(ES3Const.ZPLQuality, qualityLv, ES3Const.ZPLQualityPath);
+            quality = quality & 0x3FFF | Mathf.Clamp(lv, 0, 2) << 14;
+            PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
         }
     }
 }
