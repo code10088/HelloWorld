@@ -36,9 +36,6 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\Library\ScriptAssemblies\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="ES3">
-      <HintPath>..\Library\ScriptAssemblies\ES3.dll</HintPath>
-    </Reference>
     <Reference Include="Luban.Runtime">
       <HintPath>..\Library\ScriptAssemblies\Luban.Runtime.dll</HintPath>
     </Reference>
