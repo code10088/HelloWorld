@@ -6,4 +6,5 @@ public enum ToolsMenuSort
     HybridCLRGenerate,
     YooAssetBuild,
     UploadBundles2CDN,
+    WeChatBuild,
 }

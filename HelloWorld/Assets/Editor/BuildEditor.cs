@@ -10,6 +10,7 @@ using COSXML.Auth;
 using COSXML.Model.Object;
 using YooAsset.Editor;
 using System.Text;
+using WeChatWASM;
 
 public class BuildEditor
 {
@@ -231,6 +232,16 @@ public class BuildEditor
 
     private static void BuildPlayer()
     {
+#if UNITY_ANDROID
+        AndroidBuild();
+#elif UNITY_IOS
+        IOSBuild();
+#elif WeChatGame
+        WeChatBuild();
+#endif 
+    }
+    private static void AndroidBuild()
+    {
         string time = DateTime.Now.ToString("yyyyMMdd_HHmmss");
         string buildPlayerPath = $"{BuildPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
         Directory.CreateDirectory(Path.GetDirectoryName(buildPlayerPath));
@@ -239,5 +250,66 @@ public class BuildEditor
         BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
         HideSubScripts(false);
         if (latestAppVersion) UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{GameSetting.AppName}", buildPlayerPath);
+    }
+    private static void IOSBuild()
+    {
+        string time = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+        string buildPlayerPath = $"{BuildPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
+        Directory.CreateDirectory(Path.GetDirectoryName(buildPlayerPath));
+
+        HideSubScripts(true);
+        BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
+        HideSubScripts(false);
+    }
+    [MenuItem("Tools/WeChatBuild", false, (int)ToolsMenuSort.WeChatBuild)]
+    public static void WeChatBuild()
+    {
+        HideSubScripts(true);
+        var r = WXConvertCore.DoExport();
+        HideSubScripts(false);
+
+        if (r == WXConvertCore.WXExportError.SUCCEED)
+        {
+            string packageOutputDir = $"{WXConvertCore.config.ProjectConf.DST}/webgl";
+            DirectoryInfo dir = new DirectoryInfo(packageOutputDir);
+            FileInfo[] fileInfos = dir.GetFiles();
+            for (int i = 0; i < fileInfos.Length; i++)
+            {
+                string name = fileInfos[i].Name;
+                if (name.EndsWith(".webgl.data.unityweb.bin.txt"))
+                {
+                    UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{name}", fileInfos[i].FullName);
+                }
+            }
+
+            CosXmlConfig config = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
+            string secretId = "AKIDHSjP5iQG1byLl3mNnnolv3879KYj2OpJ";
+            string secretKey = "jKnx21ADT1OfkpyGRSLHPVXgjkhllfS6";
+            long durationSecond = 600;
+            QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(secretId, secretKey, durationSecond);
+            CosXml cosXml = new CosXmlServer(config, qCloudCredentialProvider);
+
+            string bucket = "assets-1321503079";
+            List<FileInfo> fileList = new List<FileInfo>();
+            FileUtils.GetAllFilePath($"{packageOutputDir}/StreamingAssets", fileList);
+            for (int i = 0; i < fileList.Count; i++)
+            {
+                string path = fileList[i].FullName;
+                string key = path.Remove(0, packageOutputDir.Length + 1);
+                key = $"{EditorUserBuildSettings.activeBuildTarget}/{key}";
+                key = key.Replace("\\", "/");
+                PutObjectRequest request = new PutObjectRequest(bucket, key, path);
+                PutObjectResult result = cosXml.PutObject(request);
+                if (result.IsSuccessful())
+                {
+                    Debug.Log("upload file success:" + path);
+                }
+                else
+                {
+                    Debug.LogError("upload bundle fail£º" + path);
+                    Debug.LogError(result.GetResultInfo());
+                }
+            }
+        }
     }
 }
