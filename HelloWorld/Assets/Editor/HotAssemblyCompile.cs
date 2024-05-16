@@ -2,22 +2,20 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System;
 
 public class HotAssemblyCompile
 {
     //新建代码工程名
     private static string newProjectName = "HotAssembly";
     //新建代码工程目录
-    private static string newProjectPath = System.Environment.CurrentDirectory + "/" + newProjectName;
+    private static string newProjectPath = Environment.CurrentDirectory + "/" + newProjectName;
 
     [MenuItem("Tools/HotAssemblyCompile", false, (int)ToolsMenuSort.HotAssemblyCompile)]
     public static void Generate()
     {
-        StreamReader sr = new StreamReader(newProjectPath + "/" + newProjectName + ".txt");
-        string allStr = sr.ReadToEnd();
-        sr.Close();
-
-        string strEditorInstallPath = System.AppDomain.CurrentDomain.BaseDirectory.Replace("/", "\\");
+        string allStr = File.ReadAllText(newProjectPath + "/" + newProjectName + ".txt");
+        string strEditorInstallPath = AppDomain.CurrentDomain.BaseDirectory.Replace("/", "\\");
         allStr = allStr.Replace("EditorInstallPath", strEditorInstallPath);
 
         List<FileInfo> fileList = new List<FileInfo>();
@@ -33,10 +31,7 @@ public class HotAssemblyCompile
             replaceStr += tempStr;
         }
         allStr = allStr.Replace("    LinkScripts", replaceStr);
-
-        StreamWriter sw = new StreamWriter(newProjectPath + "/" + newProjectName + ".csproj");
-        sw.Write(allStr);
-        sw.Close();
+        File.WriteAllText(newProjectPath + "/" + newProjectName + ".csproj", allStr);
 
         //生成dll
         string strMSBuildPath = EditorPrefs.GetString(CustomerPreference.MSBuildPath);
@@ -46,11 +41,28 @@ public class HotAssemblyCompile
         }
         else
         {
-            string strParam = newProjectPath + "/" + newProjectName + ".sln /t:Rebuild /p:Configuration=Debug";
-            System.Diagnostics.Process msbuild = System.Diagnostics.Process.Start(strMSBuildPath, strParam);
-            msbuild.WaitForExit();
-            msbuild.Close();
-            File.Copy($"{System.Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
+#if WeChatGame
+            //微信平台QualitySettings.SetQualityLevel崩溃
+            string dputilpath = $"{Application.dataPath}/Scripts/SubScripts/Tools/DPUtil.cs";
+            string dputilstr = File.ReadAllText(dputilpath);
+            string newdputilstr = dputilstr.Replace("QualitySettings.SetQualityLevel(lv);", "//QualitySettings.SetQualityLevel(lv);");
+            File.WriteAllText(dputilpath, newdputilstr);
+#endif
+            try
+            {
+                string strParam = newProjectPath + "/" + newProjectName + ".sln /t:Rebuild /p:Configuration=Debug";
+                System.Diagnostics.Process msbuild = System.Diagnostics.Process.Start(strMSBuildPath, strParam);
+                msbuild.WaitForExit();
+                msbuild.Close();
+                File.Copy($"{Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
+            }
+            catch (Exception e)
+            {
+                GameDebug.LogError(e.Message);
+            }
+#if WeChatGame
+            File.WriteAllText(dputilpath, dputilstr);
+#endif
             AssetDatabase.Refresh();
         }
     }
