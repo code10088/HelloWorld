@@ -80,6 +80,7 @@ WebGL
 	System.Net无法使用
 	socket库使用 https://github.com/sta/websocket-sharp 编译dll
 	colorspace使用gamma 或者 使用webgl2.0(beta)
+	QualitySettings.SetQualityLevel(lv);导致崩溃，宏定义也无法修复
 	yooasset不支持ab包加密
-	yooasset微信小游戏需要添加UNITY_WECHAT_GAME宏
 	yooasset微信小游戏需要关闭WebGL的缓存系统YooAssets.SetCacheSystemDisableCacheOnWebGL()
+	yooasset微信小游戏热更需要修改resversion，需要保证不同于StreamingAssets下的resversion
