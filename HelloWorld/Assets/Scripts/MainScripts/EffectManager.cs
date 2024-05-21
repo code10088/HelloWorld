@@ -41,7 +41,7 @@ public class EffectManager : Singletion<EffectManager>
     private class EffectItem : AsyncItem
     {
         private string path;
-        private GameObjectPoolItem item;
+        private int poolItemId;
         private int timerId = -1;
 
         public void Init(string path, Transform parent, float time)
@@ -55,7 +55,7 @@ public class EffectManager : Singletion<EffectManager>
                 pool.Init(path);
                 effectDic.Add(path, pool);
             }
-            item = pool.Dequeue(parent);
+            poolItemId = pool.Dequeue(parent).ItemID;
             if (time > 0) timerId = TimeManager.Instance.StartTimer(time, finish: Remove);
         }
         private void Remove()
@@ -65,8 +65,7 @@ public class EffectManager : Singletion<EffectManager>
         public override void Reset()
         {
             base.Reset();
-            if (effectDic.TryGetValue(path, out GameObjectPool<GameObjectPoolItem> pool)) pool.Enqueue(item);
-            item = null;
+            if (effectDic.TryGetValue(path, out GameObjectPool<GameObjectPoolItem> pool)) pool.Enqueue(poolItemId);
             TimeManager.Instance.StopTimer(timerId);
             timerId = -1;
         }

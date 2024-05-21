@@ -14,17 +14,16 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
     public List<T> Use => use;
     public int CacheCount => cacheCount;
 
-    public void Enqueue(T item)
+    public void Enqueue(int itemId)
     {
-        int index1 = use.FindIndex(a => a.ItemID == item.ItemID);
-        if (index1 >= 0) use.RemoveAt(index1);
-        int index2 = wait.FindIndex(a => a.ItemID == item.ItemID);
-        if (index2 >= 0) wait.RemoveAt(index2);
-        if (index1 < 0 || cache.Count >= cacheCount) { item.Release(); return; }
-        item.SetActive(false);
-        cache.Add(item);
+        T temp = use.Find(a => a.ItemID == itemId);
+        if (temp == null) return;
+        use.Remove(temp);
+        wait.Remove(temp);
+        if (cache.Count >= cacheCount) temp.Release();
+        else { temp.SetActive(false); cache.Add(temp); }
     }
-    public T Dequeue(Transform parent, Action<object[], GameObject> action = null, params object[] param)
+    public T Dequeue(Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
     {
         T temp = null;
         if (cache.Count > 0) temp = cache[0];
@@ -93,7 +92,7 @@ public class GameObjectPoolItem
     private int timerId = -1;
 
     private Action<int> release;
-    private Action<object[], GameObject> action;
+    private Action<int, GameObject, object[]> action;
     protected object[] param;
 
     public int ItemID => itemId;
@@ -101,7 +100,7 @@ public class GameObjectPoolItem
     /// <summary>
     /// 请使用GameObjectPool
     /// </summary>
-    public void Init(Transform parent, Action<int> release, Action<object[], GameObject> action, params object[] param)
+    public void Init(Transform parent, Action<int> release, Action<int, GameObject, object[]> action, params object[] param)
     {
         itemId = ++uniqueId;
         this.parent = parent;
@@ -163,7 +162,7 @@ public class GameObjectPoolItem
     }
     protected virtual void LoadFinish()
     {
-        action?.Invoke(param, obj);
+        action?.Invoke(itemId, obj, param);
     }
 }
 
@@ -178,17 +177,16 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
     public List<T> Use => use;
     public int CacheCount => cacheCount;
 
-    public void Enqueue(T item)
+    public void Enqueue(int itemId)
     {
-        int index1 = use.FindIndex(a => a.ItemID == item.ItemID);
-        if (index1 >= 0) use.RemoveAt(index1);
-        int index2 = wait.FindIndex(a => a.ItemID == item.ItemID);
-        if (index2 >= 0) wait.RemoveAt(index2);
-        if (index1 < 0 || cache.Count >= cacheCount) { item.Release(); return; }
-        item.SetActive(false);
-        cache.Add(item);
+        T temp = use.Find(a => a.ItemID == itemId);
+        if (temp == null) return;
+        use.Remove(temp);
+        wait.Remove(temp);
+        if (cache.Count >= cacheCount) temp.Release();
+        else { temp.SetActive(false); cache.Add(temp); }
     }
-    public T Dequeue(Action<object[], Object> action = null, params object[] param)
+    public T Dequeue(Action<int, Object, object[]> action = null, params object[] param)
     {
         T temp = null;
         if (cache.Count > 0) temp = cache[0];
@@ -242,7 +240,7 @@ public class AssetPoolItem
     private int timerId = -1;
 
     private Action<int> release;
-    private Action<object[], Object> action;
+    private Action<int, Object, object[]> action;
     protected object[] param;
 
     public int ItemID => itemId;
@@ -250,7 +248,7 @@ public class AssetPoolItem
     /// <summary>
     /// 请使用AssetPool
     /// </summary>
-    public void Init(Action<int> release, Action<object[], Object> action, params object[] param)
+    public void Init(Action<int> release, Action<int, Object, object[]> action, params object[] param)
     {
         itemId = ++uniqueId;
         this.release = release;
@@ -297,6 +295,6 @@ public class AssetPoolItem
     }
     public virtual void LoadFinish()
     {
-        action?.Invoke(param, obj);
+        action?.Invoke(itemId, obj, param);
     }
 }

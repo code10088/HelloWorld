@@ -38,14 +38,14 @@ namespace HotAssembly
 
         public void LoadBulletFromPool()
         {
-            pool.Dequeue(component.obj.transform, (a, b) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
-            pool.Dequeue(component.obj.transform, (a, b) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
-            pool.Enqueue(pool.Use[0]);
-            pool.Dequeue(component.obj.transform, (a, b) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
+            pool.Dequeue(component.obj.transform, (a, b, c) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
+            pool.Dequeue(component.obj.transform, (a, b, c) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
+            pool.Enqueue(pool.Use[0].ItemID);
+            pool.Dequeue(component.obj.transform, (a, b, c) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
         }
         public void DelectBullet()
         {
-            pool.Enqueue(pool.Use[0]);
+            pool.Enqueue(pool.Use[0].ItemID);
         }
     }
 }

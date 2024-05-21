@@ -67,7 +67,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             var use = item.Value.Use;
             for (int i = 0; i < use.Count; i++)
             {
-                item.Value.Enqueue(use[i]);
+                item.Value.Enqueue(use[i].ItemID);
             }
         }
     }
@@ -75,14 +75,10 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     {
         foreach (var item in audioPool)
         {
-            var use = item.Value.Use;
-            for (int i = 0; i < use.Count; i++)
+            if (item.Value.Use.Exists(a => a.ItemID == id))
             {
-                if (use[i].ItemID == id)
-                {
-                    item.Value.Enqueue(use[i]);
-                    return;
-                }
+                item.Value.Enqueue(id);
+                return;
             }
         }
     }
