@@ -4,6 +4,7 @@ using UnityEngine;
 using Object = UnityEngine.Object;
 using Newtonsoft.Json;
 using HybridCLR;
+using UnityEngine.SceneManagement;
 
 public class GameStart : MonoSingletion<GameStart>
 {
@@ -12,7 +13,8 @@ public class GameStart : MonoSingletion<GameStart>
     [RuntimeInitializeOnLoadMethod]
     private static void _()
     {
-        Instance.__();
+        var scene = SceneManager.GetActiveScene();
+        if (scene.buildIndex == 0) Instance.__();
     }
     public void __()
     {
