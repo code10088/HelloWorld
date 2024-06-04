@@ -1,10 +1,76 @@
-using HotAssembly;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace HotAssembly
 {
     public class PieceManager : Singletion<PieceManager>
     {
-        private List<PieceEntity> pieces = new List<PieceEntity>();
+        private List<PieceEntity> pieces = new List<PieceEntity>(1000);
+
+        public void Update()
+        {
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                var temp = pieces[i];
+                if (temp.Update(Time.deltaTime))
+                {
+                    pieces.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+        public PieceEntity FindNearArmyTarget(Vector3 pos, int allyId, List<int> exclude = null)
+        {
+            float dis = 10000;
+            PieceEntity target = null;
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                var p = pieces[i];
+                if (p.AllyId == allyId) continue;
+                if (exclude != null && exclude.Contains(p.ItemId)) continue;
+                float f = Vector3.Distance(pos, p.Pos);
+                if (f > dis) continue;
+                dis = f;
+                target = p;
+            }
+            return target;
+        }
+        public PieceEntity[] FindNearArmyTarget(Vector3 pos, int allyId, int num)
+        {
+            float[] dis = new float[num];
+            PieceEntity[] target = new PieceEntity[num];
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                var p = pieces[i];
+                if (p.AllyId == allyId) continue;
+                float f = Vector3.Distance(pos, p.Pos);
+                for (int j = 0; j < num; j++)
+                {
+                    if (dis[j] == 0 || dis[j] > f)
+                    {
+                        dis[j] = f;
+                        target[j] = p;
+                        break;
+                    }
+                }
+            }
+            return target;
+        }
+        public PieceEntity FindNearSelfTarget(Vector3 pos, int allyId, List<int> exclude = null)
+        {
+            float dis = 10000;
+            PieceEntity target = null;
+            for (int i = 0; i < pieces.Count; i++)
+            {
+                var p = pieces[i];
+                if (p.AllyId != allyId) continue;
+                if (exclude != null && exclude.Contains(p.ItemId)) continue;
+                float f = Vector3.Distance(pos, p.Pos);
+                if (f > dis) continue;
+                dis = f;
+                target = p;
+            }
+            return target;
+        }
     }
 }
