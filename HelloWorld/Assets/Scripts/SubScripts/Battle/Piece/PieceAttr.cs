@@ -9,6 +9,7 @@ namespace HotAssembly
         Mp,
         Atk,
         Def,
+        MoveSpeed,
     }
     public class PieceAttr
     {

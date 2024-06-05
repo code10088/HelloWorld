@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace HotAssembly
@@ -9,12 +10,12 @@ namespace HotAssembly
     }
     public class MonsterAni
     {
-        private Animator ani;
+        private AnimationController ani;
 
-        public void PlayAni(MonsterAniEnum name, float duration = 0.2f)
+        public void PlayAni(MonsterAniEnum name, float fadeLength = 0, Action finish = null)
         {
             if (!ani.enabled) ani.enabled = true;
-            ani.CrossFade(name.ToString(), duration);
+            ani.Play(name.ToString(), fadeLength, finish);
         }
         public void StopAni()
         {

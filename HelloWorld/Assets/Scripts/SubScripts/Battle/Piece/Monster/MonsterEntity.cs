@@ -1,4 +1,5 @@
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace HotAssembly
 {
@@ -7,6 +8,8 @@ namespace HotAssembly
         None,
         Enter,
         Idle,
+        Attack,
+        Patrol,
         Moderate,
         Frozen,
         Vertigo,
@@ -23,7 +26,36 @@ namespace HotAssembly
         }
         public override bool Update(float t)
         {
-            return base.Update(t);
+            CheckState();
+            return false;
+        }
+        public void CheckState()
+        {
+            switch (monsterState)
+            {
+                case MonsterState.Idle:
+                    target = PieceManager.Instance.FindNearArmyTarget(pos, allyId);
+                    if (target == null) ChangeState(MonsterState.Patrol);
+                    else ChangeState(MonsterState.Attack);
+                    break;
+                case MonsterState.Patrol:
+                    target = PieceManager.Instance.FindNearArmyTarget(pos, allyId);
+                    if (target != null) ChangeState(MonsterState.Attack);
+                    break;
+                case MonsterState.Attack:
+                    if (pieceSkill.AtkDis < Vector3.Distance(pos, target.Pos))
+                    {
+                        float f = pieceAttr.GetAttr(MonsterAttrEnum.MoveSpeed);
+                        var dir = Vector3.Normalize(target.Pos - pos);
+                        pos += dir * f;
+                    }
+                    else
+                    {
+                        pieceSkill.AutoPlaySkill();
+                    }
+                    break;
+                    
+            }
         }
         public void ChangeState(MonsterState state)
         {
@@ -39,7 +71,9 @@ namespace HotAssembly
             {
                 //½øÈë
                 case MonsterState.Enter:
-                    pieceAni.PlayAni(MonsterAniEnum.Enter);
+                    pieceAni.PlayAni(MonsterAniEnum.Enter, 0, () => ChangeState(MonsterState.Idle));
+                    break;
+                case MonsterState.Attack:
                     break;
             }
         }

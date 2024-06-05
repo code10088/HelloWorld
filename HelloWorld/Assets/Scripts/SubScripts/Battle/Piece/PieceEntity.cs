@@ -16,9 +16,12 @@ namespace HotAssembly
         protected PieceSkill pieceSkill;
         public PieceAttr pieceAttr;
 
+        protected PieceEntity target;
+
         public int AllyId => allyId;
         public int ItemId => itemId;
         public Vector3 Pos => pos;
+        public PieceEntity Target => target;
 
         public virtual void Init()
         {
