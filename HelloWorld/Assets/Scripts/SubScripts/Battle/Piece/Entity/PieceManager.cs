@@ -5,8 +5,16 @@ namespace HotAssembly
 {
     public class PieceManager : Singletion<PieceManager>
     {
-        private List<PieceEntity> pieces = new List<PieceEntity>(1000);
+        private int uniqueId = 0;
+        private List<PieceEntity> pieces = new List<PieceEntity>(10000);
 
+        public void AddSkillPiece(Dictionary<PieceAttrEnum, float> attrs)
+        {
+            var entity = new SkillEntity();
+            entity.Init(++uniqueId);
+            entity.Init(attrs);
+            pieces.Add(entity);
+        }
         public void Update()
         {
             for (int i = 0; i < pieces.Count; i++)

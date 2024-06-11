@@ -2,30 +2,37 @@ using UnityEngine;
 
 namespace HotAssembly
 {
-    public class PieceEntity
+    public enum PieceType
     {
-        private static int uniqueId = 0;
-
-        protected int allyId;
-        protected int teamId;
-        protected int itemId;
-        protected Vector3 pos;
+        None,
+        Player,
+        Monster,
+        Skill,
+    }
+    public partial class PieceEntity
+    {
         protected TriggerManager triggerManager;
         protected BuffManager buffManager;
         protected PieceModel pieceModel;
         protected PieceSkill pieceSkill;
-        public PieceAttr pieceAttr;
+        protected PieceAttr pieceAttr;
 
+        protected int allyId;
+        protected int teamId;
+        protected int itemId;
+        protected PieceType pieceType;
+        protected Vector3 pos;
         protected PieceEntity target;
 
         public int AllyId => allyId;
         public int ItemId => itemId;
         public Vector3 Pos => pos;
         public PieceEntity Target => target;
+        public PieceAttr PieceAttr => pieceAttr;
 
-        public virtual void Init()
+        public virtual void Init(int id)
         {
-
+            itemId = id;
         }
         public virtual bool Update(float t) 
         {

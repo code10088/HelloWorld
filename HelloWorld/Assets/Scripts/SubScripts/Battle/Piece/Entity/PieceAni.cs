@@ -3,16 +3,16 @@ using UnityEngine;
 
 namespace HotAssembly
 {
-    public enum MonsterAniEnum
+    public enum PieceAniEnum
     {
         Enter,
         Idle,
     }
-    public class MonsterAni
+    public partial class PieceEntity
     {
         private AnimationController ani;
 
-        public void PlayAni(MonsterAniEnum name, float fadeLength = 0, Action finish = null)
+        public void PlayAni(string name, float fadeLength = 0, Action finish = null)
         {
             if (!ani.enabled) ani.enabled = true;
             ani.Play(name.ToString(), fadeLength, finish);

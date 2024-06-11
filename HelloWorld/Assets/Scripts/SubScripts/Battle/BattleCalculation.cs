@@ -8,14 +8,14 @@ namespace HotAssembly
     {
         public void Attack(PieceEntity origin, PieceEntity target)
         {
-            var atk = origin.pieceAttr.GetAttr(MonsterAttrEnum.Atk);
-            var def = origin.pieceAttr.GetAttr(MonsterAttrEnum.Def);
+            var atk = origin.PieceAttr.GetAttr(PieceAttrEnum.Atk);
+            var def = origin.PieceAttr.GetAttr(PieceAttrEnum.Def);
             if (atk <= def) return;
-            target.pieceAttr.SetAttr(MonsterAttrEnum.Hp, atk - def);
+            target.PieceAttr.SetAttr(PieceAttrEnum.Hp, atk - def);
         }
-        public void AddEffect(PieceEntity target, MonsterAttrEnum k, float v)
+        public void AddEffect(PieceEntity target, PieceAttrEnum k, float v)
         {
-            target.pieceAttr.SetAttr(k, v);
+            target.PieceAttr.SetAttr(k, v);
         }
     }
 }

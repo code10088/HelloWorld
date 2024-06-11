@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace HotAssembly
 {
-    public enum MonsterAttrEnum
+    public enum PieceAttrEnum
     {
         Hp,
         Mp,
@@ -13,21 +13,21 @@ namespace HotAssembly
     }
     public class PieceAttr
     {
-        private Dictionary<MonsterAttrEnum, float> attrs = new Dictionary<MonsterAttrEnum, float>();
+        private Dictionary<PieceAttrEnum, float> attrs = new Dictionary<PieceAttrEnum, float>();
 
-        public float GetAttr(MonsterAttrEnum k)
+        public float GetAttr(PieceAttrEnum k)
         {
             float f = 0;
             attrs.TryGetValue(k, out f);
             switch (k)
             {
-                case MonsterAttrEnum.Hp:
+                case PieceAttrEnum.Hp:
                     return f;
                 default:
                     return f;
             }
         }
-        public void SetAttr(MonsterAttrEnum k, float v)
+        public void SetAttr(PieceAttrEnum k, float v)
         {
             float f = 0;
             attrs.TryGetValue(k, out f);
@@ -35,10 +35,16 @@ namespace HotAssembly
             attrs[k] = result;
             switch (k)
             {
-                case MonsterAttrEnum.Hp:
+                case PieceAttrEnum.Hp:
 
                     break;
             }
+        }
+        public Dictionary<PieceAttrEnum, float> CopyAttr()
+        {
+            Dictionary<PieceAttrEnum, float> result = new Dictionary<PieceAttrEnum, float>();
+            foreach (var item in attrs) result.Add(item.Key, item.Value);
+            return result;
         }
     }
 }

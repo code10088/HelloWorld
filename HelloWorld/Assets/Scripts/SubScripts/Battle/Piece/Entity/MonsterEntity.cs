@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace HotAssembly
 {
@@ -17,11 +16,10 @@ namespace HotAssembly
     public class MonsterEntity : PieceEntity
     {
         protected MonsterState monsterState = MonsterState.None;
-        private MonsterAni pieceAni;
 
-        public override void Init()
+        public override void Init(int id)
         {
-            base.Init();
+            base.Init(id);
             ChangeState(MonsterState.Enter);
         }
         public override bool Update(float t)
@@ -43,15 +41,12 @@ namespace HotAssembly
                     if (target != null) ChangeState(MonsterState.Attack);
                     break;
                 case MonsterState.Attack:
-                    if (pieceSkill.AtkDis < Vector3.Distance(pos, target.Pos))
+                    var result = pieceSkill.AutoPlaySkill();
+                    if (result == PieceSkillState.NoDistance)
                     {
-                        float f = pieceAttr.GetAttr(MonsterAttrEnum.MoveSpeed);
+                        float f = pieceAttr.GetAttr(PieceAttrEnum.MoveSpeed);
                         var dir = Vector3.Normalize(target.Pos - pos);
                         pos += dir * f;
-                    }
-                    else
-                    {
-                        pieceSkill.AutoPlaySkill();
                     }
                     break;
                     
@@ -71,7 +66,7 @@ namespace HotAssembly
             {
                 //½øÈë
                 case MonsterState.Enter:
-                    pieceAni.PlayAni(MonsterAniEnum.Enter, 0, () => ChangeState(MonsterState.Idle));
+                    PlayAni(PieceAniEnum.Enter.ToString(), 0, () => ChangeState(MonsterState.Idle));
                     break;
                 case MonsterState.Attack:
                     break;
