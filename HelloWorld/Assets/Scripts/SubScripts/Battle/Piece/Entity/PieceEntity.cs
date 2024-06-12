@@ -16,6 +16,7 @@ namespace HotAssembly
         protected PieceModel pieceModel;
         protected PieceSkill pieceSkill;
         protected PieceAttr pieceAttr;
+        protected PieceMove pieceMove;
 
         protected int allyId;
         protected int teamId;
