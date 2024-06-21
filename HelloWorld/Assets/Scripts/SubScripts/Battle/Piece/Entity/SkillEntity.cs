@@ -11,7 +11,9 @@ namespace HotAssembly
     }
     public class SkillEntity : PieceEntity
     {
-        
+        private BoxCollider2D collider;
+        private ContactFilter2D contactFilter;
+        private Collider2D[] results = new Collider2D[50];
         public void Init(Dictionary<PieceAttrEnum, float> attrs)
         {
 
@@ -33,7 +35,11 @@ namespace HotAssembly
         protected virtual void CheckCollision()
         {
             //碰撞用collider简单通用
+            int count = Physics2D.OverlapCollider(collider, contactFilter, results);
+            for (int i = 0; i < count; i++)
+            {
 
+            }
         }
     }
 }

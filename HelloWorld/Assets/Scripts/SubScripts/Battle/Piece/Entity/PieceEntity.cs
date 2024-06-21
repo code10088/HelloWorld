@@ -9,7 +9,7 @@ namespace HotAssembly
         Monster,
         Skill,
     }
-    public partial class PieceEntity
+    public class PieceEntity
     {
         protected TriggerManager triggerManager;
         protected BuffManager buffManager;
@@ -22,13 +22,12 @@ namespace HotAssembly
         protected int teamId;
         protected int itemId;
         protected PieceType pieceType;
-        protected Vector3 pos;
         protected PieceEntity target;
 
         public int AllyId => allyId;
         public int ItemId => itemId;
-        public Vector3 Pos => pos;
         public PieceEntity Target => target;
+        public PieceModel PieceModel => pieceModel;
         public PieceAttr PieceAttr => pieceAttr;
 
         public virtual void Init(int id)
@@ -37,6 +36,8 @@ namespace HotAssembly
         }
         public virtual bool Update(float t) 
         {
+            buffManager.Update();
+            pieceMove.Update(t);
             return false;
         }
     }

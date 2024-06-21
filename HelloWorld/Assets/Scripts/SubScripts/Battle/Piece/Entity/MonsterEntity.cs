@@ -32,12 +32,12 @@ namespace HotAssembly
             switch (monsterState)
             {
                 case MonsterState.Idle:
-                    target = PieceManager.Instance.FindNearArmyTarget(pos, allyId);
+                    target = PieceManager.Instance.FindNearArmyTarget(pieceModel.Pos, allyId);
                     if (target == null) ChangeState(MonsterState.Patrol);
                     else ChangeState(MonsterState.Attack);
                     break;
                 case MonsterState.Patrol:
-                    target = PieceManager.Instance.FindNearArmyTarget(pos, allyId);
+                    target = PieceManager.Instance.FindNearArmyTarget(pieceModel.Pos, allyId);
                     if (target != null) ChangeState(MonsterState.Attack);
                     break;
                 case MonsterState.Attack:
@@ -45,8 +45,9 @@ namespace HotAssembly
                     if (result == PieceSkillState.NoDistance)
                     {
                         float f = pieceAttr.GetAttr(PieceAttrEnum.MoveSpeed);
-                        var dir = Vector3.Normalize(target.Pos - pos);
-                        pos += dir * f;
+                        var dir = Vector3.Normalize(target.PieceModel.Pos - pieceModel.Pos);
+                        //通过piecemove移动
+                        //pieceModel.Pos += dir * f;
                     }
                     break;
                     
@@ -66,7 +67,7 @@ namespace HotAssembly
             {
                 //进入
                 case MonsterState.Enter:
-                    PlayAni(PieceAniEnum.Enter.ToString(), 0, () => ChangeState(MonsterState.Idle));
+                    PieceModel.PlayAni(PieceAniEnum.Enter.ToString(), 0, () => ChangeState(MonsterState.Idle));
                     break;
                 case MonsterState.Attack:
                     break;

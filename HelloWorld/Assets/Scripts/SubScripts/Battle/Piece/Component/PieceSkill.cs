@@ -29,7 +29,7 @@ namespace HotAssembly
             if (item == null) return PieceSkillState.None;
             if (!item.Cooldown) return PieceSkillState.NoCooldown;
             if (item.NeedTarget && piece.Target == null) return PieceSkillState.NoTarget;
-            if (item.AtkDis < Vector3.Distance(piece.Pos, piece.Target.Pos)) return PieceSkillState.NoDistance;
+            if (item.AtkDis < Vector3.Distance(piece.PieceModel.Pos, piece.Target.PieceModel.Pos)) return PieceSkillState.NoDistance;
             if (skill != null && !skill.Interval && item.InterruptPriority < skill.BeInterruptPriority) return PieceSkillState.NoInterrupt;
             PieceSkillState result = item.PlaySkill();
             if (result == PieceSkillState.Success) skill = item;
@@ -68,7 +68,7 @@ namespace HotAssembly
         }
         public PieceSkillState PlaySkill()
         {
-            piece.PlayAni("Skill");
+            piece.PieceModel.PlayAni("Skill");
             if (config.Delay == 0) Trigger();
             else timerId = TimeManager.Instance.StartTimer(config.Delay, finish: Trigger);
             return PieceSkillState.Success;

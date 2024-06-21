@@ -97,9 +97,7 @@ public class GameObjectPoolItem
 
     public int ItemID => itemId;
 
-    /// <summary>
-    /// 请使用GameObjectPool
-    /// </summary>
+    [Obsolete("请使用GameObjectPool")]
     public void Init(Transform parent, Action<int> release, Action<int, GameObject, object[]> action, params object[] param)
     {
         itemId = ++uniqueId;
@@ -108,9 +106,7 @@ public class GameObjectPoolItem
         this.action = action;
         this.param = param;
     }
-    /// <summary>
-    /// 请使用GameObjectPool
-    /// </summary>
+    [Obsolete("请使用GameObjectPool")]
     public void SetActive(bool b)
     {
         if (b) Recycle();
@@ -129,9 +125,7 @@ public class GameObjectPoolItem
             param = null;
         }
     }
-    /// <summary>
-    /// 请使用GameObjectPool
-    /// </summary>
+    [Obsolete("请使用GameObjectPool")]
     public virtual void Release()
     {
         TimeManager.Instance.StopTimer(timerId);
@@ -148,9 +142,7 @@ public class GameObjectPoolItem
         timerId = -1;
         if (obj != null) obj.SetActive(true);
     }
-    /// <summary>
-    /// 请使用GameObjectPool
-    /// </summary>
+    [Obsolete("请使用GameObjectPool")]
     public void Instantiate(Object asset)
     {
         if (obj == null) obj = Object.Instantiate(asset, parent) as GameObject;
@@ -245,9 +237,7 @@ public class AssetPoolItem
 
     public int ItemID => itemId;
 
-    /// <summary>
-    /// 请使用AssetPool
-    /// </summary>
+    [Obsolete("请使用AssetPool")]
     public void Init(Action<int> release, Action<int, Object, object[]> action, params object[] param)
     {
         itemId = ++uniqueId;
@@ -255,9 +245,7 @@ public class AssetPoolItem
         this.action = action;
         this.param = param;
     }
-    /// <summary>
-    /// 请使用AssetPool
-    /// </summary>
+    [Obsolete("请使用AssetPool")]
     public void SetActive(bool b)
     {
         if (b) Recycle();
@@ -268,9 +256,7 @@ public class AssetPoolItem
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
         param = null;
     }
-    /// <summary>
-    /// 请使用AssetPool
-    /// </summary>
+    [Obsolete("请使用AssetPool")]
     public virtual void Release()
     {
         TimeManager.Instance.StopTimer(timerId);
@@ -285,9 +271,7 @@ public class AssetPoolItem
         TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
     }
-    /// <summary>
-    /// 请使用AssetPool
-    /// </summary>
+    [Obsolete("请使用AssetPool")]
     public void Instantiate(Object asset)
     {
         obj = asset;

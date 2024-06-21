@@ -36,7 +36,7 @@ namespace HotAssembly
                 var p = pieces[i];
                 if (p.AllyId == allyId) continue;
                 if (exclude != null && exclude.Contains(p.ItemId)) continue;
-                float f = Vector3.Distance(pos, p.Pos);
+                float f = Vector3.Distance(pos, p.PieceModel.Pos);
                 if (f > dis) continue;
                 dis = f;
                 target = p;
@@ -51,7 +51,7 @@ namespace HotAssembly
             {
                 var p = pieces[i];
                 if (p.AllyId == allyId) continue;
-                float f = Vector3.Distance(pos, p.Pos);
+                float f = Vector3.Distance(pos, p.PieceModel.Pos);
                 for (int j = 0; j < num; j++)
                 {
                     if (dis[j] == 0 || dis[j] > f)
@@ -73,7 +73,7 @@ namespace HotAssembly
                 var p = pieces[i];
                 if (p.AllyId != allyId) continue;
                 if (exclude != null && exclude.Contains(p.ItemId)) continue;
-                float f = Vector3.Distance(pos, p.Pos);
+                float f = Vector3.Distance(pos, p.PieceModel.Pos);
                 if (f > dis) continue;
                 dis = f;
                 target = p;
