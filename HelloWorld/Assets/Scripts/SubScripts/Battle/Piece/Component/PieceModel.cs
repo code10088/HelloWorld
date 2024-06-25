@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace HotAssembly
@@ -11,7 +10,7 @@ namespace HotAssembly
     }
     public class PieceModel
     {
-        protected static PieceModelPool pool = new PieceModelPool();
+        protected static GameObjectPool pool = new GameObjectPool();
 
         private int itemId;
         private string path;
@@ -51,26 +50,6 @@ namespace HotAssembly
         {
             pool.Enqueue(path, itemId);
             obj = null;
-        }
-    }
-
-    public class PieceModelPool
-    {
-        private Dictionary<string, GameObjectPool<GameObjectPoolItem>> pool = new();
-        public void Enqueue(string path, int itemId)
-        {
-            if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
-        }
-        public GameObjectPoolItem Dequeue(string path, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
-        {
-            GameObjectPool<GameObjectPoolItem> temp = null;
-            if (!pool.TryGetValue(path, out temp))
-            {
-                temp = new GameObjectPool<GameObjectPoolItem>();
-                temp.Init(path);
-                pool.Add(path, temp);
-            }
-            return temp.Dequeue(parent, action, param);
         }
     }
 }

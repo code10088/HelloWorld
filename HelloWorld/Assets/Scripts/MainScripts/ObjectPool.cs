@@ -3,6 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+public class GameObjectPool
+{
+    private Dictionary<string, GameObjectPool<GameObjectPoolItem>> pool = new();
+    public void Enqueue(string path, int itemId)
+    {
+        if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
+    }
+    public GameObjectPoolItem Dequeue(string path, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
+    {
+        GameObjectPool<GameObjectPoolItem> temp = null;
+        if (!pool.TryGetValue(path, out temp))
+        {
+            temp = new GameObjectPool<GameObjectPoolItem>();
+            temp.Init(path);
+            pool.Add(path, temp);
+        }
+        return temp.Dequeue(parent, action, param);
+    }
+    public void Release()
+    {
+        foreach (var item in pool) item.Value.Release();
+        pool = null;
+    }
+}
 public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new()
 {
     private List<T> use = new();
@@ -159,6 +183,30 @@ public class GameObjectPoolItem
 }
 
 
+public class AssetPool
+{
+    private Dictionary<string, AssetPool<AssetPoolItem>> pool = new();
+    public void Enqueue(string path, int itemId)
+    {
+        if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
+    }
+    public AssetPoolItem Dequeue(string path, Action<int, Object, object[]> action = null, params object[] param)
+    {
+        AssetPool<AssetPoolItem> temp = null;
+        if (!pool.TryGetValue(path, out temp))
+        {
+            temp = new AssetPool<AssetPoolItem>();
+            temp.Init(path);
+            pool.Add(path, temp);
+        }
+        return temp.Dequeue(action, param);
+    }
+    public void Release()
+    {
+        foreach (var item in pool) item.Value.Release();
+        pool = null;
+    }
+}
 public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
 {
     private List<T> use = new();
