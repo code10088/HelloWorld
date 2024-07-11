@@ -9,7 +9,7 @@ namespace HotAssembly
         public void Attack(PieceEntity origin, PieceEntity target)
         {
             var atk = origin.PieceAttr.GetAttr(PieceAttrEnum.Atk);
-            var def = origin.PieceAttr.GetAttr(PieceAttrEnum.Def);
+            var def = target.PieceAttr.GetAttr(PieceAttrEnum.Def);
             if (atk <= def) return;
             target.PieceAttr.SetAttr(PieceAttrEnum.Hp, atk - def);
         }

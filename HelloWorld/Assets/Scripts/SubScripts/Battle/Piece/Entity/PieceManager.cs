@@ -1,3 +1,5 @@
+using cfg;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,12 +10,24 @@ namespace HotAssembly
         private int uniqueId = 0;
         private List<PieceEntity> pieces = new List<PieceEntity>(10000);
 
-        public void AddSkillPiece(Dictionary<PieceAttrEnum, float> attrs)
+        public void AddSkillPiece(SkillConfig config, PieceEntity piece)
         {
-            var entity = new SkillEntity();
+            Type t = Type.GetType("HotAssembly." + config.SkillType);
+            var entity = Activator.CreateInstance(t) as SkillEntity;
             entity.Init(++uniqueId);
-            entity.Init(attrs);
+            entity.Init(config, piece);
             pieces.Add(entity);
+        }
+        public PieceEntity GetPiece(int id)
+        {
+            var result = pieces.Find(a => a.ItemId == id);
+            return result;
+        }
+        public T GetPiece<T>(int id) where T : PieceEntity
+        {
+            var result = GetPiece(id);
+            if (result == null) return null;
+            else return result as T;
         }
         public void Update()
         {

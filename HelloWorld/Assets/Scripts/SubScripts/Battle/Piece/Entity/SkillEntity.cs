@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using cfg;
 using UnityEngine;
 
 namespace HotAssembly
@@ -11,35 +10,29 @@ namespace HotAssembly
     }
     public class SkillEntity : PieceEntity
     {
-        private BoxCollider2D collider;
-        private ContactFilter2D contactFilter;
-        private Collider2D[] results = new Collider2D[50];
-        public void Init(Dictionary<PieceAttrEnum, float> attrs)
-        {
+        protected SkillConfig config;
+        protected PieceEntity piece;
+        protected float timer = 0;
 
+        public void Init(SkillConfig config, PieceEntity piece)
+        {
+            this.config = config;
+            this.piece = piece;
+            target = piece.Target;
+            pieceAttr = piece.PieceAttr.CopyAttr();
         }
         public override bool Update(float t)
         {
-            Trigger();
-            return base.Update(t);
+            base.Update(t);
+            timer += t;
+            if (config.Duration > 0 && timer >= config.Duration) return true;
+            if (timer <= config.Delay) return false;
+            PlaySkill();
+            return config.Duration == 0;
         }
-        protected virtual void Trigger()
+        protected virtual void PlaySkill()
         {
-            //持续时间、伤害间隔
-
-            CheckCollision();
-
-            //造成伤害(-1伤害后结束，0每帧伤害，1一秒伤害一次)
-            //override释放技能，发射一个实体
-        }
-        protected virtual void CheckCollision()
-        {
-            //碰撞用collider简单通用
-            int count = Physics2D.OverlapCollider(collider, contactFilter, results);
-            for (int i = 0; i < count; i++)
-            {
-
-            }
+            
         }
     }
 }

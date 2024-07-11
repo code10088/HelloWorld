@@ -37,6 +37,7 @@ namespace HotAssembly
         public virtual bool Update(float t) 
         {
             buffManager.Update();
+            pieceSkill.Update(t);
             pieceMove.Update(t);
             return false;
         }

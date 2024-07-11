@@ -40,9 +40,9 @@ namespace HotAssembly
         }
         private void Dispatch(NetMsgItem msg)
         {
-            switch (msg.id)
+            switch ((NetMsgId)msg.id)
             {
-                case NetMsgId.Min:; break;
+                case NetMsgId.Person:; break;
             }
         }
     }

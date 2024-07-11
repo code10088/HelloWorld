@@ -40,10 +40,10 @@ namespace HotAssembly
                     break;
             }
         }
-        public Dictionary<PieceAttrEnum, float> CopyAttr()
+        public PieceAttr CopyAttr()
         {
-            Dictionary<PieceAttrEnum, float> result = new Dictionary<PieceAttrEnum, float>();
-            foreach (var item in attrs) result.Add(item.Key, item.Value);
+            PieceAttr result = new PieceAttr();
+            foreach (var item in attrs) result.SetAttr(item.Key, item.Value);
             return result;
         }
     }

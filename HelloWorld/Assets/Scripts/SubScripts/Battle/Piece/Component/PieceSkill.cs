@@ -27,10 +27,11 @@ namespace HotAssembly
         {
             var item = skills.Find(a => a.SkillId == skillId);
             if (item == null) return PieceSkillState.None;
-            if (!item.Cooldown) return PieceSkillState.NoCooldown;
+            if (item.CooldownTimer > 0) return PieceSkillState.NoCooldown;
             if (item.NeedTarget && piece.Target == null) return PieceSkillState.NoTarget;
             if (item.AtkDis < Vector3.Distance(piece.PieceModel.Pos, piece.Target.PieceModel.Pos)) return PieceSkillState.NoDistance;
-            if (skill != null && !skill.Interval && item.InterruptPriority < skill.BeInterruptPriority) return PieceSkillState.NoInterrupt;
+            if (skill != null && item.InterruptPriority < skill.BeInterruptPriority) return PieceSkillState.NoInterrupt;
+            if (skill != null) skill.Clear();
             PieceSkillState result = item.PlaySkill();
             if (result == PieceSkillState.Success) skill = item;
             return result;
@@ -44,6 +45,10 @@ namespace HotAssembly
             }
             return PieceSkillState.None;
         }
+        public void Update(float t)
+        {
+            for (int i = 0; i < skills.Count; i++) skills[i].Update(t);
+        }
     }
 
     public class PieceSkillItem
@@ -51,13 +56,11 @@ namespace HotAssembly
         protected PieceEntity piece;
         protected SkillConfig config;
         protected float cooldownTimer;
-        protected float intervalTimer;
         private int timerId;
 
         public int SkillId => config.ID;
         public bool NeedTarget => config.NeedTarget;
-        public bool Cooldown => cooldownTimer == 0;
-        public bool Interval => intervalTimer == 0;
+        public float CooldownTimer => cooldownTimer;
         public float AtkDis => config.AtkDis;
         public float InterruptPriority => config.InterruptPriority;
         public float BeInterruptPriority => config.BeInterruptPriority;
@@ -69,14 +72,18 @@ namespace HotAssembly
         public PieceSkillState PlaySkill()
         {
             piece.PieceModel.PlayAni("Skill");
-            if (config.Delay == 0) Trigger();
-            else timerId = TimeManager.Instance.StartTimer(config.Delay, finish: Trigger);
+            if (config.Anticipation == 0) _PlaySkill();
+            else timerId = TimeManager.Instance.StartTimer(config.Anticipation, finish: _PlaySkill);
             return PieceSkillState.Success;
         }
-        private void Trigger()
+        private void _PlaySkill()
         {
-            var attrs = piece.PieceAttr.CopyAttr();
-            PieceManager.Instance.AddSkillPiece(attrs);
+            PieceManager.Instance.AddSkillPiece(config, piece);
+        }
+        public void Update(float t)
+        {
+            cooldownTimer -= t;
+            cooldownTimer = Mathf.Max(0, cooldownTimer);
         }
         public void Clear()
         {

@@ -1,7 +1,7 @@
 ﻿namespace HotAssembly
 {
-    public class NetMsgId
+    public enum NetMsgId
     {
-        public const ushort Min = 0;
+        Person = 1,
     }
 }

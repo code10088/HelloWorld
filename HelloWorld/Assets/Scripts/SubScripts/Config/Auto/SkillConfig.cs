@@ -17,13 +17,20 @@ public sealed partial class SkillConfig : Luban.BeanBase
     public SkillConfig(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
+        SkillType = (SkillType)_buf.ReadInt();
         NeedTarget = _buf.ReadBool();
         Cooldown = _buf.ReadFloat();
-        Interval = _buf.ReadFloat();
-        Delay = _buf.ReadFloat();
+        Anticipation = _buf.ReadFloat();
         AtkDis = _buf.ReadFloat();
         InterruptPriority = _buf.ReadInt();
         BeInterruptPriority = _buf.ReadInt();
+        ColliderType = (DamageRangeType)_buf.ReadInt();
+        ColliderWidth = _buf.ReadFloat();
+        ColliderHeight = _buf.ReadFloat();
+        Delay = _buf.ReadFloat();
+        Duration = _buf.ReadFloat();
+        Internal = _buf.ReadFloat();
+        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Skills = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Skills.Add(_e0);}}
     }
 
     public static SkillConfig DeserializeSkillConfig(ByteBuf _buf)
@@ -33,6 +40,10 @@ public sealed partial class SkillConfig : Luban.BeanBase
 
     public readonly int ID;
     /// <summary>
+    /// 技能类型
+    /// </summary>
+    public readonly SkillType SkillType;
+    /// <summary>
     /// 需要目标
     /// </summary>
     public readonly bool NeedTarget;
@@ -41,13 +52,9 @@ public sealed partial class SkillConfig : Luban.BeanBase
     /// </summary>
     public readonly float Cooldown;
     /// <summary>
-    /// 攻击间隔
-    /// </summary>
-    public readonly float Interval;
-    /// <summary>
     /// 前摇
     /// </summary>
-    public readonly float Delay;
+    public readonly float Anticipation;
     /// <summary>
     /// 攻击距离
     /// </summary>
@@ -60,6 +67,34 @@ public sealed partial class SkillConfig : Luban.BeanBase
     /// 被打断优先级
     /// </summary>
     public readonly int BeInterruptPriority;
+    /// <summary>
+    /// 伤害范围
+    /// </summary>
+    public readonly DamageRangeType ColliderType;
+    /// <summary>
+    /// 宽/半径
+    /// </summary>
+    public readonly float ColliderWidth;
+    /// <summary>
+    /// 高
+    /// </summary>
+    public readonly float ColliderHeight;
+    /// <summary>
+    /// 延迟时间(配合动画)
+    /// </summary>
+    public readonly float Delay;
+    /// <summary>
+    /// 持续时间(0:伤害一次)
+    /// </summary>
+    public readonly float Duration;
+    /// <summary>
+    /// 伤害间隔
+    /// </summary>
+    public readonly float Internal;
+    /// <summary>
+    /// 拥有技能
+    /// </summary>
+    public readonly System.Collections.Generic.List<int> Skills;
    
     public const int __ID__ = -844226349;
     public override int GetTypeId() => __ID__;
@@ -68,13 +103,20 @@ public sealed partial class SkillConfig : Luban.BeanBase
     {
         return "{ "
         + "ID:" + ID + ","
+        + "SkillType:" + SkillType + ","
         + "NeedTarget:" + NeedTarget + ","
         + "Cooldown:" + Cooldown + ","
-        + "Interval:" + Interval + ","
-        + "Delay:" + Delay + ","
+        + "Anticipation:" + Anticipation + ","
         + "AtkDis:" + AtkDis + ","
         + "InterruptPriority:" + InterruptPriority + ","
         + "BeInterruptPriority:" + BeInterruptPriority + ","
+        + "ColliderType:" + ColliderType + ","
+        + "ColliderWidth:" + ColliderWidth + ","
+        + "ColliderHeight:" + ColliderHeight + ","
+        + "Delay:" + Delay + ","
+        + "Duration:" + Duration + ","
+        + "Internal:" + Internal + ","
+        + "Skills:" + Luban.StringUtil.CollectionToString(Skills) + ","
         + "}";
     }
 }

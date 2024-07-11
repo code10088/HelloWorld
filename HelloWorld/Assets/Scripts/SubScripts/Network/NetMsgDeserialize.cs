@@ -16,9 +16,9 @@ namespace HotAssembly
                 //var mm = new Memory<byte>(bytes, 2, bytes.Length - 2);
                 IExtensible msg = null;
                 var mm = new MemoryStream(bytes, 2, bytes.Length - 2);
-                switch (id)
+                switch ((NetMsgId)id)
                 {
-                    case 0: msg = Serializer.Deserialize<ProtoTest.Person>(mm); break;
+                    case NetMsgId.Person: msg = Serializer.Deserialize<ProtoTest.Person>(mm); break;
                 }
                 mm.Dispose();
                 Add(id, msg);
