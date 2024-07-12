@@ -25,6 +25,7 @@ public partial class Tables
     public TbActivityConfig TbActivityConfig = new TbActivityConfig();
     public TbFunctionUnlockConfig TbFunctionUnlockConfig = new TbFunctionUnlockConfig();
     public TbSkillConfig TbSkillConfig = new TbSkillConfig();
+    public TbPieceConfig TbPieceConfig = new TbPieceConfig();
 }
 
 }

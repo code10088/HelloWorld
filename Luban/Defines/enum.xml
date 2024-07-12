@@ -1,0 +1,74 @@
+<module name="">
+    <enum name="UIType">
+        <var name="UITest" value="1"/>
+        <var name="UICommonBox" value="2"/>
+		<var name="UIHotUpdateRes" value="3"/>
+		<var name="UIMain" value="4"/>
+		<var name="UISetting" value="5"/>
+		<var name="UICommonTips" value="6"/>
+		<var name="UISceneLoading" value="7"/>
+		<var name="UIGuide" value="8"/>
+    </enum>
+	<enum name="UIWindowType">
+        <var name="Normal" value="0"/>
+        <var name="Tips" value="1"/>
+		<var name="Guide" value="2"/>
+    </enum>
+	<enum name="SceneType">
+        <var name="SceneBase" value="1"/>
+		<var name="TestScene" value="2"/>
+    </enum>
+	<enum name="PlayerAvatarPartType">
+        <var name="Hair" value="1"/>
+        <var name="Head" value="2"/>
+		<var name="Body" value="3"/>
+		<var name="Foot" value="4"/>
+    </enum>
+	<enum name="TriggerMode">
+        <var name="Attack" value="1"/>
+        <var name="BeDamage" value="2"/>
+		<var name="AddBuff" value="3"/>
+		<var name="RemoveBuff" value="4"/>
+		<var name="ExcuteBuff" value="5"/>
+		<var name="PropChange" value="6"/>
+    </enum>
+	<enum name="CommonHandleType1">
+        <var name="Move" value="1"/>
+        <var name="Reset" value="2"/>
+		<var name="Keep" value="3"/>
+    </enum>
+	<enum name="ConditionType">
+        <var name="Condition_Action" value="0"/>
+        <var name="TriggerCondition_Random" value="1"/>
+		<var name="TriggerCondition_AccCount" value="2"/>
+		<var name="FunctionUnlockCondition_Lv" value="3"/>
+    </enum>
+	<enum name="ActionType">
+        <var name="Action_Action" value="0"/>
+        <var name="Action_Debug" value="1"/>
+		<var name="TriggerAction_AddTrigger" value="2"/>
+		<var name="TriggerAction_RemoveTrigger" value="3"/>
+		<var name="TriggerAction_ExcuteTrigger" value="4"/>
+		<var name="TriggerAction_AddBuff" value="5"/>
+		<var name="TriggerAction_RemoveBuff" value="6"/>
+		<var name="BuffAction_AddProp" value="7"/>
+    </enum>
+	<enum name="ActivityType">
+        <var name="Turntable" value="1"/>
+    </enum>
+	<enum name="FunctionUnlockType">
+        <var name="Turntable" value="1"/>
+    </enum>
+	<enum name="DamageRangeType">
+        <var name="Rect" value="1"/>
+		<var name="Circle" value="2"/>
+    </enum>
+	<enum name="SkillType">
+        <var name="Damage" value="1"/>
+		<var name="Entity" value="2"/>
+    </enum>
+    <enum name="MoveMode">
+        <var name="Dir" value="1"/>
+        <var name="Target" value="2"/>
+    </enum>
+</module>
