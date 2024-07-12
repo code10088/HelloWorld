@@ -1,3 +1,4 @@
+using cfg;
 using UnityEngine;
 
 namespace HotAssembly

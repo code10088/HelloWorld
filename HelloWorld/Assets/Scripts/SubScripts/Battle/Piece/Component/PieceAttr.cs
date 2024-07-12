@@ -1,44 +1,32 @@
+using cfg;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace HotAssembly
 {
-    public enum PieceAttrEnum
-    {
-        Hp,
-        Mp,
-        Atk,
-        Def,
-        MoveSpeed,
-    }
     public class PieceAttr
     {
-        private Dictionary<PieceAttrEnum, float> attrs = new Dictionary<PieceAttrEnum, float>();
+        private Dictionary<int, float> attrs = new Dictionary<int, float>();
 
         public float GetAttr(PieceAttrEnum k)
         {
+            return GetAttr((int)k);
+        }
+        public float GetAttr(int k)
+        {
             float f = 0;
             attrs.TryGetValue(k, out f);
-            switch (k)
-            {
-                case PieceAttrEnum.Hp:
-                    return f;
-                default:
-                    return f;
-            }
+            return f;
         }
         public void SetAttr(PieceAttrEnum k, float v)
+        {
+            SetAttr((int)k, v);
+        }
+        public void SetAttr(int k, float v)
         {
             float f = 0;
             attrs.TryGetValue(k, out f);
             float result = f + v;
             attrs[k] = result;
-            switch (k)
-            {
-                case PieceAttrEnum.Hp:
-
-                    break;
-            }
         }
         public PieceAttr CopyAttr()
         {

@@ -13,6 +13,7 @@ namespace cfg
 {
 public partial class Tables
 {
+    public TbLink TbLink = new TbLink();
     public TbUIConfig TbUIConfig = new TbUIConfig();
     public TbDeviceInfo TbDeviceInfo = new TbDeviceInfo();
     public TbSceneConfig TbSceneConfig = new TbSceneConfig();

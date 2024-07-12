@@ -63,6 +63,11 @@
         <var name="Rect" value="1"/>
 		<var name="Circle" value="2"/>
     </enum>
+	<enum name="PieceType">
+        <var name="Player" value="1"/>
+		<var name="Monster" value="2"/>
+		<var name="Skill" value="3"/>
+    </enum>
 	<enum name="SkillType">
         <var name="Damage" value="1"/>
 		<var name="Entity" value="2"/>
@@ -70,5 +75,12 @@
     <enum name="MoveMode">
         <var name="Dir" value="1"/>
         <var name="Target" value="2"/>
+    </enum>
+	<enum name="PieceAttrEnum">
+        <var name="Hp" value="1"/>
+        <var name="Mp" value="2"/>
+		<var name="Atk" value="3"/>
+		<var name="Def" value="4"/>
+		<var name="MoveSpeed" value="5"/>
     </enum>
 </module>

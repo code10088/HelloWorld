@@ -1,14 +1,8 @@
+using cfg;
 using UnityEngine;
 
 namespace HotAssembly
 {
-    public enum PieceType
-    {
-        None,
-        Player,
-        Monster,
-        Skill,
-    }
     public class PieceEntity
     {
         protected TriggerManager triggerManager;
