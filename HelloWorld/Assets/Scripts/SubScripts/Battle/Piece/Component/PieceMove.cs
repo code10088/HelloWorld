@@ -1,8 +1,12 @@
-using cfg;
 using UnityEngine;
 
 namespace HotAssembly
 {
+    public enum MoveMode
+    {
+        Dir = 1,
+        Target = 2,
+    }
     /// <summary>
     /// 移动多样性使Entity难以继承
     /// </summary>

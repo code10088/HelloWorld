@@ -1,3 +1,10 @@
 <module name="">
-    
+    <bean name="PieceConfig">
+		<var name="PieceType" type="PieceType"/>
+        <var name="ModelPath" type="string"/>
+        <var name="Skills" type="(list#sep=|),int"/>
+		<var name="Attrs" type="(map#sep=:|),int,float"/>
+		<var name="Speed" type="float"/>
+		<var name="AngleSpeed" type="float"/>
+    </bean>
 </module>

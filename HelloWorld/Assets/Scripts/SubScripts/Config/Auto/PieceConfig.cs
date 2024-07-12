@@ -16,12 +16,12 @@ public sealed partial class PieceConfig : Luban.BeanBase
 {
     public PieceConfig(ByteBuf _buf) 
     {
-        ID = _buf.ReadInt();
         PieceType = (PieceType)_buf.ReadInt();
-        Model = _buf.ReadString();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Attrs = new System.Collections.Generic.Dictionary<int, float>(n0 * 3 / 2);for(var i0 = 0 ; i0 < n0 ; i0++) { int _k0;  _k0 = _buf.ReadInt(); float _v0;  _v0 = _buf.ReadFloat();     Attrs.Add(_k0, _v0);}}
-        MoveMode = (MoveMode)_buf.ReadInt();
+        ModelPath = _buf.ReadString();
         {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Skills = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Skills.Add(_e0);}}
+        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Attrs = new System.Collections.Generic.Dictionary<int, float>(n0 * 3 / 2);for(var i0 = 0 ; i0 < n0 ; i0++) { int _k0;  _k0 = _buf.ReadInt(); float _v0;  _v0 = _buf.ReadFloat();     Attrs.Add(_k0, _v0);}}
+        Speed = _buf.ReadFloat();
+        AngleSpeed = _buf.ReadFloat();
     }
 
     public static PieceConfig DeserializePieceConfig(ByteBuf _buf)
@@ -29,21 +29,12 @@ public sealed partial class PieceConfig : Luban.BeanBase
         return new PieceConfig(_buf);
     }
 
-    public readonly int ID;
     public readonly PieceType PieceType;
-    public readonly string Model;
-    /// <summary>
-    /// 基础属性
-    /// </summary>
-    public readonly System.Collections.Generic.Dictionary<int, float> Attrs;
-    /// <summary>
-    /// 移动类型
-    /// </summary>
-    public readonly MoveMode MoveMode;
-    /// <summary>
-    /// 拥有技能
-    /// </summary>
+    public readonly string ModelPath;
     public readonly System.Collections.Generic.List<int> Skills;
+    public readonly System.Collections.Generic.Dictionary<int, float> Attrs;
+    public readonly float Speed;
+    public readonly float AngleSpeed;
    
     public const int __ID__ = -1138411600;
     public override int GetTypeId() => __ID__;
@@ -51,12 +42,12 @@ public sealed partial class PieceConfig : Luban.BeanBase
     public override string ToString()
     {
         return "{ "
-        + "ID:" + ID + ","
         + "PieceType:" + PieceType + ","
-        + "Model:" + Model + ","
-        + "Attrs:" + Luban.StringUtil.CollectionToString(Attrs) + ","
-        + "MoveMode:" + MoveMode + ","
+        + "ModelPath:" + ModelPath + ","
         + "Skills:" + Luban.StringUtil.CollectionToString(Skills) + ","
+        + "Attrs:" + Luban.StringUtil.CollectionToString(Attrs) + ","
+        + "Speed:" + Speed + ","
+        + "AngleSpeed:" + AngleSpeed + ","
         + "}";
     }
 }

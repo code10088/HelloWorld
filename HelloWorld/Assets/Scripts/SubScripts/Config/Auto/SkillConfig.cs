@@ -17,6 +17,7 @@ public sealed partial class SkillConfig : Luban.BeanBase
     public SkillConfig(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
+        PieceConfig = PieceConfig.DeserializePieceConfig(_buf);
         SkillType = (SkillType)_buf.ReadInt();
         NeedTarget = _buf.ReadBool();
         Cooldown = _buf.ReadFloat();
@@ -30,7 +31,6 @@ public sealed partial class SkillConfig : Luban.BeanBase
         Delay = _buf.ReadFloat();
         Duration = _buf.ReadFloat();
         Internal = _buf.ReadFloat();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Skills = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Skills.Add(_e0);}}
     }
 
     public static SkillConfig DeserializeSkillConfig(ByteBuf _buf)
@@ -39,6 +39,10 @@ public sealed partial class SkillConfig : Luban.BeanBase
     }
 
     public readonly int ID;
+    /// <summary>
+    /// 技能类型
+    /// </summary>
+    public readonly PieceConfig PieceConfig;
     /// <summary>
     /// 技能类型
     /// </summary>
@@ -91,10 +95,6 @@ public sealed partial class SkillConfig : Luban.BeanBase
     /// 伤害间隔
     /// </summary>
     public readonly float Internal;
-    /// <summary>
-    /// 拥有技能
-    /// </summary>
-    public readonly System.Collections.Generic.List<int> Skills;
    
     public const int __ID__ = -844226349;
     public override int GetTypeId() => __ID__;
@@ -103,6 +103,7 @@ public sealed partial class SkillConfig : Luban.BeanBase
     {
         return "{ "
         + "ID:" + ID + ","
+        + "PieceConfig:" + PieceConfig + ","
         + "SkillType:" + SkillType + ","
         + "NeedTarget:" + NeedTarget + ","
         + "Cooldown:" + Cooldown + ","
@@ -116,7 +117,6 @@ public sealed partial class SkillConfig : Luban.BeanBase
         + "Delay:" + Delay + ","
         + "Duration:" + Duration + ","
         + "Internal:" + Internal + ","
-        + "Skills:" + Luban.StringUtil.CollectionToString(Skills) + ","
         + "}";
     }
 }

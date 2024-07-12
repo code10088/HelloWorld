@@ -1,4 +1,3 @@
-using cfg;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,11 +9,30 @@ namespace HotAssembly
         private int uniqueId = 0;
         private List<PieceEntity> pieces = new List<PieceEntity>(10000);
 
-        public void AddSkillPiece(SkillConfig config, PieceEntity piece)
+        public void AddSimplePiece(int simpleId)
         {
+            var config = ConfigManager.Instance.GameConfigs.TbSimplePieceConfig[simpleId];
+            var entity = new PieceEntity();
+            entity.Init(++uniqueId, config.PieceConfig);
+            pieces.Add(entity);
+        }
+        public void AddMonsterPiece(int monsterId)
+        {
+            var config = ConfigManager.Instance.GameConfigs.TbMonsterConfig[monsterId];
+            Type t = Type.GetType("HotAssembly." + config.MonsterType);
+            if (t == null) t = typeof(MonsterEntity);
+            var entity = Activator.CreateInstance(t) as MonsterEntity;
+            entity.Init(++uniqueId, config.PieceConfig);
+            entity.Init(config);
+            pieces.Add(entity);
+        }
+        public void AddSkillPiece(int skillId, PieceEntity piece)
+        {
+            var config = ConfigManager.Instance.GameConfigs.TbSkillConfig[skillId];
             Type t = Type.GetType("HotAssembly." + config.SkillType);
+            if (t == null) t = typeof(SkillEntity);
             var entity = Activator.CreateInstance(t) as SkillEntity;
-            entity.Init(++uniqueId);
+            entity.Init(++uniqueId, config.PieceConfig);
             entity.Init(config, piece);
             pieces.Add(entity);
         }

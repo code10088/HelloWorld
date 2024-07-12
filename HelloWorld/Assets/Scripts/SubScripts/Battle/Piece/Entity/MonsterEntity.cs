@@ -16,11 +16,12 @@ namespace HotAssembly
     }
     public class MonsterEntity : PieceEntity
     {
+        protected MonsterConfig config;
         protected MonsterState monsterState = MonsterState.None;
 
-        public override void Init(int id)
+        public void Init(MonsterConfig config)
         {
-            base.Init(id);
+            this.config = config;
             ChangeState(MonsterState.Enter);
         }
         public override bool Update(float t)

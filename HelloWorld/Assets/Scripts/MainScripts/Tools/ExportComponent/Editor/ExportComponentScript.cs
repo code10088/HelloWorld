@@ -39,7 +39,7 @@ public class ExportComponentScript
         if (ec) GUI.DrawTexture(new Rect(selectionRect.x - (obj.transform.childCount > 0 ? 20 : 8), selectionRect.y + 6, 6, 6), texture);
     }
 
-    [MenuItem("GameObject/Tools/ExportScript", false, 1)]
+    [MenuItem("GameObject/Tools/ExportScript", false, -1)]
     public static void ExportScript()
     {
         string result = BeginExportScript();
@@ -97,15 +97,12 @@ public class ExportComponentScript
                     }
                 }
             }
-            if (tempComponentList.Count > 0)
-            {
-                ClassInfo classInfo = new ClassInfo();
-                classInfo.path = tempClass.path;
-                classInfo.className = tempClass.className;
-                classInfo.componentIndex = tempComponentIdList;
-                classInfo.component = tempComponentList;
-                classInfoList.Add(classInfo);
-            }
+            ClassInfo classInfo = new ClassInfo();
+            classInfo.path = tempClass.path;
+            classInfo.className = tempClass.className;
+            classInfo.componentIndex = tempComponentIdList;
+            classInfo.component = tempComponentList;
+            classInfoList.Add(classInfo);
         }
         if (classInfoList.Count == 0) return "沒有可用的变量名";
 

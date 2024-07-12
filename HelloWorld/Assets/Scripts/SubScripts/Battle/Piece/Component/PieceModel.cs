@@ -23,6 +23,7 @@ namespace HotAssembly
         public void Init(string path, Transform parent)
         {
             this.path = path;
+            if (string.IsNullOrEmpty(path)) return;
             itemId = pool.Dequeue(path, parent, LoadFinish).ItemID;
         }
         protected void LoadFinish(int itemId, GameObject obj, object[] param)

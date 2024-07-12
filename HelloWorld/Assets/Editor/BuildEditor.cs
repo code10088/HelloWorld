@@ -96,14 +96,21 @@ public class BuildEditor
     [MenuItem("Tools/CopyConfig", false, (int)ToolsMenuSort.CopyConfig)]
     public static void CopyConfig()
     {
-        string path = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
         List<FileInfo> list = new List<FileInfo>();
+        FileUtils.GetAllFilePath($"{Application.dataPath}/Scripts/SubScripts/Config/Auto", list);
+        for (int i = 0; i < list.Count; i++) File.Delete(list[i].FullName);
+        list.Clear();
+        string path = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
         FileUtils.GetAllFilePath($"{path}/Luban/Client/OutCodes", list);
         for (int i = 0; i < list.Count; i++)
         {
             string target = $"{Application.dataPath}/Scripts/SubScripts/Config/Auto/{list[i].Name}";
             File.Copy(list[i].FullName, target, true);
         }
+        list.Clear();
+
+        FileUtils.GetAllFilePath($"{Application.dataPath}/ZRes/DataConfig", list);
+        for (int i = 0; i < list.Count; i++) File.Delete(list[i].FullName);
         list.Clear();
         FileUtils.GetAllFilePath($"{path}/Luban/Client/OutBytes", list);
         for (int i = 0; i < list.Count; i++)

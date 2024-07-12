@@ -11,11 +11,9 @@
 
 namespace cfg
 { 
-    public enum SceneType
+    public enum MonsterType
     {
-        SceneBase = 1,
-        TestScene = 2,
-        BattleScene = 3,
+        Normal = 1,
     }
 
 } 

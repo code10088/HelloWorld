@@ -17,6 +17,7 @@
 	<enum name="SceneType">
         <var name="SceneBase" value="1"/>
 		<var name="TestScene" value="2"/>
+		<var name="BattleScene" value="3"/>
     </enum>
 	<enum name="PlayerAvatarPartType">
         <var name="Hair" value="1"/>
@@ -72,9 +73,8 @@
         <var name="Damage" value="1"/>
 		<var name="Entity" value="2"/>
     </enum>
-    <enum name="MoveMode">
-        <var name="Dir" value="1"/>
-        <var name="Target" value="2"/>
+	<enum name="MonsterType">
+        <var name="Normal" value="1"/>
     </enum>
 	<enum name="PieceAttrEnum">
         <var name="Hp" value="1"/>
