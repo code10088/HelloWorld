@@ -1,4 +1,5 @@
 using cfg;
+using UnityEngine;
 
 namespace HotAssembly
 {
@@ -22,13 +23,13 @@ namespace HotAssembly
         public PieceModel PieceModel => pieceModel;
         public PieceAttr PieceAttr => pieceAttr;
 
-        public virtual void Init(int id, PieceConfig config)
+        public virtual void Init(int id, PieceConfig config, Vector3 pos)
         {
             itemId = id;
             pieceModel = new PieceModel();
             var scene = SceneManager.Instance.GetScene(SceneType.BattleScene) as BattleScene;
             var parent = scene.GetTransform(config.PieceType.ToString());
-            pieceModel.Init(config.ModelPath, parent);
+            pieceModel.Init(config.ModelPath, parent, pos);
             pieceSkill = new PieceSkill();
             pieceSkill.Init(this, config.Skills);
             pieceAttr = new PieceAttr();

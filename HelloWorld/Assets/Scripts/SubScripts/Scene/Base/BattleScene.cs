@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace HotAssembly
 {
@@ -6,6 +7,7 @@ namespace HotAssembly
     {
         private BattleSceneComponent component = new BattleSceneComponent();
         private GameObjectPool<GameObjectPoolItem> pool = new GameObjectPool<GameObjectPoolItem>();
+        private int coroutineId = -1;
 
         protected override void Init()
         {
@@ -16,12 +18,14 @@ namespace HotAssembly
         public override void OnEnable(params object[] param)
         {
             base.OnEnable(param);
-
+            //此时调用SceneManager.Instance.GetScene取不到当前scene的解决办法
+            var enumerator = Start();
+            coroutineId = CoroutineManager.Instance.StartCoroutine(enumerator);
         }
         public override void OnDisable()
         {
             base.OnDisable();
-
+            CoroutineManager.Instance.Stop(coroutineId);
         }
         public override void OnDestroy()
         {
@@ -32,6 +36,12 @@ namespace HotAssembly
         public Transform GetTransform(string path)
         {
             return SceneObj.transform.Find(path);
+        }
+        private IEnumerator<Coroutine> Start()
+        {
+            yield return new WaitForFrame(1);
+            PieceManager.Instance.AddSimplePiece(1, Vector3.zero);
+
         }
     }
 }

@@ -88,7 +88,7 @@ namespace HotAssembly
         }
         private void _PlaySkill()
         {
-            PieceManager.Instance.AddSkillPiece(SkillId, piece);
+            PieceManager.Instance.AddSkillPiece(SkillId, piece.PieceModel.Pos, piece);
         }
         public void Update(float t)
         {

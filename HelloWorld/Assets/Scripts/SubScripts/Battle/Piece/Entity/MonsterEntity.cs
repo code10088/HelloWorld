@@ -8,6 +8,7 @@ namespace HotAssembly
         None,
         Enter,
         Idle,
+        Move,
         Attack,
         Patrol,
         Moderate,
@@ -41,6 +42,9 @@ namespace HotAssembly
                 case MonsterState.Patrol:
                     target = PieceManager.Instance.FindNearArmyTarget(pieceModel.Pos, allyId);
                     if (target != null) ChangeState(MonsterState.Attack);
+                    break;
+                case MonsterState.Move:
+                    
                     break;
                 case MonsterState.Attack:
                     var result = pieceSkill.AutoPlaySkill();

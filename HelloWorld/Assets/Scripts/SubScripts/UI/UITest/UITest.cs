@@ -24,8 +24,10 @@ namespace HotAssembly
             component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
             component.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
             component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
-            component.openSceneUIButton.onClick.AddListener(OpenScene);
-            component.closeSceneUIButton.onClick.AddListener(CloseScene);
+            component.openTestSceneUIButton.onClick.AddListener(OpenTestScene);
+            component.closeTestSceneUIButton.onClick.AddListener(CloseTestScene);
+            component.openBattleSceneUIButton.onClick.AddListener(OpenBattleScene);
+            component.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
             component.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
             component.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
             component.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
@@ -100,13 +102,21 @@ namespace HotAssembly
             TestScene ts = SceneManager.Instance.GetScene(SceneType.TestScene) as TestScene;
             ts.DelectBullet();
         }
-        private void OpenScene()
+        private void OpenTestScene()
         {
             SceneManager.Instance.OpenScene(SceneType.TestScene);
         }
-        private void CloseScene()
+        private void CloseTestScene()
         {
             SceneManager.Instance.CloseScene(SceneType.TestScene);
+        }
+        private void OpenBattleScene()
+        {
+            SceneManager.Instance.OpenScene(SceneType.BattleScene);
+        }
+        private void CloseBattleScene()
+        {
+            SceneManager.Instance.CloseScene(SceneType.BattleScene);
         }
         private void TestCoroutine()
         {

@@ -20,22 +20,25 @@ namespace HotAssembly
 
         public Vector3 Pos => pos;
 
-        public void Init(string path, Transform parent)
+        public void Init(string path, Transform parent, Vector3 pos)
         {
-            this.path = path;
             if (string.IsNullOrEmpty(path)) return;
+            this.path = path;
+            this.pos = pos;
             itemId = pool.Dequeue(path, parent, LoadFinish).ItemID;
         }
         protected void LoadFinish(int itemId, GameObject obj, object[] param)
         {
             this.obj = obj;
             ani = obj.GetComponentInChildren<AnimationController>();
+            SetPos(pos);
         }
         /// <summary>
         /// ÊÀ½ç×ø±ê
         /// </summary>
         public void SetPos(Vector3 pos)
         {
+            if (obj == null) return;
             obj.transform.position = pos;
         }
         public void PlayAni(string name, float fadeLength = 0, Action finish = null)

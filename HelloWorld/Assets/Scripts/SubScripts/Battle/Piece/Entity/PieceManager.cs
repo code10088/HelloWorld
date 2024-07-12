@@ -9,30 +9,30 @@ namespace HotAssembly
         private int uniqueId = 0;
         private List<PieceEntity> pieces = new List<PieceEntity>(10000);
 
-        public void AddSimplePiece(int simpleId)
+        public void AddSimplePiece(int simpleId, Vector3 pos)
         {
             var config = ConfigManager.Instance.GameConfigs.TbSimplePieceConfig[simpleId];
             var entity = new PieceEntity();
-            entity.Init(++uniqueId, config.PieceConfig);
+            entity.Init(++uniqueId, config.PieceConfig, pos);
             pieces.Add(entity);
         }
-        public void AddMonsterPiece(int monsterId)
+        public void AddMonsterPiece(int monsterId, Vector3 pos)
         {
             var config = ConfigManager.Instance.GameConfigs.TbMonsterConfig[monsterId];
             Type t = Type.GetType("HotAssembly." + config.MonsterType);
             if (t == null) t = typeof(MonsterEntity);
             var entity = Activator.CreateInstance(t) as MonsterEntity;
-            entity.Init(++uniqueId, config.PieceConfig);
+            entity.Init(++uniqueId, config.PieceConfig, pos);
             entity.Init(config);
             pieces.Add(entity);
         }
-        public void AddSkillPiece(int skillId, PieceEntity piece)
+        public void AddSkillPiece(int skillId, Vector3 pos, PieceEntity piece)
         {
             var config = ConfigManager.Instance.GameConfigs.TbSkillConfig[skillId];
             Type t = Type.GetType("HotAssembly." + config.SkillType);
             if (t == null) t = typeof(SkillEntity);
             var entity = Activator.CreateInstance(t) as SkillEntity;
-            entity.Init(++uniqueId, config.PieceConfig);
+            entity.Init(++uniqueId, config.PieceConfig, pos);
             entity.Init(config, piece);
             pieces.Add(entity);
         }
