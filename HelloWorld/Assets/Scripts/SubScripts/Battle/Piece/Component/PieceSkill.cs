@@ -62,6 +62,7 @@ namespace HotAssembly
         public void Clear()
         {
             for (int i = 0; i < skills.Count; i++) skills[i].Reset();
+            skills.Clear();
         }
     }
 

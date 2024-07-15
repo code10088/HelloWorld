@@ -34,5 +34,9 @@ namespace HotAssembly
             foreach (var item in attrs) result.SetAttr(item.Key, item.Value);
             return result;
         }
+        public void Clear()
+        {
+            attrs.Clear();
+        }
     }
 }

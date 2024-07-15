@@ -62,5 +62,9 @@ namespace HotAssembly
 				}
 			}
 		}
+		public void Clear()
+		{
+            buffs.Clear();
+        }
 	}
 }

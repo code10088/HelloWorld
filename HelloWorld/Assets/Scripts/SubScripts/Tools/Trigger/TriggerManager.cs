@@ -99,5 +99,9 @@ namespace HotAssembly
 				}
 			}
 		}
+		public void Clear()
+		{
+			triggers.Clear();
+		}
 	}
 }

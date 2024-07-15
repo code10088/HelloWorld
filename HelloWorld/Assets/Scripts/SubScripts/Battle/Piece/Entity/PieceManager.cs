@@ -8,6 +8,7 @@ namespace HotAssembly
     {
         private int uniqueId = 0;
         private List<PieceEntity> pieces = new List<PieceEntity>(10000);
+        private List<PieceEntity> cache = new List<PieceEntity>(10000);
 
         public void Init()
         {
@@ -17,7 +18,8 @@ namespace HotAssembly
         public void AddSimplePiece(int simpleId, int allyId, Vector3 pos)
         {
             var config = ConfigManager.Instance.GameConfigs.TbSimplePieceConfig[simpleId];
-            var entity = new PieceEntity();
+            var entity = cache.Find(a => a.GetType() == typeof(PieceEntity));
+            if (entity == null) entity = new PieceEntity();
             entity.Init(++uniqueId, allyId, config.PieceConfig, pos);
             pieces.Add(entity);
         }
@@ -26,7 +28,9 @@ namespace HotAssembly
             var config = ConfigManager.Instance.GameConfigs.TbMonsterConfig[monsterId];
             Type t = Type.GetType("HotAssembly.MonsterEntity_" + config.MonsterType);
             if (t == null) t = typeof(MonsterEntity);
-            var entity = Activator.CreateInstance(t) as MonsterEntity;
+            object obj = cache.Find(a => a.GetType() == t);
+            if (obj == null) obj = Activator.CreateInstance(t);
+            MonsterEntity entity = obj as MonsterEntity;
             entity.Init(++uniqueId, allyId, config.PieceConfig, pos);
             entity.Init(config);
             pieces.Add(entity);
@@ -36,7 +40,9 @@ namespace HotAssembly
             var config = ConfigManager.Instance.GameConfigs.TbSkillConfig[skillId];
             Type t = Type.GetType("HotAssembly.SkillEntity_" + config.SkillType);
             if (t == null) t = typeof(SkillEntity);
-            var entity = Activator.CreateInstance(t) as SkillEntity;
+            object obj = cache.Find(a => a.GetType() == t);
+            if (obj == null) obj = Activator.CreateInstance(t);
+            SkillEntity entity = obj as SkillEntity;
             entity.Init(++uniqueId, allyId, config.PieceConfig, pos);
             entity.Init(config, piece);
             pieces.Add(entity);

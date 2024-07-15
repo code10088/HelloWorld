@@ -5,12 +5,12 @@ namespace HotAssembly
 {
     public class PieceEntity
     {
-        protected TriggerManager triggerManager;
-        protected BuffManager buffManager;
-        protected PieceModel pieceModel;
-        protected PieceSkill pieceSkill;
-        protected PieceAttr pieceAttr;
-        protected PieceMove pieceMove;
+        protected TriggerManager triggerManager = new TriggerManager();
+        protected BuffManager buffManager = new BuffManager();
+        protected PieceModel pieceModel = new PieceModel();
+        protected PieceSkill pieceSkill = new PieceSkill();
+        protected PieceAttr pieceAttr = new PieceAttr();
+        protected PieceMove pieceMove = new PieceMove();
 
         protected int allyId;
         protected int teamId;
@@ -27,17 +27,11 @@ namespace HotAssembly
         {
             itemId = id;
             this.allyId = allyId;
-            triggerManager = new TriggerManager();
-            buffManager = new BuffManager();
-            pieceModel = new PieceModel();
             var scene = SceneManager.Instance.GetScene(SceneType.BattleScene) as BattleScene;
             var parent = scene.GetTransform(config.PieceType.ToString());
             pieceModel.Init(config.ModelPath, parent, pos);
-            pieceSkill = new PieceSkill();
             pieceSkill.Init(this, config.Skills);
-            pieceAttr = new PieceAttr();
             foreach (var item in config.Attrs) pieceAttr.SetAttr(item.Key, item.Value);
-            pieceMove = new PieceMove();
             pieceMove.Init(this);
             pieceMove.SetV(config.Speed);
             pieceMove.SetW(config.AngleSpeed);
@@ -52,14 +46,12 @@ namespace HotAssembly
         }
         public virtual void Clear()
         {
-            triggerManager = null;
-            buffManager = null;
+            triggerManager.Clear();
+            buffManager.Clear();
             pieceModel.Clear();
-            pieceModel = null;
             pieceSkill.Clear();
-            pieceSkill = null;
-            pieceAttr = null;
-            pieceMove = null;
+            pieceAttr.Clear();
+            pieceMove.Stop();
             target = null;
         }
     }
