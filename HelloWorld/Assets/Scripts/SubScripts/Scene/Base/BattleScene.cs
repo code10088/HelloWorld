@@ -40,8 +40,8 @@ namespace HotAssembly
         private IEnumerator<Coroutine> Start()
         {
             yield return new WaitForFrame(1);
-            PieceManager.Instance.AddSimplePiece(1, Vector3.zero);
-
+            PieceManager.Instance.AddMonsterPiece(1, 0, Vector3.right * 2);
+            PieceManager.Instance.AddMonsterPiece(1, 1, Vector3.left * 2);
         }
     }
 }

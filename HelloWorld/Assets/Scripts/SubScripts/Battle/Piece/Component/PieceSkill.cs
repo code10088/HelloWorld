@@ -8,10 +8,10 @@ namespace HotAssembly
     {
         None,
         Success,
-        NoCooldown,
-        NoTarget,
-        NoDistance,
         NoInterrupt,
+        NoCooldown,
+        NoDistance,
+        NoTarget,
     }
     public class PieceSkill
     {
@@ -36,7 +36,7 @@ namespace HotAssembly
             var item = skills.Find(a => a.SkillId == skillId);
             if (item == null) return PieceSkillState.None;
             if (item.CooldownTimer > 0) return PieceSkillState.NoCooldown;
-            if (item.NeedTarget && piece.Target == null) return PieceSkillState.NoTarget;
+            if (item.NeedTarget && (piece.Target == null || piece.Target.PieceModel == null)) return PieceSkillState.NoTarget;
             if (item.AtkDis < Vector3.Distance(piece.PieceModel.Pos, piece.Target.PieceModel.Pos)) return PieceSkillState.NoDistance;
             if (skill != null && item.InterruptPriority < skill.BeInterruptPriority) return PieceSkillState.NoInterrupt;
             if (skill != null) skill.Reset();
@@ -46,16 +46,22 @@ namespace HotAssembly
         }
         public PieceSkillState AutoPlaySkill()
         {
+            PieceSkillState result = PieceSkillState.None;
             for (int i = 0; i < skills.Count; i++)
             {
                 var state = PlaySkill(skills[i].SkillId);
                 if (state == PieceSkillState.Success) return PieceSkillState.Success;
+                else if (state > result) result = state;
             }
-            return PieceSkillState.None;
+            return result;
         }
         public void Update(float t)
         {
             for (int i = 0; i < skills.Count; i++) skills[i].Update(t);
+        }
+        public void Clear()
+        {
+            for (int i = 0; i < skills.Count; i++) skills[i].Reset();
         }
     }
 
@@ -88,7 +94,7 @@ namespace HotAssembly
         }
         private void _PlaySkill()
         {
-            PieceManager.Instance.AddSkillPiece(SkillId, piece.PieceModel.Pos, piece);
+            PieceManager.Instance.AddSkillPiece(SkillId, piece.AllyId, piece.PieceModel.Pos, piece);
         }
         public void Update(float t)
         {

@@ -1,5 +1,4 @@
 using cfg;
-using UnityEngine;
 
 namespace HotAssembly
 {
@@ -8,9 +7,7 @@ namespace HotAssembly
         None,
         Enter,
         Idle,
-        Move,
         Attack,
-        Patrol,
         Moderate,
         Frozen,
         Vertigo,
@@ -27,36 +24,26 @@ namespace HotAssembly
         }
         public override bool Update(float t)
         {
+            base.Update(t);
             CheckState();
-            return false;
+            float hp = pieceAttr.GetAttr(PieceAttrEnum.Hp);
+            return hp <= 0;
         }
         public void CheckState()
         {
             switch (monsterState)
             {
                 case MonsterState.Idle:
-                    target = PieceManager.Instance.FindNearArmyTarget(pieceModel.Pos, allyId);
-                    if (target == null) ChangeState(MonsterState.Patrol);
-                    else ChangeState(MonsterState.Attack);
-                    break;
-                case MonsterState.Patrol:
+                    pieceMove.Stop();
                     target = PieceManager.Instance.FindNearArmyTarget(pieceModel.Pos, allyId);
                     if (target != null) ChangeState(MonsterState.Attack);
                     break;
-                case MonsterState.Move:
-                    
-                    break;
                 case MonsterState.Attack:
                     var result = pieceSkill.AutoPlaySkill();
-                    if (result == PieceSkillState.NoDistance)
-                    {
-                        float f = pieceAttr.GetAttr(PieceAttrEnum.MoveSpeed);
-                        var dir = Vector3.Normalize(target.PieceModel.Pos - pieceModel.Pos);
-                        //通过piecemove移动
-                        //pieceModel.Pos += dir * f;
-                    }
+                    if (result == PieceSkillState.NoTarget) ChangeState(MonsterState.Idle);
+                    else if (result == PieceSkillState.NoDistance) pieceMove.MoveDir(pieceModel.Pos, target.PieceModel.Pos - pieceModel.Pos);
+                    else pieceMove.Stop();
                     break;
-                    
             }
         }
         public void ChangeState(MonsterState state)
@@ -73,7 +60,7 @@ namespace HotAssembly
             {
                 //进入
                 case MonsterState.Enter:
-                    PieceModel.PlayAni(PieceAniEnum.Enter.ToString(), 0, () => ChangeState(MonsterState.Idle));
+                    ChangeState(MonsterState.Idle);
                     break;
                 case MonsterState.Attack:
                     break;

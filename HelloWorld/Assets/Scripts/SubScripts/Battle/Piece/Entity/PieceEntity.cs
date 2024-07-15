@@ -23,9 +23,12 @@ namespace HotAssembly
         public PieceModel PieceModel => pieceModel;
         public PieceAttr PieceAttr => pieceAttr;
 
-        public virtual void Init(int id, PieceConfig config, Vector3 pos)
+        public virtual void Init(int id, int allyId, PieceConfig config, Vector3 pos)
         {
             itemId = id;
+            this.allyId = allyId;
+            triggerManager = new TriggerManager();
+            buffManager = new BuffManager();
             pieceModel = new PieceModel();
             var scene = SceneManager.Instance.GetScene(SceneType.BattleScene) as BattleScene;
             var parent = scene.GetTransform(config.PieceType.ToString());
@@ -39,12 +42,25 @@ namespace HotAssembly
             pieceMove.SetV(config.Speed);
             pieceMove.SetW(config.AngleSpeed);
         }
-        public virtual bool Update(float t) 
+        public virtual bool Update(float t)
         {
-            buffManager.Update();
+            triggerManager.Update(t);
+            buffManager.Update(t);
             pieceSkill.Update(t);
             pieceMove.Update(t);
             return false;
+        }
+        public virtual void Clear()
+        {
+            triggerManager = null;
+            buffManager = null;
+            pieceModel.Clear();
+            pieceModel = null;
+            pieceSkill.Clear();
+            pieceSkill = null;
+            pieceAttr = null;
+            pieceMove = null;
+            target = null;
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace HotAssembly
 {
-    public class SkillEntity_Entity : SkillEntity
+    public class SkillEntity_Skill : SkillEntity
     {
         protected override void PlaySkill()
         {

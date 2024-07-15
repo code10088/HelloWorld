@@ -34,12 +34,8 @@ namespace HotAssembly
         private void EnterMainScene()
         {
             DataManager.Instance.GuideData.Init();
-            int id = SceneManager.Instance.OpenScene(SceneType.TestScene, a => GameDebug.Log(a));
-            SceneManager.Instance.CloseScene(id);
-            SceneManager.Instance.OpenScene(SceneType.TestScene, a => GameDebug.Log(a));
             UIManager.Instance.OpenUI(UIType.UIMain);
-            UIManager.Instance.CloseUI(UIType.UIMain);
-            UIManager.Instance.OpenUI(UIType.UIMain);
+            SceneManager.Instance.OpenScene(SceneType.BattleScene);
         }
     }
 }

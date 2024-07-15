@@ -15,14 +15,14 @@ namespace HotAssembly
         private PieceEntity piece;
         private MoveMode moveMode;
         private PieceEntity target;
+
+        private bool stop = true;
         private float w;
         private float v;
         private Vector3 curPos;
         private Vector3 curDir;
-
         private Curve wcurve;
         private Curve vcurve;
-
 
         public void Init(PieceEntity piece)
         {
@@ -33,6 +33,7 @@ namespace HotAssembly
             moveMode = MoveMode.Dir;
             curPos = startPos;
             curDir = startDir;
+            stop = false;
         }
         public void MoveTrack(PieceEntity target, Vector3 startPos, Vector3 startDir)
         {
@@ -40,7 +41,13 @@ namespace HotAssembly
             this.target = target;
             curPos = startPos;
             curDir = startDir;
+            stop = false;
         }
+        public void Stop()
+        {
+            stop = true;
+        }
+
         public void SetW(float w)
         {
             this.w = w;
@@ -67,6 +74,7 @@ namespace HotAssembly
         }
         public void Update(float t)
         {
+            if (stop) return;
             if (wcurve != null) w = wcurve.Update(t);
             if (vcurve != null) v = vcurve.Update(t);
 

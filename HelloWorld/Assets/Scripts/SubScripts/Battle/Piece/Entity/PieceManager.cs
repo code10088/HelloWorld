@@ -4,35 +4,40 @@ using UnityEngine;
 
 namespace HotAssembly
 {
-    public class PieceManager : Singletion<PieceManager>
+    public class PieceManager : Singletion<PieceManager>, SingletionInterface
     {
         private int uniqueId = 0;
         private List<PieceEntity> pieces = new List<PieceEntity>(10000);
 
-        public void AddSimplePiece(int simpleId, Vector3 pos)
+        public void Init()
+        {
+            Updater.Instance.StartUpdate(Update);
+        }
+
+        public void AddSimplePiece(int simpleId, int allyId, Vector3 pos)
         {
             var config = ConfigManager.Instance.GameConfigs.TbSimplePieceConfig[simpleId];
             var entity = new PieceEntity();
-            entity.Init(++uniqueId, config.PieceConfig, pos);
+            entity.Init(++uniqueId, allyId, config.PieceConfig, pos);
             pieces.Add(entity);
         }
-        public void AddMonsterPiece(int monsterId, Vector3 pos)
+        public void AddMonsterPiece(int monsterId, int allyId, Vector3 pos)
         {
             var config = ConfigManager.Instance.GameConfigs.TbMonsterConfig[monsterId];
-            Type t = Type.GetType("HotAssembly." + config.MonsterType);
+            Type t = Type.GetType("HotAssembly.MonsterEntity_" + config.MonsterType);
             if (t == null) t = typeof(MonsterEntity);
             var entity = Activator.CreateInstance(t) as MonsterEntity;
-            entity.Init(++uniqueId, config.PieceConfig, pos);
+            entity.Init(++uniqueId, allyId, config.PieceConfig, pos);
             entity.Init(config);
             pieces.Add(entity);
         }
-        public void AddSkillPiece(int skillId, Vector3 pos, PieceEntity piece)
+        public void AddSkillPiece(int skillId, int allyId, Vector3 pos, PieceEntity piece)
         {
             var config = ConfigManager.Instance.GameConfigs.TbSkillConfig[skillId];
-            Type t = Type.GetType("HotAssembly." + config.SkillType);
+            Type t = Type.GetType("HotAssembly.SkillEntity_" + config.SkillType);
             if (t == null) t = typeof(SkillEntity);
             var entity = Activator.CreateInstance(t) as SkillEntity;
-            entity.Init(++uniqueId, config.PieceConfig, pos);
+            entity.Init(++uniqueId, allyId, config.PieceConfig, pos);
             entity.Init(config, piece);
             pieces.Add(entity);
         }
@@ -54,6 +59,7 @@ namespace HotAssembly
                 var temp = pieces[i];
                 if (temp.Update(Time.deltaTime))
                 {
+                    temp.Clear();
                     pieces.RemoveAt(i);
                     i--;
                 }

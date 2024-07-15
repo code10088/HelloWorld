@@ -1,7 +1,4 @@
 using cfg;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace HotAssembly
 {
@@ -12,7 +9,7 @@ namespace HotAssembly
             var atk = origin.PieceAttr.GetAttr(PieceAttrEnum.Atk);
             var def = target.PieceAttr.GetAttr(PieceAttrEnum.Def);
             if (atk <= def) return;
-            target.PieceAttr.SetAttr(PieceAttrEnum.Hp, atk - def);
+            target.PieceAttr.SetAttr(PieceAttrEnum.Hp, def - atk);
         }
         public void AddEffect(PieceEntity target, PieceAttrEnum k, float v)
         {

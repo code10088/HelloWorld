@@ -5,12 +5,10 @@ namespace HotAssembly
     public class SkillEntity_Damage : SkillEntity
     {
         private int count = 0;
-        private BoxCollider2D collider;
-        private ContactFilter2D contactFilter;
-        private Collider2D[] results = new Collider2D[50];
 
         protected override void PlaySkill()
         {
+            if (target == null) return;
             //ÉËº¦´ÎÊı
             int count1 = 1;
             if (config.Internal > 0)
@@ -21,17 +19,9 @@ namespace HotAssembly
             }
             if (count1 == 0) return;
             //ÉËº¦ÃüÖĞ
-            int count3 = Physics2D.OverlapCollider(collider, contactFilter, results);
-            PieceEntity[] target = new PieceEntity[count3];
-            for (int i = 0; i < count3; i++)
+            for (int i = 0; i < count1; i++)
             {
-                int code = results[i].GetHashCode();
-                int id = PieceCollider.Find(code);
-                target[i] = PieceManager.Instance.GetPiece(id);
-            }
-            for (int i = 0; i < count3; i++)
-            {
-                BattleCalculation.Instance.Attack(this, target[i]);
+                BattleCalculation.Instance.Attack(this, target);
             }
         }
     }
