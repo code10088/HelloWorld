@@ -8,10 +8,12 @@ public class GameObjectPool
     private Dictionary<string, GameObjectPool<GameObjectPoolItem>> pool = new();
     public void Enqueue(string path, int itemId)
     {
+        if (string.IsNullOrEmpty(path)) return;
         if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
     }
     public GameObjectPoolItem Dequeue(string path, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
     {
+        if (string.IsNullOrEmpty(path)) return null;
         GameObjectPool<GameObjectPoolItem> temp = null;
         if (!pool.TryGetValue(path, out temp))
         {
@@ -188,10 +190,12 @@ public class AssetPool
     private Dictionary<string, AssetPool<AssetPoolItem>> pool = new();
     public void Enqueue(string path, int itemId)
     {
+        if (string.IsNullOrEmpty(path)) return;
         if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
     }
     public AssetPoolItem Dequeue(string path, Action<int, Object, object[]> action = null, params object[] param)
     {
+        if (string.IsNullOrEmpty(path)) return null;
         AssetPool<AssetPoolItem> temp = null;
         if (!pool.TryGetValue(path, out temp))
         {

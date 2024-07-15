@@ -37,7 +37,7 @@ namespace HotAssembly
         public override void OnEnable(params object[] param)
         {
             base.OnEnable(param);
-            updateId = Updater.Instance.StartUpdate(buffManager.Update);
+            updateId = Updater.Instance.StartUpdate(UpdateTrigger);
             GameDebug.Log("UITest OnEnable");
         }
         protected override void PlayInitAni()
@@ -134,6 +134,11 @@ namespace HotAssembly
         }
         public TriggerManager triggerManager = new TriggerManager();
         public BuffManager buffManager = new BuffManager();
+        private void UpdateTrigger()
+        {
+            triggerManager.Update(Time.deltaTime);
+            buffManager.Update(Time.deltaTime);
+        }
         private void AddTrigger()
         {
             triggerManager.AddTrigger(1, action1: delegate { GameDebug.Log("T"); }, action2: delegate { GameDebug.Log("F"); });

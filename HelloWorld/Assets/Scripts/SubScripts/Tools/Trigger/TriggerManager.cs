@@ -89,5 +89,15 @@ namespace HotAssembly
 				}
 			}
 		}
+		public void Update(float t)
+		{
+			foreach (var item in triggers)
+			{
+				for (int i = 0; i < item.Value.Count; i++)
+				{
+					item.Value[i].Update(t);
+				}
+			}
+		}
 	}
 }

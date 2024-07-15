@@ -89,7 +89,7 @@ public unsafe class BRG_Background : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
 
         m_itemCount = m_backgroundW * m_backgroundH;
@@ -214,7 +214,7 @@ public unsafe class BRG_Background : MonoBehaviour
         m_brgContainer.UploadGpuData(m_itemCount);
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         if (m_brgContainer != null)
             m_brgContainer.Shutdown();

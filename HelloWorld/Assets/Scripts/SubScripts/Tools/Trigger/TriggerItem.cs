@@ -17,9 +17,9 @@ namespace HotAssembly
 		private int excuteCount = 0;//执行次数
 		private int triggerCount1 = 0;//已触发次数
 		private int triggerCount2 = 0;//已触发次数
-		private float totalEndTime = 0;
-		private float cdEndTime = 0;
-		private List<int> conditionKeys;
+        private float totalTimer = 0;
+        private float cdTimer = 0;
+        private List<int> conditionKeys;
 		private Dictionary<int, ConditionBase> conditions = new Dictionary<int, ConditionBase>();
 		private List<ActionBase> actionList1 = new List<ActionBase>();//正触发行为
 		private List<ActionBase> actionList2 = new List<ActionBase>();//反触发行为
@@ -38,21 +38,26 @@ namespace HotAssembly
 
 			InitCondition(_condition);
 			InitAction(_action1, _action2);
-			totalEndTime = Time.realtimeSinceStartup + config.TotalTime;
-			cdEndTime = 0;
+            totalTimer = 0;
+            cdTimer = 1000;
 		}
-		public void Excute(params object[] param)
+		public void Update(float t)
+		{
+            totalTimer += t;
+            cdTimer += t;
+        }
+        public void Excute(params object[] param)
 		{
 			if (endMark)
 			{
 				return;
 			}
-			if (config.TotalTime > 0 && Time.realtimeSinceStartup > totalEndTime)
+			if (config.TotalTime > 0 && totalTimer > config.TotalTime)
 			{
 				Remove();
 				return;
 			}
-			if (config.CDTime > 0 && Time.realtimeSinceStartup < cdEndTime)
+			if (config.CDTime > 0 && cdTimer > config.CDTime)
 			{
 				return;
 			}
@@ -69,10 +74,10 @@ namespace HotAssembly
 				if (config.Count1 >= 0)
 				{
 					for (int i = 0; i < actionList1.Count; i++) actionList1[i].Excute(param);
-					cdEndTime = Time.realtimeSinceStartup + config.CDTime;
+                    cdTimer = 0;
 
-					//触发次数
-					triggerCount1++;
+                    //触发次数
+                    triggerCount1++;
 					if (config.Count1 > 0 && triggerCount1 >= config.Count1)
 					{
 						if (config.Count1Type == CommonHandleType1.Move) Remove();
@@ -85,10 +90,10 @@ namespace HotAssembly
 				if (config.Count2 >= 0)
 				{
 					for (int i = 0; i < actionList2.Count; i++) actionList2[i].Excute(param);
-					cdEndTime = Time.realtimeSinceStartup + config.CDTime;
+                    cdTimer = 0;
 
-					//触发次数
-					triggerCount2++;
+                    //触发次数
+                    triggerCount2++;
 					if (config.Count2 > 0 && triggerCount2 >= config.Count2)
 					{
 						if (config.Count2Type == CommonHandleType1.Move) Remove();

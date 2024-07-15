@@ -49,12 +49,12 @@ namespace HotAssembly
 				}
 			}
 		}
-		public void Update()
+		public void Update(float t)
         {
 			for (int i = 0; i < buffs.Count; i++)
 			{
 				var temp = buffs[i];
-				temp.Excute();
+				temp.Excute(t);
 				if (temp.EndMark)
 				{
 					buffs.RemoveAt(i);

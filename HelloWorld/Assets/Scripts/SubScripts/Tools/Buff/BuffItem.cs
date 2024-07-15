@@ -16,8 +16,8 @@ namespace HotAssembly
 
 		private int excuteCount = 0;//执行次数
 		private int triggerCount = 0;//已触发次数
-		private float totalEndTime = 0;
-		private float cdEndTime = 0;
+		private float totalTimer = 0;
+		private float cdTimer = 0;
 		private List<int> conditionKeys;
 		private Dictionary<int, ConditionBase> conditions = new Dictionary<int, ConditionBase>();
 		private List<ActionBase> actionList = new List<ActionBase>();
@@ -36,21 +36,23 @@ namespace HotAssembly
 
 			InitCondition(_condition);
 			InitAction(_action);
-			totalEndTime = Time.realtimeSinceStartup + config.TotalTime;
-			cdEndTime = 0;
+			totalTimer = 0;
+			cdTimer = 1000;
 		}
-		public void Excute()
+		public void Excute(float t)
 		{
 			if (endMark)
 			{
 				return;
 			}
-			if (config.TotalTime > 0 && Time.realtimeSinceStartup > totalEndTime)
+			totalTimer += t;
+            if (config.TotalTime > 0 && totalTimer > config.TotalTime)
 			{
 				Remove();
 				return;
 			}
-			if (config.CDTime > 0 && Time.realtimeSinceStartup < cdEndTime)
+            cdTimer += t;
+            if (config.CDTime > 0 && cdTimer > config.CDTime)
 			{
 				return;
 			}
@@ -67,7 +69,7 @@ namespace HotAssembly
 				if (config.Count >= 0)
 				{
 					for (int i = 0; i < actionList.Count; i++) actionList[i].Excute();
-					cdEndTime = Time.realtimeSinceStartup + config.CDTime;
+                    cdTimer = 0;
 
 					//触发次数
 					triggerCount++;
