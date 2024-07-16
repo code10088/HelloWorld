@@ -15,6 +15,13 @@ namespace HotAssembly
             target = piece.Target;
             pieceAttr = piece.PieceAttr.CopyAttr();
         }
+        public override void Clear()
+        {
+            base.Clear();
+            config = null;
+            piece = null;
+            timer = 0;
+        }
         public override bool Update(float t)
         {
             base.Update(t);

@@ -10,6 +10,11 @@ namespace HotAssembly
         protected ContactFilter2D contactFilter;
         protected Collider2D[] results = new Collider2D[100];
 
+        public override void Clear()
+        {
+            base.Clear();
+            count = 0;
+        }
         protected override void PlaySkill()
         {
             //ÉËº¦´ÎÊý

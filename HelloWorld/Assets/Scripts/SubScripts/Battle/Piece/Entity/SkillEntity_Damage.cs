@@ -6,6 +6,11 @@ namespace HotAssembly
     {
         private int count = 0;
 
+        public override void Clear()
+        {
+            base.Clear();
+            count = 0;
+        }
         protected override void PlaySkill()
         {
             //ÉËº¦´ÎÊý

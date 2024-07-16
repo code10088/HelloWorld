@@ -39,7 +39,6 @@ namespace HotAssembly
         }
         public virtual bool Update(float t)
         {
-            itemId = -1;
             triggerManager.Update(t);
             buffManager.Update(t);
             pieceSkill.Update(t);
@@ -48,6 +47,7 @@ namespace HotAssembly
         }
         public virtual void Clear()
         {
+            itemId = -1;
             triggerManager.Clear();
             buffManager.Clear();
             pieceModel.Clear();

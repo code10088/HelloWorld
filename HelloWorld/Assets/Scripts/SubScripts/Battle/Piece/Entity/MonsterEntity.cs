@@ -22,6 +22,11 @@ namespace HotAssembly
             this.config = config;
             ChangeState(MonsterState.Enter);
         }
+        public override void Clear()
+        {
+            base.Clear();
+            config = null;
+        }
         public override bool Update(float t)
         {
             base.Update(t);
