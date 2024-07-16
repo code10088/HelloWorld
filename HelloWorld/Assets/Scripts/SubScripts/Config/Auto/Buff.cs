@@ -86,3 +86,4 @@ public sealed partial class Buff : Luban.BeanBase
 }
 
 }
+

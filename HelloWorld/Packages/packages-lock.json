@@ -12,7 +12,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "de0348c453844f91d52e736be681f0713ae47201"
+      "hash": "aa41b56501c9a7decf01dfd842a1e6ee894c85bb"
     },
     "com.qq.weixin.minigame": {
       "version": "https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.git",

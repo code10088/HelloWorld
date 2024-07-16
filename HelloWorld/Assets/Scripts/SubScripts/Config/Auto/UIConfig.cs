@@ -56,3 +56,4 @@ public sealed partial class UIConfig : Luban.BeanBase
 }
 
 }
+

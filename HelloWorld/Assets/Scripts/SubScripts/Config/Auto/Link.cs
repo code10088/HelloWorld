@@ -41,3 +41,4 @@ public sealed partial class Link : Luban.BeanBase
 }
 
 }
+

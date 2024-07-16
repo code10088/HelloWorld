@@ -110,3 +110,4 @@ public sealed partial class Trigger : Luban.BeanBase
 }
 
 }
+
