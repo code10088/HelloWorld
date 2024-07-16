@@ -36,7 +36,7 @@ namespace HotAssembly
             var item = skills.Find(a => a.SkillId == skillId);
             if (item == null) return PieceSkillState.None;
             if (item.CooldownTimer > 0) return PieceSkillState.NoCooldown;
-            if (item.NeedTarget && (piece.Target == null || piece.Target.PieceModel == null)) return PieceSkillState.NoTarget;
+            if (item.NeedTarget && (piece.Target == null || !piece.Target.Active)) return PieceSkillState.NoTarget;
             if (item.AtkDis < Vector3.Distance(piece.PieceModel.Pos, piece.Target.PieceModel.Pos)) return PieceSkillState.NoDistance;
             if (skill != null && item.InterruptPriority < skill.BeInterruptPriority) return PieceSkillState.NoInterrupt;
             if (skill != null) skill.Reset();

@@ -2,11 +2,6 @@ using cfg;
 
 namespace HotAssembly
 {
-    public enum MoveType
-    {
-        None,
-        Line,
-    }
     public class SkillEntity : PieceEntity
     {
         protected SkillConfig config;

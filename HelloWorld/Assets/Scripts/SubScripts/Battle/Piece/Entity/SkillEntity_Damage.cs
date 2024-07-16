@@ -8,7 +8,6 @@ namespace HotAssembly
 
         protected override void PlaySkill()
         {
-            if (target == null) return;
             //ÉËº¦´ÎÊý
             int count1 = 1;
             if (config.Internal > 0)

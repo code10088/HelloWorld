@@ -19,6 +19,7 @@ namespace HotAssembly
 
         public int AllyId => allyId;
         public int ItemId => itemId;
+        public bool Active => itemId > 0;
         public PieceEntity Target => target;
         public PieceModel PieceModel => pieceModel;
         public PieceAttr PieceAttr => pieceAttr;
@@ -38,6 +39,7 @@ namespace HotAssembly
         }
         public virtual bool Update(float t)
         {
+            itemId = -1;
             triggerManager.Update(t);
             buffManager.Update(t);
             pieceSkill.Update(t);

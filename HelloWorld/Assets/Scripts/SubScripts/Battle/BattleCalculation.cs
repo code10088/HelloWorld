@@ -6,6 +6,8 @@ namespace HotAssembly
     {
         public void Attack(PieceEntity origin, PieceEntity target)
         {
+            if (target == null) return;
+            if (!target.Active) return;
             var atk = origin.PieceAttr.GetAttr(PieceAttrEnum.Atk);
             var def = target.PieceAttr.GetAttr(PieceAttrEnum.Def);
             if (atk <= def) return;

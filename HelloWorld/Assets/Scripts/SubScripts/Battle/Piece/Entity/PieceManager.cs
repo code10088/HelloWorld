@@ -66,6 +66,7 @@ namespace HotAssembly
                 if (temp.Update(Time.deltaTime))
                 {
                     temp.Clear();
+                    cache.Add(temp);
                     pieces.RemoveAt(i);
                     i--;
                 }
