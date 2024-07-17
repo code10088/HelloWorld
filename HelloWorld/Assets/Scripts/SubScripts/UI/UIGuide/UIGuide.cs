@@ -98,7 +98,7 @@ namespace HotAssembly
         {
             if (!cfg.Interactable) return;
             component.maskImage.raycastTarget = false;
-            StandaloneInputModule.Click(Input.mousePosition);
+            InputSystemUIInputModule.Click(Input.mousePosition);
             component.maskImage.raycastTarget = true;
         }
         private void Next()
