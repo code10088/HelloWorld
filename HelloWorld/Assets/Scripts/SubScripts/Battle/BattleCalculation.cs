@@ -13,9 +13,5 @@ namespace HotAssembly
             if (atk <= def) return;
             target.PieceAttr.SetAttr(PieceAttrEnum.Hp, def - atk);
         }
-        public void AddAttr(PieceEntity target, PieceAttrEnum k, float v)
-        {
-            target.PieceAttr.SetAttr(k, v);
-        }
     }
 }
