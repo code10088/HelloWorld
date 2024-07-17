@@ -10,22 +10,22 @@ namespace HotAssembly
             Touchscreen ts = Touchscreen.current;
             if (ts == null) return;
             TouchControl tc = ts.touches[0];
-            UnityEngine.InputSystem.TouchPhase tp = tc.phase.ReadValue();
+            TouchPhase tp = tc.phase.ReadValue();
             switch (tp)
             {
-                case UnityEngine.InputSystem.TouchPhase.None:
+                case TouchPhase.None:
                     break;
-                case UnityEngine.InputSystem.TouchPhase.Began:
+                case TouchPhase.Began:
                     break;
-                case UnityEngine.InputSystem.TouchPhase.Moved:
+                case TouchPhase.Moved:
                     //ÆÁÄ»×ø±êtc.startPosition.ReadValue()
                     //ÆÁÄ»×ø±êtc.position.ReadValue()
                     break;
-                case UnityEngine.InputSystem.TouchPhase.Ended:
+                case TouchPhase.Ended:
                     break;
-                case UnityEngine.InputSystem.TouchPhase.Canceled:
+                case TouchPhase.Canceled:
                     break;
-                case UnityEngine.InputSystem.TouchPhase.Stationary:
+                case TouchPhase.Stationary:
                     break;
             }
         }
