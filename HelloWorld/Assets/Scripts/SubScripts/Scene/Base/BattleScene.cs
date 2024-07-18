@@ -6,14 +6,12 @@ namespace HotAssembly
     public class BattleScene : SceneBase
     {
         private BattleSceneComponent component = new BattleSceneComponent();
-        private GameObjectPool<GameObjectPoolItem> pool = new GameObjectPool<GameObjectPoolItem>();
         private int coroutineId = -1;
 
         protected override void Init()
         {
             base.Init();
             component.Init(SceneObj);
-            pool.Init($"{ZResConst.ResUIPrefabPath}TestBullet.prefab");
         }
         public override void OnEnable(params object[] param)
         {
@@ -30,7 +28,6 @@ namespace HotAssembly
         public override void OnDestroy()
         {
             base.OnDestroy();
-            pool.Release();
         }
 
         public Transform GetTransform(string path)

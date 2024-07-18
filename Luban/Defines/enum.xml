@@ -18,6 +18,7 @@
         <var name="SceneBase" value="1"/>
 		<var name="TestScene" value="2"/>
 		<var name="BattleScene" value="3"/>
+		<var name="RvoScene" value="4"/>
     </enum>
 	<enum name="PlayerAvatarPartType">
         <var name="Hair" value="1"/>

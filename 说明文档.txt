@@ -93,3 +93,4 @@ RVO
 		Simulator中添加DeleteAgent
 		Simulator中doStep先进行添加删除操作
 		Simulator中SetNumWorkers进行workers_初始化
+		KdTree中buildAgentTree修改

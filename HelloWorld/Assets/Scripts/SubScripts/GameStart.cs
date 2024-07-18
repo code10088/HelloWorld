@@ -37,7 +37,7 @@ namespace HotAssembly
         {
             DataManager.Instance.GuideData.Init();
             UIManager.Instance.OpenUI(UIType.UIMain);
-            SceneManager.Instance.OpenScene(SceneType.BattleScene);
+            SceneManager.Instance.OpenScene(SceneType.RvoScene);
         }
     }
 }

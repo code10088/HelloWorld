@@ -12,10 +12,11 @@ public class Agent
 
     private Random random = new Random();
 
-    public void Init(int agentId, Transform transform)
+    public void Init(int agentId, Transform transform, float radius)
     {
         this.agentId = agentId;
         this.transform = transform;
+        Simulator.Instance.setAgentRadius(agentId, radius);
     }
     public void Clear()
     {
@@ -38,8 +39,8 @@ public class Agent
         transform.forward = dir;
 
         Simulator.Instance.setAgentPrefVelocity(agentId, vector);
-        float angle = random.Next() * 2.0f * (float)Math.PI;
-        float dis = random.Next() * 0.0001f;
+        float angle = (float)random.NextDouble() * 2.0f * (float)Math.PI;
+        float dis = (float)random.NextDouble() * 0.0001f;
         Simulator.Instance.setAgentPrefVelocity(agentId, vector + dis * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)));
     }
 }

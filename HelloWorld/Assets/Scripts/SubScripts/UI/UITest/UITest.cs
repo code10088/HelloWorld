@@ -28,6 +28,8 @@ namespace HotAssembly
             component.closeTestSceneUIButton.onClick.AddListener(CloseTestScene);
             component.openBattleSceneUIButton.onClick.AddListener(OpenBattleScene);
             component.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
+            component.openRvoSceneUIButton.onClick.AddListener(OpenRvoScene);
+            component.closeRvoSceneUIButton.onClick.AddListener(CloseRvoScene);
             component.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
             component.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
             component.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
@@ -117,6 +119,14 @@ namespace HotAssembly
         private void CloseBattleScene()
         {
             SceneManager.Instance.CloseScene(SceneType.BattleScene);
+        }
+        private void OpenRvoScene()
+        {
+            SceneManager.Instance.OpenScene(SceneType.RvoScene);
+        }
+        private void CloseRvoScene()
+        {
+            SceneManager.Instance.CloseScene(SceneType.RvoScene);
         }
         private void TestCoroutine()
         {

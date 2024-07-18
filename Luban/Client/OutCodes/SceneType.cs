@@ -16,6 +16,7 @@ namespace cfg
         SceneBase = 1,
         TestScene = 2,
         BattleScene = 3,
+        RvoScene = 4,
     }
 
 } 

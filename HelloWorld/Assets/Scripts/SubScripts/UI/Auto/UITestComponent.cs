@@ -17,14 +17,16 @@ namespace HotAssembly
         public UnityEngine.UI.Image imageImage = null;
         public UIButton poolEnqueueUIButton = null;
         public UIButton poolDequeueUIButton = null;
-        public UIButton openTestSceneUIButton = null;
-        public UIButton closeTestSceneUIButton = null;
-        public UIButton openBattleSceneUIButton = null;
-        public UIButton closeBattleSceneUIButton = null;
         public UIButton coroutineBtnUIButton = null;
         public UIButton addTriggerBtnUIButton = null;
         public UIButton excuteTriggerBtnUIButton = null;
         public UIButton guideUIButton = null;
+        public UIButton openTestSceneUIButton = null;
+        public UIButton closeTestSceneUIButton = null;
+        public UIButton openBattleSceneUIButton = null;
+        public UIButton closeBattleSceneUIButton = null;
+        public UIButton openRvoSceneUIButton = null;
+        public UIButton closeRvoSceneUIButton = null;
         public void Init(GameObject obj)
         {
             this.obj = obj;
@@ -42,14 +44,16 @@ namespace HotAssembly
             imageImage = allData[11].exportComponent[0] as UnityEngine.UI.Image;
             poolEnqueueUIButton = allData[12].exportComponent[0] as UIButton;
             poolDequeueUIButton = allData[13].exportComponent[0] as UIButton;
-            openTestSceneUIButton = allData[14].exportComponent[0] as UIButton;
-            closeTestSceneUIButton = allData[15].exportComponent[0] as UIButton;
-            openBattleSceneUIButton = allData[16].exportComponent[0] as UIButton;
-            closeBattleSceneUIButton = allData[17].exportComponent[0] as UIButton;
-            coroutineBtnUIButton = allData[18].exportComponent[0] as UIButton;
-            addTriggerBtnUIButton = allData[19].exportComponent[0] as UIButton;
-            excuteTriggerBtnUIButton = allData[20].exportComponent[0] as UIButton;
-            guideUIButton = allData[21].exportComponent[0] as UIButton;
+            coroutineBtnUIButton = allData[14].exportComponent[0] as UIButton;
+            addTriggerBtnUIButton = allData[15].exportComponent[0] as UIButton;
+            excuteTriggerBtnUIButton = allData[16].exportComponent[0] as UIButton;
+            guideUIButton = allData[17].exportComponent[0] as UIButton;
+            openTestSceneUIButton = allData[18].exportComponent[0] as UIButton;
+            closeTestSceneUIButton = allData[19].exportComponent[0] as UIButton;
+            openBattleSceneUIButton = allData[20].exportComponent[0] as UIButton;
+            closeBattleSceneUIButton = allData[21].exportComponent[0] as UIButton;
+            openRvoSceneUIButton = allData[22].exportComponent[0] as UIButton;
+            closeRvoSceneUIButton = allData[23].exportComponent[0] as UIButton;
         }
     }
     public partial class UITestItem : LoopItemData

@@ -13,7 +13,7 @@ public class RVOManager : Singletion<RVOManager>
     public void Init()
     {
         Simulator.Instance.setTimeStep(0.25f);
-        Simulator.Instance.setAgentDefaults(15.0f, 10, 5.0f, 5.0f, 2.0f, 2.0f, new Vector2(0.0f, 0.0f));
+        Simulator.Instance.setAgentDefaults(10.0f, 10, 5.0f, 5.0f, 1.0f, 0.5f, new Vector2(0.0f, 0.0f));
         Simulator.Instance.SetNumWorkers(1);
     }
 
@@ -21,6 +21,7 @@ public class RVOManager : Singletion<RVOManager>
     {
         if (updateId < 0) updateId = Updater.Instance.StartUpdate(Update);
     }
+
     private void Update()
     {
         Simulator.Instance.doStep();
@@ -59,14 +60,14 @@ public class RVOManager : Singletion<RVOManager>
         }
         Simulator.Instance.processObstacles();
     }
-    public Agent AddAgent(Vector2 pos, Transform transform)
+    public Agent AddAgent(Vector3 pos, Transform transform, float radius)
     {
-        int agentId = Simulator.Instance.addAgent(pos);
+        int agentId = Simulator.Instance.addAgent(new Vector2(pos.x, pos.y));
         if (agentId < 0) return null;
         Agent agent = null;
         if (cache.Count > 0) agent = cache.Dequeue();
         else agent = new Agent();
-        agent.Init(agentId, transform);
+        agent.Init(agentId, transform, radius);
         agents.Add(agent);
         return agent;
     }
