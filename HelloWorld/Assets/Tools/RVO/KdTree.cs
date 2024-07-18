@@ -162,15 +162,17 @@ namespace RVO
         /**
          * <summary>Builds an agent k-D tree.</summary>
          */
-        internal void buildAgentTree()
+        internal void buildAgentTree(bool rebuild)
         {
-            if (agents_ == null || agents_.Length != Simulator.Instance.agents_.Count)
+            if (rebuild)
             {
                 agents_ = new Agent[Simulator.Instance.agents_.Count];
 
-                for (int i = 0; i < agents_.Length; ++i)
+                int index = 0;
+                foreach (var item in Simulator.Instance.agents_)
                 {
-                    agents_[i] = Simulator.Instance.agents_[i];
+                    agents_[index] = item.Value;
+                    index++;
                 }
 
                 agentTree_ = new AgentTreeNode[2 * agents_.Length];
@@ -181,7 +183,7 @@ namespace RVO
                 }
             }
 
-            if (agents_.Length != 0)
+            if (agents_ != null && agents_.Length != 0)
             {
                 buildAgentTreeRecursive(0, agents_.Length, 0);
             }

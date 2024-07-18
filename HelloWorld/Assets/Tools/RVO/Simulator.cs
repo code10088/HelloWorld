@@ -317,9 +317,10 @@ namespace RVO
          */
         public float doStep()
         {
+            bool rebuild = waitAdd.Count > 0 || waitRemove.Count > 0;
             for (int i = 0; i < waitAdd.Count; i++)
             {
-                int index = workerIndex++ % waitAdd.Count;
+                int index = workerIndex++ % workers_.Length;
                 workers_[index].Add(waitAdd[i]);
             }
             waitAdd.Clear();
@@ -330,7 +331,7 @@ namespace RVO
             }
             waitRemove.Clear();
 
-            kdTree_.buildAgentTree();
+            kdTree_.buildAgentTree(rebuild);
 
             for (int block = 0; block < workers_.Length; ++block)
             {
