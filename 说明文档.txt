@@ -84,3 +84,12 @@ WebGL
 	yooasset不支持ab包加密
 	yooasset微信小游戏需要关闭WebGL的缓存系统YooAssets.SetCacheSystemDisableCacheOnWebGL()
 	yooasset微信小游戏热更需要修改resversion，需要保证不同于StreamingAssets下的resversion
+	
+RVO
+	没有删除功能，添加删除功能，涉及到的修改:
+		Worker中strat、end改为private List<Agent> agents = new List<Agent>();
+		Simulator agents_改成dic不通过下标索引通过uniqueId查找
+		Simulator中添加待加入列表waitAdd、waitRemove
+		Simulator中添加DeleteAgent
+		Simulator中doStep先进行添加删除操作
+		Simulator中SetNumWorkers进行workers_初始化
