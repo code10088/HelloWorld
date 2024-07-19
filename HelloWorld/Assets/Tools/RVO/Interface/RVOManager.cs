@@ -14,7 +14,11 @@ public class RVOManager : Singletion<RVOManager>
     {
         Simulator.Instance.setTimeStep(0.25f);
         Simulator.Instance.setAgentDefaults(10.0f, 10, 5.0f, 5.0f, 1.0f, 0.5f, new Vector2(0.0f, 0.0f));
+#if UNITY_WEBGL
         Simulator.Instance.SetNumWorkers(1);
+#else
+        Simulator.Instance.SetNumWorkers(8);
+#endif
     }
 
     public void Start()

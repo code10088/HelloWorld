@@ -335,7 +335,11 @@ namespace RVO
             for (int block = 0; block < workers_.Length; ++block)
             {
                 doneEvents_[block].Reset();
+#if UNITY_WEBGL
+                workers_[block].step(null);
+#else
                 ThreadPool.QueueUserWorkItem(workers_[block].step);
+#endif
             }
 
             WaitHandle.WaitAll(doneEvents_);
@@ -343,7 +347,11 @@ namespace RVO
             for (int block = 0; block < workers_.Length; ++block)
             {
                 doneEvents_[block].Reset();
+#if UNITY_WEBGL
+                workers_[block].update(null);
+#else
                 ThreadPool.QueueUserWorkItem(workers_[block].update);
+#endif
             }
 
             WaitHandle.WaitAll(doneEvents_);

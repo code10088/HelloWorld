@@ -91,6 +91,6 @@ RVO
 		Simulator agents_改成dic不通过下标索引通过uniqueId查找
 		Simulator中添加待加入列表waitAdd、waitRemove
 		Simulator中添加DeleteAgent
-		Simulator中doStep先进行添加删除操作
+		Simulator中doStep先进行添加删除操作，兼容webgl无法多线程
 		Simulator中SetNumWorkers进行workers_初始化
 		KdTree中buildAgentTree修改
