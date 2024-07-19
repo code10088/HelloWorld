@@ -29,6 +29,7 @@
 /HelloWorld/Assets/StreamingAssets
 /HelloWorld/Assets/YooAsset/Config/Resources/BuildinFile.txt
 /HelloWorld/Assets/ZRes/Assembly
+/HelloWorld/Assets/ZRes/DataConfig/*.meta
 
 /SDK/.gradle
 /SDK/.idea
