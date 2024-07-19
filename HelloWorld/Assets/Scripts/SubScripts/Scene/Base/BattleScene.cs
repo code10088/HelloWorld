@@ -16,6 +16,10 @@ namespace HotAssembly
         public override void OnEnable(params object[] param)
         {
             base.OnEnable(param);
+
+            Camera camera = SceneManager.Instance.SceneCamera;
+            camera.transform.position = new Vector3(0, 3, -3);
+            camera.transform.eulerAngles = new Vector3(30, 0, 0);
             //此时调用SceneManager.Instance.GetScene取不到当前scene的解决办法
             var enumerator = Start();
             coroutineId = CoroutineManager.Instance.StartCoroutine(enumerator);

@@ -15,8 +15,10 @@ namespace HotAssembly
         public override void OnEnable(params object[] param)
         {
             base.OnEnable(param);
-            SceneManager.Instance.SceneCamera.transform.position = new Vector3(0, 0, -10);
-            SceneManager.Instance.SceneCamera.transform.rotation = Quaternion.identity;
+
+            Camera camera = SceneManager.Instance.SceneCamera;
+            camera.transform.position = new Vector3(0, 0, -10);
+            camera.transform.rotation = Quaternion.identity;
             RVOManager.Instance.Init();
             RVOManager.Instance.Start();
             RVOManager.Instance.AddObstacle(component.obstacleObj);

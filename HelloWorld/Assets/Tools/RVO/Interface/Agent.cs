@@ -32,12 +32,11 @@ public class Agent
     {
         Vector2 pos = Simulator.Instance.getAgentPosition(agentId);
         transform.position = new Vector3(pos.x(), pos.y());
-
         Vector3 dir = target - transform.position;
-        Vector2 vector = new Vector2(dir.x, dir.y);
-        if (RVOMath.absSq(vector) > 1.0f) vector = RVOMath.normalize(vector);
         transform.forward = dir;
 
+        Vector2 vector = new Vector2(dir.x, dir.y);
+        if (RVOMath.absSq(vector) > 1.0f) vector = RVOMath.normalize(vector);
         Simulator.Instance.setAgentPrefVelocity(agentId, vector);
         float angle = (float)random.NextDouble() * 2.0f * (float)Math.PI;
         float dis = (float)random.NextDouble() * 0.0001f;

@@ -20,6 +20,9 @@ namespace HotAssembly
             base.OnEnable(param);
             GameDebug.Log("TestScene OnEnable");
 
+            Camera camera = SceneManager.Instance.SceneCamera;
+            camera.transform.position = new Vector3(0, 3, -3);
+            camera.transform.eulerAngles = new Vector3(30, 0, 0);
             testEffectId = EffectManager.Instance.AddEffect($"{ZResConst.ResSceneEffectPath}Fire.prefab", component.fireRootTransform);
         }
         public override void OnDisable()

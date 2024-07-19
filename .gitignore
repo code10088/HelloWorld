@@ -23,6 +23,9 @@
 /Build/build.log
 
 /HelloWorld/Assets/HybridCLRData
+/HelloWorld/Assets/Scripts/SubScripts/Config/Auto/*.meta
+/HelloWorld/Assets/Scripts/SubScripts/Scene/Auto/*.meta
+/HelloWorld/Assets/Scripts/SubScripts/UI/Auto/*.meta
 /HelloWorld/Assets/StreamingAssets
 /HelloWorld/Assets/YooAsset/Config/Resources/BuildinFile.txt
 /HelloWorld/Assets/ZRes/Assembly
