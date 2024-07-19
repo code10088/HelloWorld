@@ -10,6 +10,8 @@ public class RVOManager : Singletion<RVOManager>
     private List<Agent> agents = new List<Agent>();
     private Queue<Agent> cache = new Queue<Agent>();
 
+    public List<Agent> Agents => agents;
+
     public void Init()
     {
         Simulator.Instance.setTimeStep(0.25f);
@@ -77,7 +79,7 @@ public class RVOManager : Singletion<RVOManager>
     }
     public void RemoveAgent(int agentId)
     {
-        int index = agents.FindIndex(a => a.agentId == agentId);
+        int index = agents.FindIndex(a => a.AgentId == agentId);
         var agent = agents[index];
         agent.Clear();
         cache.Enqueue(agent);

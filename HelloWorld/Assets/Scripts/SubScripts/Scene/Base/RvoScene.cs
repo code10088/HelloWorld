@@ -5,7 +5,10 @@ namespace HotAssembly
     public class RvoScene : SceneBase
     {
         private RvoSceneComponent component = new RvoSceneComponent();
-        private GameObjectPool<GameObjectPoolItem> pool = new GameObjectPool<GameObjectPoolItem>();
+        private Camera camera;
+        private int updateId = -1;
+        private float dis = 30f;
+        private Vector3 target = new Vector3(-29, -16);
 
         protected override void Init()
         {
@@ -16,28 +19,44 @@ namespace HotAssembly
         {
             base.OnEnable(param);
 
-            Camera camera = SceneManager.Instance.SceneCamera;
-            camera.transform.position = new Vector3(0, 0, -10);
+            camera = SceneManager.Instance.SceneCamera;
+            camera.transform.position = new Vector3(0, 0, -dis);
             camera.transform.rotation = Quaternion.identity;
+            if (updateId < 0) updateId = Updater.Instance.StartUpdate(Update);
             RVOManager.Instance.Init();
-            RVOManager.Instance.Start();
             RVOManager.Instance.AddObstacle(component.obstacleObj);
-            TimeManager.Instance.StartTimer(30, 0.1f, CreateTest);
+            TimeManager.Instance.StartTimer(50, 0.1f, CreateTest);
+            RVOManager.Instance.Start();
         }
         public override void OnDisable()
         {
             base.OnDisable();
+
+            if (updateId > 0) Updater.Instance.StopUpdate(updateId);
+            RVOManager.Instance.Stop();
         }
         public override void OnDestroy()
         {
             base.OnDestroy();
-            pool.Release();
+
+            RVOManager.Instance.Clear();
         }
 
         private void CreateTest(float t)
         {
-            var obj = GameObject.Instantiate(component.tankTransform, Vector3.zero, Quaternion.identity, SceneObj.transform);
-            RVOManager.Instance.AddAgent(Vector3.zero, obj.transform, 0.1f);
+            var obj = GameObject.Instantiate(component.tankTransform, SceneObj.transform);
+            RVOManager.Instance.AddAgent(component.tankTransform.position, obj, 0.5f);
+        }
+        private void Update()
+        {
+            Vector3 v = camera.ScreenToWorldPoint(Input.mousePosition + Vector3.forward * dis);
+            var agents = RVOManager.Instance.Agents;
+            for (int i = 0; i < agents.Count; i++)
+            {
+                agents[i].RefreshTarget(v);
+                var dis = Vector3.Distance(agents[i].Transform.position, target);
+                if (dis < 2) RVOManager.Instance.RemoveAgent(agents[i].AgentId);
+            }
         }
     }
 }
