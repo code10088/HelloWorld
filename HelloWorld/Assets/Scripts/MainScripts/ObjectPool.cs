@@ -26,7 +26,7 @@ public class GameObjectPool
     public void Release()
     {
         foreach (var item in pool) item.Value.Release();
-        pool = null;
+        pool.Clear();
     }
 }
 public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new()
@@ -208,7 +208,7 @@ public class AssetPool
     public void Release()
     {
         foreach (var item in pool) item.Value.Release();
-        pool = null;
+        pool.Clear();
     }
 }
 public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()

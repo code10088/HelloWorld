@@ -14,6 +14,7 @@ namespace HotAssembly
         private Random random = new Random();
         private List<RvoItem> items = new List<RvoItem>();
         private Queue<RvoItem> cache = new Queue<RvoItem>();
+        private int timerId = -1;
 
         protected override void Init()
         {
@@ -28,17 +29,19 @@ namespace HotAssembly
             camera.transform.position = new Vector3(0, 0, -dis);
             camera.transform.rotation = Quaternion.identity;
 
-            if (updateId < 0) updateId = Updater.Instance.StartUpdate(Update);
+            updateId = Updater.Instance.StartUpdate(Update);
+            RVOManager.Instance.Init();
             RVOManager.Instance.AddObstacle(component.obstacleObj);
             RVOManager.Instance.Start();
-            TimeManager.Instance.StartTimer(30, 0.1f, CreateTest);
+            timerId = TimeManager.Instance.StartTimer(30, 0.1f, CreateTest);
         }
         public override void OnDisable()
         {
             base.OnDisable();
 
-            if (updateId > 0) Updater.Instance.StopUpdate(updateId);
+            Updater.Instance.StopUpdate(updateId);
             RVOManager.Instance.Stop();
+            TimeManager.Instance.StopTimer(timerId);
         }
         public override void OnDestroy()
         {
@@ -123,6 +126,7 @@ namespace HotAssembly
         public void Clear()
         {
             RVOManager.Instance.RemoveAgent(agentId);
+            agentId = -1;
             pool.Enqueue(path, itemId);
             itemId = -1;
             obj = null;

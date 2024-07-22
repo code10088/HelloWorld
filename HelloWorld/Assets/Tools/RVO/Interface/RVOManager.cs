@@ -5,7 +5,7 @@ using UnityEngine;
 using Random = System.Random;
 using Vector2 = RVO.Vector2;
 
-public class RVOManager : Singletion<RVOManager>, SingletionInterface
+public class RVOManager : Singletion<RVOManager>
 {
     private int updateId = -1;
 
@@ -22,7 +22,11 @@ public class RVOManager : Singletion<RVOManager>, SingletionInterface
         Simulator.Instance.SetNumWorkers(8);
 #endif
     }
-
+    public void Clear()
+    {
+        Simulator.Instance.Clear();
+        agents.Clear();
+    }
     public void Start()
     {
         if (updateId < 0) updateId = Updater.Instance.StartUpdate(Update);
@@ -35,11 +39,7 @@ public class RVOManager : Singletion<RVOManager>, SingletionInterface
     public void Stop()
     {
         if (updateId > 0) Updater.Instance.StopUpdate(updateId);
-    }
-    public void Clear()
-    {
-        Simulator.Instance.Clear();
-        agents.Clear();
+        updateId = -1;
     }
 
     public void AddObstacle(GameObject obj)
