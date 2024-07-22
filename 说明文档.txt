@@ -94,3 +94,4 @@ RVO
 		Simulator中doStep先进行添加删除操作，兼容webgl无法多线程
 		Simulator中SetNumWorkers进行workers_初始化
 		KdTree中buildAgentTree修改
+		初始位置必须添加随机，保证两个Agent不同，否则会出现NaN报错

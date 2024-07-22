@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Random = System.Random;
 
 namespace HotAssembly
 {
@@ -8,6 +10,7 @@ namespace HotAssembly
         private Camera camera;
         private int updateId = -1;
         private float dis = 30f;
+        private Random random = new Random();
         private Vector3 target = new Vector3(-29, -16);
 
         protected override void Init()
@@ -44,8 +47,12 @@ namespace HotAssembly
 
         private void CreateTest(float t)
         {
+            var angle = random.NextDouble() * 2.0f * Math.PI;
+            var pos = component.tankTransform.position;
+            pos.x += (float)Math.Cos(angle);
+            pos.y += (float)Math.Sin(angle);
             var obj = GameObject.Instantiate(component.tankTransform, SceneObj.transform);
-            RVOManager.Instance.AddAgent(component.tankTransform.position, obj, 0.5f);
+            RVOManager.Instance.AddAgent(pos, obj, 0.5f);
         }
         private void Update()
         {
