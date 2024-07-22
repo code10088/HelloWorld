@@ -527,6 +527,7 @@ GameObject:
   - component: {fileID: 9165827876904746892}
   - component: {fileID: 4603640074235834601}
   - component: {fileID: 4736528901445974932}
+  - component: {fileID: 1852495068768984070}
   m_Layer: 0
   m_Name: End
   m_TagString: Untagged
@@ -599,6 +600,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1852495068768984070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2049713280952565555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exportComponent:
+  - {fileID: 9165827876904746892}
 --- !u!1 &2578356808268175431
 GameObject:
   m_ObjectHideFlags: 0
@@ -1231,7 +1246,7 @@ GameObject:
   - component: {fileID: 2495074962807847064}
   - component: {fileID: 7962156238926307304}
   m_Layer: 0
-  m_Name: Tank
+  m_Name: Start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

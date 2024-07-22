@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using RVO;
 using UnityEngine;
+using Random = System.Random;
 using Vector2 = RVO.Vector2;
 
-public class RVOManager : Singletion<RVOManager>
+public class RVOManager : Singletion<RVOManager>, SingletionInterface
 {
     private int updateId = -1;
 
-    private List<Agent> agents = new List<Agent>();
-    private Queue<Agent> cache = new Queue<Agent>();
-
-    public List<Agent> Agents => agents;
+    private Dictionary<int, Agent> agents = new();
+    private Queue<Agent> cache = new();
 
     public void Init()
     {
         Simulator.Instance.setTimeStep(0.25f);
-        Simulator.Instance.setAgentDefaults(10.0f, 10, 5.0f, 5.0f, 1.0f, 0.5f, new Vector2(0.0f, 0.0f));
+        Simulator.Instance.setAgentDefaults(10.0f, 10, 5.0f, 5.0f, 1.0f, 1f, new Vector2(0.0f, 0.0f));
 #if UNITY_WEBGL
         Simulator.Instance.SetNumWorkers(1);
 #else
@@ -27,11 +27,10 @@ public class RVOManager : Singletion<RVOManager>
     {
         if (updateId < 0) updateId = Updater.Instance.StartUpdate(Update);
     }
-
     private void Update()
     {
         Simulator.Instance.doStep();
-        for (int i = 0; i < agents.Count; i++) agents[i].Update();
+        foreach (var item in agents) item.Value.Update();
     }
     public void Stop()
     {
@@ -66,23 +65,79 @@ public class RVOManager : Singletion<RVOManager>
         }
         Simulator.Instance.processObstacles();
     }
-    public Agent AddAgent(Vector3 pos, Transform transform, float radius)
+    public int AddAgent(Vector3 pos, Action<Vector3> change)
     {
-        int agentId = Simulator.Instance.addAgent(new Vector2(pos.x, pos.y));
-        if (agentId < 0) return null;
-        Agent agent = null;
-        if (cache.Count > 0) agent = cache.Dequeue();
-        else agent = new Agent();
-        agent.Init(agentId, transform, radius);
-        agents.Add(agent);
-        return agent;
+        Agent agent = cache.Count > 0 ? cache.Dequeue() : new Agent();
+        int id = agent.Init(pos, change);
+        agents.Add(id, agent);
+        return id;
     }
     public void RemoveAgent(int agentId)
     {
-        int index = agents.FindIndex(a => a.AgentId == agentId);
-        var agent = agents[index];
-        agent.Clear();
-        cache.Enqueue(agent);
-        agents.RemoveAt(index);
+        if (agents.TryGetValue(agentId, out Agent agent))
+        {
+            agent.Clear();
+            cache.Enqueue(agent);
+            agents.Remove(agentId);
+        }
+    }
+    public void RefreshTarget(int agentId, Vector3 target)
+    {
+        if (agents.TryGetValue(agentId, out Agent agent)) agent.RefreshTarget(target);
+    }
+    public void SetAgentRadius(int agentId, float radius)
+    {
+        if (agents.TryGetValue(agentId, out Agent agent)) agent.SetAgentRadius(radius);
+    }
+    public void SetAgentMaxSpeed(int agentId, float speed)
+    {
+        if (agents.TryGetValue(agentId, out Agent agent)) agent.SetAgentMaxSpeed(speed);
+    }
+}
+
+public class Agent
+{
+    private static Random random = new Random();
+    private int agentId = -1;
+    private Vector3 target;
+    private Action<Vector3> change;
+
+    public int Init(Vector3 start, Action<Vector3> change)
+    {
+        agentId = Simulator.Instance.addAgent(new Vector2(start.x, start.y));
+        this.change = change;
+        return agentId;
+    }
+    public void Clear()
+    {
+        Simulator.Instance.RemoveAgent(agentId);
+        agentId = -1;
+        change = null;
+    }
+    public void RefreshTarget(Vector3 target)
+    {
+        this.target = target;
+    }
+    public void SetAgentRadius(float radius)
+    {
+        Simulator.Instance.setAgentRadius(agentId, radius);
+    }
+    public void SetAgentMaxSpeed(float speed)
+    {
+        Simulator.Instance.setAgentMaxSpeed(agentId, speed);
+    }
+    public void Update()
+    {
+        Vector2 pos1 = Simulator.Instance.getAgentPosition(agentId);
+        Vector3 pos2 = new Vector3(pos1.x(), pos1.y());
+        change?.Invoke(pos2);
+
+        Vector3 dir = target - pos2;
+        Vector2 vector = new Vector2(dir.x, dir.y);
+        if (RVOMath.absSq(vector) > 1.0f) vector = RVOMath.normalize(vector);
+        Simulator.Instance.setAgentPrefVelocity(agentId, vector);
+        float angle = (float)random.NextDouble() * 2.0f * (float)Math.PI;
+        float dis = (float)random.NextDouble() * 0.0001f;
+        Simulator.Instance.setAgentPrefVelocity(agentId, vector + dis * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)));
     }
 }

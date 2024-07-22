@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
 
@@ -8,10 +9,11 @@ namespace HotAssembly
     {
         private RvoSceneComponent component = new RvoSceneComponent();
         private Camera camera;
-        private int updateId = -1;
         private float dis = 30f;
+        private int updateId = -1;
         private Random random = new Random();
-        private Vector3 target = new Vector3(-29, -16);
+        private List<RvoItem> items = new List<RvoItem>();
+        private Queue<RvoItem> cache = new Queue<RvoItem>();
 
         protected override void Init()
         {
@@ -25,11 +27,11 @@ namespace HotAssembly
             camera = SceneManager.Instance.SceneCamera;
             camera.transform.position = new Vector3(0, 0, -dis);
             camera.transform.rotation = Quaternion.identity;
+
             if (updateId < 0) updateId = Updater.Instance.StartUpdate(Update);
-            RVOManager.Instance.Init();
             RVOManager.Instance.AddObstacle(component.obstacleObj);
-            TimeManager.Instance.StartTimer(50, 0.1f, CreateTest);
             RVOManager.Instance.Start();
+            TimeManager.Instance.StartTimer(30, 0.1f, CreateTest);
         }
         public override void OnDisable()
         {
@@ -43,27 +45,105 @@ namespace HotAssembly
             base.OnDestroy();
 
             RVOManager.Instance.Clear();
+            RvoItem.Release();
+            items.Clear();
+            cache.Clear();
         }
 
         private void CreateTest(float t)
         {
             var angle = random.NextDouble() * 2.0f * Math.PI;
-            var pos = component.tankTransform.position;
+            var pos = component.startTransform.position;
             pos.x += (float)Math.Cos(angle);
             pos.y += (float)Math.Sin(angle);
-            var obj = GameObject.Instantiate(component.tankTransform, SceneObj.transform);
-            RVOManager.Instance.AddAgent(pos, obj, 0.5f);
+            RvoItem item = cache.Count > 0 ? cache.Dequeue() : new RvoItem();
+            item.Init(ZResConst.ResScenePath + "RvoSphere", SceneObj.transform, pos);
+            item.SetAgentRadius(0.5f);
+            item.SetAgentMaxSpeed(1f);
+            items.Add(item);
         }
         private void Update()
         {
             Vector3 v = camera.ScreenToWorldPoint(Input.mousePosition + Vector3.forward * dis);
-            var agents = RVOManager.Instance.Agents;
-            for (int i = 0; i < agents.Count; i++)
+            for (int i = 0; i < items.Count; i++)
             {
-                agents[i].RefreshTarget(v);
-                var dis = Vector3.Distance(agents[i].Transform.position, target);
-                if (dis < 2) RVOManager.Instance.RemoveAgent(agents[i].AgentId);
+                var item = items[i];
+                item.RefreshTarget(v);
+                var dis = Vector3.Distance(item.Pos, component.endTransform.position);
+                if (dis > 1) continue;
+                item.Clear();
+                cache.Enqueue(item);
+                items.RemoveAt(i);
+                i--;
             }
+        }
+    }
+    public class RvoItem
+    {
+        private static GameObjectPool pool = new GameObjectPool();
+        public static void Release() => pool.Release();
+
+        private int itemId = -1;
+        private string path;
+        private GameObject obj;
+        private Vector3 pos;
+        private int agentId = -1;
+        private Vector3 target;
+        private float radius;
+        private float speed;
+
+        public Vector3 Pos => pos;
+        private bool Active => obj;
+
+        public void Init(string path, Transform parent, Vector3 pos)
+        {
+            if (string.IsNullOrEmpty(path)) return;
+            this.path = path;
+            this.pos = pos;
+            itemId = pool.Dequeue(path, parent, LoadFinish).ItemID;
+        }
+        private void LoadFinish(int itemId, GameObject obj, object[] param)
+        {
+            this.obj = obj;
+            obj.transform.position = pos;
+            agentId = RVOManager.Instance.AddAgent(pos, Change);
+            RefreshTarget(target);
+            SetAgentRadius(radius);
+            SetAgentMaxSpeed(speed);
+        }
+        private void Change(Vector3 pos)
+        {
+            if (!Active) return;
+            this.pos = pos;
+            obj.transform.position = pos;
+            var dir = target - pos;
+            float angle = Vector2.SignedAngle(Vector2.right, dir);
+            obj.transform.eulerAngles = new Vector3(0, 0, angle);
+        }
+        public void Clear()
+        {
+            RVOManager.Instance.RemoveAgent(agentId);
+            pool.Enqueue(path, itemId);
+            itemId = -1;
+            obj = null;
+        }
+        public void RefreshTarget(Vector3 target)
+        {
+            this.target = target;
+            if (!Active) return;
+            RVOManager.Instance.RefreshTarget(agentId, target);
+        }
+        public void SetAgentRadius(float radius)
+        {
+            this.radius = radius;
+            if (!Active) return;
+            RVOManager.Instance.SetAgentRadius(agentId, radius);
+        }
+        public void SetAgentMaxSpeed(float speed)
+        {
+            this.speed = speed;
+            if (!Active) return;
+            RVOManager.Instance.SetAgentMaxSpeed(agentId, speed);
         }
     }
 }
