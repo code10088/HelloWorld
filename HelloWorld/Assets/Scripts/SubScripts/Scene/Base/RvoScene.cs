@@ -20,6 +20,8 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(SceneObj);
+
+            RVOManager.Instance.Init();
         }
         public override void OnEnable(params object[] param)
         {
@@ -30,7 +32,6 @@ namespace HotAssembly
             camera.transform.rotation = Quaternion.identity;
 
             updateId = Updater.Instance.StartUpdate(Update);
-            RVOManager.Instance.Init();
             RVOManager.Instance.AddObstacle(component.obstacleObj);
             RVOManager.Instance.Start();
             timerId = TimeManager.Instance.StartTimer(30, 0.1f, CreateTest);
