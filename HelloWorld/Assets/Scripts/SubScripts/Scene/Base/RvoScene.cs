@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem;
 using Random = System.Random;
 
 namespace HotAssembly
@@ -15,6 +17,7 @@ namespace HotAssembly
         private List<RvoItem> items = new List<RvoItem>();
         private Queue<RvoItem> cache = new Queue<RvoItem>();
         private int timerId = -1;
+        private Vector3 targetPos;
 
         protected override void Init()
         {
@@ -68,11 +71,17 @@ namespace HotAssembly
         }
         private void Update()
         {
-            Vector3 v = camera.ScreenToWorldPoint(Input.mousePosition + Vector3.forward * dis);
+            Touchscreen ts = Touchscreen.current;
+            if (ts != null)
+            {
+                TouchControl tc = ts.touches[0];
+                var p = tc.position.ReadValue();
+                targetPos = camera.ScreenToWorldPoint(new Vector3(p.x, p.y, dis));
+            }
             for (int i = 0; i < items.Count; i++)
             {
                 var item = items[i];
-                item.RefreshTarget(v);
+                item.RefreshTarget(targetPos);
                 var dis = Vector3.Distance(item.Pos, component.endTransform.position);
                 if (dis > 1) continue;
                 item.Clear();
