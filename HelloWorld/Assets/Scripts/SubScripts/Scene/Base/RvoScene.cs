@@ -100,6 +100,7 @@ namespace HotAssembly
         private string path;
         private GameObject obj;
         private Vector3 pos;
+
         private int agentId = -1;
         private Vector3 target;
         private float radius;

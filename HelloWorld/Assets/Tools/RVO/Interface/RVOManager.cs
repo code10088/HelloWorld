@@ -11,6 +11,7 @@ public class RVOManager : Singletion<RVOManager>
 
     private Dictionary<int, Agent> agents = new();
     private Queue<Agent> cache = new();
+    private Random random = new Random();
 
     public void Init()
     {
@@ -93,51 +94,51 @@ public class RVOManager : Singletion<RVOManager>
     {
         if (agents.TryGetValue(agentId, out Agent agent)) agent.SetAgentMaxSpeed(speed);
     }
-}
 
-public class Agent
-{
-    private static Random random = new Random();
-    private int agentId = -1;
-    private Vector3 target;
-    private Action<Vector3> change;
 
-    public int Init(Vector3 start, Action<Vector3> change)
+    private class Agent
     {
-        agentId = Simulator.Instance.addAgent(new Vector2(start.x, start.y));
-        this.change = change;
-        return agentId;
-    }
-    public void Clear()
-    {
-        Simulator.Instance.RemoveAgent(agentId);
-        agentId = -1;
-        change = null;
-    }
-    public void RefreshTarget(Vector3 target)
-    {
-        this.target = target;
-    }
-    public void SetAgentRadius(float radius)
-    {
-        Simulator.Instance.setAgentRadius(agentId, radius);
-    }
-    public void SetAgentMaxSpeed(float speed)
-    {
-        Simulator.Instance.setAgentMaxSpeed(agentId, speed);
-    }
-    public void Update()
-    {
-        Vector2 pos1 = Simulator.Instance.getAgentPosition(agentId);
-        Vector3 pos2 = new Vector3(pos1.x(), pos1.y());
-        change?.Invoke(pos2);
+        private int agentId = -1;
+        private Vector3 target;
+        private Action<Vector3> change;
 
-        Vector3 dir = target - pos2;
-        Vector2 vector = new Vector2(dir.x, dir.y);
-        if (RVOMath.absSq(vector) > 1.0f) vector = RVOMath.normalize(vector);
-        Simulator.Instance.setAgentPrefVelocity(agentId, vector);
-        float angle = (float)random.NextDouble() * 2.0f * (float)Math.PI;
-        float dis = (float)random.NextDouble() * 0.0001f;
-        Simulator.Instance.setAgentPrefVelocity(agentId, vector + dis * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)));
+        public int Init(Vector3 start, Action<Vector3> change)
+        {
+            agentId = Simulator.Instance.addAgent(new Vector2(start.x, start.y));
+            this.change = change;
+            return agentId;
+        }
+        public void Clear()
+        {
+            Simulator.Instance.RemoveAgent(agentId);
+            agentId = -1;
+            change = null;
+        }
+        public void RefreshTarget(Vector3 target)
+        {
+            this.target = target;
+        }
+        public void SetAgentRadius(float radius)
+        {
+            Simulator.Instance.setAgentRadius(agentId, radius);
+        }
+        public void SetAgentMaxSpeed(float speed)
+        {
+            Simulator.Instance.setAgentMaxSpeed(agentId, speed);
+        }
+        public void Update()
+        {
+            Vector2 pos1 = Simulator.Instance.getAgentPosition(agentId);
+            Vector3 pos2 = new Vector3(pos1.x(), pos1.y());
+            change?.Invoke(pos2);
+
+            Vector3 dir = target - pos2;
+            Vector2 vector = new Vector2(dir.x, dir.y);
+            if (RVOMath.absSq(vector) > 1.0f) vector = RVOMath.normalize(vector);
+            Simulator.Instance.setAgentPrefVelocity(agentId, vector);
+            float angle = (float)Instance.random.NextDouble() * 2.0f * (float)Math.PI;
+            float dis = (float)Instance.random.NextDouble() * 0.0001f;
+            Simulator.Instance.setAgentPrefVelocity(agentId, vector + dis * new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)));
+        }
     }
 }
