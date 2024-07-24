@@ -48,6 +48,11 @@ ECS+Job+Brust
 		https://blog.csdn.net/final5788/article/details/132912995
 		https://blog.csdn.net/final5788/article/details/132953620
 		https://github.com/Unity-Technologies/brg-shooter
+		
+GPUInstancing限制
+	DrawMeshInstanced只能有一个mesh数据
+	动画：预计算所有动画的所有顶点数据(转成贴图)即GPU动画
+	IK动画：无法预计算，只能GPU实现一套动画系统
 	
 protobuf-net
 	github下载最新版，使用vs2022编译(如果编译失败尝试更新vs)
