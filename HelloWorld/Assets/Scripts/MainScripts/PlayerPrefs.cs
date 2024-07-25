@@ -1,4 +1,6 @@
-﻿using WeChatWASM;
+﻿#if WeChatGame && !UNITY_EDITOR
+using WeChatWASM;
+#endif
 
 public static class PlayerPrefs
 {
