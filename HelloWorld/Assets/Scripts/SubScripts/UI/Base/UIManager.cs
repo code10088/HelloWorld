@@ -244,8 +244,7 @@ namespace HotAssembly
                 TimeManager.Instance.StopTimer(timerId);
                 if (baseUI != null) baseUI.OnDestroy();
                 if (baseObj != null) GameObject.Destroy(baseObj);
-                AssetManager.Instance.Unload(loadId);
-                loadId = -1;
+                AssetManager.Instance.Unload(ref loadId);
                 baseUI = null;
                 baseObj = null;
                 open = null;

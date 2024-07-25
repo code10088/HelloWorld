@@ -34,9 +34,16 @@ namespace HotAssembly
         }
         public virtual void OnDisable()
         {
-            for (int i = 0; i < loader1.Count; i++) AssetManager.Instance.Unload(loader1[i]);
-            for (int i = 0; i < loader2.Count; i++) loader2[i].SetActive(false);
+            for (int i = 0; i < loader1.Count; i++)
+            {
+                int loadId = loader1[i];
+                AssetManager.Instance.Unload(ref loadId);
+            }
             loader1.Clear();
+            for (int i = 0; i < loader2.Count; i++)
+            {
+                loader2[i].SetActive(false);
+            }
         }
         public virtual void OnDestroy()
         {

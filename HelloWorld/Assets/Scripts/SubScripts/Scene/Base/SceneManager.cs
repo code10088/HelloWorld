@@ -250,8 +250,7 @@ namespace HotAssembly
                 TimeManager.Instance.StopTimer(timerId);
                 if (baseScene != null) baseScene?.OnDestroy();
                 if (baseObj != null) GameObject.Destroy(baseObj);
-                AssetManager.Instance.Unload(loadId);
-                loadId = -1;
+                AssetManager.Instance.Unload(ref loadId);
                 baseScene = null;
                 baseObj = null;
                 open = null;

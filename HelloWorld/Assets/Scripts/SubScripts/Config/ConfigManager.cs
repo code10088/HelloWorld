@@ -66,7 +66,7 @@ namespace HotAssembly
             private void Finish()
             {
                 tb = null;
-                AssetManager.Instance.Unload(loadId);
+                AssetManager.Instance.Unload(ref loadId);
                 finish?.Invoke();
             }
         }

@@ -67,7 +67,7 @@ public class AssetManager : Singletion<AssetManager>
 
     public void Load<T>(ref int loadId, string path, Action<int, Object> action = null) where T : Object
     {
-        if (loadId > 0) Unload(loadId);
+        if (loadId > 0) Unload(ref loadId);
         AssetItem temp = cache.Count > 0 ? cache.Dequeue() : new();
         temp.Init<T>(path, action);
         total[temp.ItemID] = temp;
@@ -75,13 +75,13 @@ public class AssetManager : Singletion<AssetManager>
     }
     public void Load(ref int loadId, string[] path, Action<string[], Object[]> action = null)
     {
-        if (loadId > 0) Unload(loadId);
+        if (loadId > 0) Unload(ref loadId);
         AssetItemGroup temp = new();
         temp.Init(path, action);
         group[temp.ItemID] = temp;
         loadId = temp.ItemID;
     }
-    public void Unload(int id)
+    public void Unload(ref int id)
     {
         if (id < 0) return;
         if (group.TryGetValue(id, out AssetItemGroup a))
@@ -94,6 +94,7 @@ public class AssetManager : Singletion<AssetManager>
             b.Unload();
             total.Remove(id);
         }
+        id = -1;
     }
     public float GetProgerss(int id)
     {
@@ -132,7 +133,7 @@ public class AssetManager : Singletion<AssetManager>
         }
         public void Unload()
         {
-            for (int i = 0; i < ids.Length; i++) Instance.Unload(ids[i]);
+            for (int i = 0; i < ids.Length; i++) Instance.Unload(ref ids[i]);
             action = null;
             path = null;
             ids = null;
@@ -259,11 +260,10 @@ public class LoadGameObjectItem
     {
         TimeManager.Instance.StopTimer(timerId);
         if (obj != null) GameObject.Destroy(obj);
-        AssetManager.Instance.Unload(loadId);
+        AssetManager.Instance.Unload(ref loadId);
         parent = null;
         asset = null;
         obj = null;
-        loadId = -1;
         state = 4;
         timer = 0;
         timerId = -1;
@@ -338,9 +338,8 @@ public class LoadAssetItem
     public virtual void Release()
     {
         TimeManager.Instance.StopTimer(timerId);
-        AssetManager.Instance.Unload(loadId);
+        AssetManager.Instance.Unload(ref loadId);
         asset = null;
-        loadId = -1;
         releaseMark = true;
         loadMark = false;
         timer = 0;

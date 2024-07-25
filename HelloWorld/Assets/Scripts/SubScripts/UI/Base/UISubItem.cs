@@ -88,9 +88,8 @@ namespace HotAssembly
             TimeManager.Instance.StopTimer(timerId);
             OnDestroy();
             if (UIObj != null) GameObject.Destroy(UIObj);
-            AssetManager.Instance.Unload(loadId);
+            AssetManager.Instance.Unload(ref loadId);
             parent = null;
-            loadId = -1;
             UIObj = null;
             open = null;
             param = null;

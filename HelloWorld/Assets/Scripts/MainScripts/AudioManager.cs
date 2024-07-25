@@ -37,7 +37,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     public void StopMusic()
     {
         music.Stop();
-        AssetManager.Instance.Unload(loadId);
+        AssetManager.Instance.Unload(ref loadId);
     }
     #endregion
 

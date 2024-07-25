@@ -29,7 +29,7 @@ public class GameStart : MonoSingletion<GameStart>
     {
         if (GameDebug.GDebug)
         {
-            int loadId = -1;
+            loadId = -1;
             AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/IngameDebugConsole.prefab", (a, b) => Instantiate(b));
             loadId = -1;
             AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/AdvancedFPSCounter.prefab", (a, b) => Instantiate(b));
@@ -42,14 +42,14 @@ public class GameStart : MonoSingletion<GameStart>
     }
     private void LoadHotUpdateConfig()
     {
-        int loadId = -1;
+        loadId = -1;
         AssetManager.Instance.Load<TextAsset>(ref loadId, GameSetting.HotUpdateConfigPath, LoadMetadataRes);
     }
     private void LoadMetadataRes(int id, Object asset)
     {
         TextAsset ta = asset as TextAsset;
         var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
-        AssetManager.Instance.Unload(id);
+        AssetManager.Instance.Unload(ref loadId);
         string[] path = config.Metadata.ToArray();
         AssetManager.Instance.Load(ref loadId, path, LoadMetadataForAOTAssembly);
     }
@@ -63,7 +63,7 @@ public class GameStart : MonoSingletion<GameStart>
                 RuntimeApi.LoadMetadataForAOTAssembly(ta.bytes, HomologousImageMode.SuperSet);
             }
         }
-        AssetManager.Instance.Unload(loadId);
+        AssetManager.Instance.Unload(ref loadId);
         StartHotAssembly();
     }
     private void StartHotAssembly()
@@ -75,15 +75,18 @@ public class GameStart : MonoSingletion<GameStart>
         MethodInfo m = t.GetMethod("Init");
         m.Invoke(o, null);
 #else
-        int loadId = -1;
-        AssetManager.Instance.Load<TextAsset>(ref loadId, "Assets/ZRes/Assembly/HotAssembly.bytes", StartHotAssembly);
+        string[] paths = new string[2];
+        paths[0] = "Assets/ZRes/Assembly/HotAssemblyDll.bytes";
+        paths[1] = "Assets/ZRes/Assembly/HotAssemblyPdb.bytes";
+        AssetManager.Instance.Load(ref loadId, paths, StartHotAssembly);
 #endif
     }
-    private void StartHotAssembly(int id, Object asset)
+    private void StartHotAssembly(string[] paths, Object[] asset)
     {
-        TextAsset ta = asset as TextAsset;
-        var hotAssembly = Assembly.Load(ta.bytes);
-        AssetManager.Instance.Unload(id);
+        TextAsset dll = asset[0] as TextAsset;
+        TextAsset pdb = asset[1] as TextAsset;
+        var hotAssembly = Assembly.Load(dll.bytes, pdb.bytes);
+        AssetManager.Instance.Unload(ref loadId);
         Type t = hotAssembly.GetType("HotAssembly.GameStart");
         PropertyInfo p = t.BaseType.GetProperty("Instance");
         object o = p.GetMethod.Invoke(null, null);
