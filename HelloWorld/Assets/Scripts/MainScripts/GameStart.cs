@@ -85,7 +85,11 @@ public class GameStart : MonoSingletion<GameStart>
     {
         TextAsset dll = asset[0] as TextAsset;
         TextAsset pdb = asset[1] as TextAsset;
+#if UNITY_WEBGL
+        var hotAssembly = Assembly.Load(dll.bytes);
+#else
         var hotAssembly = Assembly.Load(dll.bytes, pdb.bytes);
+#endif
         AssetManager.Instance.Unload(ref loadId);
         Type t = hotAssembly.GetType("HotAssembly.GameStart");
         PropertyInfo p = t.BaseType.GetProperty("Instance");
