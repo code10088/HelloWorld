@@ -75,17 +75,13 @@ public class GameStart : MonoSingletion<GameStart>
         MethodInfo m = t.GetMethod("Init");
         m.Invoke(o, null);
 #else
-        string[] paths = new string[2];
-        paths[0] = "Assets/ZRes/Assembly/HotAssemblyDll.bytes";
-        paths[1] = "Assets/ZRes/Assembly/HotAssemblyPdb.bytes";
-        AssetManager.Instance.Load(ref loadId, paths, StartHotAssembly);
+        AssetManager.Instance.Load<TextAsset>(ref loadId, "Assets/ZRes/Assembly/HotAssembly.bytes", StartHotAssembly);
 #endif
     }
-    private void StartHotAssembly(string[] paths, Object[] asset)
+    private void StartHotAssembly(int id, Object asset)
     {
-        TextAsset dll = asset[0] as TextAsset;
-        TextAsset pdb = asset[1] as TextAsset;
-        var hotAssembly = Assembly.Load(dll.bytes);
+        TextAsset ta = asset as TextAsset;
+        var hotAssembly = Assembly.Load(ta.bytes);
         AssetManager.Instance.Unload(ref loadId);
         Type t = hotAssembly.GetType("HotAssembly.GameStart");
         PropertyInfo p = t.BaseType.GetProperty("Instance");

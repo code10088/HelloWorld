@@ -6,8 +6,7 @@
 	],
 	"HotUpdateRes":
 	[
-		"Assets/ZRes/Assembly/HotAssemblyDll.bytes",
-		"Assets/ZRes/Assembly/HotAssemblyPdb.bytes",
+		"Assets/ZRes/Assembly/HotAssembly.bytes",
 		"Assets/ZRes/DataConfig/tbuiconfig.bytes",
 		"Assets/ZRes/UI/Prefab/UIHotUpdateRes.prefab",
 		"Assets/ZRes/UI/Prefab/UICommonBox.prefab",
