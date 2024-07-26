@@ -1,18 +1,19 @@
 /HelloWorld/.vs
 /HelloWorld/Bundles
-/HelloWorld/BundlesCache
 /HelloWorld/HotAssembly/.vs
 /HelloWorld/HotAssembly/bin
 /HelloWorld/HotAssembly/obj
 /HelloWorld/HotAssembly/*.csproj
 /HelloWorld/HybridCLRData
 /HelloWorld/Library
+!/HelloWorld/Library/*.asset
 /HelloWorld/Logs
 /HelloWorld/MemoryCaptures
 /HelloWorld/obj
 /HelloWorld/Temp
 /HelloWorld/TextToolDatas
 /HelloWorld/UserSettings
+!/HelloWorld/UserSettings/*.asset
 /HelloWorld/yoo
 /HelloWorld/*.csproj
 /HelloWorld/*.sln
@@ -27,7 +28,6 @@
 /HelloWorld/Assets/Scripts/SubScripts/Scene/Auto/*.meta
 /HelloWorld/Assets/Scripts/SubScripts/UI/Auto/*.meta
 /HelloWorld/Assets/StreamingAssets
-/HelloWorld/Assets/YooAsset/Config/Resources/BuildinFile.txt
 /HelloWorld/Assets/ZRes/Assembly
 /HelloWorld/Assets/ZRes/DataConfig/*.meta
 
