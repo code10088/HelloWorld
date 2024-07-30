@@ -5,7 +5,7 @@ namespace HotAssembly
 {
     public class InputControl
     {
-        public static void Update()
+        public void Update()
         {
             Touchscreen ts = Touchscreen.current;
             if (ts == null) return;
@@ -16,18 +16,42 @@ namespace HotAssembly
                 case TouchPhase.None:
                     break;
                 case TouchPhase.Began:
+                    OnBegan(tc);
                     break;
                 case TouchPhase.Moved:
-                    //ÆÁÄ»×ø±êtc.startPosition.ReadValue()
-                    //ÆÁÄ»×ø±êtc.position.ReadValue()
+                    OnMoved(tc);
                     break;
                 case TouchPhase.Ended:
+                    OnEnded(tc);
                     break;
                 case TouchPhase.Canceled:
+                    OnCanceled(tc);
                     break;
                 case TouchPhase.Stationary:
+                    OnStationary(tc);
                     break;
             }
+        }
+        public virtual void OnBegan(TouchControl tc)
+        {
+
+        }
+        public virtual void OnMoved(TouchControl tc)
+        {
+            //ÆÁÄ»×ø±êtc.startPosition.ReadValue()
+            //ÆÁÄ»×ø±êtc.position.ReadValue()
+        }
+        public virtual void OnEnded(TouchControl tc)
+        {
+
+        }
+        public virtual void OnCanceled(TouchControl tc)
+        {
+
+        }
+        public virtual void OnStationary(TouchControl tc)
+        {
+
         }
     }
 }
