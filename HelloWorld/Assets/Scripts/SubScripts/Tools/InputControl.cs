@@ -1,17 +1,22 @@
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem;
+using UnityEngine;
+using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace HotAssembly
 {
     public class InputControl
     {
+        protected TouchControl tc;
+        public Vector2 MousePos => tc.position.value;
+        public Vector2 MouseStartPos => tc.startPosition.value;
+
         public void Update()
         {
             Touchscreen ts = Touchscreen.current;
             if (ts == null) return;
-            TouchControl tc = ts.touches[0];
-            TouchPhase tp = tc.phase.ReadValue();
-            switch (tp)
+            tc = ts.touches[0];
+            switch (tc.phase.value)
             {
                 case TouchPhase.None:
                     break;
@@ -38,8 +43,7 @@ namespace HotAssembly
         }
         public virtual void OnMoved(TouchControl tc)
         {
-            //ÆÁÄ»×ø±êtc.startPosition.ReadValue()
-            //ÆÁÄ»×ø±êtc.position.ReadValue()
+
         }
         public virtual void OnEnded(TouchControl tc)
         {

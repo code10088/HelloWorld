@@ -17,6 +17,7 @@ namespace HotAssembly
         private GameObject obj;
         private AnimationController ani;
         private Vector3 pos;
+        private Vector3 euler;
 
         public Vector3 Pos => pos;
 
@@ -41,6 +42,12 @@ namespace HotAssembly
             if (obj == null) return;
             obj.transform.position = pos;
             this.pos = pos;
+        }
+        public void SetEulerAngles(Vector3 angle)
+        {
+            if (obj == null) return;
+            obj.transform.eulerAngles = angle;
+            euler = angle;
         }
         public void PlayAni(string name, float fadeLength = 0, Action finish = null)
         {
