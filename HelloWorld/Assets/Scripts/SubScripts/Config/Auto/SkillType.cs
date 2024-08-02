@@ -14,7 +14,8 @@ namespace cfg
     public enum SkillType
     {
         Damage = 1,
-        Entity = 2,
+        Bullet = 2,
+        Entity = 3,
     }
 
 } 

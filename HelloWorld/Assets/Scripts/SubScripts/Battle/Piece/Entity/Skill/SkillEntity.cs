@@ -8,18 +8,21 @@ namespace HotAssembly
         protected PieceEntity piece;
         protected float timer = 0;
 
-        public void Init(SkillConfig config, PieceEntity piece)
+        public virtual void Init(SkillConfig config, PieceEntity piece)
         {
             this.config = config;
             this.piece = piece;
-            target = piece.Target;
+            if (pieceAttr == null) pieceAttr = new PieceAttr();
             pieceAttr = piece.PieceAttr.CopyAttr();
+            target = piece.Target;
         }
         public override void Clear()
         {
             base.Clear();
+            pieceAttr.Clear();
             config = null;
             piece = null;
+            target = null;
             timer = 0;
         }
         public override bool Update(float t)

@@ -4,16 +4,35 @@ namespace HotAssembly
 {
     public class SkillEntity_Bullet : SkillEntity
     {
+        private PieceMove_Normal bulletMove;
+
         private int count = 0;
 
         protected BoxCollider2D collider;
         protected ContactFilter2D contactFilter;
         protected Collider2D[] results = new Collider2D[100];
 
+        public void Init(Vector3 pos)
+        {
+            if (pieceModel == null) pieceModel = new PieceModel();
+            var parent = BattleManager.Instance.BattleScene.GetTransform(config.PieceConfig.PieceType.ToString());
+            pieceModel.Init(config.PieceConfig.ModelPath, parent, pos);
+            if (bulletMove == null) bulletMove = new PieceMove_Normal();
+            pieceMove = bulletMove;
+            bulletMove.Init(this);
+            bulletMove.SetV(config.PieceConfig.Speed);
+            bulletMove.SetW(config.PieceConfig.AngleSpeed);
+        }
         public override void Clear()
         {
             base.Clear();
+            pieceModel.Clear();
             count = 0;
+        }
+        public override bool Update(float t)
+        {
+            bulletMove.Update(t);
+            return base.Update(t);
         }
         protected override void PlaySkill()
         {
@@ -33,7 +52,7 @@ namespace HotAssembly
             {
                 int code = results[i].GetHashCode();
                 int id = PieceCollider.Find(code);
-                target[i] = PieceManager.Instance.GetPiece(id);
+                target[i] = FightManager.Instance.GetFight(id);
             }
             for (int i = 0; i < count1; i++)
             {

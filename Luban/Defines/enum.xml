@@ -72,7 +72,8 @@
     </enum>
 	<enum name="SkillType">
         <var name="Damage" value="1"/>
-		<var name="Entity" value="2"/>
+		<var name="Bullet" value="2"/>
+		<var name="Entity" value="3"/>
     </enum>
 	<enum name="MonsterType">
         <var name="Normal" value="1"/>

@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace HotAssembly
 {
     public class BattleScene : SceneBase
     {
         private BattleSceneComponent component = new BattleSceneComponent();
-        private int coroutineId = -1;
+        private Camera camera;
+        private float dis = 30f;
 
         protected override void Init()
         {
@@ -17,17 +17,13 @@ namespace HotAssembly
         {
             base.OnEnable(param);
 
-            Camera camera = SceneManager.Instance.SceneCamera;
-            camera.transform.position = new Vector3(0, 3, -3);
-            camera.transform.eulerAngles = new Vector3(30, 0, 0);
-            //此时调用SceneManager.Instance.GetScene取不到当前scene的解决办法
-            var enumerator = Start();
-            coroutineId = CoroutineManager.Instance.StartCoroutine(enumerator);
+            camera = SceneManager.Instance.SceneCamera;
+            camera.transform.position = new Vector3(0, 0, -dis);
+            camera.transform.rotation = Quaternion.identity;
         }
         public override void OnDisable()
         {
             base.OnDisable();
-            CoroutineManager.Instance.Stop(coroutineId);
         }
         public override void OnDestroy()
         {
@@ -38,11 +34,9 @@ namespace HotAssembly
         {
             return SceneObj.transform.Find(path);
         }
-        private IEnumerator<Coroutine> Start()
+        public Vector3 ScreenToWorldPoint(Vector2 p)
         {
-            yield return new WaitForFrame(1);
-            PieceManager.Instance.AddMonsterPiece(1, 0, Vector3.right * 2);
-            PieceManager.Instance.AddMonsterPiece(1, 1, Vector3.left * 2);
+            return camera.ScreenToWorldPoint(new Vector3(p.x, p.y, dis));
         }
     }
 }

@@ -4,19 +4,17 @@ using Random = System.Random;
 
 namespace HotAssembly
 {
-    public class PieceRvoMove
+    public class PieceMove_Rvo : PieceMove
     {
-        private PieceEntity piece;
-
         private static Random random = new Random();
         private int agentId = -1;
         private Vector3 targetPos;
         private float radius = 1f;
         private float speed = 1f;
 
-        public void Init(PieceEntity piece)
+        public override void Init(PieceEntity piece)
         {
-            this.piece = piece;
+            base.Init(piece);
             var pos = piece.PieceModel.Pos;
             var angle = random.NextDouble() * 2.0f * Math.PI;
             pos.x += (float)Math.Cos(angle);

@@ -1,60 +1,38 @@
-using cfg;
-using UnityEngine;
-
 namespace HotAssembly
 {
-    public class PieceEntity
+    public class PieceEntity : Entity
     {
-        protected TriggerManager triggerManager = new TriggerManager();
-        protected BuffManager buffManager = new BuffManager();
-        protected PieceModel pieceModel = new PieceModel();
-        protected PieceSkill pieceSkill = new PieceSkill();
-        protected PieceAttr pieceAttr = new PieceAttr();
-        protected PieceMove pieceMove = new PieceMove();
+        protected TriggerManager triggerManager;
+        protected BuffManager buffManager;
+        protected PieceModel pieceModel;
+        protected PieceSkill pieceSkill;
+        protected PieceAttr pieceAttr;
+        protected PieceMove pieceMove;
 
         protected int allyId;
         protected int teamId;
-        protected int itemId;
         protected PieceEntity target;
 
-        public int AllyId => allyId;
-        public int ItemId => itemId;
-        public bool Active => itemId > 0;
-        public PieceEntity Target => target;
+        public TriggerManager TriggerManager => triggerManager;
+        public BuffManager BuffManager => buffManager;
         public PieceModel PieceModel => pieceModel;
+        public PieceSkill PieceSkill => pieceSkill;
         public PieceAttr PieceAttr => pieceAttr;
+        public PieceMove PieceMove => pieceMove;
+        public int AllyId => allyId;
+        public PieceEntity Target => target;
 
-        public virtual void Init(int id, int allyId, PieceConfig config, Vector3 pos)
+        public virtual void Init(int allyId)
         {
-            itemId = id;
             this.allyId = allyId;
-            var scene = SceneManager.Instance.GetScene(SceneType.BattleScene) as BattleScene;
-            var parent = scene.GetTransform(config.PieceType.ToString());
-            pieceModel.Init(config.ModelPath, parent, pos);
-            pieceSkill.Init(this, config.Skills);
-            foreach (var item in config.Attrs) pieceAttr.SetAttr(item.Key, item.Value);
-            pieceMove.Init(this);
-            pieceMove.SetV(config.Speed);
-            pieceMove.SetW(config.AngleSpeed);
         }
         public virtual bool Update(float t)
         {
-            triggerManager.Update(t);
-            buffManager.Update(t);
-            pieceSkill.Update(t);
-            pieceMove.Update(t);
             return false;
         }
-        public virtual void Clear()
+        public override void Clear()
         {
-            itemId = -1;
-            triggerManager.Clear();
-            buffManager.Clear();
-            pieceModel.Clear();
-            pieceSkill.Clear();
-            pieceAttr.Clear();
-            pieceMove.Stop();
-            target = null;
+
         }
     }
 }

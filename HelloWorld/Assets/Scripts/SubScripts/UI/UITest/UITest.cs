@@ -114,11 +114,11 @@ namespace HotAssembly
         }
         private void OpenBattleScene()
         {
-            SceneManager.Instance.OpenScene(SceneType.BattleScene);
+            BattleManager.Instance.Init();
         }
         private void CloseBattleScene()
         {
-            SceneManager.Instance.CloseScene(SceneType.BattleScene);
+            BattleManager.Instance.Exit();
         }
         private void OpenRvoScene()
         {

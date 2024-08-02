@@ -41,7 +41,9 @@ YooAsset
 	BuildParameters检测输出目录是否存在，存在的情况下也可以打包，避免频繁修改VersionConfig文件
 	
 ECS+Job+Brust
-	ECS中Component数据都是值类型为了内存连续提高缓存命中率(List、Array引用连续内存分散，Array<值类型>内存连续)
+	ECS中Component
+		都是数据，方便数据回滚，逻辑都在System中
+		都是值类型，内存连续提高缓存命中率(List、Array引用连续内存分散，Array<值类型>内存连续)
 	Job多线程有些类似于computeShader
 	Brust只能在Job中使用
 	万人同屏：JobSystem+Brust+BatchRendererGroup(ECS目前阶段局限性太大)

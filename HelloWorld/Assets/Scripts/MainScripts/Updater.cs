@@ -12,7 +12,7 @@ public class Updater : Singletion<Updater>
         AsyncManager.Instance.Add(temp, ignoreFrameTime);
         return temp.ItemID;
     }
-    public void StopUpdate(int id, bool execMark = true)
+    public void StopUpdate(int id, bool execMark = false)
     {
         if (id < 0) return;
         AsyncManager.Instance.Remove(id, execMark);
@@ -28,7 +28,7 @@ public class Updater : Singletion<Updater>
         }
         public override void Finish()
         {
-            finish?.Invoke();
+            if (execMark) finish?.Invoke();
         }
         public override void Reset()
         {
