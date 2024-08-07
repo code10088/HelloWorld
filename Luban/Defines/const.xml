@@ -1,0 +1,11 @@
+<module name="">
+    <bean name="ConstConfig">
+		<var name="ID" type="int"/>
+		<var name="BattleConst" type="BattleConst"/>
+    </bean>
+	<bean name="BattleConst">
+		<var name="BrushInterval" type="float"/>
+    </bean>
+	
+	<table name="TbConstConfig" value="ConstConfig" input="Json"/> 
+</module>
