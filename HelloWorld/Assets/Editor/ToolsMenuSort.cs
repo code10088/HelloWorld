@@ -1,7 +1,7 @@
 public enum ToolsMenuSort
 {
-    BuildBundles,
     CopyConfig,
+    BuildBundles,
     HotAssemblyCompile,
     HybridCLRGenerate,
     YooAssetBuild,

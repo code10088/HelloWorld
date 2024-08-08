@@ -34,7 +34,7 @@ public class HotAssemblyCompile
         File.WriteAllText(newProjectPath + "/" + newProjectName + ".csproj", allStr);
 
         //生成dll
-        string strMSBuildPath = EditorPrefs.GetString(CustomerPreference.MSBuildPath);
+        string strMSBuildPath = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.MSBuildPath);
         if (string.IsNullOrEmpty(strMSBuildPath) || !File.Exists(strMSBuildPath))
         {
             EditorUtility.DisplayDialog("Error", "需要配置MSBuild路径：Preference->Customer->MSBuild路径", "Ok");

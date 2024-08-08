@@ -18,21 +18,6 @@ public class BuildEditor
     private static string appversion = string.Empty;
     private static string resversion = string.Empty;
     private static bool latestAppVersion = false;
-    private static string buildPath;
-
-    private static string BuildPath
-    {
-        get
-        {
-            if (string.IsNullOrEmpty(buildPath))
-            {
-                buildPath = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
-                buildPath = $"{buildPath}/Build";
-                Directory.CreateDirectory(Path.GetDirectoryName(buildPath));
-            }
-            return buildPath;
-        }
-    }
 
     public static void Build()
     {
@@ -60,7 +45,6 @@ public class BuildEditor
     public static void BuildBundles()
     {
         CheckArgs();
-        CopyConfig();
         HotAssemblyCompile.Generate();
         HybridCLRGenerate();
         YooAssetBuild();
@@ -74,7 +58,8 @@ public class BuildEditor
             if (args[i].StartsWith("--appversion:"))
             {
                 appversion = args[i].Replace("--appversion:", string.Empty);
-                string str = File.ReadAllText($"{BuildPath}/VersionConfig.txt", Encoding.UTF8);
+                string path = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.BuildPlayerPath);
+                string str = File.ReadAllText($"{path}/VersionConfig.txt", Encoding.UTF8);
                 var config = JsonConvert.DeserializeObject<VersionConfig>(str);
                 int index = config.AppVersions.FindIndex(a => a == appversion);
                 index = Math.Max(index, 0);
@@ -91,34 +76,6 @@ public class BuildEditor
                 if (!b) options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
             }
         }
-    }
-
-    [MenuItem("Tools/CopyConfig", false, (int)ToolsMenuSort.CopyConfig)]
-    public static void CopyConfig()
-    {
-        List<FileInfo> list = new List<FileInfo>();
-        FileUtils.GetAllFilePath($"{Application.dataPath}/Scripts/SubScripts/Config/Auto", list);
-        for (int i = 0; i < list.Count; i++) File.Delete(list[i].FullName);
-        list.Clear();
-        string path = Environment.CurrentDirectory.Substring(0, Environment.CurrentDirectory.LastIndexOf(@"\"));
-        FileUtils.GetAllFilePath($"{path}/Luban/Client/OutCodes", list);
-        for (int i = 0; i < list.Count; i++)
-        {
-            string target = $"{Application.dataPath}/Scripts/SubScripts/Config/Auto/{list[i].Name}";
-            File.Copy(list[i].FullName, target, true);
-        }
-        list.Clear();
-
-        FileUtils.GetAllFilePath($"{Application.dataPath}/ZRes/DataConfig", list);
-        for (int i = 0; i < list.Count; i++) File.Delete(list[i].FullName);
-        list.Clear();
-        FileUtils.GetAllFilePath($"{path}/Luban/Client/OutBytes", list);
-        for (int i = 0; i < list.Count; i++)
-        {
-            string target = $"{Application.dataPath}/ZRes/DataConfig/{list[i].Name}";
-            File.Copy(list[i].FullName, target, true);
-        }
-        AssetDatabase.Refresh();
     }
 
     [MenuItem("Tools/HybridCLRGenerate", false, (int)ToolsMenuSort.HybridCLRGenerate)]
@@ -171,7 +128,8 @@ public class BuildEditor
     {
         if (string.IsNullOrEmpty(appversion))
         {
-            string str = File.ReadAllText($"{BuildPath}/VersionConfig.txt", Encoding.UTF8);
+            string path = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.BuildPlayerPath);
+            string str = File.ReadAllText($"{path}/VersionConfig.txt", Encoding.UTF8);
             var config = JsonConvert.DeserializeObject<VersionConfig>(str);
             appversion = config.AppVersions[0];
             resversion = config.ResVersions[0];
@@ -211,7 +169,8 @@ public class BuildEditor
             }
         }
 
-        UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/VersionConfig.txt", $"{BuildPath}/VersionConfig.txt");
+        string buildPlayerPath = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.BuildPlayerPath);
+        UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/VersionConfig.txt", $"{buildPlayerPath}/VersionConfig.txt");
     }
     private static void UploadFile2CDN(string key, string path)
     {
@@ -250,7 +209,8 @@ public class BuildEditor
     private static void AndroidBuild()
     {
         string time = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        string buildPlayerPath = $"{BuildPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
+        string buildPlayerPath = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.BuildPlayerPath);
+        buildPlayerPath = $"{buildPlayerPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
         Directory.CreateDirectory(Path.GetDirectoryName(buildPlayerPath));
 
         HideSubScripts(true);
@@ -261,7 +221,8 @@ public class BuildEditor
     private static void IOSBuild()
     {
         string time = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        string buildPlayerPath = $"{BuildPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
+        string buildPlayerPath = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.BuildPlayerPath);
+        buildPlayerPath = $"{buildPlayerPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
         Directory.CreateDirectory(Path.GetDirectoryName(buildPlayerPath));
 
         HideSubScripts(true);
