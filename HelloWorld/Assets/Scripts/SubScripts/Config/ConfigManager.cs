@@ -9,11 +9,13 @@ namespace HotAssembly
     public class ConfigManager : Singletion<ConfigManager>
     {
         private Tables gameConfigs;
+        private ConstConfig constConfig;
         private int count = 0;
         private int total = 0;
         private Action finish;
 
         public Tables GameConfigs => gameConfigs;
+        public ConstConfig ConstConfig => constConfig;
 
         public void Init(Action finish)
         {
@@ -28,6 +30,7 @@ namespace HotAssembly
             if (++count == total)
             {
                 finish?.Invoke();
+                constConfig = gameConfigs.TbConstConfig[0];
                 AsyncManager.Instance.GCCollect();
             }
             else
