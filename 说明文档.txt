@@ -115,4 +115,4 @@ RVO
 	修改打包路径：build/unitybuild.bat
 	修改打包机参数
 	修改Preferences/Customer
-	
+	修改minigameconfig.asset导出路径
