@@ -108,3 +108,11 @@ RVO
 		Simulator中SetNumWorkers进行workers_初始化
 		KdTree中buildAgentTree修改
 		初始位置必须添加随机，保证两个Agent不同，否则会出现NaN报错
+		
+新工程
+	添加新的cdn
+	修改cdn地址：buildeditor、gamesetting
+	修改打包路径：build/unitybuild.bat
+	修改打包机参数
+	修改Preferences/Customer
+	
