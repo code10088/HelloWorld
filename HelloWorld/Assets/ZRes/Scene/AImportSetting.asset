@@ -15,14 +15,14 @@ MonoBehaviour:
   IsEnabled: 1
   ConfigSortOrder: 10
   MatchList:
-  - ZRes/Texture
+  - ZRes/Scene/CommonTexture
+  - ZRes/Scene/SingleTexture
   IgnoreList: []
   TextureType: 0
   NPOTScale: 1
   StreamingMipmaps: 0
   VirtualTextureOnly: 0
   SpriteMode: 1
-  PackingTag: 
   PixelsPerUnit: 100
   MeshType: 1
   ExtrudeEdges: 1

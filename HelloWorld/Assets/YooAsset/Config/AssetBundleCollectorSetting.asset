@@ -21,8 +21,8 @@ MonoBehaviour:
     EnableAddressable: 1
     LocationToLower: 0
     IncludeAssetGUID: 0
-    IgnoreDefaultType: 0
     AutoCollectShaders: 1
+    IgnoreRuleName: NormalIgnoreRule
     Groups:
     - GroupName: Base
       GroupDesc: 
@@ -60,7 +60,7 @@ MonoBehaviour:
         PackRuleName: PackSeparately
         FilterRuleName: CollectUserData
         AssetTags: 
-        UserData: .mp3
+        UserData: .mp3;.wav
       - CollectPath: Assets/ZRes/GameConfig
         CollectorGUID: a86f22da9507702429febaaade33c10a
         CollectorType: 0

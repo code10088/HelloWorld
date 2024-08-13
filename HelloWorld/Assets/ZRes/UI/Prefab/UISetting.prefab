@@ -2661,7 +2661,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  soundPath: Frequence/Button3
+  soundPath: Frequence/Button.wav
 --- !u!1 &2910361553778693781
 GameObject:
   m_ObjectHideFlags: 0
