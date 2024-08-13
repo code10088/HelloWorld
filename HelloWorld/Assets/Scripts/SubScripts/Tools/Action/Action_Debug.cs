@@ -9,7 +9,7 @@ namespace HotAssembly
 
 		public override void Excute(params object[] param)
 		{
-			GameDebug.Log("Action: " + Time.realtimeSinceStartup);
+			GameDebug.Log("Action: " + TimeUtils.ServerTime);
 		}
 	}
 }

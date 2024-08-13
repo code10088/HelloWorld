@@ -2,8 +2,8 @@ namespace HotAssembly
 {
 	public class TimeUtils
 	{
-		private static long serverTime;
+		private static float serverTime;
 
-		public static long ServerTime => serverTime;
+		public static float ServerTime => UnityEngine.Time.realtimeSinceStartup;
 	}
 }

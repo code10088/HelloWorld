@@ -77,7 +77,7 @@ namespace HotAssembly
         }
         private void OnOpenTips()
         {
-            UICommonTips.ShowTips(Time.realtimeSinceStartup.ToString());
+            UICommonTips.ShowTips(TimeUtils.ServerTime.ToString());
         }
         private void OnOpenSub()
         {
