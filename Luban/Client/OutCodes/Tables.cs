@@ -29,6 +29,7 @@ public partial class Tables
     public TbSimplePieceConfig TbSimplePieceConfig = new TbSimplePieceConfig();
     public TbSkillConfig TbSkillConfig = new TbSkillConfig();
     public TbMonsterConfig TbMonsterConfig = new TbMonsterConfig();
+    public TbDamageNumConfig TbDamageNumConfig = new TbDamageNumConfig();
 }
 
 }

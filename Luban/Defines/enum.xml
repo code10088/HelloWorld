@@ -85,4 +85,7 @@
 		<var name="Def" value="4"/>
 		<var name="MoveSpeed" value="5"/>
     </enum>
+	<enum name="DamageNumType">
+        <var name="Damage" value="1"/>
+    </enum>
 </module>
