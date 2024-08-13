@@ -49,7 +49,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     public int PlaySound(string path, bool loop = false)
     {
         AssetPool<SoundItem> pool;
-        path = $"{ResSoundPath}{path}.mp3";
+        path = $"{ResSoundPath}{path}";
         if (!audioPool.TryGetValue(path, out pool))
         {
             pool = new AssetPool<SoundItem>();

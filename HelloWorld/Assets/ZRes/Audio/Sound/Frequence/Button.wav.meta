@@ -1,48 +1,48 @@
 fileFormatVersion: 2
-guid: 5c3c7be30892c7e42823ac9ad0622f3c
+guid: 4f02f1929d038a24ea1188b73e3f1819
 AudioImporter:
   externalObjects: {}
   serializedVersion: 7
   defaultSettings:
     serializedVersion: 2
-    loadType: 1
+    loadType: 0
     sampleRateSetting: 2
     sampleRateOverride: 44100
-    compressionFormat: 1
+    compressionFormat: 0
     quality: 0.7
     conversionMode: 0
     preloadAudioData: 1
   platformSettingOverrides:
     1:
       serializedVersion: 2
-      loadType: 1
+      loadType: 0
       sampleRateSetting: 2
       sampleRateOverride: 44100
-      compressionFormat: 1
+      compressionFormat: 0
       quality: 0.7
       conversionMode: 0
       preloadAudioData: 1
     4:
       serializedVersion: 2
-      loadType: 1
+      loadType: 0
       sampleRateSetting: 2
       sampleRateOverride: 44100
-      compressionFormat: 1
+      compressionFormat: 0
       quality: 0.7
       conversionMode: 0
       preloadAudioData: 1
     7:
       serializedVersion: 2
-      loadType: 1
+      loadType: 0
       sampleRateSetting: 2
       sampleRateOverride: 44100
-      compressionFormat: 1
+      compressionFormat: 0
       quality: 0.7
       conversionMode: 0
       preloadAudioData: 1
     13:
       serializedVersion: 2
-      loadType: 1
+      loadType: 0
       sampleRateSetting: 2
       sampleRateOverride: 44100
       compressionFormat: 7

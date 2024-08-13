@@ -18,11 +18,10 @@ MonoBehaviour:
   - ZRes/UI/Atlas
   IgnoreList: []
   TextureType: 8
-  NPOTScale: 1
+  NPOTScale: 0
   StreamingMipmaps: 0
   VirtualTextureOnly: 0
   SpriteMode: 1
-  PackingTag: 
   PixelsPerUnit: 100
   MeshType: 1
   ExtrudeEdges: 1
