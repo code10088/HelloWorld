@@ -3,6 +3,10 @@ using UnityEngine.EventSystems;
 
 public class StandaloneInputModule : UnityEngine.EventSystems.StandaloneInputModule
 {
+    public static void SimulateMouseWithTouches()
+    {
+        Input.simulateMouseWithTouches = true;
+    }
     public static void Click(Vector2 pos)
     {
         var sim = EventSystem.current.currentInputModule as StandaloneInputModule;

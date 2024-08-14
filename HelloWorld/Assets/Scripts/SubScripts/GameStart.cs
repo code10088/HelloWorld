@@ -6,7 +6,7 @@ namespace HotAssembly
     {
         public void Init()
         {
-            InputSystemUIInputModule.EnableTouchSimulation();
+            StandaloneInputModule.SimulateMouseWithTouches();
             ConfigManager.Instance.InitSpecial("TbUIConfig", OpenUIHotUpdateRes);
         }
         private void OpenUIHotUpdateRes()

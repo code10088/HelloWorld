@@ -8,11 +8,9 @@ namespace HotAssembly
         private int updateId = -1;
         private int sceneId = -1;
         private BattleScene battleScene;
-        private BattleInput input;
 
         public BattleScene BattleScene => battleScene;
-        public Vector2 InputPos => input.MousePos;
-        public Vector2 InputWorldPos => battleScene.ScreenToWorldPoint(input.MousePos);
+        public Vector2 InputWorldPos => battleScene.ScreenToWorldPoint(Input.mousePosition);
 
         public void Init(SceneType type)
         {
@@ -22,7 +20,6 @@ namespace HotAssembly
         {
             battleScene = SceneManager.Instance.GetScene(id) as BattleScene;
             updateId = Updater.Instance.StartUpdate(Update);
-            input = new BattleInput();
         }
         public void Exit()
         {
@@ -30,11 +27,9 @@ namespace HotAssembly
             SceneManager.Instance.CloseScene(sceneId);
             battleScene = null;
             sceneId = -1;
-            input = null;
         }
         private void Update()
         {
-            input.Update();
             FightManager.Instance.Update();
             SkillManager.Instance.Update();
         }
