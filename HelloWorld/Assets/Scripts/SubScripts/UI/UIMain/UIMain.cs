@@ -10,8 +10,6 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(UIObj);
-            component.openUITestBtnUIButton.onClick.AddListener(OnOpenUITest);
-            component.openUISettingUIButton.onClick.AddListener(OnOpenUISetting);
         }
         public override void OnEnable(params object[] param)
         {
@@ -32,14 +30,6 @@ namespace HotAssembly
         public override void OnDestroy()
         {
             base.OnDestroy();
-        }
-        private void OnOpenUITest()
-        {
-            UIManager.Instance.OpenUI(UIType.UITest);
-        }
-        private void OnOpenUISetting()
-        {
-            UIManager.Instance.OpenUI(UIType.UISetting);
         }
     }
 }

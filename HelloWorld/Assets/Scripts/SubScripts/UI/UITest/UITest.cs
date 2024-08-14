@@ -16,7 +16,11 @@ namespace HotAssembly
             base.Init();
             component.Init(UIObj);
             component.bgRectTransform.anchorMin = UIManager.anchorMinFull;
-            component.closeBtnUIButton.onClick.AddListener(OnClose);
+            component.openSceneBtnUIButton.onClick.AddListener(OnOpenScene);
+            component.openUIBtnUIButton.onClick.AddListener(OnOpenUI);
+            component.openFunctionBtnUIButton.onClick.AddListener(OnOpenFunction);
+            component.openUISettingUIButton.onClick.AddListener(OnOpenUISetting);
+            component.closeBtnUIButton.onClick.AddListener(OnClickClose);
             component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
             component.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);
             component.openTipsBtnUIButton.onClick.AddListener(OnOpenTips);
@@ -66,34 +70,30 @@ namespace HotAssembly
             GameDebug.Log("UITest OnDestroy");
         }
 
-        private void OnOpenMessage()
+        private void OnOpenScene()
         {
-            UICommonBoxParam param = new UICommonBoxParam();
-            param.type = UICommonBoxType.SureAndCancel;
-            param.title = "Tips";
-            param.content = "Content";
-            param.sure = a => OnOpenMessage();
-            UICommonBox.OpenCommonBox(param);
+            component.totalObj.SetActive(false);
+            component.sceneObj.SetActive(true);
         }
-        private void OnOpenTips()
+        private void OnOpenUI()
         {
-            UICommonTips.ShowTips(TimeUtils.ServerTime.ToString());
+            component.totalObj.SetActive(false);
+            component.uIObj.SetActive(true);
         }
-        private void OnOpenSub()
+        private void OnOpenFunction()
         {
-            if (subUI.Active) subUI.SetActive(component.subRootObj.transform, false);
-            else subUI.Open(component.subRootObj.transform);
+            component.totalObj.SetActive(false);
+            component.functionObj.SetActive(true);
         }
-        private void SDKInit()
+        private void OnClickClose()
         {
-            SDK.Instance.InitSDK();
+            component.totalObj.SetActive(true);
+            component.sceneObj.SetActive(false);
+            component.uIObj.SetActive(false);
+            component.functionObj.SetActive(false);
         }
-        private void LoadSprite()
-        {
-            SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
-            SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
-            GameDebug.Log("SetSprite");
-        }
+
+        #region Scene
         private void LoadBulletFromPool()
         {
             TestScene ts = SceneManager.Instance.GetScene(SceneType.TestScene) as TestScene;
@@ -127,6 +127,56 @@ namespace HotAssembly
         private void CloseRvoScene()
         {
             BattleManager.Instance.Exit();
+        }
+        #endregion
+
+        #region UI
+        LoopListViewItem2 OnGetItemByIndex(LoopListView2 listView, int index)
+        {
+            if (index < 0 || index >= DataManager.Instance.TestData.testItemDatas.Count)
+            {
+                return null;
+            }
+            LoopListViewItem2 item = listView.NewListViewItem("Item");
+            if (item.IsInitHandlerCalled == false)
+            {
+                item.IsInitHandlerCalled = true;
+                item.ItemData = new UITestItem();
+                item.ItemData.Init(item.gameObject);
+            }
+            item.ItemData.SetData(index);
+            return item;
+        }
+        private void OnOpenMessage()
+        {
+            UICommonBoxParam param = new UICommonBoxParam();
+            param.type = UICommonBoxType.SureAndCancel;
+            param.title = "Tips";
+            param.content = "Content";
+            param.sure = a => OnOpenMessage();
+            UICommonBox.OpenCommonBox(param);
+        }
+        private void OnOpenTips()
+        {
+            UICommonTips.ShowTips(TimeUtils.ServerTime.ToString());
+        }
+        private void OnOpenSub()
+        {
+            if (subUI.Active) subUI.SetActive(component.subRootObj.transform, false);
+            else subUI.Open(component.subRootObj.transform);
+        }
+        private void LoadSprite()
+        {
+            SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
+            SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
+            GameDebug.Log("SetSprite");
+        }
+        #endregion
+
+        #region Function
+        private void SDKInit()
+        {
+            SDK.Instance.InitSDK();
         }
         private void TestCoroutine()
         {
@@ -163,22 +213,11 @@ namespace HotAssembly
         {
             DataManager.Instance.GuideData.StartGuide(1);
         }
+        #endregion
 
-        LoopListViewItem2 OnGetItemByIndex(LoopListView2 listView, int index)
+        private void OnOpenUISetting()
         {
-            if (index < 0 || index >= DataManager.Instance.TestData.testItemDatas.Count)
-            {
-                return null;
-            }
-            LoopListViewItem2 item = listView.NewListViewItem("Item");
-            if (item.IsInitHandlerCalled == false)
-            {
-                item.IsInitHandlerCalled = true;
-                item.ItemData = new UITestItem();
-                item.ItemData.Init(item.gameObject);
-            }
-            item.ItemData.SetData(index);
-            return item;
+            UIManager.Instance.OpenUI(UIType.UISetting);
         }
     }
     public partial class UITestItem

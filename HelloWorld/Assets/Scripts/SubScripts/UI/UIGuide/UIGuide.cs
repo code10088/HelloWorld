@@ -8,6 +8,7 @@ namespace HotAssembly
         private UIGuideComponent component = new UIGuideComponent();
         private Guide cfg;
         private int updateId = -1;
+        private InputControl input = new InputControl();
 
         private Vector3 record = Vector3.zero;
         private Vector3[] corners = new Vector3[4];
@@ -87,10 +88,11 @@ namespace HotAssembly
                 Next();
                 return;
             }
-            if (Input.mousePosition.x < v3.x) return;
-            if (Input.mousePosition.x > v4.x) return;
-            if (Input.mousePosition.y < v3.y) return;
-            if (Input.mousePosition.y > v4.y) return;
+            input.Update();
+            if (input.MousePos.x < v3.x) return;
+            if (input.MousePos.x > v4.x) return;
+            if (input.MousePos.y < v3.y) return;
+            if (input.MousePos.y > v4.y) return;
             CheckClick();
             Next();
         }
@@ -98,7 +100,7 @@ namespace HotAssembly
         {
             if (!cfg.Interactable) return;
             component.maskImage.raycastTarget = false;
-            InputSystemUIInputModule.Click(Input.mousePosition);
+            InputSystemUIInputModule.Click(input.MousePos);
             component.maskImage.raycastTarget = true;
         }
         private void Next()
