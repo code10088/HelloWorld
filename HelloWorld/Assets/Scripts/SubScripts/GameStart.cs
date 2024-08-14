@@ -35,8 +35,11 @@ namespace HotAssembly
         private void EnterMainScene()
         {
             DataManager.Instance.GuideData.Init();
-            UIManager.Instance.OpenUI(UIType.UIMain);
-            SceneManager.Instance.OpenScene(SceneType.RvoScene);
+            UIManager.Instance.OpenUI(UIType.UIMain, CloseSceneLoading);
+        }
+        private void CloseSceneLoading(bool open)
+        {
+            UIManager.Instance.CloseUI(UIType.UISceneLoading);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace cfg
     public enum MonsterType
     {
         Normal = 1,
+        Rvo = 2,
     }
 
 } 

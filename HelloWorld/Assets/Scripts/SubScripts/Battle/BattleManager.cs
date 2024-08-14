@@ -14,18 +14,15 @@ namespace HotAssembly
         public Vector2 InputPos => input.MousePos;
         public Vector2 InputWorldPos => battleScene.ScreenToWorldPoint(input.MousePos);
 
-        public void Init()
+        public void Init(SceneType type)
         {
-            sceneId = SceneManager.Instance.OpenScene(SceneType.BattleScene, Init);
+            sceneId = SceneManager.Instance.OpenScene(type, Init);
         }
-        private void Init(bool success)
+        private void Init(int id, bool success)
         {
-            battleScene = SceneManager.Instance.GetScene(sceneId) as BattleScene;
+            battleScene = SceneManager.Instance.GetScene(id) as BattleScene;
             updateId = Updater.Instance.StartUpdate(Update);
             input = new BattleInput();
-
-            FightManager.Instance.AddMonster(1, 0, Vector3.right * 2);
-            FightManager.Instance.AddMonster(1, 1, Vector3.left * 2);
         }
         public void Exit()
         {

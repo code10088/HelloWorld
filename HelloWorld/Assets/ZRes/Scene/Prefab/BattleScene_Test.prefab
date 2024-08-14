@@ -73,7 +73,7 @@ GameObject:
   - component: {fileID: 392475982783516489}
   - component: {fileID: 8422382113264368914}
   m_Layer: 0
-  m_Name: BattleScene
+  m_Name: BattleScene_Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: Assets/Scripts/SubScripts/Scene/Auto/
-  className: BattleSceneComponent
+  className: BattleScene_TestComponent
 --- !u!1 &7091863500351045863
 GameObject:
   m_ObjectHideFlags: 0

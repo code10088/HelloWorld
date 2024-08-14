@@ -6,6 +6,7 @@ namespace HotAssembly
 {
     public class SceneBase
     {
+        protected Camera camera;
         protected GameObject SceneObj;
         protected int id;
         protected SceneType from;
@@ -28,6 +29,10 @@ namespace HotAssembly
         }
         public virtual void OnEnable(params object[] param)
         {
+            camera = SceneManager.Instance.SceneCamera;
+            camera.transform.position = config.CameraPos;
+            camera.transform.eulerAngles = config.CameraEuler;
+
             int skyboxLoadId = -1;
             AssetManager.Instance.Load<Material>(ref skyboxLoadId, config.SkyBoxPath, (a, b) => RenderSettings.skybox = (Material)b);
             loader1.Add(skyboxLoadId);

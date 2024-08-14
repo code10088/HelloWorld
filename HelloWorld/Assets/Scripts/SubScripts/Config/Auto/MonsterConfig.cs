@@ -27,13 +27,7 @@ public sealed partial class MonsterConfig : Luban.BeanBase
     }
 
     public readonly int ID;
-    /// <summary>
-    /// 技能类型
-    /// </summary>
     public readonly PieceConfig PieceConfig;
-    /// <summary>
-    /// 技能类型
-    /// </summary>
     public readonly MonsterType MonsterType;
    
     public const int __ID__ = -55174244;

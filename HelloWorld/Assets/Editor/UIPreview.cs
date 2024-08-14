@@ -31,8 +31,11 @@ public class UIPreview : ObjectPreview
         if (obj = previewRender.InstantiatePrefabInScene(obj))
         {
             var canvasInstance = obj.GetComponent<Canvas>();
-            canvasInstance.renderMode = RenderMode.ScreenSpaceCamera;
-            canvasInstance.worldCamera = previewRender.camera;
+            if (canvasInstance != null)
+            {
+                canvasInstance.renderMode = RenderMode.ScreenSpaceCamera;
+                canvasInstance.worldCamera = previewRender.camera;
+            }
         }
 
         previewRender.BeginStaticPreview(rect1);

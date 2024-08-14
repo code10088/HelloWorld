@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 
 namespace HotAssembly

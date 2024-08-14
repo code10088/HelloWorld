@@ -16,27 +16,22 @@ namespace HotAssembly
         public override void OnEnable(params object[] param)
         {
             base.OnEnable(param);
-            GameDebug.Log("UITest OnEnable");
         }
         protected override void PlayInitAni()
         {
             base.PlayInitAni();
-            GameDebug.Log("UITest OnPlayUIAnimation");
         }
         protected override void RefreshUILayer()
         {
             base.RefreshUILayer();
-            GameDebug.Log("UITest RefreshUILayer");
         }
         public override void OnDisable()
         {
             base.OnDisable();
-            GameDebug.Log("UITest OnDisable");
         }
         public override void OnDestroy()
         {
             base.OnDestroy();
-            GameDebug.Log("UITest OnDestroy");
         }
         private void OnOpenUITest()
         {

@@ -20,6 +20,8 @@ public sealed partial class SceneConfig : Luban.BeanBase
         Name = _buf.ReadString();
         PrefabPath = _buf.ReadString();
         SkyBoxPath = _buf.ReadString();
+        CameraPos = HotAssembly.ExternalTypeUtil.NewVector3(vec3.Deserializevec3(_buf));
+        CameraEuler = HotAssembly.ExternalTypeUtil.NewVector3(vec3.Deserializevec3(_buf));
     }
 
     public static SceneConfig DeserializeSceneConfig(ByteBuf _buf)
@@ -40,6 +42,14 @@ public sealed partial class SceneConfig : Luban.BeanBase
     /// 天空盒
     /// </summary>
     public readonly string SkyBoxPath;
+    /// <summary>
+    /// 相机位置
+    /// </summary>
+    public readonly UnityEngine.Vector3 CameraPos;
+    /// <summary>
+    /// 相机位置
+    /// </summary>
+    public readonly UnityEngine.Vector3 CameraEuler;
    
     public const int __ID__ = 935827150;
     public override int GetTypeId() => __ID__;
@@ -51,6 +61,8 @@ public sealed partial class SceneConfig : Luban.BeanBase
         + "Name:" + Name + ","
         + "PrefabPath:" + PrefabPath + ","
         + "SkyBoxPath:" + SkyBoxPath + ","
+        + "CameraPos:" + CameraPos + ","
+        + "CameraEuler:" + CameraEuler + ","
         + "}";
     }
 }

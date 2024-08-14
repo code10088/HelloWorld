@@ -114,7 +114,7 @@ namespace HotAssembly
         }
         private void OpenBattleScene()
         {
-            BattleManager.Instance.Init();
+            BattleManager.Instance.Init(SceneType.BattleScene_Test);
         }
         private void CloseBattleScene()
         {
@@ -122,11 +122,11 @@ namespace HotAssembly
         }
         private void OpenRvoScene()
         {
-            SceneManager.Instance.OpenScene(SceneType.RvoScene);
+            BattleManager.Instance.Init(SceneType.BattleScene_Rvo);
         }
         private void CloseRvoScene()
         {
-            SceneManager.Instance.CloseScene(SceneType.RvoScene);
+            BattleManager.Instance.Exit();
         }
         private void TestCoroutine()
         {

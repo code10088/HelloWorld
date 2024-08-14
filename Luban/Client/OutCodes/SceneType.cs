@@ -15,8 +15,8 @@ namespace cfg
     {
         SceneBase = 1,
         TestScene = 2,
-        BattleScene = 3,
-        RvoScene = 4,
+        BattleScene_Test = 3,
+        BattleScene_Rvo = 4,
     }
 
 } 

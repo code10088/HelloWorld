@@ -18,14 +18,24 @@ namespace HotAssembly
             switch (config.MonsterType)
             {
                 case MonsterType.Normal:
-                    t = typeof(MonsterEntity);
+                    t = typeof(MonsterEntity_Normal);
                     index = cache.FindIndex(a => a.GetType() == t);
-                    MonsterEntity nromal = index < 0 ? new MonsterEntity() : (MonsterEntity)cache[index];
+                    MonsterEntity_Normal nromal = index < 0 ? new MonsterEntity_Normal() : (MonsterEntity_Normal)cache[index];
                     if (index >= 0) cache.RemoveAt(index);
                     nromal.Init();
                     nromal.Init(allyId);
                     nromal.Init(config, pos);
                     pieces.Add(nromal);
+                    break;
+                case MonsterType.Rvo:
+                    t = typeof(MonsterEntity_Rvo);
+                    index = cache.FindIndex(a => a.GetType() == t);
+                    MonsterEntity_Rvo rvo = index < 0 ? new MonsterEntity_Rvo() : (MonsterEntity_Rvo)cache[index];
+                    if (index >= 0) cache.RemoveAt(index);
+                    rvo.Init();
+                    rvo.Init(allyId);
+                    rvo.Init(config, pos);
+                    pieces.Add(rvo);
                     break;
             }
         }

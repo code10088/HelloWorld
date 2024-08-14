@@ -31,7 +31,7 @@ namespace HotAssembly
         /// <param name="progress"></param>
         /// <param name="param"></param>
         /// <returns>唯一id</returns>
-        public int OpenScene(SceneType type, Action<bool> open = null, Action<float> progress = null, params object[] param)
+        public int OpenScene(SceneType type, Action<int, bool> open = null, Action<float> progress = null, params object[] param)
         {
             SceneItem item;
             int tempIndex = cacheScene.FindIndex(a => a.Type == type);
@@ -142,7 +142,7 @@ namespace HotAssembly
             private SceneConfig config;
             private SceneBase baseScene;
             private GameObject baseObj;
-            private Action<bool> open = null;
+            private Action<int, bool> open = null;
             private Action<float> progress = null;
             private object[] param = null;
 
@@ -160,7 +160,7 @@ namespace HotAssembly
                 id = ++uniqueId;
                 config = ConfigManager.Instance.GameConfigs.TbSceneConfig[type];
             }
-            public void SetParam(SceneType _from, Action<bool> _open = null, Action<float> _progress = null, params object[] _param)
+            public void SetParam(SceneType _from, Action<int, bool> _open = null, Action<float> _progress = null, params object[] _param)
             {
                 from = _from;
                 open = _open;
@@ -228,7 +228,7 @@ namespace HotAssembly
             public void OpenActionInvoke(bool success)
             {
                 UIManager.Instance.CloseUI(UIType.UISceneLoading);
-                open?.Invoke(success);
+                open?.Invoke(id, success);
             }
             public void ProgressActionInvoke()
             {

@@ -10,7 +10,7 @@ public class TimeManager : Singletion<TimeManager>
     /// loop>0
     ///     loop：循环时间
     ///     time：>0表示总时间，<=0表示无限循环
-    ///     action：循环回调
+    ///     action：循环回调(immediately立刻执行一次)
     ///     finish：总时间结束回调
     /// loop<=0
     ///     loop：没有意义
@@ -18,11 +18,11 @@ public class TimeManager : Singletion<TimeManager>
     ///     action：没有意义
     ///     finish：总时间结束回调
     /// </summary>
-    public int StartTimer(float time, float loop = 0f, Action<float> action = null, Action finish = null, bool ignoreFrameTime = false)
+    public int StartTimer(float time, float loop = 0f, Action<float> action = null, bool immediately = true, Action finish = null, bool ignoreFrameTime = false)
     {
         if (loop <= 0 && time <= 0) return -1;
         TimeItem temp = cache.Count > 0 ? cache.Dequeue(): new();
-        temp.Init(time, loop, action, finish);
+        temp.Init(time, loop, action, immediately, finish);
         AsyncManager.Instance.Add(temp, ignoreFrameTime);
         return temp.ItemID;
     }
@@ -41,12 +41,14 @@ public class TimeManager : Singletion<TimeManager>
         private float _time = 0;
         private float _loop = 0;
 
-        public void Init(float time, float loop = 0f, Action<float> action = null, Action finish = null)
+        public void Init(float time, float loop = 0f, Action<float> action = null, bool immediately = true, Action finish = null)
         {
             base.Init(finish);
             this.time = time;
             this.loop = loop;
             this.action = action;
+            _time = 0;
+            _loop = immediately ? 0 : loop;
         }
         public override void Update()
         {
@@ -63,11 +65,7 @@ public class TimeManager : Singletion<TimeManager>
         public override void Reset()
         {
             base.Reset();
-            time = 0;
-            loop = 0;
             action = null;
-            _time = 0;
-            _loop = 0;
 
             cache.Enqueue(this);
         }
