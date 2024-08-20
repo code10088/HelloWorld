@@ -19,7 +19,6 @@
 		<var name="TestScene" value="2"/>
 		<var name="BattleScene_Test" value="3"/>
 		<var name="BattleScene_Rvo" value="4"/>
-		<var name="BattleScene_Rigidbody" value="5"/>
     </enum>
 	<enum name="PlayerAvatarPartType">
         <var name="Hair" value="1"/>

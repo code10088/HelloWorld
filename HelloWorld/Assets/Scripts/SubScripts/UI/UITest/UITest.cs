@@ -106,11 +106,11 @@ namespace HotAssembly
         }
         private void OpenTestScene()
         {
-            SceneManager.Instance.OpenScene(SceneType.BattleScene_Rigidbody);
+            SceneManager.Instance.OpenScene(SceneType.TestScene);
         }
         private void CloseTestScene()
         {
-            SceneManager.Instance.CloseScene(SceneType.BattleScene_Rigidbody);
+            SceneManager.Instance.CloseScene(SceneType.TestScene);
         }
         private void OpenBattleScene()
         {
