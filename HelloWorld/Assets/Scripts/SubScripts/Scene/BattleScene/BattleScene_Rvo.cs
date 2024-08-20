@@ -22,7 +22,7 @@ namespace HotAssembly
 
             RVOManager.Instance.AddObstacle(component.obstacleObj);
             RVOManager.Instance.Start();
-            timerId = TimeManager.Instance.StartTimer(30, 0.1f, CreateTest, false);
+            timerId = TimeManager.Instance.StartTimer(10, 0.1f, CreateTest, false);
         }
         public override void OnDisable()
         {

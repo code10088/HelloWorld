@@ -6903,6 +6903,7 @@ GameObject:
   - component: {fileID: 439251197655552881}
   - component: {fileID: 5149010856302671980}
   - component: {fileID: 3158111280949475706}
+  - component: {fileID: 7846477089017216221}
   m_Layer: 5
   m_Name: UITest
   m_TagString: Untagged
@@ -7012,6 +7013,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   path: Assets/Scripts/SubScripts/UI/Auto/
   className: UITestComponent
+--- !u!225 &7846477089017216221
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8764031000229441226}
+  m_Enabled: 1
+  m_Alpha: 0.1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8819200151629333775
 GameObject:
   m_ObjectHideFlags: 0
