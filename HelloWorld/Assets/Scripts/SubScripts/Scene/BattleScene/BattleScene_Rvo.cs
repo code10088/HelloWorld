@@ -22,7 +22,7 @@ namespace HotAssembly
 
             RVOManager.Instance.AddObstacle(component.obstacleObj);
             RVOManager.Instance.Start();
-            timerId = TimeManager.Instance.StartTimer(30, 0.1f, CreateTest, false);
+            timerId = TimeManager.Instance.StartTimer(10, 0.1f, CreateTest, false);
         }
         public override void OnDisable()
         {
@@ -44,7 +44,7 @@ namespace HotAssembly
             var pos = component.startTransform.position;
             pos.x += (float)Math.Cos(angle);
             pos.y += (float)Math.Sin(angle);
-            FightManager.Instance.AddMonster(2, 1, pos);
+            EntityCacheManager.Instance.FightCache.AddMonster(2, 1, pos);
         }
     }
 }

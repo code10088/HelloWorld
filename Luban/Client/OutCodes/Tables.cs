@@ -26,7 +26,7 @@ public partial class Tables
     public TbGuide TbGuide = new TbGuide();
     public TbActivityConfig TbActivityConfig = new TbActivityConfig();
     public TbFunctionUnlockConfig TbFunctionUnlockConfig = new TbFunctionUnlockConfig();
-    public TbSimplePieceConfig TbSimplePieceConfig = new TbSimplePieceConfig();
+    public TbSimpleFightConfig TbSimpleFightConfig = new TbSimpleFightConfig();
     public TbSkillConfig TbSkillConfig = new TbSkillConfig();
     public TbMonsterConfig TbMonsterConfig = new TbMonsterConfig();
     public TbDamageNumConfig TbDamageNumConfig = new TbDamageNumConfig();

@@ -17,7 +17,7 @@ public sealed partial class MonsterConfig : Luban.BeanBase
     public MonsterConfig(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        PieceConfig = PieceConfig.DeserializePieceConfig(_buf);
+        FightConfig = FightConfig.DeserializeFightConfig(_buf);
         MonsterType = (MonsterType)_buf.ReadInt();
     }
 
@@ -27,7 +27,7 @@ public sealed partial class MonsterConfig : Luban.BeanBase
     }
 
     public readonly int ID;
-    public readonly PieceConfig PieceConfig;
+    public readonly FightConfig FightConfig;
     public readonly MonsterType MonsterType;
    
     public const int __ID__ = -55174244;
@@ -37,7 +37,7 @@ public sealed partial class MonsterConfig : Luban.BeanBase
     {
         return "{ "
         + "ID:" + ID + ","
-        + "PieceConfig:" + PieceConfig + ","
+        + "FightConfig:" + FightConfig + ","
         + "MonsterType:" + MonsterType + ","
         + "}";
     }

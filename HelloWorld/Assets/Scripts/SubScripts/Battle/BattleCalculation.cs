@@ -4,14 +4,14 @@ namespace HotAssembly
 {
     public class BattleCalculation : Singletion<BattleCalculation>
     {
-        public void Attack(PieceEntity origin, PieceEntity target)
+        public void Attack(SkillEntity origin, FightEntity target)
         {
             if (target == null) return;
             if (!target.Active) return;
-            var atk = origin.PieceAttr.GetAttr(PieceAttrEnum.Atk);
-            var def = target.PieceAttr.GetAttr(PieceAttrEnum.Def);
+            var atk = origin.Attr.GetAttr(AttrEnum.Atk);
+            var def = target.Attr.GetAttr(AttrEnum.Def);
             if (atk <= def) return;
-            target.PieceAttr.SetAttr(PieceAttrEnum.Hp, def - atk);
+            target.Attr.SetAttr(AttrEnum.Hp, def - atk);
         }
     }
 }

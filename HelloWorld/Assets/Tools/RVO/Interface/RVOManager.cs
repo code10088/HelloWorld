@@ -32,7 +32,7 @@ public class RVOManager : Singletion<RVOManager>
     {
         if (updateId < 0) updateId = Updater.Instance.StartUpdate(Update);
     }
-    private void Update()
+    private void Update(float t)
     {
         Simulator.Instance.doStep();
         foreach (var item in agents) item.Value.Update();

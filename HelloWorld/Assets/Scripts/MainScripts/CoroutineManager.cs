@@ -29,7 +29,7 @@ public class CoroutineManager : MonoSingletion<CoroutineManager>
             this.action = action;
             nextMark = action.MoveNext();
         }
-        public override void Update()
+        public override void Update(float t)
         {
             if (endMark) return;
             if (nextMark) nextMark = !action.Current.MoveNext();

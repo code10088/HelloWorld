@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class TimeManager : Singletion<TimeManager>
 {
@@ -50,10 +49,10 @@ public class TimeManager : Singletion<TimeManager>
             _time = 0;
             _loop = immediately ? 0 : loop;
         }
-        public override void Update()
+        public override void Update(float t)
         {
             if (endMark) return;
-            _time += Time.deltaTime;
+            _time += t;
             if (loop > 0 && _time > _loop)
             {
                 _loop += loop;

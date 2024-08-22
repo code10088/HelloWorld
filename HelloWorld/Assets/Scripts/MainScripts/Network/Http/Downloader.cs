@@ -37,7 +37,7 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
             count++;
         }
     }
-    public void UpdateProgress()
+    public void UpdateProgress(float t)
     {
         for (int i = 0; i < all.Count; i++)
         {

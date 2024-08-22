@@ -7,10 +7,10 @@ namespace HotAssembly
     {
         private int updateId = -1;
         private int sceneId = -1;
-        private BattleScene battleScene;
+        public BattleScene BattleScene;
+        public GameObjectPool Pool = new GameObjectPool();
 
-        public BattleScene BattleScene => battleScene;
-        public Vector2 InputWorldPos => battleScene.ScreenToWorldPoint(Input.mousePosition);
+        public Vector2 InputWorldPos => BattleScene.ScreenToWorldPoint(Input.mousePosition);
 
         public void Init(SceneType type)
         {
@@ -18,20 +18,23 @@ namespace HotAssembly
         }
         private void Init(int id, bool success)
         {
-            battleScene = SceneManager.Instance.GetScene(id) as BattleScene;
+            BattleScene = SceneManager.Instance.GetScene(id) as BattleScene;
             updateId = Updater.Instance.StartUpdate(Update);
         }
         public void Exit()
         {
+            SystemManager.Instance.Clear();
+            EntityCacheManager.Instance.Clear();
+
+            Pool.Release();
             Updater.Instance.StopUpdate(updateId);
             SceneManager.Instance.CloseScene(sceneId);
-            battleScene = null;
+            BattleScene = null;
             sceneId = -1;
         }
-        private void Update()
+        private void Update(float t)
         {
-            FightManager.Instance.Update();
-            SkillManager.Instance.Update();
+            SystemManager.Instance.Update(t);
         }
     }
 }

@@ -47,7 +47,7 @@ public class FrameManager : Singletion<FrameManager>
             this.loop = loop;
             this.action = action;
         }
-        public override void Update()
+        public override void Update(float t)
         {
             if (endMark) return;
             _frame++;

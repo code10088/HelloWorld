@@ -194,10 +194,10 @@ namespace HotAssembly
         }
         public TriggerManager triggerManager = new TriggerManager();
         public BuffManager buffManager = new BuffManager();
-        private void UpdateTrigger()
+        private void UpdateTrigger(float t)
         {
-            triggerManager.Update(Time.deltaTime);
-            buffManager.Update(Time.deltaTime);
+            triggerManager.Update(t);
+            buffManager.Update(t);
         }
         private void AddTrigger()
         {

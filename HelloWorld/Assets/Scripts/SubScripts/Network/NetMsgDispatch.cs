@@ -27,7 +27,7 @@ namespace HotAssembly
                 msgPool.Enqueue(item);
             }
         }
-        private void Update()
+        private void Update(float t)
         {
             while (msgPool.Count > 0)
             {

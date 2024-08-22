@@ -5,34 +5,37 @@ public class Updater : Singletion<Updater>
 {
     private static Queue<UpdateItem> cache = new();
 
-    public int StartUpdate(Action action, bool ignoreFrameTime = false)
+    public int StartUpdate(Action<float> action, bool ignoreFrameTime = false)
     {
         UpdateItem temp = cache.Count > 0 ? cache.Dequeue() : new();
         temp.Init(action);
         AsyncManager.Instance.Add(temp, ignoreFrameTime);
         return temp.ItemID;
     }
-    public void StopUpdate(int id, bool execMark = false)
+    public void StopUpdate(int id)
     {
         if (id < 0) return;
-        AsyncManager.Instance.Remove(id, execMark);
+        AsyncManager.Instance.Remove(id, false);
     }
 
 
     private class UpdateItem : AsyncItem
     {
-        public override void Update()
+        private Action<float> action;
+        public void Init(Action<float> action)
+        {
+            base.Init(null);
+            this.action = action;
+        }
+        public override void Update(float t)
         {
             if (endMark) return;
-            Finish();
-        }
-        public override void Finish()
-        {
-            if (execMark) finish?.Invoke();
+            action?.Invoke(t);
         }
         public override void Reset()
         {
             base.Reset();
+            action = null;
 
             cache.Enqueue(this);
         }

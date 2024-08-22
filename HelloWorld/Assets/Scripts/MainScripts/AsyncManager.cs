@@ -4,150 +4,85 @@ using YooAsset;
 
 public class AsyncManager : Singletion<AsyncManager>
 {
-    private AsyncItem[] array1 = new AsyncItem[100];//不切片列表
-    private AsyncItem[] array2 = new AsyncItem[10000];//切片列表
-    private byte[] mark1 = new byte[100];
-    private byte[] mark2 = new byte[10000];
-    private int count1 = 0;
-    private int count2 = 0;
+    private ArrayEx<AsyncItem> array1 = new ArrayEx<AsyncItem>(100);//不切片列表
+    private ArrayEx<AsyncItem> array2 = new ArrayEx<AsyncItem>(10000);//切片列表
     private float gcTimer = 0;
     private int idxMark = 0;
+    private float timeMark = 0;
 
     public void Add(AsyncItem item, bool ignoreFrameTime)
     {
-        if (ignoreFrameTime)
-        {
-            for (int i = 0; i < count1; i++)
-            {
-                if (mark1[i] == 0)
-                {
-                    array1[i] = item;
-                    mark1[i] = 1;
-                    return;
-                }
-            }
-            array1[count1] = item;
-            mark1[count1] = 1;
-            count1++;
-        }
-        else
-        {
-            for (int i = 0; i < count2; i++)
-            {
-                if (mark2[i] == 0)
-                {
-                    array2[i] = item;
-                    mark2[i] = 1;
-                    return;
-                }
-            }
-            array2[count2] = item;
-            mark2[count2] = 1;
-            count2++;
-        }
+        (ignoreFrameTime ? array1 : array2).Add(item);
     }
     public void Remove(int id, bool execMark)
     {
         AsyncItem temp;
-        for (int i = 0; i < count1; i++)
+        for (int i = 0; i < array1.Count; i++)
         {
-            if (mark1[i] > 0)
+            temp = array1[i];
+            if (temp != null && temp.ItemID == id)
             {
-                temp = array1[i];
-                if (temp.ItemID == id)
-                {
-                    temp.endMark = true;
-                    temp.execMark = execMark;
-                    return;
-                }
+                temp.endMark = true;
+                temp.execMark = execMark;
+                return;
             }
         }
-        for (int i = 0; i < count2; i++)
+        for (int i = 0; i < array2.Count; i++)
         {
-            if (mark2[i] > 0)
+            temp = array2[i];
+            if (temp != null && temp.ItemID == id)
             {
-                temp = array2[i];
-                if (temp.ItemID == id)
-                {
-                    temp.endMark = true;
-                    temp.execMark = execMark;
-                    return;
-                }
+                temp.endMark = true;
+                temp.execMark = execMark;
+                return;
             }
         }
     }
     public void Update()
     {
         float t = Time.realtimeSinceStartup;
+        float delta = t - timeMark;
+        timeMark = t;
         YooAssets.SetOperationSystemFrameTime(t);
         AsyncItem temp;
-        for (int i = 0; i < count1; i++)
+        for (int i = 0; i < array1.Count; i++)
         {
-            if (mark1[i] > 0)
+            temp = array1[i];
+            if (temp != null)
             {
-                temp = array1[i];
-                temp.Update();
+                temp.Update(delta);
                 if (temp.endMark)
                 {
                     temp.Finish();
                     temp.Reset();
-                    mark1[i] = 0;
+                    array1[i] = null;
                 }
             }
         }
-        for (int i = 0; i < count2; i++)
+        for (int i = 0; i < array2.Count; i++)
         {
-            int idx = (i + idxMark) % count2;
-            if (mark2[idx] > 0)
+            int idx = (i + idxMark) % array2.Count;
+            temp = array2[idx];
+            if (temp != null)
             {
-                temp = array2[idx];
-                temp.Update();
+                temp.Update(delta);
                 if (temp.endMark)
                 {
                     temp.Finish();
                     temp.Reset();
-                    mark2[idx] = 0;
+                    array2[idx] = null;
                 }
             }
             if (Time.realtimeSinceStartup - t > GameSetting.updateTimeSliceS)
             {
-                idxMark = (idx + 1) % Math.Max(1, count2);
+                idxMark = (idx + 1) % Math.Max(1, array2.Count);
                 return;
             }
         }
         if (Time.realtimeSinceStartup - gcTimer > GameSetting.gcTimeIntervalS)
         {
-            int offset = 0;
-            for (int i = 0; i < count1; i++)
-            {
-                int idx = i - offset;
-                if (mark1[i] == 0) offset++;
-                array1[idx] = array1[i];
-                mark1[idx] = 1;
-            }
-            for (int i = 0; i < offset; i++)
-            {
-                int idx = count1 - 1 - i;
-                array1[idx] = null;
-                mark1[idx] = 0;
-            }
-            count1 -= offset;
-
-            offset = 0;
-            for (int i = 0; i < count2; i++)
-            {
-                int idx = i - offset;
-                if (mark2[i] == 0) offset++;
-                array2[idx] = array2[i];
-                mark2[idx] = 1;
-            }
-            for (int i = 0; i < offset; i++)
-            {
-                int idx = count2 - 1 - i;
-                array2[idx] = null;
-                mark2[idx] = 0;
-            }
-            count2 -= offset;
+            array1.Trim();
+            array2.Trim();
 
             gcTimer = Time.realtimeSinceStartup;
             GC.Collect();
@@ -174,7 +109,7 @@ public class AsyncItem
         this.finish = finish;
     }
 
-    public virtual void Update()
+    public virtual void Update(float t)
     {
 
     }

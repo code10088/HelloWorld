@@ -31,8 +31,8 @@ namespace HotAssembly
         private IEnumerator<Coroutine> Start()
         {
             yield return new WaitForFrame(1);
-            FightManager.Instance.AddMonster(1, 0, Vector3.right * 2);
-            FightManager.Instance.AddMonster(1, 1, Vector3.left * 2);
+            EntityCacheManager.Instance.FightCache.AddMonster(1, 0, Vector3.right * 2);
+            EntityCacheManager.Instance.FightCache.AddMonster(1, 1, Vector3.left * 2);
         }
     }
 }

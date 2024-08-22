@@ -17,7 +17,7 @@ public sealed partial class Link : Luban.BeanBase
     public Link(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        PieceAttrEnum = (PieceAttrEnum)_buf.ReadInt();
+        AttrEnum = (AttrEnum)_buf.ReadInt();
     }
 
     public static Link DeserializeLink(ByteBuf _buf)
@@ -26,7 +26,7 @@ public sealed partial class Link : Luban.BeanBase
     }
 
     public readonly int ID;
-    public readonly PieceAttrEnum PieceAttrEnum;
+    public readonly AttrEnum AttrEnum;
    
     public const int __ID__ = 2368538;
     public override int GetTypeId() => __ID__;
@@ -35,7 +35,7 @@ public sealed partial class Link : Luban.BeanBase
     {
         return "{ "
         + "ID:" + ID + ","
-        + "PieceAttrEnum:" + PieceAttrEnum + ","
+        + "AttrEnum:" + AttrEnum + ","
         + "}";
     }
 }

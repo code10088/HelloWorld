@@ -52,7 +52,7 @@ namespace HotAssembly
             component.skipBtnObj.SetActive(cfg.CanSkip > 0);
             Update();
         }
-        private void Update()
+        private void Update(float delta = 0)
         {
             var t = DataManager.Instance.GuideData.GetGuideT();
             Vector3 p = t == null ? Vector3.back : t.position;
