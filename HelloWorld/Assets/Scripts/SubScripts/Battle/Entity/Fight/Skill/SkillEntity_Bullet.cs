@@ -5,13 +5,11 @@ namespace HotAssembly
     public class SkillEntity_Bullet : SkillEntity, MoveSystemInterface
     {
         private int count = 0;
+        private MoveComponent move;
 
         protected BoxCollider2D collider;
         protected ContactFilter2D contactFilter;
         protected Collider2D[] results = new Collider2D[100];
-
-        private MoveComponent move;
-        public MoveComponent Move => move;
 
         public void Init(Vector3 pos)
         {
@@ -38,6 +36,10 @@ namespace HotAssembly
             transform.Clear();
             count = 0;
             SystemManager.Instance.MoveSystem.RemoveEntity(this);
+        }
+        public void UpdateMove(float t)
+        {
+            move.Update(t);
         }
         public override void PlaySkill(float t)
         {

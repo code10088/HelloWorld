@@ -5,17 +5,16 @@ namespace HotAssembly
         protected int allyId;
         protected int teamId;
         protected FightEntity target;
+        protected GameObjectComponent obj;
+        protected TransformComponent transform;
+        protected AttrComponent attr;
+        protected AniComponent ani;
 
         public bool Active => itemId > 0;
         public int AllyId => allyId;
         public FightEntity Target => target;
-
-        protected GameObjectComponent obj;
-        protected AttrComponent attr;
-        public AttrComponent Attr => attr;
-        protected TransformComponent transform;
         public TransformComponent Transform => transform;
-        protected AniComponent ani;
+        public AttrComponent Attr => attr;
         public AniComponent Ani => ani;
 
         public void Init(int allyId)

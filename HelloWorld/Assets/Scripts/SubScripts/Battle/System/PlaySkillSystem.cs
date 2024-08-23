@@ -2,13 +2,13 @@ namespace HotAssembly
 {
     public interface PlaySkillSystemInterface : ECS_SystemInterface
     {
-        PlaySkillComponent Play { get; }
+        void UpdatePlaySkill(float t);
     }
     public class PlaySkillSystem : ECS_System<PlaySkillSystemInterface>
     {
         protected override void Update(PlaySkillSystemInterface entity, float t)
         {
-            entity.Play.Update(t);
+            entity.UpdatePlaySkill(t);
         }
     }
 }

@@ -5,9 +5,7 @@ namespace HotAssembly
     public class SkillEntity : FightEntity, SkillSystemInterface
     {
         protected FightEntity entity;
-
         protected SkillComponent skill;
-        public SkillComponent Skill => skill;
 
         public virtual void Init(SkillConfig config, FightEntity entity)
         {
@@ -28,6 +26,10 @@ namespace HotAssembly
             target = null;
             SystemManager.Instance.SkillSystem.RemoveEntity(this);
             EntityCacheManager.Instance.SkillCache.Remove(this);
+        }
+        public void UpdateSkill(float t)
+        {
+            skill.Update(t);
         }
         public virtual void PlaySkill(float t)
         {

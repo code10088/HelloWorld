@@ -5,7 +5,6 @@ namespace HotAssembly
     public class SkillEntity_Skill : SkillEntity, PlaySkillSystemInterface
     {
         private PlaySkillComponent play;
-        public PlaySkillComponent Play => play;
 
         public override void Init(SkillConfig config, FightEntity entity)
         {
@@ -19,6 +18,10 @@ namespace HotAssembly
             base.Clear();
             play.Clear();
             SystemManager.Instance.PlaySkillSystem.RemoveEntity(this);
+        }
+        public void UpdatePlaySkill(float t)
+        {
+            play.Update(t);
         }
         public override void PlaySkill(float t)
         {

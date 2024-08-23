@@ -6,7 +6,6 @@ namespace HotAssembly
     public class MonsterMoveEntity : MonsterEntity, MoveSystemInterface
     {
         private MoveComponent move;
-        public MoveComponent Move => move;
 
         public override void Init(MonsterConfig config, Vector3 pos)
         {
@@ -21,6 +20,10 @@ namespace HotAssembly
         {
             base.Clear();
             SystemManager.Instance.MoveSystem.RemoveEntity(this);
+        }
+        public void UpdateMove(float t)
+        {
+            move.Update(t);
         }
         public override void UpdateState()
         {

@@ -6,7 +6,6 @@ namespace HotAssembly
     public class MonsterRvoEntity : MonsterEntity
     {
         private MoveRvoComponent move;
-        public MoveRvoComponent Move => move;
 
         public override void Init(MonsterConfig config, Vector3 pos)
         {

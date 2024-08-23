@@ -20,11 +20,8 @@ namespace HotAssembly
     {
         protected MonsterConfig config;
         protected MonsterState monsterState = MonsterState.Enter;
-
         protected PlaySkillComponent play;
-        public PlaySkillComponent Play => play;
         private StateComponent state;
-        public StateComponent State => state;
 
         public virtual void Init(MonsterConfig config, Vector3 pos)
         {
@@ -50,6 +47,14 @@ namespace HotAssembly
         {
             transform.SetPos();
             ani.Init(obj);
+        }
+        public void UpdatePlaySkill(float t)
+        {
+            play.Update(t);
+        }
+        public void UpdateState(float t)
+        {
+            state.Update(t);
         }
         public override void Clear()
         {

@@ -2,13 +2,13 @@ namespace HotAssembly
 {
     public interface StateSystemInterface : ECS_SystemInterface
     {
-        StateComponent State { get; }
+        void UpdateState(float t);
     }
     public class StateSystem : ECS_System<StateSystemInterface>
     {
         protected override void Update(StateSystemInterface entity, float t)
         {
-            entity.State.Update(t);
+            entity.UpdateState(t);
         }
     }
 }
