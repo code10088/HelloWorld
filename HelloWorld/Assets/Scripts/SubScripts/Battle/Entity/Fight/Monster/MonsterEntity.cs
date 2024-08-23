@@ -21,7 +21,6 @@ namespace HotAssembly
         protected MonsterConfig config;
         protected MonsterState monsterState = MonsterState.Enter;
 
-
         protected PlaySkillComponent play;
         public PlaySkillComponent Play => play;
         private StateComponent state;
