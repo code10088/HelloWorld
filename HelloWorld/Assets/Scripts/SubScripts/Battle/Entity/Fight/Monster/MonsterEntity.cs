@@ -48,14 +48,6 @@ namespace HotAssembly
             transform.SetPos();
             ani.Init(obj);
         }
-        public void UpdatePlaySkill(float t)
-        {
-            play.Update(t);
-        }
-        public void UpdateState(float t)
-        {
-            state.Update(t);
-        }
         public override void Clear()
         {
             base.Clear();
@@ -70,6 +62,14 @@ namespace HotAssembly
             SystemManager.Instance.PlaySkillSystem.RemoveEntity(this);
             SystemManager.Instance.StateSystem.RemoveEntity(this);
             EntityCacheManager.Instance.FightCache.Remove(this);
+        }
+        public void UpdatePlaySkill(float t)
+        {
+            play.Update(t);
+        }
+        public void UpdateState(float t)
+        {
+            state.Update(t);
         }
         public virtual void UpdateState()
         {
