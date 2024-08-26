@@ -46,11 +46,12 @@ ECS+Job+Brust
 		都是值类型，内存连续提高缓存命中率(List、Array引用连续内存分散，Array<值类型>内存连续)
 		热插拔减少耦合
 	ecs实践
-		C#无法保证内存连续，system筛选entity性能差，采用注册方式，又会增加耦合，所以ecs牺牲性能解耦
+		C#无法保证内存连续，system筛选entity性能差，采用注册方式，又会增加耦合，所以ecs牺牲性能解耦(多线程除外)
 	我的ecs
 		没有数据回滚需求
 		不需要值类型增加代码复杂度
-		只保留ec热插拔结构，s中的逻辑在c中
+		只保留ec热插拔结构，s中的逻辑分散到ec中
+		采用注册方式:cs无耦合、es注册耦合、ec强耦合(e依赖c、特殊c依赖e)
 	Job多线程有些类似于computeShader
 	Brust只能在Job中使用
 	万人同屏：JobSystem+Brust+BatchRendererGroup(ECS目前阶段局限性太大)
