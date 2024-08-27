@@ -160,6 +160,8 @@ public class GameObjectPoolItem
         itemId = -1;
         obj = null;
         timerId = -1;
+        release = null;
+        action = null;
         param = null;
     }
     private void Recycle()
@@ -316,6 +318,8 @@ public class AssetPoolItem
         itemId = -1;
         obj = null;
         timerId = -1;
+        release = null;
+        action = null;
         param = null;
     }
     private void Recycle()
