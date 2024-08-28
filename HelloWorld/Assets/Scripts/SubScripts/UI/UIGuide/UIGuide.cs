@@ -21,7 +21,7 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(UIObj);
-            component.maskRectTransform.anchorMin = UIManager.anchorMinFull;
+            component.maskRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
             component.maskUIButton.onClick.AddListener(OnClickMask);
             component.skipBtnUIButton.onClick.AddListener(OnClickSkip);
 

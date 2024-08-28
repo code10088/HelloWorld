@@ -8,7 +8,7 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(UIObj);
-            component.bgRectTransform.anchorMin = UIManager.anchorMinFull;
+            component.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
         }
         public override void OnEnable(params object[] param)
         {

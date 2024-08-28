@@ -8,7 +8,7 @@ namespace HotAssembly
         {
             base.Init();
             component.Init(UIObj);
-            component.bgRectTransform.anchorMin = UIManager.anchorMinFull;
+            component.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
             component.closeBtnUIButton.onClick.AddListener(OnClose);
             component.qualitySettings0Toggle.onValueChanged.AddListener(OnClickQualitySettings0);
             component.qualitySettings1Toggle.onValueChanged.AddListener(OnClickQualitySettings1);

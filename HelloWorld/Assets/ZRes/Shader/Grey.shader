@@ -1,9 +1,8 @@
-Shader "URP/Template"
+Shader "URP/Grey"
 {
     Properties
     {
         _MainTex("Sprite Texture", 2D) = "white" {}
-        _Color("Tint", Color) = (1,1,1,1)
     }
 
     SubShader
@@ -18,8 +17,6 @@ Shader "URP/Template"
 
         Pass
         {
-            //Tags { "LightMode" = "UniversalForward" }
-
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 
@@ -31,13 +28,11 @@ Shader "URP/Template"
 
             CBUFFER_START(UnityPerMaterial)
             float4 _MainTex_ST;
-            float4 _Color;
             CBUFFER_END
 
             struct Input
             {
                 float3 pos : POSITION;
-                float4 color : COLOR;
                 float2 uv : TEXCOORD0;
             };
             struct Output
@@ -56,7 +51,8 @@ Shader "URP/Template"
             half4 frag(Output o) : SV_Target
             {
                 half4 c = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, o.uv);
-                return c * _Color;
+                half gray = dot(c.xyz, half3(0.299, 0.587, 0.114));
+                return half4(gray, gray, gray, c.a);
             }
             ENDHLSL
         }

@@ -14,13 +14,15 @@ namespace HotAssembly
         public Camera UICamera;
         private EventSystem eventSystem;
         private Vector2 anchorMin = Vector2.zero;
-        public static Vector2 anchorMinFull = Vector2.zero;
+        public Vector2 anchorMinFull = Vector2.zero;
         public Dictionary<UIWindowType, Transform> Layers;
 
-        public static int layer = 0;
         private List<UIItem> loadUI = new List<UIItem>();
         private List<UIItem> curUI = new List<UIItem>();
         private List<UIItem> cacheUI = new List<UIItem>();
+
+        public int Layer = 0;
+        public Material GreyMat;
 
         public void Init()
         {
@@ -37,6 +39,9 @@ namespace HotAssembly
             var names = Enum.GetNames(typeof(UIWindowType));
             Layers = new Dictionary<UIWindowType, Transform>();
             for (int i = 0; i < names.Length; i++) Layers[(UIWindowType)i] = tUIRoot.Find(names[i]);
+            //灰度材质
+            int loadId = -1;
+            AssetManager.Instance.Load<Material>(ref loadId, $"{ZResConst.ResUIMaterialPath}Grey.mat", (a, b) => GreyMat = (Material)b);
         }
         public void OpenUI(UIType type, Action<bool> open = null, params object[] param)
         {

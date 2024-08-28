@@ -43,9 +43,9 @@ namespace HotAssembly
             {
                 if (layerRecord1[i] != null)
                 {
-                    UIManager.layer += Math.Max(layerRecord2[i], 1);
+                    UIManager.Instance.Layer += Math.Max(layerRecord2[i], 1);
                     layerRecord1[i].sortingLayerName = config.UIWindowType.ToString();
-                    layerRecord1[i].sortingOrder = UIManager.layer;
+                    layerRecord1[i].sortingOrder = UIManager.Instance.Layer;
                 }
             }
             for (int i = 0; i < layerRecord3.Length; i++)
