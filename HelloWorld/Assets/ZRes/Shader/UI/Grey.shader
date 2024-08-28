@@ -3,6 +3,7 @@ Shader "URP/UI/Grey"
     Properties
     {
         _MainTex("Sprite Texture", 2D) = "white" {}
+        [Toggle] _Grey("Grey", Range(0,1)) = 0
     }
 
     SubShader
@@ -28,6 +29,7 @@ Shader "URP/UI/Grey"
 
             CBUFFER_START(UnityPerMaterial)
             float4 _MainTex_ST;
+            uint _Grey;
             CBUFFER_END
 
             struct Input
@@ -51,8 +53,15 @@ Shader "URP/UI/Grey"
             half4 frag(Output o) : SV_Target
             {
                 half4 c = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, o.uv);
-                half gray = dot(c.xyz, half3(0.299, 0.587, 0.114));
-                return half4(gray, gray, gray, c.a);
+                if (_Grey == 1)
+                {
+                    half gray = dot(c.xyz, half3(0.299, 0.587, 0.114));
+                    return half4(gray, gray, gray, c.a);
+                }
+                else
+                {
+                    return c;
+                }
             }
             ENDHLSL
         }
