@@ -1,4 +1,4 @@
-Shader "URP/GuideClip"
+Shader "URP/UI/GuideClip"
 {
     Properties
     {
