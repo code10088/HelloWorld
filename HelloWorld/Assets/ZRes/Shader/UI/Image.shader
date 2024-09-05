@@ -1,9 +1,8 @@
-Shader "URP/UI/Light"
+Shader "URP/UI/Image"
 {
     Properties
     {
         _MainTex("Sprite Texture", 2D) = "white" {}
-        _Power("Power", Range(0,2)) = 1
     }
 
     SubShader
@@ -35,11 +34,13 @@ Shader "URP/UI/Light"
             struct Input
             {
                 float3 pos : POSITION;
+                float4 color : COLOR;
                 float2 uv : TEXCOORD0;
             };
             struct Output
             {
                 float4 pos : SV_POSITION;
+                float4 color : COLOR;
                 float2 uv : TEXCOORD0;
             };
 
@@ -47,13 +48,14 @@ Shader "URP/UI/Light"
             {
                 Output o = (Output)0;
                 o.pos = TransformObjectToHClip(i.pos);
+                o.color = i.color;
                 o.uv = TRANSFORM_TEX(i.uv, _MainTex);
                 return o;
             }
             half4 frag(Output o) : SV_Target
             {
                 half4 c = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, o.uv);
-                return half4(c.rgb * _Power, c.a);
+                return c * o.color;
             }
             ENDHLSL
         }
