@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MiniGameConfig
   m_EditorClassIdentifier: 
   ProjectConf:
-    projectName: Start1993
+    projectName: Colourful
     Appid: wxe75b79c84a17faed
     CDN: https://assets-1321503079.cos.ap-beijing.myqcloud.com/WebGL
     assetLoadType: 0
@@ -57,6 +57,7 @@ MonoBehaviour:
     ProfilingMemory: 0
     CleanBuild: 0
     CustomNodePath: 
+    autoAdaptScreen: 1
     showMonitorSuggestModal: 1
     enableProfileStats: 0
     enableRenderAnalysis: 0

@@ -33,6 +33,9 @@ namespace CodeStage.AdvancedFPSCounter
 			
 			var result = false;
 #if USING_INPUT_SYSTEM
+			if (Keyboard.current == null)
+				return false;
+
 			if (lastHotKeyLegacy != key)
 			{
 				cachedHotKey = ConvertLegacyKeyCode(key);
@@ -53,7 +56,7 @@ namespace CodeStage.AdvancedFPSCounter
 		public static bool GetControlKey()
 		{
 #if USING_INPUT_SYSTEM
-			return Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.rightCtrlKey.isPressed || Keyboard.current.leftCommandKey.isPressed || Keyboard.current.rightCommandKey.isPressed;
+			return Keyboard.current != null && (Keyboard.current.leftCtrlKey.isPressed || Keyboard.current.rightCtrlKey.isPressed || Keyboard.current.leftCommandKey.isPressed || Keyboard.current.rightCommandKey.isPressed);
 #else
 			return Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.RightCommand);
 #endif
@@ -62,7 +65,7 @@ namespace CodeStage.AdvancedFPSCounter
 		public static bool GetAltKey()
 		{
 #if USING_INPUT_SYSTEM
-			return Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed;
+			return Keyboard.current != null && (Keyboard.current.leftAltKey.isPressed || Keyboard.current.rightAltKey.isPressed);
 #else
 			return Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt);
 #endif
@@ -71,7 +74,7 @@ namespace CodeStage.AdvancedFPSCounter
 		public static bool GetShiftKey()
 		{
 #if USING_INPUT_SYSTEM
-			return Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
+			return Keyboard.current != null && (Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed);
 #else
 			return Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 #endif

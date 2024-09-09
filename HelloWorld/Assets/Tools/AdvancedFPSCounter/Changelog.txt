@@ -1,5 +1,12 @@
 Please, always remove previous Advanced FPS Counter version before updating!
 
+1.5.4
+- Fix null reference exceptions when using Input System and there is no Keyboard attached (thx strich)
+
+1.5.3
+- Fix Render Time counter didn't work with modern rendering pipelines (thx daklab)
+- Minimum Unity version requirement raised to 2019.3
+
 1.5.2
 - Fix legacy font usage in Unity 2022.2 and newer (thx game3dover)
 

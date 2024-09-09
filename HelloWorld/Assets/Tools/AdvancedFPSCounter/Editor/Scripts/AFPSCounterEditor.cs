@@ -6,6 +6,7 @@ namespace CodeStage.AdvancedFPSCounter.Editor
 
 	using UnityEditor;
 	using UnityEngine;
+	using UnityEngine.Rendering;
 
 	[CustomEditor(typeof(AFPSCounter))]
 	internal class AFPSCounterEditor: Editor
@@ -492,6 +493,8 @@ namespace CodeStage.AdvancedFPSCounter.Editor
 					EditorUIUtils.DrawProperty(fpsColorRender, "Color", () => me.fpsCounter.ColorRender = fpsColorRender.colorValue);
 					EditorUIUtils.DrawProperty(fpsRenderNewLine, "New Line", () => me.fpsCounter.RenderNewLine = fpsRenderNewLine.boolValue);
 					EditorUIUtils.DrawProperty(fpsRenderAutoAdd, "Auto add", () => me.fpsCounter.RenderAutoAdd = fpsRenderAutoAdd.boolValue);
+					if (GraphicsSettings.defaultRenderPipeline == null) // only for built-in legacy pipeline
+						EditorUIUtils.DrawProperty(fpsRenderAutoAdd, "Auto add", () => me.fpsCounter.RenderAutoAdd = fpsRenderAutoAdd.boolValue);
 					EditorUIUtils.DoubleUnIndent();
 				}
 				GUI.enabled = true;

@@ -8,11 +8,9 @@ namespace CodeStage.AdvancedFPSCounter.CountersData
 {
 	using System;
 	using System.Collections;
-
-	using Utils;
-
 	using UnityEngine;
-	using Object = UnityEngine.Object;
+	using UnityEngine.Rendering;
+	using Utils;
 
 	/// <summary>
 	/// Shows frames per second counter.
@@ -413,16 +411,16 @@ namespace CodeStage.AdvancedFPSCounter.CountersData
 
 				if (!render)
 				{
-					if (renderAutoAdd) TryToRemoveRenderRecorder();
+					TryToRemoveRenderRecorder();
 					return;
 				}
 
 				previousFrameCount = Time.frameCount;
-				if (renderAutoAdd) TryToAddRenderRecorder();
-
+				TryToAddRenderRecorder();
 				Refresh();
 			}
 		}
+
 		#endregion
 
 		#region RenderNewLine
@@ -449,7 +447,8 @@ namespace CodeStage.AdvancedFPSCounter.CountersData
 		#endregion
 
 		#region RenderAutoAdd
-		[Tooltip("Check to automatically add AFPSRenderRecorder to the Main Camera if present.")]
+		[Tooltip("Check to automatically add AFPSRenderRecorder to the Main Camera if present. " +
+		         "Compatible with the Built-in Render Pipeline only!")]
 		[SerializeField]
 		private bool renderAutoAdd = true;
 
@@ -458,6 +457,7 @@ namespace CodeStage.AdvancedFPSCounter.CountersData
 		/// <br/>You're free to add AFPSRenderRecorder to any cameras you wish to count.
 		/// \sa Render
 		/// </summary>
+		/// This functionality is compatible with the Built-in Render Pipeline only. URP and other pipelines do include all cameras automatically.
 		public bool RenderAutoAdd
 		{
 			get { return renderAutoAdd; }
@@ -468,7 +468,6 @@ namespace CodeStage.AdvancedFPSCounter.CountersData
 				if (!enabled) return;
 
 				TryToAddRenderRecorder();
-
 				Refresh();
 			}
 		}
@@ -606,6 +605,8 @@ namespace CodeStage.AdvancedFPSCounter.CountersData
 		/// \sa FPSLevel, OnFPSLevelChange
 		/// </summary>
 		public FPSLevel CurrentFpsLevel { get; private set; }
+		
+		private bool IsBuiltInRenderPipeline => GraphicsSettings.defaultRenderPipeline == null;
 
 		// ----------------------------------------------------------------------------
 		// constructor
@@ -668,7 +669,7 @@ namespace CodeStage.AdvancedFPSCounter.CountersData
 		{
 			if (minMax && resetMinMaxOnNewScene) ResetMinMax();
 			if (average && resetAverageOnNewScene) ResetAverage();
-			if (render && renderAutoAdd) TryToAddRenderRecorder();
+			if (render) TryToAddRenderRecorder();
 		}
 
 		internal void AddRenderTime(float time)
@@ -952,10 +953,7 @@ namespace CodeStage.AdvancedFPSCounter.CountersData
 			if (render)
 			{
 				previousFrameCount = Time.frameCount;
-				if (renderAutoAdd)
-				{
-					TryToAddRenderRecorder();
-				}
+				TryToAddRenderRecorder();
 			}
 
 			if (main.OperationMode == OperationMode.Normal)
@@ -1049,27 +1047,16 @@ namespace CodeStage.AdvancedFPSCounter.CountersData
 		// private methods
 		// ----------------------------------------------------------------------------
 
-		private static void TryToAddRenderRecorder()
+		private void TryToAddRenderRecorder()
 		{
-			var mainCamera = Camera.main;
-			if (mainCamera == null) return;
-
-			if (mainCamera.GetComponent<AFPSRenderRecorder>() == null)
-			{
-				mainCamera.gameObject.AddComponent<AFPSRenderRecorder>();
-			}
+			if (renderAutoAdd || !IsBuiltInRenderPipeline) 
+				AFPSRenderRecorder.Add(this);
 		}
 
-		private static void TryToRemoveRenderRecorder()
+		private void TryToRemoveRenderRecorder()
 		{
-			var mainCamera = Camera.main;
-			if (mainCamera == null) return;
-
-			var recorder = mainCamera.GetComponent<AFPSRenderRecorder>();
-			if (recorder != null)
-			{
-				Object.Destroy(recorder);
-			}
+			if (renderAutoAdd || !IsBuiltInRenderPipeline) 
+				AFPSRenderRecorder.Remove();
 		}
 	}
 }
