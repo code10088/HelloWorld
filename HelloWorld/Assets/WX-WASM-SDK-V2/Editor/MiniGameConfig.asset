@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MiniGameConfig
   m_EditorClassIdentifier: 
   ProjectConf:
-    projectName: Colourful
+    projectName: "\u8272\u5F69\u8FDE\u8FDE"
     Appid: wxe75b79c84a17faed
     CDN: https://assets-1321503079.cos.ap-beijing.myqcloud.com/WebGL
     assetLoadType: 0
