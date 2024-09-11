@@ -1,8 +1,9 @@
-Shader "URP/UI/Image"
+Shader "URP/UI/ImageCircle"
 {
     Properties
     {
         _MainTex("Sprite Texture", 2D) = "white" {}
+        _Circle("_Circle", float) = 0.5
     }
 
     SubShader
@@ -28,6 +29,7 @@ Shader "URP/UI/Image"
 
             CBUFFER_START(UnityPerMaterial)
             float4 _MainTex_ST;
+            float _Circle;
             CBUFFER_END
 
             struct Input
@@ -53,8 +55,9 @@ Shader "URP/UI/Image"
             }
             half4 frag(Output o) : SV_Target
             {
+                float dis = distance(o.uv, half2(0.5, 0.5));
                 half4 c = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, o.uv);
-                return c * o.color;
+                return c * o.color * step(dis, _Circle);
             }
             ENDHLSL
         }
