@@ -66,7 +66,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     }
     private void CheckPackageManifest()
     {
-        var operation = AssetManager.Package.UpdatePackageManifestAsync(resVersion, true);
+        var operation = AssetManager.Package.UpdatePackageManifestAsync(resVersion);
         operation.Completed += CheckPackageManifest;
 
         UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckPackageManifest.ToString());

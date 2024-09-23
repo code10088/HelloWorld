@@ -6,15 +6,26 @@ using UnityEngine.SceneManagement;
 
 namespace YooAsset
 {
-    internal sealed class BundledSceneProvider : ProviderBase
+    internal sealed class BundledSceneProvider : ProviderOperation
     {
-        public readonly LoadSceneMode SceneMode;
+        public readonly LoadSceneParameters LoadSceneParams;
         private AsyncOperation _asyncOperation;
         private bool _suspendLoadMode;
 
-        public BundledSceneProvider(ResourceManager manager, string providerGUID, AssetInfo assetInfo, LoadSceneMode sceneMode, bool suspendLoad) : base(manager, providerGUID, assetInfo)
+        /// <summary>
+        /// 场景加载模式
+        /// </summary>
+        public LoadSceneMode SceneMode
         {
-            SceneMode = sceneMode;
+            get
+            {
+                return LoadSceneParams.loadSceneMode;
+            }
+        }
+
+        public BundledSceneProvider(ResourceManager manager, string providerGUID, AssetInfo assetInfo, LoadSceneParameters loadSceneParams, bool suspendLoad) : base(manager, providerGUID, assetInfo)
+        {
+            LoadSceneParams = loadSceneParams;
             SceneName = Path.GetFileNameWithoutExtension(assetInfo.AssetPath);
             _suspendLoadMode = suspendLoad;
         }
@@ -35,28 +46,20 @@ namespace YooAsset
             // 1. 检测资源包
             if (_steps == ESteps.CheckBundle)
             {
-                if (IsWaitForAsyncComplete)
-                {
-                    DependBundles.WaitForAsyncComplete();
-                    OwnerBundle.WaitForAsyncComplete();
-                }
-
-                if (DependBundles.IsDone() == false)
+                if (LoadDependBundleFileOp.IsDone == false)
                     return;
-                if (OwnerBundle.IsDone() == false)
+                if (LoadBundleFileOp.IsDone == false)
                     return;
 
-                if (DependBundles.IsSucceed() == false)
+                if (LoadDependBundleFileOp.Status != EOperationStatus.Succeed)
                 {
-                    string error = DependBundles.GetLastError();
-                    InvokeCompletion(error, EOperationStatus.Failed);
+                    InvokeCompletion(LoadDependBundleFileOp.Error, EOperationStatus.Failed);
                     return;
                 }
 
-                if (OwnerBundle.Status != BundleLoaderBase.EStatus.Succeed)
+                if (LoadBundleFileOp.Status != EOperationStatus.Succeed)
                 {
-                    string error = OwnerBundle.LastError;
-                    InvokeCompletion(error, EOperationStatus.Failed);
+                    InvokeCompletion(LoadBundleFileOp.Error, EOperationStatus.Failed);
                     return;
                 }
 
@@ -66,18 +69,17 @@ namespace YooAsset
             // 2. 加载场景
             if (_steps == ESteps.Loading)
             {
-                if (IsWaitForAsyncComplete || IsForceDestroyComplete)
+                if (IsWaitForAsyncComplete)
                 {
                     // 注意：场景同步加载方法不会立即加载场景，而是在下一帧加载。
-                    LoadSceneParameters parameters = new LoadSceneParameters(SceneMode);
-                    SceneObject = SceneManager.LoadScene(MainAssetInfo.AssetPath, parameters);
+                    SceneObject = SceneManager.LoadScene(MainAssetInfo.AssetPath, LoadSceneParams);
                     _steps = ESteps.Checking;
                 }
                 else
                 {
                     // 注意：如果场景不存在异步加载方法返回NULL
                     // 注意：即使是异步加载也要在当帧获取到场景对象
-                    _asyncOperation = SceneManager.LoadSceneAsync(MainAssetInfo.AssetPath, SceneMode);
+                    _asyncOperation = SceneManager.LoadSceneAsync(MainAssetInfo.AssetPath, LoadSceneParams);
                     if (_asyncOperation != null)
                     {
                         _asyncOperation.allowSceneActivation = !_suspendLoadMode;
@@ -99,7 +101,7 @@ namespace YooAsset
             {
                 if (_asyncOperation != null)
                 {
-                    if (IsWaitForAsyncComplete || IsForceDestroyComplete)
+                    if (IsWaitForAsyncComplete)
                     {
                         // 场景加载无法强制异步转同步
                         YooLogger.Error("The scene is loading asyn !");

@@ -4,8 +4,9 @@ using UnityEngine;
 
 namespace YooAsset
 {
-    internal sealed class BundledAssetProvider : ProviderBase
+    internal sealed class BundledAssetProvider : ProviderOperation
     {
+        private AssetBundle _assetBundle;
         private AssetBundleRequest _cacheRequest;
 
         public BundledAssetProvider(ResourceManager manager, string providerGUID, AssetInfo assetInfo) : base(manager, providerGUID, assetInfo)
@@ -28,56 +29,56 @@ namespace YooAsset
             // 1. 检测资源包
             if (_steps == ESteps.CheckBundle)
             {
-                if (IsWaitForAsyncComplete)
+                if (LoadDependBundleFileOp.IsDone == false)
+                    return;
+                if (LoadBundleFileOp.IsDone == false)
+                    return;
+
+                if (LoadDependBundleFileOp.Status != EOperationStatus.Succeed)
                 {
-                    DependBundles.WaitForAsyncComplete();
-                    OwnerBundle.WaitForAsyncComplete();
+                    InvokeCompletion(LoadDependBundleFileOp.Error, EOperationStatus.Failed);
+                    return;
                 }
 
-                if (DependBundles.IsDone() == false)
-                    return;
-                if (OwnerBundle.IsDone() == false)
-                    return;
-
-                if (DependBundles.IsSucceed() == false)
+                if (LoadBundleFileOp.Status != EOperationStatus.Succeed)
                 {
-                    string error = DependBundles.GetLastError();
+                    InvokeCompletion(LoadBundleFileOp.Error, EOperationStatus.Failed);
+                    return;
+                }
+
+                if (LoadBundleFileOp.Result == null)
+                {
+                    ProcessFatalEvent();
+                    return;
+                }
+
+                if (LoadBundleFileOp.Result is AssetBundle == false)
+                {
+                    string error = "Try load raw file using load assetbundle method !";
                     InvokeCompletion(error, EOperationStatus.Failed);
                     return;
                 }
 
-                if (OwnerBundle.Status != BundleLoaderBase.EStatus.Succeed)
-                {
-                    string error = OwnerBundle.LastError;
-                    InvokeCompletion(error, EOperationStatus.Failed);
-                    return;
-                }
-
-                if (OwnerBundle.CacheBundle == null)
-                {
-                    ProcessCacheBundleException();
-                    return;
-                }
-
+                _assetBundle = LoadBundleFileOp.Result as AssetBundle;
                 _steps = ESteps.Loading;
             }
 
             // 2. 加载资源对象
             if (_steps == ESteps.Loading)
             {
-                if (IsWaitForAsyncComplete || IsForceDestroyComplete)
+                if (IsWaitForAsyncComplete)
                 {
                     if (MainAssetInfo.AssetType == null)
-                        AssetObject = OwnerBundle.CacheBundle.LoadAsset(MainAssetInfo.AssetPath);
+                        AssetObject = _assetBundle.LoadAsset(MainAssetInfo.AssetPath);
                     else
-                        AssetObject = OwnerBundle.CacheBundle.LoadAsset(MainAssetInfo.AssetPath, MainAssetInfo.AssetType);
+                        AssetObject = _assetBundle.LoadAsset(MainAssetInfo.AssetPath, MainAssetInfo.AssetType);
                 }
                 else
                 {
                     if (MainAssetInfo.AssetType == null)
-                        _cacheRequest = OwnerBundle.CacheBundle.LoadAssetAsync(MainAssetInfo.AssetPath);
+                        _cacheRequest = _assetBundle.LoadAssetAsync(MainAssetInfo.AssetPath);
                     else
-                        _cacheRequest = OwnerBundle.CacheBundle.LoadAssetAsync(MainAssetInfo.AssetPath, MainAssetInfo.AssetType);
+                        _cacheRequest = _assetBundle.LoadAssetAsync(MainAssetInfo.AssetPath, MainAssetInfo.AssetType);
                 }
                 _steps = ESteps.Checking;
             }
@@ -87,7 +88,7 @@ namespace YooAsset
             {
                 if (_cacheRequest != null)
                 {
-                    if (IsWaitForAsyncComplete || IsForceDestroyComplete)
+                    if (IsWaitForAsyncComplete)
                     {
                         // 强制挂起主线程（注意：该操作会很耗时）
                         YooLogger.Warning("Suspend the main thread to load unity asset.");
@@ -106,9 +107,9 @@ namespace YooAsset
                 {
                     string error;
                     if (MainAssetInfo.AssetType == null)
-                        error = $"Failed to load asset : {MainAssetInfo.AssetPath} AssetType : null AssetBundle : {OwnerBundle.MainBundleInfo.Bundle.BundleName}";
+                        error = $"Failed to load asset : {MainAssetInfo.AssetPath} AssetType : null AssetBundle : {LoadBundleFileOp.BundleFileInfo.Bundle.BundleName}";
                     else
-                        error = $"Failed to load asset : {MainAssetInfo.AssetPath} AssetType : {MainAssetInfo.AssetType} AssetBundle : {OwnerBundle.MainBundleInfo.Bundle.BundleName}";
+                        error = $"Failed to load asset : {MainAssetInfo.AssetPath} AssetType : {MainAssetInfo.AssetType} AssetBundle : {LoadBundleFileOp.BundleFileInfo.Bundle.BundleName}";
                     YooLogger.Error(error);
                     InvokeCompletion(error, EOperationStatus.Failed);
                 }

@@ -2,6 +2,123 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.2.4-preview] - 2024-08-15
+
+### Fixed
+
+- 修复了HostPlayMode初始化卡死的问题。
+
+## [2.2.3-preview] - 2024-08-13
+
+### Fixed
+
+- (#311) 修复了断点续传下载器极小概率报错 : “416 Range Not Satisfiable”
+
+### Improvements
+
+- 原生文件构建管线支持原生文件加密。
+
+- HostPlayMode模式下内置文件系统初始化参数可以为空。
+
+- 场景加载增加了LocalPhysicsMode参数来控制物理运行模式。
+
+- 默认的内置文件系统和缓存文件系统增加解密方法。
+
+  ```csharp
+  /// <summary>
+  /// 创建默认的内置文件系统参数
+  /// </summary>
+  /// <param name="decryptionServices">加密文件解密服务类</param>
+  /// <param name="verifyLevel">缓存文件的校验等级</param>
+  /// <param name="rootDirectory">内置文件的根路径</param>
+  public static FileSystemParameters CreateDefaultBuildinFileSystemParameters(IDecryptionServices decryptionServices, EFileVerifyLevel verifyLevel, string rootDirectory);
+  
+  /// <summary>
+  /// 创建默认的缓存文件系统参数
+  /// </summary>
+  /// <param name="remoteServices">远端资源地址查询服务类</param>
+  /// <param name="decryptionServices">加密文件解密服务类</param>
+  /// <param name="verifyLevel">缓存文件的校验等级</param>
+  /// <param name="rootDirectory">文件系统的根目录</param>
+  public static FileSystemParameters CreateDefaultCacheFileSystemParameters(IRemoteServices remoteServices, IDecryptionServices decryptionServices, EFileVerifyLevel verifyLevel, string rootDirectory);
+  ```
+
+## [2.2.2-preview] - 2024-07-31
+
+### Fixed
+
+- (#321) 修复了在Unity2022里编辑器下离线模式运行失败的问题。
+- (#325) 修复了在Unity2019里编译报错问题。
+
+## [2.2.1-preview] - 2024-07-10
+
+统一了所有PlayMode的初始化逻辑，EditorSimulateMode和OfflinePlayMode初始化不再主动加载资源清单！
+
+### Added
+
+- 新增了IFileSystem.ReadFileData方法，支持原生文件自定义获取文本和二进制数据。
+
+### Improvements
+
+- 优化了DefaultWebFileSystem和DefaultBuildFileSystem文件系统的内部初始化逻辑。
+
+## [2.2.0-preview] - 2024-07-07
+
+重构了运行时代码，新增了文件系统接口（IFileSystem）方便开发者扩展特殊需求。
+
+新增微信小游戏文件系统示例代码，详细见Extension Sample/Runtime/WechatFileSystem
+
+### Added
+
+- 新增了ResourcePackage.DestroyAsync方法
+
+- 新增了FileSystemParameters类帮助初始化文件系统
+
+  内置了编辑器文件系统参数，内置文件系统参数，缓存文件系统参数，Web文件系统参数。
+
+  ```csharp
+  public class FileSystemParameters
+  {
+      /// <summary>
+      /// 文件系统类
+      /// </summary>
+      public string FileSystemClass { private set; get; }
+      
+      /// <summary>
+      /// 文件系统的根目录
+      /// </summary>
+      public string RootDirectory { private set; get; }   
+      
+      /// <summary>
+      /// 添加自定义参数
+      /// </summary>
+      public void AddParameter(string name, object value)    
+  }
+  ```
+
+### Changed
+
+- 重构了InitializeParameters初始化参数
+- 重命名YooAssets.DestroyPackage方法为RemovePackage
+- 重命名ResourcePackage.UpdatePackageVersionAsync方法为RequestPackageVersionAsync
+- 重命名ResourcePackage.UnloadUnusedAssets方法为UnloadUnusedAssetsAsync
+- 重命名ResourcePackage.ForceUnloadAllAssets方法为UnloadAllAssetsAsync
+- 重命名ResourcePackage.ClearUnusedCacheFilesAsync方法为ClearUnusedBundleFilesAsync
+- 重命名ResourcePackage.ClearAllCacheFilesAsync方法为ClearAllBundleFilesAsync
+
+### Removed
+
+- 移除了YooAssets.Destroy方法
+- 移除了YooAssets.SetDownloadSystemClearFileResponseCode方法
+- 移除了YooAssets.SetCacheSystemDisableCacheOnWebGL方法
+- 移除了ResourcePackage.GetPackageBuildinRootDirectory方法
+- 移除了ResourcePackage.GetPackageSandboxRootDirectory方法
+- 移除了ResourcePackage.ClearPackageSandbox方法
+- 移除了IBuildinQueryServices接口
+- 移除了IDeliveryLoadServices接口
+- 移除了IDeliveryQueryServices接口
+
+
 ## [2.1.2] - 2024-05-16
 
 SBP库依赖版本升级至2.1.3

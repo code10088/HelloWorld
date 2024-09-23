@@ -23,39 +23,31 @@ public class AssetManager : Singletion<AssetManager>
         YooAssets.Initialize();
         package = YooAssets.CreatePackage(PackageName);
 #if UNITY_EDITOR && !HotUpdateDebug
+        var simulate = EditorSimulateModeHelper.SimulateBuild(EDefaultBuildPipeline.BuiltinBuildPipeline, PackageName);
+        var editorFileSystem = FileSystemParameters.CreateDefaultEditorFileSystemParameters(simulate);
         var parameters = new EditorSimulateModeParameters();
-        var path = EditorSimulateModeHelper.SimulateBuild(EDefaultBuildPipeline.BuiltinBuildPipeline, PackageName);
-        parameters.CacheBootVerifyLevel = EVerifyLevel.Middle;
-        parameters.AutoDestroyAssetProvider = false;
-        parameters.BreakpointResumeFileSize = 102400;
-        parameters.SimulateManifestFilePath = path;
+        parameters.EditorFileSystemParameters = editorFileSystem;
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
-#elif UNITY_WEBGL
+#elif WEIXINMINIGAME
         string defaultHostServer = GameSetting.Instance.CDNVersion;
         string fallbackHostServer = GameSetting.Instance.CDNVersion;
+        IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
+        var wechatFileSystem = WechatFileSystemCreater.CreateWechatFileSystemParameters(remoteServices);
         var parameters = new WebPlayModeParameters();
-        parameters.CacheBootVerifyLevel = EVerifyLevel.Middle;
-        parameters.AutoDestroyAssetProvider = false;
-        parameters.BreakpointResumeFileSize = 102400;
-        parameters.BuildinQueryServices = new QueryServices();
-        parameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-#if WeChatGame && !UNITY_EDITOR
-        parameters.WechatQueryServices = new WechatQueryServices();
-        YooAssets.SetCacheSystemDisableCacheOnWebGL();
-#endif
+        parameters.WebFileSystemParameters = wechatFileSystem;
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
 #else
         string defaultHostServer = GameSetting.Instance.CDNVersion;
         string fallbackHostServer = GameSetting.Instance.CDNVersion;
+        IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
+        DecryptionServices decryptionServices = new DecryptionServices();
+        var buildinFileSystem = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices);   
+        var cacheFileSystem = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, decryptionServices);
         var parameters = new HostPlayModeParameters();
-        parameters.CacheBootVerifyLevel = EVerifyLevel.Middle;
-        parameters.AutoDestroyAssetProvider = false;
-        parameters.BreakpointResumeFileSize = 102400;
-        parameters.BuildinQueryServices = new QueryServices();
-        parameters.DecryptionServices = new DecryptionServices();
-        parameters.RemoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
+        parameters.BuildinFileSystemParameters = buildinFileSystem;
+        parameters.CacheFileSystemParameters = cacheFileSystem;
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
 #endif

@@ -35,7 +35,8 @@ namespace YooAsset.Editor
     {
         public bool IsCollectAsset(FilterRuleData data)
         {
-            return Path.GetExtension(data.AssetPath) == ".unity";
+            string extension = Path.GetExtension(data.AssetPath);
+            return extension == ".unity" || extension == ".scene";
         }
     }
 

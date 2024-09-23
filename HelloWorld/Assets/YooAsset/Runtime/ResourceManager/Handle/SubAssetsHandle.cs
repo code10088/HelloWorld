@@ -7,7 +7,7 @@ namespace YooAsset
     {
         private System.Action<SubAssetsHandle> _callback;
 
-        internal SubAssetsHandle(ProviderBase provider) : base(provider)
+        internal SubAssetsHandle(ProviderOperation provider) : base(provider)
         {
         }
         internal override void InvokeCallback()
@@ -67,7 +67,7 @@ namespace YooAsset
         /// <summary>
         /// 子资源对象集合
         /// </summary>
-        public UnityEngine.Object[] AllAssetObjects
+        public IReadOnlyList<UnityEngine.Object> AllAssetObjects
         {
             get
             {
@@ -89,7 +89,7 @@ namespace YooAsset
 
             foreach (var assetObject in Provider.AllAssetObjects)
             {
-                if (assetObject.name == assetName)
+                if (assetObject.name == assetName && assetObject is TObject)
                     return assetObject as TObject;
             }
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using UnityEditor;
 using UnityEngine;
 
@@ -52,7 +50,6 @@ namespace YooAsset.Editor
             }
 
             // 拷贝文件列表（所有文件）
-            string builtinPaths = string.Empty; 
             if (copyOption == EBuildinFileCopyOption.ClearAndCopyAll || copyOption == EBuildinFileCopyOption.OnlyCopyAll)
             {
                 foreach (var packageBundle in manifest.BundleList)
@@ -60,7 +57,6 @@ namespace YooAsset.Editor
                     string sourcePath = $"{packageOutputDirectory}/{packageBundle.FileName}";
                     string destPath = $"{buildinRootDirectory}/{packageBundle.FileName}";
                     EditorTools.CopyFile(sourcePath, destPath, true);
-                    builtinPaths = $"{builtinPaths}\n{packageBundle.FileName}";
                 }
             }
 
@@ -75,11 +71,8 @@ namespace YooAsset.Editor
                     string sourcePath = $"{packageOutputDirectory}/{packageBundle.FileName}";
                     string destPath = $"{buildinRootDirectory}/{packageBundle.FileName}";
                     EditorTools.CopyFile(sourcePath, destPath, true);
-                    builtinPaths = $"{builtinPaths}\n{packageBundle.FileName}";
                 }
             }
-            string saveFilePath = $"{Application.dataPath}/YooAsset/Config/Resources/BuildinFile.txt";
-            File.WriteAllText(saveFilePath, builtinPaths, Encoding.UTF8);
 
             // 刷新目录
             AssetDatabase.Refresh();

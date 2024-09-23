@@ -8,7 +8,7 @@ namespace YooAsset
     {
         private System.Action<RawFileHandle> _callback;
 
-        internal RawFileHandle(ProviderBase provider) : base(provider)
+        internal RawFileHandle(ProviderOperation provider) : base(provider)
         {
         }
         internal override void InvokeCallback()
@@ -72,8 +72,7 @@ namespace YooAsset
         {
             if (IsValidWithWarning == false)
                 return null;
-            string filePath = Provider.RawFilePath;
-            return FileUtility.ReadAllBytes(filePath);
+            return Provider.RawBundleObject.ReadFileData();
         }
 
         /// <summary>
@@ -83,8 +82,7 @@ namespace YooAsset
         {
             if (IsValidWithWarning == false)
                 return null;
-            string filePath = Provider.RawFilePath;
-            return FileUtility.ReadAllText(filePath);
+            return Provider.RawBundleObject.ReadFileText();
         }
 
         /// <summary>
@@ -94,7 +92,7 @@ namespace YooAsset
         {
             if (IsValidWithWarning == false)
                 return string.Empty;
-            return Provider.RawFilePath;
+            return Provider.RawBundleObject.GetFilePath();
         }
     }
 }

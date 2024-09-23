@@ -17,6 +17,7 @@ namespace YooAsset
         private readonly Quaternion _rotation;
         private readonly Transform _parent;
         private readonly bool _worldPositionStays;
+        private readonly bool _actived;
         private ESteps _steps = ESteps.None;
 
         /// <summary>
@@ -25,7 +26,8 @@ namespace YooAsset
         public GameObject Result = null;
 
 
-        internal InstantiateOperation(AssetHandle handle, bool setPositionAndRotation, Vector3 position, Quaternion rotation, Transform parent, bool worldPositionStays)
+        internal InstantiateOperation(AssetHandle handle, bool setPositionAndRotation, Vector3 position, Quaternion rotation,
+            Transform parent, bool worldPositionStays, bool actived)
         {
             _handle = handle;
             _setPositionAndRotation = setPositionAndRotation;
@@ -33,6 +35,7 @@ namespace YooAsset
             _rotation = rotation;
             _parent = parent;
             _worldPositionStays = worldPositionStays;
+            _actived = actived;
         }
         internal override void InternalOnStart()
         {
@@ -66,9 +69,26 @@ namespace YooAsset
 
                 // 实例化游戏对象
                 Result = InstantiateInternal(_handle.AssetObject, _setPositionAndRotation, _position, _rotation, _parent, _worldPositionStays);
+                if (_actived == false)
+                    Result.SetActive(false);
 
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Succeed;
+            }
+        }
+        internal override void InternalWaitForAsyncComplete()
+        {
+            while (true)
+            {
+                // 等待句柄完成
+                if (_handle != null)
+                    _handle.WaitForAsyncComplete();
+
+                if (ExecuteWhileDone())
+                {
+                    _steps = ESteps.Done;
+                    break;
+                }
             }
         }
 
@@ -77,23 +97,7 @@ namespace YooAsset
         /// </summary>
         public void Cancel()
         {
-            if (IsDone == false)
-            {
-                _steps = ESteps.Done;
-                Status = EOperationStatus.Failed;
-                Error = $"User cancelled !";
-            }
-        }
-
-        /// <summary>
-        /// 等待异步实例化结束
-        /// </summary>
-        public void WaitForAsyncComplete()
-        {
-            if (_steps == ESteps.Done)
-                return;
-            _handle.WaitForAsyncComplete();
-            InternalOnUpdate();
+            SetAbort();
         }
 
         internal static GameObject InstantiateInternal(UnityEngine.Object assetObject, bool setPositionAndRotation, Vector3 position, Quaternion rotation, Transform parent, bool worldPositionStays)

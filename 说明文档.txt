@@ -35,10 +35,11 @@ XAsset
 YooAsset
 	使用对比工具
 	DefaultFilterRule添加CollectUserData
-	修改OperationSystem的计时方式
 	屏蔽[MenuItem("YooAsset/AssetBundle Builder", false, 102)]
-	TaskCopyBuildinFiles添加写入BuildinFile.txt
 	BuildParameters检测输出目录是否存在，存在的情况下也可以打包，避免频繁修改VersionConfig文件
+	修改OperationSystem的计时方式
+	TaskCopyBuildinFiles添加写入BuildinFile.txt（2.2.x版本不需要）
+	Samples~中Extension Sample文件直接使用
 	
 ECS+Job+Brust
 	ECS中Component

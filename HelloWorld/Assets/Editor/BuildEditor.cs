@@ -113,7 +113,7 @@ public class BuildEditor
         }
         else
         {
-#if WeChatGame
+#if WEIXINMINIGAME
             //Œ¢–≈∆ΩÃ®QualitySettings.SetQualityLevel±¿¿£
             string dputilpath = $"{Application.dataPath}/Scripts/SubScripts/Tools/DPUtil.cs";
             string dputilstr = File.ReadAllText(dputilpath);
@@ -132,7 +132,7 @@ public class BuildEditor
             {
                 GameDebug.LogError(e.Message);
             }
-#if WeChatGame
+#if WEIXINMINIGAME
             File.WriteAllText(dputilpath, dputilstr);
 #endif
             AssetDatabase.Refresh();
@@ -163,7 +163,7 @@ public class BuildEditor
         var buildParameters = new BuiltinBuildParameters();
         buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
         buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
-        buildParameters.BuildPipeline = EBuildPipeline.BuiltinBuildPipeline.ToString();
+        buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
         buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
         buildParameters.BuildMode = EBuildMode.IncrementalBuild;
         buildParameters.PackageName = AssetManager.PackageName;
@@ -173,7 +173,7 @@ public class BuildEditor
         buildParameters.FileNameStyle = EFileNameStyle.HashName;
         buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;
         buildParameters.BuildinFileCopyParams = "Builtin";
-#if UNITY_WEBGL
+#if WEIXINMINIGAME
         buildParameters.EncryptionServices = null;
 #else
         buildParameters.EncryptionServices = new EncryptionServices();
@@ -263,7 +263,7 @@ public class BuildEditor
         AndroidBuild();
 #elif UNITY_IOS
         IOSBuild();
-#elif WeChatGame
+#elif WEIXINMINIGAME
         WeChatBuild();
 #endif 
     }

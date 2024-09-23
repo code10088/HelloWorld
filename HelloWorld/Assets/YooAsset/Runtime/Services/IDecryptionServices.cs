@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace YooAsset
 {
-    /// <summary>
-    /// 解密文件的信息
-    /// </summary>
     public struct DecryptFileInfo
     {
         /// <summary>
@@ -21,12 +18,9 @@ namespace YooAsset
         /// <summary>
         /// Unity引擎用于内容校验的CRC
         /// </summary>
-        public uint ConentCRC;
+        public uint FileLoadCRC;
     }
 
-    /// <summary>
-    /// 解密类服务接口
-    /// </summary>
     public interface IDecryptionServices
     {
         /// <summary>
@@ -40,5 +34,15 @@ namespace YooAsset
         /// 注意：加载流对象在资源包对象释放的时候会自动释放
         /// </summary>
         AssetBundleCreateRequest LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream);
+
+        /// <summary>
+        /// 获取解密的字节数据
+        /// </summary>
+        byte[] ReadFileData(DecryptFileInfo fileInfo);
+
+        /// <summary>
+        /// 获取解密的文本数据
+        /// </summary>
+        string ReadFileText(DecryptFileInfo fileInfo);
     }
 }
