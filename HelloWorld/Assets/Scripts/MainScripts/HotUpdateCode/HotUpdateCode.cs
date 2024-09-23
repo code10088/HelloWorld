@@ -11,6 +11,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     {
         CheckVersion = 10,
         CheckPackageManifest = 20,
+        ClearPackageUnusedCacheFiles = 25,
         DownloadingHotUpdateConfig = 30,
         LoadHotUpdateConfig = 35,
         DownloadingHotUpdateRes = 100,
@@ -74,8 +75,21 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     {
         UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckPackageManifest / (float)HotUpdateCodeStep.Max);
 
-        if (o.Status == EOperationStatus.Succeed) CheckDownloadHotUpdateConfig();
+        if (o.Status == EOperationStatus.Succeed) ClearPackageUnusedCacheFiles();
         else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckPackageManifest);
+    }
+    private void ClearPackageUnusedCacheFiles()
+    {
+        var operation = AssetManager.Package.ClearUnusedBundleFilesAsync();
+        operation.Completed += ClearPackageUnusedCacheFiles;
+
+        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.ClearPackageUnusedCacheFiles.ToString());
+    }
+    private void ClearPackageUnusedCacheFiles(AsyncOperationBase o)
+    {
+        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.ClearPackageUnusedCacheFiles / (float)HotUpdateCodeStep.Max);
+
+        CheckDownloadHotUpdateConfig();
     }
     #endregion
 
