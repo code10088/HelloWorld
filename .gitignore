@@ -6,8 +6,7 @@
 /HelloWorld/HotAssembly/*.csproj
 /HelloWorld/HybridCLRData
 /HelloWorld/Library
-!/HelloWorld/Library/*.asset
-/HelloWorld/Library/SpriteAtlasDatabase.asset
+!/HelloWorld/Library/BuildSettings.asset
 /HelloWorld/Logs
 /HelloWorld/MemoryCaptures
 /HelloWorld/obj
