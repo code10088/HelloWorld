@@ -8,7 +8,6 @@ namespace HotAssembly
     {
         private Action hotUpdateResFinish;
         private ResourceDownloaderOperation downloaderOperation;
-        private int timerId = -1;
 
         public void Clear() { }
         public void StartUpdate(Action finish)
@@ -41,15 +40,14 @@ namespace HotAssembly
         }
         private void StartDownload()
         {
-            downloaderOperation.Completed += CheckDownloadHotUpdateRes;
+            downloaderOperation.OnDownloadOverCallback = CheckDownloadHotUpdateRes;
+            downloaderOperation.OnDownloadProgressCallback = Downloading;
+            downloaderOperation.OnDownloadErrorCallback = DownloadError;
             downloaderOperation.BeginDownload();
-
-            timerId = TimeManager.Instance.StartTimer(0, 1, Downloading);
         }
-        private void CheckDownloadHotUpdateRes(AsyncOperationBase o)
+        private void CheckDownloadHotUpdateRes(bool isSucceed)
         {
-            TimeManager.Instance.StopTimer(timerId);
-            if (o.Status == EOperationStatus.Succeed)
+            if (isSucceed)
             {
                 UpdateFinish();
             }
@@ -63,11 +61,15 @@ namespace HotAssembly
                 UICommonBox.OpenCommonBox(param);
             }
         }
-        private void Downloading(float t)
+        private void Downloading(int totalDownloadCount, int currentDownloadCount, long totalDownloadBytes, long currentDownloadBytes)
         {
             var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
-            hotUpdateRes.SetText($"HotUpdateRes£º{downloaderOperation.CurrentDownloadBytes}/{downloaderOperation.TotalDownloadBytes}");
-            hotUpdateRes.SetSlider(downloaderOperation.Progress);
+            hotUpdateRes.SetText($"HotUpdateRes£º{currentDownloadBytes}/{totalDownloadBytes}");
+            hotUpdateRes.SetSlider(currentDownloadBytes/totalDownloadBytes);
+        }
+        private void DownloadError(string fileName, string error)
+        {
+            GameDebug.LogError($"DownloadError£º{fileName}:{error}");
         }
         private void UpdateFinish()
         {

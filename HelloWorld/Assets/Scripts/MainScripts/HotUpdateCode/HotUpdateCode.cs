@@ -20,7 +20,6 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     private Action hotUpdateCodeFinish;
     private string resVersion;
     private ResourceDownloaderOperation downloaderOperation;
-    private int timerId = -1;
 
     public void StartUpdate(Action finish)
     {
@@ -86,7 +85,8 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         downloaderOperation = AssetManager.Package.CreateBundleDownloader(GameSetting.HotUpdateConfigPath, 1, GameSetting.retryTime, GameSetting.timeoutS);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
-            downloaderOperation.Completed += CheckDownloadHotUpdateConfig;
+            downloaderOperation.OnDownloadOverCallback = CheckDownloadHotUpdateConfig;
+            downloaderOperation.OnDownloadErrorCallback = DownloadError;
             downloaderOperation.BeginDownload();
 
             UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateConfig.ToString());
@@ -97,12 +97,16 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
             LoadHotUpdateConfig();
         }
     }
-    private void CheckDownloadHotUpdateConfig(AsyncOperationBase o)
+    private void CheckDownloadHotUpdateConfig(bool isSucceed)
     {
         UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.DownloadingHotUpdateConfig / (float)HotUpdateCodeStep.Max);
 
-        if (o.Status == EOperationStatus.Succeed) LoadHotUpdateConfig();
+        if (isSucceed) LoadHotUpdateConfig();
         else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckDownloadHotUpdateConfig);
+    }
+    private void DownloadError(string fileName, string error)
+    {
+        GameDebug.LogError($"DownloadError：{fileName}:{error}");
     }
     private void LoadHotUpdateConfig()
     {
@@ -131,9 +135,10 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeoutS);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
-            downloaderOperation.Completed += CheckDownloadHotUpdateRes;
+            downloaderOperation.OnDownloadOverCallback = CheckDownloadHotUpdateRes;
+            downloaderOperation.OnDownloadProgressCallback = DownloadingHotUpdateRes;
+            downloaderOperation.OnDownloadErrorCallback = DownloadError;
             downloaderOperation.BeginDownload();
-            timerId = TimeManager.Instance.StartTimer(0, 1, DownloadingHotUpdateRes);
 
             UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateRes.ToString());
         }
@@ -143,20 +148,19 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
             UpdateFinish();
         }
     }
-    private void CheckDownloadHotUpdateRes(AsyncOperationBase o)
+    private void CheckDownloadHotUpdateRes(bool isSucceed)
     {
         UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.DownloadingHotUpdateRes / (float)HotUpdateCodeStep.Max);
 
-        TimeManager.Instance.StopTimer(timerId);
-        if (o.Status == EOperationStatus.Succeed) UpdateFinish();
+        if (isSucceed) UpdateFinish();
         else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", LoadHotUpdateConfig);
     }
-    private void DownloadingHotUpdateRes(float t)
+    private void DownloadingHotUpdateRes(int totalDownloadCount, int currentDownloadCount, long totalDownloadBytes, long currentDownloadBytes)
     {
-        UIHotUpdateCode.Instance.SetText($"{HotUpdateCodeStep.DownloadingHotUpdateRes}：{downloaderOperation.CurrentDownloadBytes}/{downloaderOperation.TotalDownloadBytes}");
+        UIHotUpdateCode.Instance.SetText($"{HotUpdateCodeStep.DownloadingHotUpdateRes}：{currentDownloadBytes}/{totalDownloadBytes}");
         float f = (float)HotUpdateCodeStep.LoadHotUpdateConfig / (float)HotUpdateCodeStep.Max;
         float w = (HotUpdateCodeStep.DownloadingHotUpdateRes - HotUpdateCodeStep.LoadHotUpdateConfig) / (float)HotUpdateCodeStep.Max;
-        f += downloaderOperation.Progress * w;
+        f += currentDownloadBytes / totalDownloadBytes * w;
         UIHotUpdateCode.Instance.SetSlider(f);
     }
     #endregion
