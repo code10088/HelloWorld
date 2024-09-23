@@ -161,15 +161,7 @@ MonoBehaviour:
       GroupDesc: 
       AssetTags: 
       ActiveRuleName: EnableGroup
-      Collectors:
-      - CollectPath: Assets/ZRes/Debug
-        CollectorGUID: 1b23e03772edccc499da18cb9bd0346c
-        CollectorType: 0
-        AddressRuleName: AddressDisable
-        PackRuleName: PackCollector
-        FilterRuleName: CollectAll
-        AssetTags: 
-        UserData: 
+      Collectors: []
     - GroupName: Test
       GroupDesc: 
       AssetTags: 

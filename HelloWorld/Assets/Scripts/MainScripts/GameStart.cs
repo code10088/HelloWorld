@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using HybridCLR;
 using UnityEngine.SceneManagement;
 
-public class GameStart : MonoSingletion<GameStart>
+public class GameStart : Singletion<GameStart>
 {
     private int loadId;
 
@@ -14,27 +14,14 @@ public class GameStart : MonoSingletion<GameStart>
     private static void _()
     {
         var scene = SceneManager.GetActiveScene();
-        if (scene.buildIndex == 0) Instance.__();
-    }
-    public void __()
-    {
-        Application.runInBackground = true;
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        if (scene.buildIndex == 0) Instance.Start();
     }
     private void Start()
     {
-        AssetManager.Instance.Init(CheckDebug);
-    }
-    private void CheckDebug()
-    {
-        if (GameDebug.GDebug)
-        {
-            loadId = -1;
-            AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/IngameDebugConsole.prefab", (a, b) => Instantiate(b));
-            loadId = -1;
-            AssetManager.Instance.Load<GameObject>(ref loadId, "Assets/ZRes/Debug/AdvancedFPSCounter.prefab", (a, b) => Instantiate(b));
-        }
-        HotUpdate();
+        Application.runInBackground = true;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        if (GameDebug.GDebug == false) GameObject.DestroyImmediate(GameObject.FindWithTag("Debug"));
+        AssetManager.Instance.Init(HotUpdate);
     }
     private void HotUpdate()
     {

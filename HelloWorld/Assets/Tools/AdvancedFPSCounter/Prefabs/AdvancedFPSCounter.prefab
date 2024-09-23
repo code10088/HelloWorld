@@ -127,7 +127,7 @@ MonoBehaviour:
   autoScale: 1
   scaleFactor: 1
   labelsFont: {fileID: 12800000, guid: 92d4412c5f6512e45baa303841886311, type: 3}
-  fontSize: 40
+  fontSize: 20
   lineSpacing: 1
   countersSpacing: 0
   paddingOffset: {x: 5, y: 5}
