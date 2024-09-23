@@ -105,7 +105,7 @@ namespace YooAsset
                 }
             }
 
-            string saveFilePath = $"Assets/Resources/{YooAssetSettingsData.Setting.DefaultYooFolderName}/{packageName}/{DefaultBuildinFileSystemDefine.BuildinCatalogFileName}";
+            string saveFilePath = $"Assets/YooAsset/Config/Resources/{YooAssetSettingsData.Setting.DefaultYooFolderName}/{packageName}/{DefaultBuildinFileSystemDefine.BuildinCatalogFileName}";
             FileUtility.CreateFileDirectory(saveFilePath);
 
             UnityEditor.AssetDatabase.CreateAsset(buildinFileCatalog, saveFilePath);

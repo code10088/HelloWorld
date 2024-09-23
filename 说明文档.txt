@@ -39,6 +39,7 @@ YooAsset
 	BuildParameters检测输出目录是否存在，存在的情况下也可以打包，避免频繁修改VersionConfig文件
 	修改OperationSystem的计时方式
 	TaskCopyBuildinFiles添加写入BuildinFile.txt（2.2.x版本不需要）
+	DefaultBuildinFileSystemBuild中修改BuildinCatalog文件路径
 	Samples~中Extension Sample文件直接使用
 	
 ECS+Job+Brust
