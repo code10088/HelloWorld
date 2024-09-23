@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using HybridCLR;
 using UnityEngine.SceneManagement;
 
-public class GameStart : Singletion<GameStart>
+public class GameStart : MonoSingletion<GameStart>
 {
     private int loadId;
 
@@ -14,9 +14,9 @@ public class GameStart : Singletion<GameStart>
     private static void _()
     {
         var scene = SceneManager.GetActiveScene();
-        if (scene.buildIndex == 0) Instance.Start();
+        if (scene.buildIndex == 0) Instance.__();
     }
-    private void Start()
+    private void __()
     {
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
