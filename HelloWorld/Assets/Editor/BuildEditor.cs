@@ -160,7 +160,7 @@ public class BuildEditor
     public static void YooAssetBuild()
     {
         CheckAppVersion();
-        var buildParameters = new BuiltinBuildParameters();
+        var buildParameters = new ScriptableBuildParameters();
         buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
         buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
         buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
@@ -180,7 +180,7 @@ public class BuildEditor
 #endif
         buildParameters.CompressOption = ECompressOption.LZ4;
 
-        BuiltinBuildPipeline pipeline = new BuiltinBuildPipeline();
+        ScriptableBuildPipeline pipeline = new ScriptableBuildPipeline();
         var buildResult = pipeline.Run(buildParameters, true);
         if (buildResult.Success) Debug.Log("build success");
         else Debug.LogError($"build fail:{buildResult.ErrorInfo}");
