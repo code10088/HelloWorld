@@ -26,11 +26,23 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     {
         hotUpdateCodeFinish = finish;
 #if UNITY_EDITOR && !HotUpdateDebug
-        UpdateFinish();
+        EditorSimulate();
 #else
         CheckVersion();
 #endif
     }
+
+    #region Editor
+    private void EditorSimulate()
+    {
+        var operation = AssetManager.Package.UpdatePackageManifestAsync("Simulate");
+        operation.Completed += EditorSimulate;
+    }
+    private void EditorSimulate(AsyncOperationBase o)
+    {
+        UpdateFinish();
+    }
+    #endregion
 
     #region Version
     private void CheckVersion()
