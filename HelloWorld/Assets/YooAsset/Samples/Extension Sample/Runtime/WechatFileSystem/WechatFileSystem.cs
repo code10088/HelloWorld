@@ -181,6 +181,7 @@ internal class WechatFileSystem : IFileSystem
     {
         string filePath = GetCacheFileLoadPath(bundle);
         string result = _fileSystemManager.AccessSync(filePath);
+        Debug.LogError("--------" + filePath + "-----" + result);
         return result.Equals("access:ok");
     }
     public virtual bool NeedDownload(PackageBundle bundle)
