@@ -22,7 +22,7 @@ MonoBehaviour:
     DST: D:/HelloWorld/Build/WebGL
     StreamCDN: 
     bundleHashLength: 32
-    bundlePathIdentifier: StreamingAssets;__GAME_FILE_CACHE;
+    bundlePathIdentifier: StreamingAssets;1.2.0;
     bundleExcludeExtensions: .txt;.json;.version;.hash;.bytes;
     AssetsUrl: 
     MemorySize: 496
