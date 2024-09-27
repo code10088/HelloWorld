@@ -127,6 +127,7 @@ internal class WechatFileSystem : IFileSystem
     {
         param.MainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
         param.FallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+        Debug.LogError(param.MainURL);
         var operation = new WXFSDownloadFileOperation(this, bundle, param);
         OperationSystem.StartOperation(PackageName, operation);
         return operation;
@@ -167,7 +168,7 @@ internal class WechatFileSystem : IFileSystem
         }
 
         _fileSystemManager = WX.GetFileSystemManager();
-        _fileCacheRoot = WX.env.USER_DATA_PATH; //注意：如果有子目录，请修改此处！
+        _fileCacheRoot = $"{WX.env.USER_DATA_PATH}StreamingAssets/"; //注意：如果有子目录，请修改此处！
     }
     public virtual void OnUpdate()
     {
