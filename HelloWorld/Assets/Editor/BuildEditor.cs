@@ -170,7 +170,7 @@ public class BuildEditor
         buildParameters.PackageVersion = resversion;
         buildParameters.EnableSharePackRule = false;
         buildParameters.VerifyBuildingResult = true;
-        buildParameters.FileNameStyle = EFileNameStyle.HashName;
+        buildParameters.FileNameStyle = EFileNameStyle.BundleName_HashName;
         buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;
         buildParameters.BuildinFileCopyParams = "Builtin";
 #if WEIXINMINIGAME
