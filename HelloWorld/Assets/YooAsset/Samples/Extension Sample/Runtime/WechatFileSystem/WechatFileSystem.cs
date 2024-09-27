@@ -168,7 +168,7 @@ internal class WechatFileSystem : IFileSystem
         }
 
         _fileSystemManager = WX.GetFileSystemManager();
-        _fileCacheRoot = $"{WX.env.USER_DATA_PATH}/{Application.version}"; //注意：如果有子目录，请修改此处！
+        _fileCacheRoot = $"{WX.env.USER_DATA_PATH}/__GAME_FILE_CACHE/{Application.version}"; //注意：如果有子目录，请修改此处！
     }
     public virtual void OnUpdate()
     {
