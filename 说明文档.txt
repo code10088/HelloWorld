@@ -40,7 +40,25 @@ YooAsset
 	修改OperationSystem的计时方式
 	TaskCopyBuildinFiles添加写入BuildinFile.txt（2.2.x版本不需要）
 	DefaultBuildinFileSystemBuild中修改BuildinCatalog文件路径
-	Samples~中Extension Sample文件直接使用
+WebGL
+	System.Net无法使用
+	socket库使用 https://github.com/sta/websocket-sharp 编译dll
+微信小游戏
+	colorspace使用gamma 或者 使用webgl2.0(beta)
+	QualitySettings.SetQualityLevel(lv);导致崩溃，宏定义也无法修复
+	使用cdn下载资源，无需上传StreamingAssets文件夹
+	缓存策略：https://wechat-miniprogram.github.io/minigame-unity-webgl-transform/Design/FileCache.html
+	bundleExcludeExtensions对缓存十分重要
+	bundlePathIdentifier对缓存十分重要
+	yooasset
+		Samples~中Extension Sample文件直接使用
+		不支持ab包加密
+		BuildEditor打包需要EFileNameStyle.BundleName_HashName格式
+		微信小游戏需要关闭WebGL的缓存系统YooAssets.SetCacheSystemDisableCacheOnWebGL()（2.2.x版本不需要）
+		微信小游戏热更需要修改resversion，需要保证不同于StreamingAssets下的resversion（2.2.x版本不需要）
+		微信小游戏根据minigame缓存策略修改缓存目录WechatFileSystem _fileCacheRoot = $"{WX.env.USER_DATA_PATH}/__GAME_FILE_CACHE/{Application.version}";
+		bundleExcludeExtension缓存需要.version;.bytes;.hash;.json;
+		bundlePathIdentifier缓存需要1.2.0
 	
 ECS+Job+Brust
 	ECS中Component
@@ -93,15 +111,6 @@ GPU地形大世界地形解决方案
 
 SpriteAtlas
 	无法使用自动导入设置，common是已调好的设置参数，新建SpriteAtlas时copy后修改文件夹即可
-	
-WebGL
-	System.Net无法使用
-	socket库使用 https://github.com/sta/websocket-sharp 编译dll
-	colorspace使用gamma 或者 使用webgl2.0(beta)
-	QualitySettings.SetQualityLevel(lv);导致崩溃，宏定义也无法修复
-	yooasset不支持ab包加密
-	yooasset微信小游戏需要关闭WebGL的缓存系统YooAssets.SetCacheSystemDisableCacheOnWebGL()
-	yooasset微信小游戏热更需要修改resversion，需要保证不同于StreamingAssets下的resversion
 	
 RVO
 	没有删除功能，添加删除功能，涉及到的修改:

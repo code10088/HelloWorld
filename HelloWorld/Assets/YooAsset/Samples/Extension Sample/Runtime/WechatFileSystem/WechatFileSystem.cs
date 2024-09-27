@@ -127,7 +127,6 @@ internal class WechatFileSystem : IFileSystem
     {
         param.MainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
         param.FallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
-        Debug.LogError(param.MainURL);
         var operation = new WXFSDownloadFileOperation(this, bundle, param);
         OperationSystem.StartOperation(PackageName, operation);
         return operation;
@@ -182,7 +181,6 @@ internal class WechatFileSystem : IFileSystem
     {
         string filePath = GetCacheFileLoadPath(bundle);
         string result = _fileSystemManager.AccessSync(filePath);
-        Debug.LogError("--------" + filePath + "-----" + result);
         return result.Equals("access:ok");
     }
     public virtual bool NeedDownload(PackageBundle bundle)

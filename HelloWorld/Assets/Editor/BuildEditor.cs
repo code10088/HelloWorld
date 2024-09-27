@@ -310,35 +310,6 @@ public class BuildEditor
                     UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{name}", fileInfos[i].FullName);
                 }
             }
-
-            CosXmlConfig config = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
-            string secretId = "AKIDHSjP5iQG1byLl3mNnnolv3879KYj2OpJ";
-            string secretKey = "jKnx21ADT1OfkpyGRSLHPVXgjkhllfS6";
-            long durationSecond = 600;
-            QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(secretId, secretKey, durationSecond);
-            CosXml cosXml = new CosXmlServer(config, qCloudCredentialProvider);
-
-            string bucket = "assets-1321503079";
-            List<FileInfo> fileList = new List<FileInfo>();
-            FileUtils.GetAllFilePath($"{packageOutputDir}/StreamingAssets", fileList);
-            for (int i = 0; i < fileList.Count; i++)
-            {
-                string path = fileList[i].FullName;
-                string key = path.Remove(0, packageOutputDir.Length + 1);
-                key = $"{EditorUserBuildSettings.activeBuildTarget}/{key}";
-                key = key.Replace("\\", "/");
-                PutObjectRequest request = new PutObjectRequest(bucket, key, path);
-                PutObjectResult result = cosXml.PutObject(request);
-                if (result.IsSuccessful())
-                {
-                    Debug.Log("upload file success:" + path);
-                }
-                else
-                {
-                    Debug.LogError("upload bundle fail£º" + path);
-                    Debug.LogError(result.GetResultInfo());
-                }
-            }
         }
     }
 }
