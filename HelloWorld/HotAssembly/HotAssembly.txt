@@ -39,6 +39,10 @@
     <Reference Include="Luban.Runtime">
       <HintPath>..\Library\ScriptAssemblies\Luban.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Library\PackageCache\com.unity.nuget.newtonsoft-json@3.2.1\Runtime\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="protobuf-net">
       <HintPath>..\Assets\Plugins\Protobuf-net\net462\protobuf-net.dll</HintPath>
     </Reference>
@@ -73,9 +77,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-	<Reference Include="Unity.InputSystem">
-      <HintPath>..\Library\ScriptAssemblies\Unity.InputSystem.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.RenderPipelines.Universal.Runtime">
       <HintPath>..\Library\ScriptAssemblies\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
     </Reference>
