@@ -131,6 +131,7 @@ namespace SuperScrollView
         bool mIsPointerDownInVerticalScrollBar = false;
         bool mIsPointerDownInHorizontalScrollBar = false;
         bool mNeedReplaceScrollbarEventHandler = true;
+        int mCurCreatingItemIndex = -1;
 
         public List<GridViewItemPrefabConfData> ItemPrefabDataList
         {
@@ -364,7 +365,7 @@ namespace SuperScrollView
             {
                 return null;
             }
-            LoopGridViewItem item = pool.GetItem();
+            LoopGridViewItem item = pool.GetItem(mCurCreatingItemIndex);
             RectTransform rf = item.GetComponent<RectTransform>();
             rf.SetParent(mContainerTrans);
             rf.localScale = Vector3.one;

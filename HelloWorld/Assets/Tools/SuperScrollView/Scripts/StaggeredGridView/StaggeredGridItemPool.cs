@@ -35,15 +35,27 @@ namespace SuperScrollView
                 RecycleItemReal(tViewItem);
             }
         }
-        public LoopStaggeredGridViewItem GetItem()
+        public LoopStaggeredGridViewItem GetItem(int itemIndexForSearch)
         {
             mCurItemIdCount++;
             LoopStaggeredGridViewItem tItem = null;
             if (mTmpPooledItemList.Count > 0)
             {
                 int count = mTmpPooledItemList.Count;
-                tItem = mTmpPooledItemList[count - 1];
-                mTmpPooledItemList.RemoveAt(count - 1);
+                for (int i = 0; i < count; ++i)
+                {
+                    if (mTmpPooledItemList[i].ItemIndex == itemIndexForSearch)
+                    {
+                        tItem = mTmpPooledItemList[i];
+                        mTmpPooledItemList.RemoveAt(i);
+                        break;
+                    }
+                }
+                if(tItem == null)
+                {
+                    tItem = mTmpPooledItemList[count - 1];
+                    mTmpPooledItemList.RemoveAt(count - 1);
+                }
                 tItem.gameObject.SetActive(true);
             }
             else

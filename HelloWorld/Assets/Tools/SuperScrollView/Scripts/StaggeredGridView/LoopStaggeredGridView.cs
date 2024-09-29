@@ -77,6 +77,7 @@ namespace SuperScrollView
     }
 
 
+
     public class LoopStaggeredGridView : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         Dictionary<string, StaggeredGridItemPool> mItemPoolDict = new Dictionary<string, StaggeredGridItemPool>();
@@ -101,6 +102,7 @@ namespace SuperScrollView
         int mItemTotalCount = 0;
         bool mIsVertList = false;
         System.Func<LoopStaggeredGridView, int,LoopStaggeredGridViewItem> mOnGetItemByItemIndex;
+        System.Func<int,(float,float)> mOnGetItemSizeByItemIndex;
         Vector3[] mItemWorldCorners = new Vector3[4];
         Vector3[] mViewPortRectLocalCorners = new Vector3[4];
         float mDistanceForRecycle0 = 300;
@@ -119,6 +121,7 @@ namespace SuperScrollView
         bool mIsPointerDownInScrollBar = false;
         bool mNeedReplaceScrollbarEventHandler = true;
         ClickEventListener mScrollBarClickEventListener = null;
+        int mCurCreatingItemIndex = -1;
 
         public List<StaggeredGridItemPrefabConfData> ItemPrefabDataList
         {
@@ -217,15 +220,30 @@ namespace SuperScrollView
 
         /*
         InitListView method is to initiate the LoopStaggeredGridView component. There are 4 parameters:
+
         itemTotalCount: the total item count in the scrollview, this parameter should be >=0.
+
         layoutParam: this class is very sample, and you need new a GridViewLayoutParam instance and set the values you want.
+        
         onGetItemByItemIndex: when an item is getting in the scrollrect viewport, this Action will be called with the item’ index as a parameter, to let you create the item and update its content.
-        LoopStaggeredGridViewItem is the return value of onGetItemByItemIndex
+        
+        onGetItemSizeByItemIndex: if you can know every item's size beforehand, you may set this delegate that is to return the size and padding of a given itemIndex.
+        Because every item may have different size, and LoopStaggeredGridView needs the item's size to make layout, so if you cannot know every item's size beforehand,
+        the MovePanelToItemIndex method of LoopStaggeredGridView can only move to an item that had ever been shown in the scrollRect viewport. 
+        But if you can know every item's size beforehand, you may set this delegate that is to return the size and padding of a given itemIndex, 
+        and then when you want to move the panel to a given itemIndex,  you may firstly call LoopStaggeredGridView.UpdateContentSizeUpToItemIndex(itemIndex) to ensure the LoopStaggeredGridView have made layout up to the itemIndex,
+        and then call MovePanelToItemIndex(itemIndex) would move panel to that item successfully.
+        the parameter is null by default.
+        StaggeredViewMoveToItemDemo scene shows more details.
+        
+        return value: LoopStaggeredGridViewItem is the return value of onGetItemByItemIndex
+
         Every created item has a LoopStaggeredGridViewItem component auto attached
         */
         public void InitListView(int itemTotalCount, GridViewLayoutParam layoutParam,
             System.Func<LoopStaggeredGridView, int, LoopStaggeredGridViewItem> onGetItemByItemIndex,
-            StaggeredGridViewInitParam initParam = null)
+            StaggeredGridViewInitParam initParam = null,
+            System.Func<int,(float, float)> onGetItemSizeByItemIndex = null)
         {
             mLayoutParam = layoutParam;
             if(mLayoutParam == null)
@@ -276,14 +294,21 @@ namespace SuperScrollView
                 Debug.LogError("ScrollRect.verticalScrollbarVisibility cannot be set to AutoHideAndExpandViewport");
             }
             mIsVertList = (mArrangeType == ListItemArrangeType.TopToBottom || mArrangeType == ListItemArrangeType.BottomToTop);
-            mScrollRect.horizontal = !mIsVertList;
-            mScrollRect.vertical = mIsVertList;
+            if(mIsVertList)
+            {
+                mScrollRect.vertical = true;
+            }
+            else
+            {
+                mScrollRect.horizontal = true;
+            }
             UpdateItemSize();
             AdjustPivot(mViewPortRectTransform);
             AdjustAnchor(mContainerTrans);
             AdjustContainerPivot(mContainerTrans);
             InitItemPool();
             mOnGetItemByItemIndex = onGetItemByItemIndex;
+            mOnGetItemSizeByItemIndex = onGetItemSizeByItemIndex;
             if (mListViewInited == true)
             {
                 Debug.LogError("LoopStaggeredGridView.InitListView method can be called only once.");
@@ -473,7 +498,7 @@ namespace SuperScrollView
             {
                 return null;
             }
-            LoopStaggeredGridViewItem item = pool.GetItem();
+            LoopStaggeredGridViewItem item = pool.GetItem(mCurCreatingItemIndex);
             RectTransform rf = item.GetComponent<RectTransform>();
             rf.SetParent(mContainerTrans);
             rf.localScale = Vector3.one;
@@ -503,6 +528,15 @@ namespace SuperScrollView
             {
                 mItemIndexDataList.Clear();
                 ClearAllTmpRecycledItem();
+                mScrollRect.StopMovement();
+                if (IsVertList)
+                {
+                    SetAnchoredPositionY(mContainerTrans, 0f);
+                }
+                else
+                {
+                    SetAnchoredPositionX(mContainerTrans, 0f);
+                }
                 return;
             }
             int count = mItemIndexDataList.Count;
@@ -684,6 +718,72 @@ namespace SuperScrollView
             {
                 mContainerTrans.anchoredPosition3D = Vector3.zero;
             }
+        }
+
+
+        /*
+         If you can know every item's size beforehand, you may set the onGetItemSizeByItemIndex delegate that is to return the size and padding of a given itemIndex.
+         and then when you want to move the panel to a given itemIndex, 
+         you may firstly call LoopStaggeredGridView.UpdateContentSizeUpToItemIndex(itemIndex) to ensure the LoopStaggeredGridView have made layout up to the itemIndex, 
+         and then call MovePanelToItemIndex(itemIndex) would move panel to that item successfully.
+         */
+        public void UpdateContentSizeUpToItemIndex(int itemIndex)
+        {
+            if(mItemTotalCount == 0)
+            {
+                return;
+            }
+            if(mOnGetItemSizeByItemIndex == null)
+            {
+                return;
+            }
+            if(itemIndex >= mItemTotalCount)
+            {
+                itemIndex = mItemTotalCount - 1;
+            }
+            if(itemIndex <= 0)
+            {
+                return;
+            }
+            int curMaxCreatedItemIndexCount = mItemIndexDataList.Count;
+            if (itemIndex < curMaxCreatedItemIndexCount)
+            {
+                return;
+            }
+
+            float v = float.MaxValue;
+            int groupCount = mItemGroupList.Count;
+            int groupIndex = 0;
+            float[] groupContentSize = new float[groupCount];
+            for (int i = 0; i < groupCount; ++i)
+            {
+                float size = mItemGroupList[i].GetContentPanelSizeWithLastItemPadding();
+                groupContentSize[i] = size;
+            }
+            for (int curItemIndex = curMaxCreatedItemIndexCount; curItemIndex <= itemIndex;++curItemIndex)
+            {
+                v = float.MaxValue;
+                groupIndex = 0;
+                for (int i = 0; i < groupCount; ++i)
+                {
+                    float size = groupContentSize[i];
+                    if (size < v)
+                    {
+                        v = size;
+                        groupIndex = i;
+                    }
+                }
+                var (itemSize, itemPadding) = mOnGetItemSizeByItemIndex(curItemIndex);
+                groupContentSize[groupIndex] = groupContentSize[groupIndex] + itemSize + itemPadding;
+                List<int> mItemIndexMap = mItemGroupList[groupIndex].ItemIndexMap;
+                mItemIndexMap.Add(curItemIndex);
+                ItemIndexData indexData = new ItemIndexData();
+                indexData.mGroupIndex = groupIndex;
+                indexData.mIndexInGroup = mItemIndexMap.Count - 1;
+                mItemIndexDataList.Add(indexData);
+                mItemGroupList[groupIndex].SetItemSize(indexData.mIndexInGroup, itemSize, itemPadding);
+            }
+            UpdateContentSize();
         }
 
 
@@ -1024,6 +1124,7 @@ namespace SuperScrollView
             if (count > indexInGroup)
             {
                 index = mItemIndexMap[indexInGroup];
+                mCurCreatingItemIndex = index;
                 newItem = mOnGetItemByItemIndex(this, index);
                 if (newItem == null)
                 {
@@ -1045,6 +1146,7 @@ namespace SuperScrollView
                 return null;
             }
             index = curMaxCreatedItemIndexCount;
+            mCurCreatingItemIndex = index;
             newItem = mOnGetItemByItemIndex(this, index);
             if (newItem == null)
             {

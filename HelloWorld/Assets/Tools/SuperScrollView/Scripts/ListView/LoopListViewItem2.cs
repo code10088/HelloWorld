@@ -12,9 +12,7 @@ namespace SuperScrollView
         //If itemTotalCount is set a value >=0 , then the mItemIndex can only be from 0 to itemTotalCount -1.
         int mItemIndex = -1;
 
-        //ndicates the item’s id. 
-        //This property is set when the item is created or fetched from pool, 
-        //and will no longer change until the item is recycled back to pool.
+        //indicates the user defined id of an item, and can be set to any user defined integer value, for any purpose, such as to help searching items.
         int mItemId = -1;
 
         LoopListView2 mParentListView = null;
@@ -118,6 +116,8 @@ namespace SuperScrollView
                 mItemIndex = value;
             }
         }
+
+        //user defined id of the item
         public int ItemId
         {
             get
@@ -252,6 +252,5 @@ namespace SuperScrollView
             get { return mItemData; }
             set { mItemData = value; }
         }
-
     }
 }

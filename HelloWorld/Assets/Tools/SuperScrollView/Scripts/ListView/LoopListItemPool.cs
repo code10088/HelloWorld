@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace SuperScrollView
 {
     public class ItemPool
@@ -35,15 +34,27 @@ namespace SuperScrollView
                 RecycleItemReal(tViewItem);
             }
         }
-        public LoopListViewItem2 GetItem()
+        public LoopListViewItem2 GetItem(int itemIndexForSearch)
         {
             mCurItemIdCount++;
             LoopListViewItem2 tItem = null;
             if (mTmpPooledItemList.Count > 0)
             {
                 int count = mTmpPooledItemList.Count;
-                tItem = mTmpPooledItemList[count - 1];
-                mTmpPooledItemList.RemoveAt(count - 1);
+                for(int i = 0;i < count;++i)
+                {
+                    if(mTmpPooledItemList[i].ItemIndex == itemIndexForSearch)
+                    {
+                        tItem = mTmpPooledItemList[i];
+                        mTmpPooledItemList.RemoveAt(i);
+                        break;
+                    }
+                }
+                if(tItem == null)
+                {
+                    tItem = mTmpPooledItemList[count - 1];
+                    mTmpPooledItemList.RemoveAt(count - 1);
+                }
                 tItem.gameObject.SetActive(true);
             }
             else
@@ -61,7 +72,6 @@ namespace SuperScrollView
                 }
             }
             tItem.Padding = mPadding;
-            tItem.ItemId = mCurItemIdCount;
             return tItem;
 
         }
@@ -90,7 +100,7 @@ namespace SuperScrollView
             tViewItem.StartPosOffset = mStartPosOffset;
             return tViewItem;
         }
-        void RecycleItemReal(LoopListViewItem2 item)
+        public void RecycleItemReal(LoopListViewItem2 item)
         {
             item.gameObject.SetActive(false);
             mPooledItemList.Add(item);
