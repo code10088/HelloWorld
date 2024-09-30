@@ -13,7 +13,7 @@ namespace HotAssembly
         public void StartUpdate(Action finish)
         {
             hotUpdateResFinish = finish;
-#if UNITY_EDITOR && !HotUpdateDebug
+#if (UNITY_EDITOR || UNITY_WEBGL) && !HotUpdateDebug
             UpdateFinish();
 #else
             CheckDownloadHotUpdateRes();
