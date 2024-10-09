@@ -30,6 +30,7 @@
 /HelloWorld/Assets/Scripts/SubScripts/Scene/Auto/*.meta
 /HelloWorld/Assets/Scripts/SubScripts/UI/Auto/*.meta
 /HelloWorld/Assets/StreamingAssets
+/HelloWorld/Assets/WX-WASM-SDK-V2/Editor/template/conflict.*
 /HelloWorld/Assets/YooAsset/Config/Resources
 /HelloWorld/Assets/ZRes/Assembly
 /HelloWorld/Assets/ZRes/DataConfig/*.meta
