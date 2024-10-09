@@ -87,6 +87,11 @@ public class BuildEditor
         string newProjectPath = Environment.CurrentDirectory + "/" + newProjectName;
 
         string allStr = File.ReadAllText(newProjectPath + "/" + newProjectName + ".txt");
+        string assemblyStr = File.ReadAllText(Environment.CurrentDirectory + "/Assembly-CSharp.csproj");
+        int start = assemblyStr.IndexOf("<DefineConstants>") + 17;
+        int end = assemblyStr.IndexOf("</DefineConstants>");
+        string defineConstants = assemblyStr.Substring(start, end - start);
+        allStr = allStr.Replace("DebugDefineConstants", defineConstants);
         string strEditorInstallPath = AppDomain.CurrentDomain.BaseDirectory.Replace("/", "\\");
         allStr = allStr.Replace("EditorInstallPath", strEditorInstallPath);
 
@@ -113,13 +118,6 @@ public class BuildEditor
         }
         else
         {
-#if WEIXINMINIGAME
-            //Œ¢–≈∆ΩÃ®QualitySettings.SetQualityLevel±¿¿£
-            string dputilpath = $"{Application.dataPath}/Scripts/SubScripts/Tools/DPUtil.cs";
-            string dputilstr = File.ReadAllText(dputilpath);
-            string newdputilstr = dputilstr.Replace("QualitySettings.SetQualityLevel(lv);", "//QualitySettings.SetQualityLevel(lv);");
-            File.WriteAllText(dputilpath, newdputilstr);
-#endif
             try
             {
                 string strParam = newProjectPath + "/" + newProjectName + ".sln /t:Rebuild /p:Configuration=Debug";
@@ -132,9 +130,6 @@ public class BuildEditor
             {
                 GameDebug.LogError(e.Message);
             }
-#if WEIXINMINIGAME
-            File.WriteAllText(dputilpath, dputilstr);
-#endif
             AssetDatabase.Refresh();
         }
     }
