@@ -129,6 +129,7 @@ public class BuildEditor
             catch (Exception e)
             {
                 GameDebug.LogError(e.Message);
+                throw e;
             }
             AssetDatabase.Refresh();
         }
@@ -138,7 +139,16 @@ public class BuildEditor
     public static void HybridCLRGenerate()
     {
         HideSubScripts(true);
-        PrebuildCommand.GenerateAll();
+        try
+        {
+            PrebuildCommand.GenerateAll();
+        }
+        catch (Exception e)
+        {
+            HideSubScripts(false);
+            GameDebug.LogError(e.Message);
+            throw e;
+        }
         HideSubScripts(false);
         TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(GameSetting.HotUpdateConfigPath);
         var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
@@ -270,7 +280,16 @@ public class BuildEditor
         Directory.CreateDirectory(Path.GetDirectoryName(buildPlayerPath));
 
         HideSubScripts(true);
-        BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
+        try
+        {
+            BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
+        }
+        catch (Exception e)
+        {
+            HideSubScripts(false);
+            GameDebug.LogError(e.Message);
+            throw e;
+        }
         HideSubScripts(false);
         if (latestAppVersion) UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{GameSetting.AppName}", buildPlayerPath);
     }
@@ -282,17 +301,35 @@ public class BuildEditor
         Directory.CreateDirectory(Path.GetDirectoryName(buildPlayerPath));
 
         HideSubScripts(true);
-        BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
+        try
+        {
+            BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
+        }
+        catch (Exception e)
+        {
+            HideSubScripts(false);
+            GameDebug.LogError(e.Message);
+            throw e;
+        }
         HideSubScripts(false);
     }
     [MenuItem("Tools/WeChatBuild", false, (int)ToolsMenuSort.WeChatBuild)]
     public static void WeChatBuild()
     {
         HideSubScripts(true);
-        var r = WXConvertCore.DoExport();
+        WXConvertCore.WXExportError result;
+        try
+        {
+            result = WXConvertCore.DoExport();
+        }
+        catch (Exception e)
+        {
+            HideSubScripts(false);
+            GameDebug.LogError(e.Message);
+            throw e;
+        }
         HideSubScripts(false);
-
-        if (r == WXConvertCore.WXExportError.SUCCEED)
+        if (result == WXConvertCore.WXExportError.SUCCEED)
         {
             string packageOutputDir = $"{WXConvertCore.config.ProjectConf.DST}/webgl";
             DirectoryInfo dir = new DirectoryInfo(packageOutputDir);
