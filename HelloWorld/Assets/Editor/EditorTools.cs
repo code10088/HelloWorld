@@ -101,4 +101,20 @@ public class EditorTools
     {
         Time.timeScale = 1;
     }
+    public static void AddScriptingDefineSymbols(string str)
+    {
+        var buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+        var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
+        if (string.IsNullOrEmpty(symbols)) PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, str);
+        else if (!symbols.Contains(str)) PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, $"{symbols};{str}");
+        AssetDatabase.Refresh();
+    }
+    public static void RemoveScriptingDefineSymbols(string str)
+    {
+        var buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+        var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
+        symbols = symbols.Replace(str, string.Empty);
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, symbols);
+        AssetDatabase.Refresh();
+    }
 }

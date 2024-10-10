@@ -70,10 +70,16 @@ public class BuildEditor
                 resversion = config.ResVersions[index];
                 Debug.Log("resversion:" + resversion);
             }
-            else if (args[i].StartsWith("--release:"))
+            else if (args[i].StartsWith("--development:"))
             {
-                bool b = bool.Parse(args[i].Replace("--release:", string.Empty));
-                if (!b) options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
+                bool b = bool.Parse(args[i].Replace("--development:", string.Empty));
+                if (b) options = BuildOptions.Development | BuildOptions.EnableDeepProfilingSupport | BuildOptions.AllowDebugging;
+            }
+            else if (args[i].StartsWith("--debug:"))
+            {
+                bool b = bool.Parse(args[i].Replace("--debug:", string.Empty));
+                if (b) EditorTools.AddScriptingDefineSymbols("Debug");
+                else EditorTools.RemoveScriptingDefineSymbols("Debug");
             }
         }
     }
