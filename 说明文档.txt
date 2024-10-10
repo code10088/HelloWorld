@@ -45,7 +45,7 @@ WebGL
 	socket库使用 https://github.com/sta/websocket-sharp 编译dll
 微信小游戏
 	colorspace使用gamma 或者 使用webgl2.0(beta)
-	QualitySettings.SetQualityLevel(lv);导致崩溃，宏定义也无法修复
+	QualitySettings.SetQualityLevel(lv);导致崩溃（minigame最新版已修复）
 	使用cdn下载资源，无需上传StreamingAssets文件夹
 	缓存策略：https://wechat-miniprogram.github.io/minigame-unity-webgl-transform/Design/FileCache.html
 	bundleExcludeExtensions对缓存十分重要
