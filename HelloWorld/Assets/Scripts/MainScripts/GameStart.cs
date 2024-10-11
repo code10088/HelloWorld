@@ -5,6 +5,9 @@ using Object = UnityEngine.Object;
 using Newtonsoft.Json;
 using HybridCLR;
 using UnityEngine.SceneManagement;
+#if WEIXINMINIGAME
+using WeChatWASM;
+#endif
 
 public class GameStart : MonoSingletion<GameStart>
 {
@@ -20,6 +23,11 @@ public class GameStart : MonoSingletion<GameStart>
     {
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+#if WEIXINMINIGAME
+        var callback = new SetKeepScreenOnOption();
+        callback.keepScreenOn = true;
+        WX.SetKeepScreenOn(callback);
+#endif
         if (GameDebug.GDebug == false) GameObject.DestroyImmediate(GameObject.FindWithTag("Debug"));
         AssetManager.Instance.Init(HotUpdate);
     }
