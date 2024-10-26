@@ -10,6 +10,7 @@ public class GameSetting : Singletion<GameSetting>, SingletionInterface
     public static int downloadLimit = 5;//小于threadLimit
     public static int writeLimit = 3;//小于threadLimit
     public static int recycleTimeS = 30;
+    public static float recycleTimeMinS = 10;
     public static float recycleTimeMaxS = 120;
     public static int retryTime = 3;
     public static int timeoutS = 10;//秒

@@ -141,19 +141,20 @@ namespace HotAssembly
             private int loadId;
             private SceneConfig config;
             private SceneBase baseScene;
+            private Object asset;
             private GameObject baseObj;
             private Action<int, bool> open = null;
             private Action<float> progress = null;
             private object[] param = null;
 
-            private int state = 0;//7：二进制111：分别表示release init load
-            private float releaseTime = 5f;
+            private LoadState state = LoadState.Release;
+            private float releaseTime = GameSetting.recycleTimeMinS;
             private int timerId = -1;
 
             public int ID => id;
             public SceneType Type => config.SceneType;
             public SceneBase BaseScene => baseScene;
-            public bool State => state > 0;
+            public bool State => state > LoadState.LoadFinish;
 
             public SceneItem(SceneType type)
             {
@@ -170,40 +171,55 @@ namespace HotAssembly
             }
             public void Load()
             {
-                if (state > 3)
+                if (state.HasFlag(LoadState.Release))
                 {
                     Recycle();
                 }
-                if (state > 0)
+                switch (state)
                 {
-                    LoadFinish(loadId, baseObj);
-                }
-                else
-                {
-                    AssetManager.Instance.Load<GameObject>(ref loadId, config.PrefabPath, LoadFinish);
+                    case LoadState.None:
+                        state = LoadState.Loading;
+                        AssetManager.Instance.Load<GameObject>(ref loadId, config.PrefabPath, LoadFinish);
+                        break;
+                    case LoadState.Loading:
+                        break;
+                    case LoadState.LoadFinish:
+                        LoadFinish(loadId, asset);
+                        break;
+                    case LoadState.Instantiate:
+                        Instance.InitScene();
+                        break;
                 }
             }
-            private void LoadFinish(int id, Object asset)
+            private void LoadFinish(int id, Object _asset)
             {
-                if (asset == null)
+                if (_asset == null)
                 {
                     Release(true);
                 }
-                else if (state == 0)
+                else if (state.HasFlag(LoadState.Release))
                 {
-                    state = 1;
-                    baseObj = Object.Instantiate(asset, Instance.tSceneRoot) as GameObject;
+                    asset = _asset;
+                    state = LoadState.LoadFinish | LoadState.Release;
+                }
+                else
+                {
+                    state = LoadState.Instantiate;
+                    baseObj = Object.Instantiate(_asset, Instance.tSceneRoot) as GameObject;
                     baseObj.transform.localPosition = Vector3.zero;
                     baseObj.transform.localRotation = Quaternion.identity;
                     baseObj.transform.localScale = Vector3.one;
                     baseObj.SetActive(false);
                 }
-                releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.1f);
                 Instance.InitScene();
             }
             public void Init()
             {
-                if (state == 1)
+                if (state.HasFlag(LoadState.Release))
+                {
+                    OpenActionInvoke(false);
+                }
+                else if (baseScene == null)
                 {
                     baseObj.SetActive(true);
                     Type t = System.Type.GetType("HotAssembly." + config.Name);
@@ -211,18 +227,13 @@ namespace HotAssembly
                     baseScene.InitScene(baseObj, id, from, config, param);
                     Instance.curScene.Add(this);
                     OpenActionInvoke(true);
-                    state = 3;
                 }
-                else if (state == 3)
+                else
                 {
                     baseObj.SetActive(true);
                     baseScene.OnEnable(param);
                     Instance.curScene.Add(this);
                     OpenActionInvoke(true);
-                }
-                else
-                {
-                    OpenActionInvoke(false);
                 }
             }
             public void OpenActionInvoke(bool success)
@@ -242,28 +253,31 @@ namespace HotAssembly
                 baseScene?.OnDisable();
                 if (immediate) _Release();
                 else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);
-                state |= 4;
+                state |= LoadState.Release;
             }
             private void _Release()
             {
                 Instance.cacheScene.Remove(this);
-                TimeManager.Instance.StopTimer(timerId);
                 if (baseScene != null) baseScene?.OnDestroy();
-                if (baseObj != null) GameObject.Destroy(baseObj);
-                AssetManager.Instance.Unload(ref loadId);
                 baseScene = null;
+                asset = null;
+                if (baseObj != null) GameObject.Destroy(baseObj);
                 baseObj = null;
+                AssetManager.Instance.Unload(ref loadId);
                 open = null;
                 progress = null;
                 param = null;
+                state = LoadState.Release;
+                releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMinS, 0.1f);
+                TimeManager.Instance.StopTimer(timerId);
                 timerId = -1;
-                state = 0;
             }
             private void Recycle()
             {
+                state &= LoadState.Instantiate | LoadState.LoadFinish | LoadState.Loading;
+                releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.1f);
                 TimeManager.Instance.StopTimer(timerId);
                 timerId = -1;
-                state &= 3;
             }
         }
     }

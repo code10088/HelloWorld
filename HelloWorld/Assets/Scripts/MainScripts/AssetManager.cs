@@ -163,6 +163,14 @@ public class AssetManager : Singletion<AssetManager>
         }
     }
 }
+public enum LoadState
+{
+    None = 0,
+    Loading = 1,
+    LoadFinish = 2,
+    Instantiate = 4,
+    Release = 8,
+}
 /// <summary>
 /// 父节点删除时必须Release，否则加载状态会错乱(虽有办法避免，但不卸载导致的资源常驻无法避免)
 /// </summary>
@@ -173,7 +181,7 @@ public class LoadGameObjectItem
     protected Object asset;
     protected GameObject obj;
     private int loadId;
-    private int state = 4;//7：二进制111：分别表示release instantiate load
+    private LoadState state = LoadState.Release;
     private float timer = 0;
     private int timerId = -1;
 
@@ -189,30 +197,33 @@ public class LoadGameObjectItem
     }
     public void SetActive(bool b)
     {
-        if (b && state > 3)
+        if (b && state.HasFlag(LoadState.Release))
         {
             Recycle();
             Load();
         }
-        else if (!b && state <= 3)
+        else if (!b && !state.HasFlag(LoadState.Release))
         {
             Delay();
         }
     }
     private void Load()
     {
-        if (state == 0)
+        switch (state)
         {
-            AssetManager.Instance.Load<GameObject>(ref loadId, path, LoadFinish);
-        }
-        else if (state == 1)
-        {
-            LoadFinish(loadId, asset);
-        }
-        else
-        {
-            obj.SetActive(true);
-            Finish(obj);
+            case LoadState.None:
+                state = LoadState.Loading;
+                AssetManager.Instance.Load<GameObject>(ref loadId, path, LoadFinish);
+                break;
+            case LoadState.Loading:
+                break;
+            case LoadState.LoadFinish:
+                LoadFinish(loadId, asset);
+                break;
+            case LoadState.Instantiate:
+                obj.SetActive(true);
+                Finish(obj);
+                break;
         }
     }
     private void LoadFinish(int id, Object _asset)
@@ -222,15 +233,15 @@ public class LoadGameObjectItem
             Release();
             Finish(null);
         }
-        else if (state > 3)
+        else if (state.HasFlag(LoadState.Release))
         {
             asset = _asset;
-            state |= 1;
+            state = LoadState.LoadFinish | LoadState.Release;
             Finish(null);
         }
         else
         {
-            state = 3;
+            state = LoadState.Instantiate;
             obj = Object.Instantiate(_asset, parent) as GameObject;
             obj.transform.localPosition = Vector3.zero;
             obj.transform.localRotation = Quaternion.identity;
@@ -246,27 +257,27 @@ public class LoadGameObjectItem
     {
         obj?.SetActive(false);
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Release);
-        state |= 4;
+        state |= LoadState.Release;
     }
     public virtual void Release()
     {
-        TimeManager.Instance.StopTimer(timerId);
-        if (obj != null) GameObject.Destroy(obj);
-        AssetManager.Instance.Unload(ref loadId);
         parent = null;
         asset = null;
+        if (obj != null) GameObject.Destroy(obj);
         obj = null;
-        state = 4;
+        AssetManager.Instance.Unload(ref loadId);
+        state = LoadState.Release;
         timer = 0;
+        TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
     }
     private void Recycle()
     {
-        TimeManager.Instance.StopTimer(timerId);
+        state &= LoadState.Instantiate | LoadState.LoadFinish | LoadState.Loading;
         timer += GameSetting.recycleTimeS;
         timer = Math.Min(timer, GameSetting.recycleTimeMaxS);
+        TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
-        state &= 3;
     }
 }
 public class LoadAssetItem
@@ -274,8 +285,7 @@ public class LoadAssetItem
     protected string path;
     protected Object asset;
     private int loadId;
-    private bool releaseMark = true;
-    private bool loadMark = false;
+    private LoadState state = LoadState.Release;
     private float timer = 0;
     private int timerId = -1;
 
@@ -290,17 +300,21 @@ public class LoadAssetItem
     }
     public void Load<T>() where T : Object
     {
-        if (releaseMark)
+        if (state.HasFlag(LoadState.Release))
         {
             Recycle();
         }
-        if (loadMark)
+        switch (state)
         {
-            Finish(asset);
-        }
-        else
-        {
-            AssetManager.Instance.Load<T>(ref loadId, path, LoadFinish);
+            case LoadState.None:
+                state = LoadState.Loading;
+                AssetManager.Instance.Load<T>(ref loadId, path, LoadFinish);
+                break;
+            case LoadState.Loading:
+                break;
+            case LoadState.LoadFinish:
+                Finish(asset);
+                break;
         }
     }
     private void LoadFinish(int id, Object _asset)
@@ -310,12 +324,17 @@ public class LoadAssetItem
             Release();
             Finish(null);
         }
+        else if (state.HasFlag(LoadState.Release))
+        {
+            asset = _asset;
+            state = LoadState.LoadFinish | LoadState.Release;
+            Finish(null);
+        }
         else
         {
             asset = _asset;
-            loadMark = true;
-            if (releaseMark) Finish(null);
-            else Finish(asset);
+            state = LoadState.LoadFinish;
+            Finish(asset);
         }
     }
     protected virtual void Finish(Object asset)
@@ -325,24 +344,23 @@ public class LoadAssetItem
     public void Delay()
     {
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Release);
-        releaseMark = true;
+        state |= LoadState.Release;
     }
     public virtual void Release()
     {
-        TimeManager.Instance.StopTimer(timerId);
-        AssetManager.Instance.Unload(ref loadId);
         asset = null;
-        releaseMark = true;
-        loadMark = false;
+        AssetManager.Instance.Unload(ref loadId);
+        state = LoadState.Release;
         timer = 0;
+        TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
     }
     private void Recycle()
     {
-        TimeManager.Instance.StopTimer(timerId);
+        state &= LoadState.LoadFinish | LoadState.Loading;
         timer += GameSetting.recycleTimeS;
         timer = Math.Min(timer, GameSetting.recycleTimeMaxS);
+        TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
-        releaseMark = false;
     }
 }

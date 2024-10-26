@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "64a6d26fa33466c864de9cb0ed90481873cd6250"
+      "hash": "2414e77fefdd5d6fe44510437d2394eecaf989f0"
     },
     "com.code-philosophy.luban": {
       "version": "https://github.com/focus-creative-games/luban_unity.git",
@@ -14,12 +14,19 @@
       "dependencies": {},
       "hash": "7dcd33fd67c7ffe73e88c741bf9ef89ee04aa521"
     },
+    "com.monitor1394.xcharts": {
+      "version": "https://github.com/XCharts-Team/XCharts.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "dc254fb722581ddb241d08a8a511a1a52929476d"
+    },
     "com.qq.weixin.minigame": {
       "version": "https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "a35ef240711145de3c5dde71dc65f1012b594555"
+      "hash": "3d141a9620e185a1eedc10af1aad133dc849c536"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -53,6 +60,19 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.collections": {
+      "version": "2.1.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.burst": "1.8.4",
+        "com.unity.test-framework": "1.3.3",
+        "com.unity.nuget.mono-cecil": "1.11.4",
+        "com.unity.modules.unityanalytics": "1.0.0",
+        "com.unity.test-framework.performance": "3.0.0-pre.1"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.editorcoroutines": {
       "version": "1.0.0",
       "depth": 1,
@@ -61,8 +81,8 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
-      "version": "1.0.6",
-      "depth": 2,
+      "version": "2.0.3",
+      "depth": 3,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -91,12 +111,22 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.memoryprofiler": {
-      "version": "1.1.1",
+      "version": "1.1.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
+        "com.unity.burst": "1.8.0",
+        "com.unity.collections": "2.1.1",
+        "com.unity.profiling.core": "1.0.0",
         "com.unity.editorcoroutines": "1.0.0"
       },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.mono-cecil": {
+      "version": "1.11.4",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
@@ -109,6 +139,13 @@
     "com.unity.performance.profile-analyzer": {
       "version": "1.2.2",
       "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.profiling.core": {
+      "version": "1.0.2",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -168,12 +205,22 @@
       }
     },
     "com.unity.test-framework": {
-      "version": "1.1.33",
-      "depth": 1,
+      "version": "1.3.3",
+      "depth": 2,
       "source": "registry",
       "dependencies": {
-        "com.unity.ext.nunit": "1.0.6",
+        "com.unity.ext.nunit": "2.0.3",
         "com.unity.modules.imgui": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.test-framework.performance": {
+      "version": "3.0.0-pre.1",
+      "depth": 2,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.test-framework": "1.1.31",
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
