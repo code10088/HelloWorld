@@ -28,7 +28,7 @@ namespace HotAssembly
         }
         private void SetBg(object name)
         {
-            SetSprite(component.bgRawImage, (string)name);
+            SetSprite(component.bgUIRawImage, (string)name);
         }
         private void Refresh(object info)
         {

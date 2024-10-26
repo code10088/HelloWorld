@@ -28,7 +28,7 @@ namespace HotAssembly
         public UIButton openMsgBtnUIButton = null;
         public UIButton openTipsBtnUIButton = null;
         public UIButton loadSpriteUIButton = null;
-        public UnityEngine.UI.Image imageImage = null;
+        public UIImage imageUIImage = null;
         public GameObject functionObj = null;
         public UIButton openSDKBtnUIButton = null;
         public UIButton coroutineBtnUIButton = null;
@@ -63,7 +63,7 @@ namespace HotAssembly
             openMsgBtnUIButton = allData[22].exportComponent[0] as UIButton;
             openTipsBtnUIButton = allData[23].exportComponent[0] as UIButton;
             loadSpriteUIButton = allData[24].exportComponent[0] as UIButton;
-            imageImage = allData[25].exportComponent[0] as UnityEngine.UI.Image;
+            imageUIImage = allData[25].exportComponent[0] as UIImage;
             functionObj = allData[26].gameObject;
             openSDKBtnUIButton = allData[27].exportComponent[0] as UIButton;
             coroutineBtnUIButton = allData[28].exportComponent[0] as UIButton;

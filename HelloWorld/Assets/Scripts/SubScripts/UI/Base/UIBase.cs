@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityExtensions.Tween;
 using System.Collections.Generic;
-using UnityEngine.UI;
 using System;
 
 namespace HotAssembly
@@ -15,8 +14,9 @@ namespace HotAssembly
         protected Canvas[] layerRecord1;
         protected int[] layerRecord2;
         protected UIParticle[] layerRecord3;
-        private List<int> loader1 = new List<int>();
-        private List<LoadGameObjectItem> loader2 = new List<LoadGameObjectItem>();
+        private List<int> loadId1 = new List<int>();
+        private AssetPool loader1 = new AssetPool();
+        private GameObjectPool loader2 = new GameObjectPool();
         public void InitUI(GameObject UIObj, UIType from, UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;
@@ -63,24 +63,17 @@ namespace HotAssembly
         }
         public virtual void OnDisable()
         {
-            for (int i = 0; i < loader1.Count; i++)
-            {
-                int loadId = loader1[i];
-                AssetManager.Instance.Unload(ref loadId);
-            }
-            loader1.Clear();
-            for (int i = 0; i < loader2.Count; i++)
-            {
-                loader2[i].SetActive(false);
-            }
+
         }
         public virtual void OnDestroy()
         {
             layerRecord1 = null;
             layerRecord2 = null;
             layerRecord3 = null;
-            for (int i = 0; i < loader2.Count; i++) loader2[i].Release();
+            loadId1 = null;
+            loader1.Release();
             loader1 = null;
+            loader2.Release();
             loader2 = null;
         }
         protected virtual void OnClose()
@@ -89,39 +82,65 @@ namespace HotAssembly
         }
 
         #region 扩展方法
-        protected void SetSprite(Image image, string atlas, string name)
+        protected void SetSprite(UIImage image, string atlas, string name)
         {
-            int loadId = -1;
-            AssetManager.Instance.Load<Sprite>(ref loadId, $"{atlas}{name}.png", (a, b) => image.sprite = (Sprite)b);
-            loader1.Add(loadId);
+            string path = $"{atlas}{name}.png";
+            if (image.loadId > 0)
+            {
+                loadId1.Remove(image.loadId);
+                loader1.Enqueue(path, image.loadId);
+            }
+            image.loadId = loader1.Dequeue<Sprite>(path, (a, b, c) => image.sprite = (Sprite)b).ItemID;
+            loadId1.Add(image.loadId);
         }
         /// <summary>
         /// 背景图
         /// </summary>
         /// <param name="path">相对于Assets/ZRes/UI/Texture的相对路径</param>
-        protected void SetSprite(RawImage image, string path)
+        protected void SetSprite(UIRawImage image, string path)
         {
-            int loadId = -1;
-            AssetManager.Instance.Load<Texture>(ref loadId, $"{ZResConst.ResUITexturePath}{path}.png", (a, b) => image.texture = (Texture)b);
-            loader1.Add(loadId);
+            path = $"{ZResConst.ResUITexturePath}{path}.png";
+            if (image.loadId > 0)
+            {
+                loadId1.Remove(image.loadId);
+                loader1.Enqueue(path, image.loadId);
+            }
+            image.loadId = loader1.Dequeue<Texture>(path, (a, b, c) => image.texture = (Texture)b).ItemID;
+            loadId1.Add(image.loadId);
         }
         /// <summary>
         /// 加载Prefab
         /// </summary>
         /// <param name="path">相对于Assets/ZRes/UI/Prefab的相对路径</param>
-        protected void LoadPrefab(string path, Action<GameObject> finish)
+        protected void LoadPrefab(ref int itemId, string path, Transform parent, Action<GameObject> finish)
         {
-            int loadId = -1;
-            AssetManager.Instance.Load<GameObject>(ref loadId, $"{ZResConst.ResUIPrefabPath}{path}.prefab", (a, b) => finish?.Invoke((GameObject)b));
-            loader1.Add(loadId);
+            path = $"{ZResConst.ResUIPrefabPath}{path}.prefab";
+            if (itemId > 0) loader2.Enqueue(path, itemId);
+            itemId = loader2.Dequeue(path, parent, (a, b, c) => finish?.Invoke(b)).ItemID;
         }
-        protected void AddEffect(string path, Transform parent)
+        protected void RemovePrefab(ref int itemId, string path)
+        {
+            if (itemId > 0)
+            {
+                path = $"{ZResConst.ResUIPrefabPath}{path}.prefab";
+                loader2.Enqueue(path, itemId);
+                itemId = -1;
+            }
+        }
+        protected void AddEffect(ref int itemId, string path, Transform parent)
         {
             path = $"{ZResConst.ResUIEffectPath}{path}.prefab";
-            var item = new LoadGameObjectItem();
-            item.Init(path, parent);
-            item.SetActive(true);
-            loader2.Add(item);
+            if (itemId > 0) loader2.Enqueue(path, itemId);
+            itemId = loader2.Dequeue(path, parent).ItemID;
+        }
+        protected void RemoveEffect(ref int itemId, string path)
+        {
+            if (itemId > 0)
+            {
+                path = $"{ZResConst.ResUIEffectPath}{path}.prefab";
+                loader2.Enqueue(path, itemId);
+                itemId = -1;
+            }
         }
         protected GameObject Instantiate(GameObject obj, Transform parent = null)
         {

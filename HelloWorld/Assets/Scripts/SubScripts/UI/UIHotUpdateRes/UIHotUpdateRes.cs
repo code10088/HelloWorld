@@ -16,7 +16,7 @@ namespace HotAssembly
         }
         public void SetBg(string name)
         {
-            SetSprite(component.bgRawImage, name);
+            SetSprite(component.bgUIRawImage, name);
         }
         public void SetText(string str)
         {

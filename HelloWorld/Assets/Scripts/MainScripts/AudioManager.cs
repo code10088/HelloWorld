@@ -56,7 +56,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             pool.Init(path);
             audioPool.Add(path, pool);
         }
-        var item = pool.Dequeue();
+        var item = pool.Dequeue<AudioClip>();
         item.Set(loop);
         return item.ItemID;
     }

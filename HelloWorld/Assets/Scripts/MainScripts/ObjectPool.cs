@@ -195,7 +195,7 @@ public class AssetPool
         if (string.IsNullOrEmpty(path)) return;
         if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
     }
-    public AssetPoolItem Dequeue(string path, Action<int, Object, object[]> action = null, params object[] param)
+    public AssetPoolItem Dequeue<T>(string path, Action<int, Object, object[]> action = null, params object[] param) where T : Object
     {
         if (string.IsNullOrEmpty(path)) return null;
         AssetPool<AssetPoolItem> temp = null;
@@ -205,7 +205,7 @@ public class AssetPool
             temp.Init(path);
             pool.Add(path, temp);
         }
-        return temp.Dequeue(action, param);
+        return temp.Dequeue<T>(action, param);
     }
     public void Release()
     {
@@ -232,7 +232,7 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
         if (cache.Count >= cacheCount) temp.Release();
         else { temp.SetActive(false); cache.Add(temp); }
     }
-    public T Dequeue(Action<int, Object, object[]> action = null, params object[] param)
+    public T Dequeue<K>(Action<int, Object, object[]> action = null, params object[] param) where K : Object
     {
         T temp = null;
         if (cache.Count > 0) temp = cache[0];
@@ -242,7 +242,7 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
         temp.SetActive(true);
         use.Add(temp);
         wait.Add(temp);
-        Load<Object>();
+        Load<K>();
         return temp;
     }
     public override void Release()
