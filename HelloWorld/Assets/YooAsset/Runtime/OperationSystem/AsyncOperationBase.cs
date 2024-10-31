@@ -13,6 +13,11 @@ namespace YooAsset
         private int _whileFrame = 1000;
 
         /// <summary>
+        /// 等待异步执行完成
+        /// </summary>
+        internal bool IsWaitForAsyncComplete = false;
+
+        /// <summary>
         /// 是否已经完成
         /// </summary>
         internal bool IsFinish = false;
@@ -168,6 +173,7 @@ namespace YooAsset
             if (IsDone)
                 return;
 
+            IsWaitForAsyncComplete = true;
             InternalWaitForAsyncComplete();
         }
 

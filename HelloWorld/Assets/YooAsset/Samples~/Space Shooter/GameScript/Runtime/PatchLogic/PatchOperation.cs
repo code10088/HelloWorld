@@ -19,7 +19,7 @@ public class PatchOperation : GameAsyncOperation
     private readonly StateMachine _machine;
     private ESteps _steps = ESteps.None;
 
-    public PatchOperation(string packageName, string buildPipeline, EPlayMode playMode)
+    public PatchOperation(string packageName, string buildPipeline, bool rawFileSystem, EPlayMode playMode)
     {
         // 注册监听事件
         _eventGroup.AddListener<UserEventDefine.UserTryInitialize>(OnHandleEventMessage);
@@ -42,6 +42,7 @@ public class PatchOperation : GameAsyncOperation
         _machine.SetBlackboardValue("PackageName", packageName);
         _machine.SetBlackboardValue("PlayMode", playMode);
         _machine.SetBlackboardValue("BuildPipeline", buildPipeline);
+        _machine.SetBlackboardValue("RawFileSystem", rawFileSystem);
     }
     protected override void OnStart()
     {

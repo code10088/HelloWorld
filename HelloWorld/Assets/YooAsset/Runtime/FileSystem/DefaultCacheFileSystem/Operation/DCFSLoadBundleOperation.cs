@@ -19,7 +19,6 @@ namespace YooAsset
         protected readonly PackageBundle _bundle;
         protected FSDownloadFileOperation _downloadFileOp;
         protected AssetBundleCreateRequest _createRequest;
-        protected bool _isWaitForAsyncComplete = false;
         protected ESteps _steps = ESteps.None;
 
 
@@ -90,7 +89,7 @@ namespace YooAsset
                     }
                 }
 
-                if (_isWaitForAsyncComplete)
+                if (IsWaitForAsyncComplete)
                 {
                     if (_bundle.Encrypted)
                     {
@@ -122,7 +121,7 @@ namespace YooAsset
             {
                 if (_createRequest != null)
                 {
-                    if (_isWaitForAsyncComplete)
+                    if (IsWaitForAsyncComplete)
                     {
                         // 强制挂起主线程（注意：该操作会很耗时）
                         YooLogger.Warning("Suspend the main thread to load unity bundle.");
@@ -197,8 +196,6 @@ namespace YooAsset
         }
         internal override void InternalWaitForAsyncComplete()
         {
-            _isWaitForAsyncComplete = true;
-
             while (true)
             {
                 if (_downloadFileOp != null)

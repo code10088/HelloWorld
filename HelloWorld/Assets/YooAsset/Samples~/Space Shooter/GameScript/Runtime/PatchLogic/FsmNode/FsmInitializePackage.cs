@@ -34,6 +34,7 @@ internal class FsmInitializePackage : IStateNode
         var playMode = (EPlayMode)_machine.GetBlackboardValue("PlayMode");
         var packageName = (string)_machine.GetBlackboardValue("PackageName");
         var buildPipeline = (string)_machine.GetBlackboardValue("BuildPipeline");
+        var rawFileSystem = (bool)_machine.GetBlackboardValue("RawFileSystem");
 
         // 创建资源包裹类
         var package = YooAssets.TryGetPackage(packageName);
@@ -54,7 +55,10 @@ internal class FsmInitializePackage : IStateNode
         if (playMode == EPlayMode.OfflinePlayMode)
         {
             var createParameters = new OfflinePlayModeParameters();
-            createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
+            if (rawFileSystem)
+                createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinRawFileSystemParameters();
+            else
+                createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
             initializationOperation = package.InitializeAsync(createParameters);
         }
 
@@ -65,8 +69,16 @@ internal class FsmInitializePackage : IStateNode
             string fallbackHostServer = GetHostServerURL();
             IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
             var createParameters = new HostPlayModeParameters();
-            createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
-            createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices);
+            if (rawFileSystem)
+            {
+                createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinRawFileSystemParameters();
+                createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheRawFileSystemParameters(remoteServices);
+            }
+            else
+            {
+                createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
+                createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices);
+            }
             initializationOperation = package.InitializeAsync(createParameters);
         }
 
