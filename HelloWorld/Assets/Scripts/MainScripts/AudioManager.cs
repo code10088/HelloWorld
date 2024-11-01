@@ -109,7 +109,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             this.loop = loop;
             if (source) source.loop = loop;
         }
-        protected override void Delay()
+        public override void Delay()
         {
             if (source)
             {
@@ -137,11 +137,11 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             }
             base.Release();
         }
-        public override void LoadFinish()
+        public override void Finish(Object asset)
         {
             source = Instance.GetEmptyAudioSource();
             source.loop = loop;
-            var clip = obj as AudioClip;
+            var clip = asset as AudioClip;
             source.clip = clip;
             source.Play();
             if (!loop && timerId < 0) timerId = TimeManager.Instance.StartTimer(clip.length, finish: Stop);

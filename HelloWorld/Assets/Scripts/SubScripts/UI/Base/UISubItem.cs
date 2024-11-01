@@ -11,12 +11,13 @@ namespace HotAssembly
         private Transform parent;
         private int loadId;
         private Object asset;
-        private Action<bool> open = null;
-        private object[] param = null;
-
+        private AsyncInstantiateOperation<Object> aio;
         private LoadState state = LoadState.Release;
         private float releaseTime = 10f;
         private int timerId = -1;
+
+        private Action<bool> open = null;
+        private object[] param = null;
 
         /// <summary>
         /// 子界面
@@ -46,7 +47,9 @@ namespace HotAssembly
                 case LoadState.LoadFinish:
                     LoadFinish(loadId, asset);
                     break;
-                case LoadState.Instantiate:
+                case LoadState.Instantiating:
+                    break;
+                case LoadState.InstantiateFinish:
                     UIObj.SetActive(true);
                     OnEnable(param);
                     open?.Invoke(true);
@@ -68,8 +71,41 @@ namespace HotAssembly
             }
             else
             {
-                state = LoadState.Instantiate;
-                UIObj = Object.Instantiate(_asset, parent) as GameObject;
+                asset = _asset;
+                state = LoadState.Instantiating;
+                aio = Object.InstantiateAsync(_asset);
+                aio.completed += InstantiateFinish;
+            }
+        }
+        private void InstantiateFinish(AsyncOperation operation)
+        {
+            if (aio.Result.Length == 0)
+            {
+                Release(true);
+                open?.Invoke(false);
+            }
+            else if (state.HasFlag(LoadState.Release))
+            {
+                UIObj = aio.Result[0] as GameObject;
+                state = LoadState.InstantiateFinish | LoadState.Release;
+                UIObj.transform.SetParent(parent);
+                UIObj.transform.localPosition = Vector3.zero;
+                UIObj.transform.localRotation = Quaternion.identity;
+                UIObj.transform.localScale = Vector3.one;
+                RectTransform rt = UIObj.GetComponent<RectTransform>();
+                rt.anchoredPosition3D = Vector3.zero;
+                rt.anchorMin = Vector2.zero;
+                rt.anchorMax = Vector2.one;
+                rt.sizeDelta = Vector2.zero;
+                UIObj.SetActive(false);
+                Init();
+                open?.Invoke(false);
+            }
+            else
+            {
+                UIObj = aio.Result[0] as GameObject;
+                state = LoadState.InstantiateFinish;
+                UIObj.transform.SetParent(parent);
                 UIObj.transform.localPosition = Vector3.zero;
                 UIObj.transform.localRotation = Quaternion.identity;
                 UIObj.transform.localScale = Vector3.one;
@@ -86,7 +122,7 @@ namespace HotAssembly
         private void Release(bool immediate = false)
         {
             UIObj?.SetActive(false);
-            if (state.HasFlag(LoadState.Instantiate)) OnDisable();
+            if (state.HasFlag(LoadState.InstantiateFinish)) OnDisable();
             if (immediate) _Release();
             else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);
             state |= LoadState.Release;
@@ -94,21 +130,22 @@ namespace HotAssembly
         private void _Release()
         {
             OnDestroy();
+            parent = null;
             asset = null;
+            aio = null;
             if (UIObj != null) GameObject.Destroy(UIObj);
             UIObj = null;
             AssetManager.Instance.Unload(ref loadId);
-            parent = null;
-            open = null;
-            param = null;
             state = LoadState.Release;
             releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMinS, 0.2f);
             TimeManager.Instance.StopTimer(timerId);
             timerId = -1;
+            open = null;
+            param = null;
         }
         private void Recycle()
         {
-            state &= LoadState.Instantiate | LoadState.LoadFinish | LoadState.Loading;
+            state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
             releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.2f);
             TimeManager.Instance.StopTimer(timerId);
             timerId = -1;

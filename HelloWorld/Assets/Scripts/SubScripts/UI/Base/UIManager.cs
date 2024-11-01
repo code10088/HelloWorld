@@ -142,18 +142,19 @@ namespace HotAssembly
             private UIConfig config;
             private UIBase baseUI;
             private Object asset;
+            private AsyncInstantiateOperation<Object> aio;
             private GameObject baseObj;
-            private Action<bool> open = null;
-            private object[] param = null;
-
             private LoadState state = LoadState.Release;
             private float releaseTime = GameSetting.recycleTimeMinS;
             private int timerId = -1;
 
+            private Action<bool> open = null;
+            private object[] param = null;
+
             public UIType Type => config.UIType;
             public UIWindowType UIWindowType => config.UIWindowType;
             public UIBase BaseUI => baseUI;
-            public bool State => state > LoadState.LoadFinish;
+            public bool State => state >= LoadState.InstantiateFinish;
 
             public UIItem(UIType type)
             {
@@ -183,9 +184,10 @@ namespace HotAssembly
                     case LoadState.LoadFinish:
                         LoadFinish(loadId, asset);
                         break;
-                    case LoadState.Instantiate:
-                        Instance.SetEventSystemState(true);
-                        Instance.InitUI();
+                    case LoadState.Instantiating:
+                        break;
+                    case LoadState.InstantiateFinish:
+                        Finish();
                         break;
                 }
             }
@@ -194,16 +196,35 @@ namespace HotAssembly
                 if (_asset == null)
                 {
                     Release(true);
+                    Finish();
                 }
                 else if (state.HasFlag(LoadState.Release))
                 {
                     asset = _asset;
                     state = LoadState.LoadFinish | LoadState.Release;
+                    Finish();
                 }
                 else
                 {
-                    state = LoadState.Instantiate;
-                    baseObj = Object.Instantiate(_asset, Instance.Layers[config.UIWindowType]) as GameObject;
+                    asset = _asset;
+                    state = LoadState.Instantiating;
+                    aio = Object.InstantiateAsync(_asset);
+                    aio.completed += InstantiateFinish;
+                }
+            }
+            private void InstantiateFinish(AsyncOperation operation)
+            {
+                if (aio.Result.Length == 0)
+                {
+                    Release(true);
+                }
+                else
+                {
+                    baseObj = aio.Result[0] as GameObject;
+                    bool release = state.HasFlag(LoadState.Release);
+                    state = LoadState.InstantiateFinish;
+                    if (release) state |= LoadState.Release;
+                    baseObj.transform.SetParent(Instance.Layers[config.UIWindowType]);
                     baseObj.transform.localPosition = Vector3.zero;
                     baseObj.transform.localRotation = Quaternion.identity;
                     baseObj.transform.localScale = Vector3.one;
@@ -214,6 +235,10 @@ namespace HotAssembly
                     rt.sizeDelta = Vector2.zero;
                     baseObj.SetActive(false);
                 }
+                Finish();
+            }
+            private void Finish()
+            {
                 Instance.SetEventSystemState(true);
                 Instance.InitUI();
             }
@@ -257,19 +282,20 @@ namespace HotAssembly
                 if (baseUI != null) baseUI.OnDestroy();
                 baseUI = null;
                 asset = null;
+                aio = null;
                 if (baseObj != null) GameObject.Destroy(baseObj);
                 baseObj = null;
                 AssetManager.Instance.Unload(ref loadId);
-                open = null;
-                param = null;
                 state = LoadState.Release;
                 releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMinS, 0.2f);
                 TimeManager.Instance.StopTimer(timerId);
                 timerId = -1;
+                open = null;
+                param = null;
             }
             private void Recycle()
             {
-                state &= LoadState.Instantiate | LoadState.LoadFinish | LoadState.Loading;
+                state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
                 releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.2f);
                 TimeManager.Instance.StopTimer(timerId);
                 timerId = -1;

@@ -168,8 +168,9 @@ public enum LoadState
     None = 0,
     Loading = 1,
     LoadFinish = 2,
-    Instantiate = 4,
-    Release = 8,
+    Instantiating = 4,
+    InstantiateFinish = 8,
+    Release = 16,
 }
 /// <summary>
 /// 父节点删除时必须Release，否则加载状态会错乱(虽有办法避免，但不卸载导致的资源常驻无法避免)
@@ -179,6 +180,7 @@ public class LoadGameObjectItem
     protected string path;
     protected Transform parent;
     protected Object asset;
+    private AsyncInstantiateOperation<Object> aio;
     protected GameObject obj;
     private int loadId;
     private LoadState state = LoadState.Release;
@@ -220,7 +222,9 @@ public class LoadGameObjectItem
             case LoadState.LoadFinish:
                 LoadFinish(loadId, asset);
                 break;
-            case LoadState.Instantiate:
+            case LoadState.Instantiating:
+                break;
+            case LoadState.InstantiateFinish:
                 obj.SetActive(true);
                 Finish(obj);
                 break;
@@ -241,8 +245,35 @@ public class LoadGameObjectItem
         }
         else
         {
-            state = LoadState.Instantiate;
-            obj = Object.Instantiate(_asset, parent) as GameObject;
+            asset = _asset;
+            state = LoadState.Instantiating;
+            aio = Object.InstantiateAsync(_asset);
+            aio.completed += InstantiateFinish;
+        }
+    }
+    private void InstantiateFinish(AsyncOperation operation)
+    {
+        if (aio.Result.Length == 0)
+        {
+            Release();
+            Finish(null);
+        }
+        else if (state.HasFlag(LoadState.Release))
+        {
+            obj = aio.Result[0] as GameObject;
+            state = LoadState.InstantiateFinish | LoadState.Release;
+            obj.transform.SetParent(parent);
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
+            obj.transform.localScale = Vector3.one;
+            obj.SetActive(false);
+            Finish(null);
+        }
+        else
+        {
+            obj = aio.Result[0] as GameObject;
+            state = LoadState.InstantiateFinish;
+            obj.transform.SetParent(parent);
             obj.transform.localPosition = Vector3.zero;
             obj.transform.localRotation = Quaternion.identity;
             obj.transform.localScale = Vector3.one;
@@ -263,6 +294,7 @@ public class LoadGameObjectItem
     {
         parent = null;
         asset = null;
+        aio = null;
         if (obj != null) GameObject.Destroy(obj);
         obj = null;
         AssetManager.Instance.Unload(ref loadId);
@@ -273,7 +305,7 @@ public class LoadGameObjectItem
     }
     private void Recycle()
     {
-        state &= LoadState.Instantiate | LoadState.LoadFinish | LoadState.Loading;
+        state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
         timer += GameSetting.recycleTimeS;
         timer = Math.Min(timer, GameSetting.recycleTimeMaxS);
         TimeManager.Instance.StopTimer(timerId);

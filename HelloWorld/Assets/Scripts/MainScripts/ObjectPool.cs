@@ -35,7 +35,6 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
     private List<T> wait = new();
     private List<T> cache = new();
     private int cacheCount = 10;
-    private int frameId = -1;
 
     public List<T> Use => use;
     public int CacheCount => cacheCount;
@@ -47,7 +46,7 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
         use.Remove(temp);
         wait.Remove(temp);
         if (cache.Count >= cacheCount) temp.Release();
-        else { temp.SetActive(false); cache.Add(temp); }
+        else { temp.Delay(); cache.Add(temp); }
     }
     public T Dequeue(Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
     {
@@ -56,7 +55,6 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
         if (temp != null) cache.RemoveAt(0);
         else temp = new T();
         temp.Init(parent, Delete, action, param);
-        temp.SetActive(true);
         use.Add(temp);
         wait.Add(temp);
         Load<GameObject>();
@@ -66,11 +64,9 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
     {
         for (int i = use.Count - 1; i >= 0; i--) use[i].Release();
         for (int i = cache.Count - 1; i >= 0; i--) cache[i].Release();
-        FrameManager.Instance.StopFrame(frameId);
         use.Clear();
         wait.Clear();
         cache.Clear();
-        frameId = -1;
         base.Release();
     }
     private void Delete(int itemId)
@@ -92,21 +88,8 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
     }
     protected override void Finish(Object asset)
     {
-        if (asset == null) return;
-        if (frameId < 0) frameId = FrameManager.Instance.StartFrame(0, 1, Instantiate);
-    }
-    private void Instantiate(int frame)
-    {
-        if (wait.Count == 0)
-        {
-            FrameManager.Instance.StopFrame(frameId);
-            frameId = -1;
-        }
-        else
-        {
-            wait[0].Instantiate(asset);
-            wait.RemoveAt(0);
-        }
+        for (int i = 0; i < wait.Count; i++) wait[i].InstantiateAsync(asset);
+        wait.Clear();
     }
 }
 public class GameObjectPoolItem
@@ -114,7 +97,10 @@ public class GameObjectPoolItem
     private static int uniqueId = 0;
     private int itemId = -1;
     private Transform parent;
+    protected Object asset;
+    private AsyncInstantiateOperation<Object> aio;
     protected GameObject obj;
+    private LoadState state = LoadState.None;
     private int timerId = -1;
 
     private Action<int> release;
@@ -133,56 +119,93 @@ public class GameObjectPoolItem
         this.param = param;
     }
     [Obsolete("请使用GameObjectPool")]
-    public void SetActive(bool b)
+    public void InstantiateAsync(Object _asset)
     {
-        if (b) Recycle();
-        else Delay();
-    }
-    protected virtual void Delay()
-    {
-        if (obj == null)
+        if (state.HasFlag(LoadState.Release))
+        {
+            Recycle();
+        }
+        if (_asset == null)
         {
             Release();
+            Finish(null);
+        }
+        else if (state == LoadState.None)
+        {
+            asset = _asset;
+            state = LoadState.Instantiating;
+            aio = Object.InstantiateAsync(_asset);
+            aio.completed += InstantiateFinish;
+        }
+        else if (state == LoadState.InstantiateFinish)
+        {
+            Finish(obj);
+        }
+    }
+    private void InstantiateFinish(AsyncOperation operation)
+    {
+        if (aio.Result.Length == 0)
+        {
+            Release();
+            Finish(null);
+        }
+        else if (state.HasFlag(LoadState.Release))
+        {
+            obj = aio.Result[0] as GameObject;
+            state = LoadState.InstantiateFinish | LoadState.Release;
+            obj.SetActive(false);
+            Finish(null);
         }
         else
         {
-            obj.SetActive(false);
-            if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
-            param = null;
+            obj = aio.Result[0] as GameObject;
+            state = LoadState.InstantiateFinish;
+            Finish(obj);
         }
+    }
+    protected virtual void Finish(GameObject obj)
+    {
+        if (obj != null)
+        {
+            obj.SetActive(true);
+            obj.transform.SetParent(parent);
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
+            obj.transform.localScale = Vector3.one;
+        }
+        if (action != null)
+        {
+            action?.Invoke(itemId, obj, param);
+        }
+    }
+    public virtual void Delay()
+    {
+        obj?.SetActive(false);
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
+        state |= LoadState.Release;
+        action = null;
+        param = null;
     }
     [Obsolete("请使用GameObjectPool")]
     public virtual void Release()
     {
-        TimeManager.Instance.StopTimer(timerId);
-        if (obj != null) GameObject.Destroy(obj);
-        release?.Invoke(itemId);
         itemId = -1;
+        parent = null;
+        asset = null;
+        aio = null;
+        if (obj != null) GameObject.Destroy(obj);
         obj = null;
+        state = LoadState.None;
+        TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
+        release?.Invoke(itemId);
         release = null;
-        action = null;
-        param = null;
     }
     private void Recycle()
     {
+        state &= LoadState.InstantiateFinish | LoadState.Instantiating;
         TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
-        if (obj != null) obj.SetActive(true);
-    }
-    [Obsolete("请使用GameObjectPool")]
-    public void Instantiate(Object asset)
-    {
-        if (obj == null) obj = Object.Instantiate(asset, parent) as GameObject;
-        obj.transform.localPosition = Vector3.zero;
-        obj.transform.localRotation = Quaternion.identity;
-        obj.transform.localScale = Vector3.one;
-        obj.SetActive(true);
-        LoadFinish();
-    }
-    protected virtual void LoadFinish()
-    {
-        action?.Invoke(itemId, obj, param);
     }
 }
 
@@ -230,7 +253,7 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
         use.Remove(temp);
         wait.Remove(temp);
         if (cache.Count >= cacheCount) temp.Release();
-        else { temp.SetActive(false); cache.Add(temp); }
+        else { temp.Delay(); cache.Add(temp); }
     }
     public T Dequeue<K>(Action<int, Object, object[]> action = null, params object[] param) where K : Object
     {
@@ -239,7 +262,6 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
         if (temp != null) cache.RemoveAt(0);
         else temp = new T();
         temp.Init(Delete, action, param);
-        temp.SetActive(true);
         use.Add(temp);
         wait.Add(temp);
         Load<K>();
@@ -273,8 +295,7 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
     }
     protected override void Finish(Object asset)
     {
-        if (asset == null) return;
-        for (int i = 0; i < wait.Count; i++) wait[i].Instantiate(asset);
+        for (int i = 0; i < wait.Count; i++) wait[i].InstantiateAsync(asset);
         wait.Clear();
     }
 }
@@ -282,7 +303,8 @@ public class AssetPoolItem
 {
     private static int uniqueId = 0;
     private int itemId = -1;
-    protected Object obj;
+    protected Object asset;
+    private LoadState state = LoadState.None;
     private int timerId = -1;
 
     private Action<int> release;
@@ -300,41 +322,49 @@ public class AssetPoolItem
         this.param = param;
     }
     [Obsolete("请使用AssetPool")]
-    public void SetActive(bool b)
+    public void InstantiateAsync(Object _asset)
     {
-        if (b) Recycle();
-        else Delay();
+        if (state == LoadState.Release)
+        {
+            Recycle();
+        }
+        if (_asset == null)
+        {
+            Release();
+            Finish(null);
+        }
+        else
+        {
+            asset = _asset;
+            Finish(asset);
+        }
     }
-    protected virtual void Delay()
+    public virtual void Finish(Object asset)
+    {
+        action?.Invoke(itemId, asset, param);
+    }
+    public virtual void Delay()
     {
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
+        state = LoadState.Release;
+        action = null;
         param = null;
     }
     [Obsolete("请使用AssetPool")]
     public virtual void Release()
     {
-        TimeManager.Instance.StopTimer(timerId);
-        release?.Invoke(itemId);
         itemId = -1;
-        obj = null;
+        asset = null;
+        state = LoadState.None;
+        TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
+        release?.Invoke(itemId);
         release = null;
-        action = null;
-        param = null;
     }
     private void Recycle()
     {
+        state = LoadState.None;
         TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
-    }
-    [Obsolete("请使用AssetPool")]
-    public void Instantiate(Object asset)
-    {
-        obj = asset;
-        LoadFinish();
-    }
-    public virtual void LoadFinish()
-    {
-        action?.Invoke(itemId, obj, param);
     }
 }
