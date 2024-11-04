@@ -2,7 +2,7 @@ fileFormatVersion: 2
 guid: 4f02f1929d038a24ea1188b73e3f1819
 AudioImporter:
   externalObjects: {}
-  serializedVersion: 7
+  serializedVersion: 8
   defaultSettings:
     serializedVersion: 2
     loadType: 0
@@ -13,7 +13,7 @@ AudioImporter:
     conversionMode: 0
     preloadAudioData: 1
   platformSettingOverrides:
-    1:
+    Android:
       serializedVersion: 2
       loadType: 0
       sampleRateSetting: 2
@@ -22,7 +22,7 @@ AudioImporter:
       quality: 0.7
       conversionMode: 0
       preloadAudioData: 1
-    4:
+    Standalone:
       serializedVersion: 2
       loadType: 0
       sampleRateSetting: 2
@@ -31,21 +31,21 @@ AudioImporter:
       quality: 0.7
       conversionMode: 0
       preloadAudioData: 1
-    7:
-      serializedVersion: 2
-      loadType: 0
-      sampleRateSetting: 2
-      sampleRateOverride: 44100
-      compressionFormat: 0
-      quality: 0.7
-      conversionMode: 0
-      preloadAudioData: 1
-    13:
+    WebGL:
       serializedVersion: 2
       loadType: 0
       sampleRateSetting: 2
       sampleRateOverride: 44100
       compressionFormat: 7
+      quality: 0.7
+      conversionMode: 0
+      preloadAudioData: 1
+    iPhone:
+      serializedVersion: 2
+      loadType: 0
+      sampleRateSetting: 2
+      sampleRateOverride: 44100
+      compressionFormat: 0
       quality: 0.7
       conversionMode: 0
       preloadAudioData: 1
