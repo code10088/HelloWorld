@@ -120,14 +120,16 @@ public class SKCP
             var buffer = new byte[len];
             if (kcp.Recv(buffer) >= 0)
             {
-                Deserialize(buffer);
+                bool success = Deserialize(buffer);
+                if (!success) return;
             }
         }
     }
-    private void Deserialize(byte[] buffer)
+    private bool Deserialize(byte[] buffer)
     {
         bool success = SocketManager.Instance.Deserialize(buffer);
         if (!success) Reconect();
+        return success;
     }
     #endregion
 

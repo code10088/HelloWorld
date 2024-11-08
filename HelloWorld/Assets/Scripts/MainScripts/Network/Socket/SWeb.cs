@@ -133,17 +133,19 @@ public class SWeb
                 bodyPos += l;
                 if (bodyPos == bodyLength)
                 {
-                    Deserialize(bodyBuffer);
+                    bool success = Deserialize(bodyBuffer);
+                    if (!success) return;
                     headPos = 0;
                     bodyPos = 0;
                 }
             }
         }
     }
-    private void Deserialize(byte[] bytes)
+    private bool Deserialize(byte[] bytes)
     {
         bool success = SocketManager.Instance.Deserialize(bytes);
         if (!success) Reconect();
+        return success;
     }
     #endregion
 
