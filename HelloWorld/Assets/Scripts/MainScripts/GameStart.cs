@@ -16,7 +16,6 @@ public class GameStart : MonoSingletion<GameStart>
     [RuntimeInitializeOnLoadMethod]
     private static void _()
     {
-        666;
         var scene = SceneManager.GetActiveScene();
         if (scene.buildIndex == 0) Instance.__();
     }

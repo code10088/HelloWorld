@@ -21,35 +21,17 @@ public class BuildEditor
 
     public static void Build()
     {
-        try
-        {
-            CheckArgs();
-            Generate();
-            HybridCLRGenerate();
-            YooAssetBuild();
-            UploadBundles2CDN();
-            BuildPlayer();
-        }
-        catch (Exception e)
-        {
-            GameDebug.LogError(e.Message);
-        }
+        BuildBundles();
+        BuildPlayer();
     }
     [MenuItem("Tools/BuildBundles", false, (int)ToolsMenuSort.BuildBundles)]
     public static void BuildBundles()
     {
-        try
-        {
-            CheckArgs();
-            Generate();
-            HybridCLRGenerate();
-            YooAssetBuild();
-            UploadBundles2CDN();
-        }
-        catch (Exception e)
-        {
-            GameDebug.LogError(e.Message);
-        }
+        CheckArgs();
+        Generate();
+        HybridCLRGenerate();
+        YooAssetBuild();
+        UploadBundles2CDN();
     }
 
     private static void HideSubScripts(bool b)

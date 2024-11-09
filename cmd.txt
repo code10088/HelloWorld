@@ -26,9 +26,9 @@ windows
 			杀进程taskkill -f -pid xxx
 	Jenkins导入导出配置
 		cd jenkins-cli.jar目录
-		java -jar jenkins-cli.jar -s http://localhost:8888 -auth qinshuai:123456 get-job BuildAndroid > BuildAndroid.xml
-		java -jar jenkins-cli.jar -s http://localhost:8888 -auth qinshuai:123456 create-job BuildAndroid
-		BuildAndroid.xml
+		java -jar jenkins-cli.jar -s http://localhost:8888 -auth qinshuai:123456 get-job HelloWorld > HelloWorld.xml
+		java -jar jenkins-cli.jar -s http://localhost:8888 -auth qinshuai:123456 create-job HelloWorld
+		HelloWorld.xml
 
 mac
 	环境变量
