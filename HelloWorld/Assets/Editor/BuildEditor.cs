@@ -21,9 +21,37 @@ public class BuildEditor
 
     public static void Build()
     {
-        BuildBundles();
-        BuildPlayer();
+        try
+        {
+            CheckArgs();
+            Generate();
+            HybridCLRGenerate();
+            YooAssetBuild();
+            UploadBundles2CDN();
+            BuildPlayer();
+        }
+        catch (Exception e)
+        {
+            GameDebug.LogError(e.Message);
+        }
     }
+    [MenuItem("Tools/BuildBundles", false, (int)ToolsMenuSort.BuildBundles)]
+    public static void BuildBundles()
+    {
+        try
+        {
+            CheckArgs();
+            Generate();
+            HybridCLRGenerate();
+            YooAssetBuild();
+            UploadBundles2CDN();
+        }
+        catch (Exception e)
+        {
+            GameDebug.LogError(e.Message);
+        }
+    }
+
     private static void HideSubScripts(bool b)
     {
         string source = Application.dataPath + "/Scripts/SubScripts";
@@ -31,25 +59,16 @@ public class BuildEditor
         if (b)
         {
             if (Directory.Exists(dest)) Directory.Delete(dest, true);
-            Directory.Move(source, dest);
+            if (Directory.Exists(source)) Directory.Move(source, dest);
         }
         else
         {
             if (Directory.Exists(source)) Directory.Delete(source, true);
-            Directory.Move(dest, source);
+            if (Directory.Exists(dest)) Directory.Move(dest, source);
         }
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/BuildBundles", false, (int)ToolsMenuSort.BuildBundles)]
-    public static void BuildBundles()
-    {
-        CheckArgs();
-        Generate();
-        HybridCLRGenerate();
-        YooAssetBuild();
-        UploadBundles2CDN();
-    }
     private static void CheckArgs()
     {
         string[] args = Environment.GetCommandLineArgs();
@@ -66,9 +85,9 @@ public class BuildEditor
                 latestAppVersion = index == 0;
                 appversion = config.AppVersions[index];
                 PlayerSettings.bundleVersion = appversion;
-                Debug.Log("appversion:" + appversion);
+                GameDebug.Log("appversion:" + appversion);
                 resversion = config.ResVersions[index];
-                Debug.Log("resversion:" + resversion);
+                GameDebug.Log("resversion:" + resversion);
             }
             else if (args[i].StartsWith("--development:"))
             {
@@ -120,50 +139,48 @@ public class BuildEditor
         string strMSBuildPath = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.MSBuildPath);
         if (string.IsNullOrEmpty(strMSBuildPath) || !File.Exists(strMSBuildPath))
         {
-            EditorUtility.DisplayDialog("Error", "需要配置MSBuild路径：Preference->Customer->MSBuild路径", "Ok");
+            GameDebug.LogError("需要配置MSBuild路径：Preference->Customer->MSBuild路径");
+            throw new Exception();
         }
-        else
+        try
         {
-            try
-            {
-                string strParam = newProjectPath + "/" + newProjectName + ".sln /t:Rebuild /p:Configuration=Debug";
-                System.Diagnostics.Process msbuild = System.Diagnostics.Process.Start(strMSBuildPath, strParam);
-                msbuild.WaitForExit();
-                msbuild.Close();
-                File.Copy($"{Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
-            }
-            catch (Exception e)
-            {
-                GameDebug.LogError(e.Message);
-                throw e;
-            }
+            string strParam = newProjectPath + "/" + newProjectName + ".sln /t:Rebuild /p:Configuration=Debug";
+            System.Diagnostics.Process msbuild = System.Diagnostics.Process.Start(strMSBuildPath, strParam);
+            msbuild.WaitForExit();
+            msbuild.Close();
+            File.Copy($"{Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
             AssetDatabase.Refresh();
+        }
+        catch (Exception e)
+        {
+            GameDebug.LogError(e.Message);
+            throw e;
         }
     }
 
     [MenuItem("Tools/HybridCLRGenerate", false, (int)ToolsMenuSort.HybridCLRGenerate)]
     public static void HybridCLRGenerate()
     {
-        HideSubScripts(true);
         try
         {
+            HideSubScripts(true);
             PrebuildCommand.GenerateAll();
+            HideSubScripts(false);
+            TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(GameSetting.HotUpdateConfigPath);
+            var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
+            string stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
+            for (int i = 0; i < config.Metadata.Count; i++)
+            {
+                var path = config.Metadata[i];
+                var name = Path.GetFileNameWithoutExtension(path);
+                File.Copy($"{stripDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
+            }
         }
         catch (Exception e)
         {
             HideSubScripts(false);
             GameDebug.LogError(e.Message);
             throw e;
-        }
-        HideSubScripts(false);
-        TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(GameSetting.HotUpdateConfigPath);
-        var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
-        string stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
-        for (int i = 0; i < config.Metadata.Count; i++)
-        {
-            var path = config.Metadata[i];
-            var name = Path.GetFileNameWithoutExtension(path);
-            File.Copy($"{stripDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
         }
     }
 
@@ -191,10 +208,18 @@ public class BuildEditor
 #endif
         buildParameters.CompressOption = ECompressOption.LZ4;
 
-        ScriptableBuildPipeline pipeline = new ScriptableBuildPipeline();
-        var buildResult = pipeline.Run(buildParameters, true);
-        if (buildResult.Success) Debug.Log("build success");
-        else Debug.LogError($"build fail:{buildResult.ErrorInfo}");
+        try
+        {
+            ScriptableBuildPipeline pipeline = new ScriptableBuildPipeline();
+            var buildResult = pipeline.Run(buildParameters, true);
+            if (buildResult.Success) GameDebug.Log("build success");
+            else throw new Exception($"build fail:{buildResult.ErrorInfo}");
+        }
+        catch (Exception e)
+        {
+            GameDebug.LogError(e.Message);
+            throw e;
+        }
     }
     private static void CheckAppVersion()
     {
@@ -232,12 +257,12 @@ public class BuildEditor
             PutObjectResult result = cosXml.PutObject(request);
             if (result.IsSuccessful())
             {
-                Debug.Log("upload file success:" + path);
+                GameDebug.Log("upload file success:" + path);
             }
             else
             {
-                Debug.LogError("upload bundle fail：" + path);
-                Debug.LogError(result.GetResultInfo());
+                GameDebug.LogError("upload bundle fail：" + path);
+                GameDebug.LogError(result.GetResultInfo());
             }
         }
 
@@ -259,12 +284,12 @@ public class BuildEditor
         PutObjectResult result = cosXml.PutObject(request);
         if (result.IsSuccessful())
         {
-            Debug.Log("upload file success:" + path);
+            GameDebug.Log("upload file success:" + path);
         }
         else
         {
-            Debug.LogError("upload file fail:" + path);
-            Debug.LogError(result.GetResultInfo());
+            GameDebug.LogError("upload file fail:" + path);
+            GameDebug.LogError(result.GetResultInfo());
         }
     }
 
@@ -285,10 +310,12 @@ public class BuildEditor
         buildPlayerPath = $"{buildPlayerPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
         Directory.CreateDirectory(Path.GetDirectoryName(buildPlayerPath));
 
-        HideSubScripts(true);
         try
         {
+            HideSubScripts(true);
             BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
+            HideSubScripts(false);
+            if (latestAppVersion) UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{GameSetting.AppName}", buildPlayerPath);
         }
         catch (Exception e)
         {
@@ -296,8 +323,6 @@ public class BuildEditor
             GameDebug.LogError(e.Message);
             throw e;
         }
-        HideSubScripts(false);
-        if (latestAppVersion) UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{GameSetting.AppName}", buildPlayerPath);
     }
     private static void IOSBuild()
     {
@@ -306,10 +331,11 @@ public class BuildEditor
         buildPlayerPath = $"{buildPlayerPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
         Directory.CreateDirectory(Path.GetDirectoryName(buildPlayerPath));
 
-        HideSubScripts(true);
         try
         {
+            HideSubScripts(true);
             BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
+            HideSubScripts(false);
         }
         catch (Exception e)
         {
@@ -317,37 +343,36 @@ public class BuildEditor
             GameDebug.LogError(e.Message);
             throw e;
         }
-        HideSubScripts(false);
     }
     [MenuItem("Tools/WeChatBuild", false, (int)ToolsMenuSort.WeChatBuild)]
     public static void WeChatBuild()
     {
-        HideSubScripts(true);
-        WXConvertCore.WXExportError result;
         try
         {
+            HideSubScripts(true);
+            WXConvertCore.WXExportError result;
             result = WXConvertCore.DoExport();
+            HideSubScripts(false);
+            if (result == WXConvertCore.WXExportError.SUCCEED)
+            {
+                string packageOutputDir = $"{WXConvertCore.config.ProjectConf.DST}/webgl";
+                DirectoryInfo dir = new DirectoryInfo(packageOutputDir);
+                FileInfo[] fileInfos = dir.GetFiles();
+                for (int i = 0; i < fileInfos.Length; i++)
+                {
+                    string name = fileInfos[i].Name;
+                    if (name.EndsWith(".webgl.data.unityweb.bin.txt"))
+                    {
+                        UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{name}", fileInfos[i].FullName);
+                    }
+                }
+            }
         }
         catch (Exception e)
         {
             HideSubScripts(false);
             GameDebug.LogError(e.Message);
             throw e;
-        }
-        HideSubScripts(false);
-        if (result == WXConvertCore.WXExportError.SUCCEED)
-        {
-            string packageOutputDir = $"{WXConvertCore.config.ProjectConf.DST}/webgl";
-            DirectoryInfo dir = new DirectoryInfo(packageOutputDir);
-            FileInfo[] fileInfos = dir.GetFiles();
-            for (int i = 0; i < fileInfos.Length; i++)
-            {
-                string name = fileInfos[i].Name;
-                if (name.EndsWith(".webgl.data.unityweb.bin.txt"))
-                {
-                    UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{name}", fileInfos[i].FullName);
-                }
-            }
         }
     }
 }
