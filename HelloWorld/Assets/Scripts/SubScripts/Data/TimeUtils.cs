@@ -4,6 +4,6 @@ namespace HotAssembly
 	{
 		private static float serverTime;
 
-		public static float ServerTime => UnityEngine.Time.realtimeSinceStartup;
+		public static float ServerTime => UnityEngine.Time.time;
 	}
 }

@@ -23,7 +23,7 @@ namespace YooAsset
         {
             get
             {
-                return Time.realtimeSinceStartup - FrameTime >= MaxTimeSlice;
+                return Time.time - FrameTime >= MaxTimeSlice;
             }
         }
 

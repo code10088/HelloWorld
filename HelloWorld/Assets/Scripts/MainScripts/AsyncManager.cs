@@ -40,7 +40,7 @@ public class AsyncManager : Singletion<AsyncManager>
     }
     public void Update()
     {
-        float t = Time.realtimeSinceStartup;
+        float t = Time.time;
         float delta = t - timeMark;
         timeMark = t;
         YooAssets.SetOperationSystemFrameTime(t);
@@ -73,18 +73,18 @@ public class AsyncManager : Singletion<AsyncManager>
                     array2[idx] = null;
                 }
             }
-            if (Time.realtimeSinceStartup - t > GameSetting.updateTimeSliceS)
+            if (Time.time - t > GameSetting.updateTimeSliceS)
             {
                 idxMark = (idx + 1) % Math.Max(1, array2.Count);
                 return;
             }
         }
-        if (Time.realtimeSinceStartup - gcTimer > GameSetting.gcTimeIntervalS)
+        if (Time.time - gcTimer > GameSetting.gcTimeIntervalS)
         {
             array1.Trim();
             array2.Trim();
 
-            gcTimer = Time.realtimeSinceStartup;
+            gcTimer = Time.time;
             GC.Collect();
         }
     }
