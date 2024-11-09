@@ -13,7 +13,7 @@ taskkill /f /im Unity.exe
 -quit ^
 -batchmode ^
 -projectPath "D:/HelloWorld/HelloWorld" ^
--logFile "D:/HelloWorld/Build/build.log" ^
+-logFile - ^
 -executeMethod %2 ^
 --appversion:%3 ^
 --development:%4 ^
