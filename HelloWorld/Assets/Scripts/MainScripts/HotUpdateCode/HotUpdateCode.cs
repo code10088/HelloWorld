@@ -48,8 +48,6 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     private void CheckVersion()
     {
         Downloader.Instance.Download($"{GameSetting.Instance.CDNPlatform}VersionConfig.txt", string.Empty, CheckVersion);
-
-        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckVersion.ToString());
     }
     private void CheckVersion(string url, byte[] result)
     {
@@ -80,8 +78,6 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     {
         var operation = AssetManager.Package.UpdatePackageManifestAsync(resVersion);
         operation.Completed += CheckPackageManifest;
-
-        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.CheckPackageManifest.ToString());
     }
     private void CheckPackageManifest(AsyncOperationBase o)
     {
@@ -94,8 +90,6 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     {
         var operation = AssetManager.Package.ClearUnusedBundleFilesAsync();
         operation.Completed += ClearPackageUnusedCacheFiles;
-
-        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.ClearPackageUnusedCacheFiles.ToString());
     }
     private void ClearPackageUnusedCacheFiles(AsyncOperationBase o)
     {
@@ -114,8 +108,6 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
             downloaderOperation.OnDownloadOverCallback = CheckDownloadHotUpdateConfig;
             downloaderOperation.OnDownloadErrorCallback = DownloadError;
             downloaderOperation.BeginDownload();
-
-            UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateConfig.ToString());
         }
         else
         {
@@ -138,8 +130,6 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     {
         int loadId = -1;
         AssetManager.Instance.Load<TextAsset>(ref loadId, GameSetting.HotUpdateConfigPath, CheckDownloadHotUpdateRes);
-
-        UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.LoadHotUpdateConfig.ToString());
     }
     #endregion
 
@@ -165,8 +155,6 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
             downloaderOperation.OnDownloadProgressCallback = DownloadingHotUpdateRes;
             downloaderOperation.OnDownloadErrorCallback = DownloadError;
             downloaderOperation.BeginDownload();
-
-            UIHotUpdateCode.Instance.SetText(HotUpdateCodeStep.DownloadingHotUpdateRes.ToString());
         }
         else
         {
@@ -183,7 +171,6 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     }
     private void DownloadingHotUpdateRes(int totalDownloadCount, int currentDownloadCount, long totalDownloadBytes, long currentDownloadBytes)
     {
-        UIHotUpdateCode.Instance.SetText($"{HotUpdateCodeStep.DownloadingHotUpdateRes}：{currentDownloadBytes}/{totalDownloadBytes}");
         float f = (float)HotUpdateCodeStep.LoadHotUpdateConfig / (float)HotUpdateCodeStep.Max;
         float w = (HotUpdateCodeStep.DownloadingHotUpdateRes - HotUpdateCodeStep.LoadHotUpdateConfig) / (float)HotUpdateCodeStep.Max;
         f += currentDownloadBytes / totalDownloadBytes * w;
