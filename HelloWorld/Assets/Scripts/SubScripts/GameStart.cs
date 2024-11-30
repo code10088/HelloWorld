@@ -1,4 +1,5 @@
 ﻿using cfg;
+using UnityEngine;
 
 namespace HotAssembly
 {
@@ -24,16 +25,25 @@ namespace HotAssembly
         }
         private void InitConfig(bool success)
         {
-            UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
-            ConfigManager.Instance.Init(InitSetting);
+            ConfigManager.Instance.Init(WarmUpShader);
         }
-        private void InitSetting() 
+        private void WarmUpShader()
         {
+            int loadId = -1;
+            AssetManager.Instance.Load<ShaderVariantCollection>(ref loadId, $"{ZResConst.ResShderPath}MyShaderVariants.shadervariants", InitSetting);
+        }
+        private void InitSetting(int loadId, Object asset)
+        {
+            var svc = asset as ShaderVariantCollection;
+            svc.WarmUp();
+            AssetManager.Instance.Unload(ref loadId);
+
             DPUtil.Init();
             EnterMainScene();
         }
         private void EnterMainScene()
         {
+            UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             DataManager.Instance.GuideData.Init();
             UIManager.Instance.OpenUI(UIType.UITest, CloseSceneLoading);
         }

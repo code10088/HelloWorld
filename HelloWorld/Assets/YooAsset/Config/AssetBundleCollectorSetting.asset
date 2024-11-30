@@ -81,7 +81,7 @@ MonoBehaviour:
         CollectorGUID: 295515cf7f194734791e8eb1b8fe28cc
         CollectorType: 0
         AddressRuleName: AddressDisable
-        PackRuleName: PackCollector
+        PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
@@ -97,7 +97,7 @@ MonoBehaviour:
         CollectorGUID: 2f2a43019bbc0f24f889a6ebb546d320
         CollectorType: 0
         AddressRuleName: AddressDisable
-        PackRuleName: PackCollector
+        PackRuleName: PackDirectory
         FilterRuleName: CollectUserData
         AssetTags: 
         UserData: .png
@@ -137,7 +137,7 @@ MonoBehaviour:
         CollectorGUID: 0b2b9d4fe3dffad4eae317a8ac796efe
         CollectorType: 0
         AddressRuleName: AddressDisable
-        PackRuleName: PackCollector
+        PackRuleName: PackDirectory
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
@@ -153,10 +153,18 @@ MonoBehaviour:
         CollectorGUID: 0dbedf96f0896e6478cd3585a6f237ed
         CollectorType: 0
         AddressRuleName: AddressDisable
-        PackRuleName: PackCollector
+        PackRuleName: PackDirectory
         FilterRuleName: CollectUserData
         AssetTags: 
         UserData: .png
+      - CollectPath: Assets/ZRes/Shader
+        CollectorGUID: e7fa2046494f54d4dad9ddafb9835121
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackDirectory
+        FilterRuleName: CollectAll
+        AssetTags: 
+        UserData: 
     - GroupName: Debug
       GroupDesc: 
       AssetTags: 

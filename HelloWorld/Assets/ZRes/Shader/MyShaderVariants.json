@@ -1,6 +1,6 @@
 {
-    "ShaderTotalCount": 20,
-    "VariantTotalCount": 22,
+    "ShaderTotalCount": 22,
+    "VariantTotalCount": 24,
     "ShaderVariantInfos": [
         {
             "AssetPath": "Assets/ZRes/Shader/BRGTemplate.shader",
@@ -45,14 +45,8 @@
         {
             "AssetPath": "Assets/ZRes/Shader/UI/GuideClip.shader",
             "ShaderName": "URP/UI/GuideClip",
-            "ShaderVariantCount": 2,
+            "ShaderVariantCount": 1,
             "ShaderVariantElements": [
-                {
-                    "PassType": 0,
-                    "Keywords": [
-                        ""
-                    ]
-                },
                 {
                     "PassType": 0,
                     "Keywords": [
@@ -62,10 +56,30 @@
             ]
         },
         {
+            "AssetPath": "Packages/com.unity.render-pipelines.core/Runtime/RenderPipelineResources/FallbackShader.shader",
+            "ShaderName": "Hidden/Core/FallbackError",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
             "AssetPath": "Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader",
             "ShaderName": "Universal Render Pipeline/Lit",
-            "ShaderVariantCount": 2,
+            "ShaderVariantCount": 3,
             "ShaderVariantElements": [
+                {
+                    "PassType": 13,
+                    "Keywords": [
+                        "_ADDITIONAL_LIGHTS",
+                        "_MAIN_LIGHT_SHADOWS_CASCADE"
+                    ]
+                },
                 {
                     "PassType": 13,
                     "Keywords": [
@@ -90,7 +104,7 @@
                 {
                     "PassType": 0,
                     "Keywords": [
-                        ""
+                        "_DEPTH_MSAA_4"
                     ]
                 }
             ]
@@ -227,13 +241,26 @@
         },
         {
             "AssetPath": "Resources/unity_builtin_extra",
-            "ShaderName": "Hidden/UIElements/EditorUIE",
+            "ShaderName": "Hidden/TextCore/Distance Field SSD",
             "ShaderVariantCount": 1,
             "ShaderVariantElements": [
                 {
                     "PassType": 0,
                     "Keywords": [
                         ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Resources/unity_builtin_extra",
+            "ShaderName": "Hidden/UIElements/EditorUIE",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        "UIE_FORCE_GAMMA"
                     ]
                 }
             ]

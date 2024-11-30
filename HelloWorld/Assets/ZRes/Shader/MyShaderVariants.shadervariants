@@ -66,12 +66,17 @@ ShaderVariantCollection:
   - first: {fileID: 9103, guid: 0000000000000000f000000000000000, type: 0}
     second:
       variants:
+      - keywords: UIE_FORCE_GAMMA
+        passType: 0
+  - first: {fileID: 19011, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
       - keywords: 
         passType: 0
   - first: {fileID: 4800000, guid: d6dae50ee9e1bfa4db75f19f99355220, type: 3}
     second:
       variants:
-      - keywords: 
+      - keywords: _DEPTH_MSAA_4
         passType: 0
   - first: {fileID: 4800000, guid: e6e9a19c3678ded42a3bc431ebef7dbd, type: 3}
     second:
@@ -88,6 +93,8 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 8
+      - keywords: _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+        passType: 13
       - keywords: _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
         passType: 13
   - first: {fileID: 4800000, guid: d46ce16722e67f041b3d43e978899588, type: 3}
@@ -98,11 +105,14 @@ ShaderVariantCollection:
   - first: {fileID: 4800000, guid: b09c353d6cf00fe438189dd958a5ed0a, type: 3}
     second:
       variants:
-      - keywords: 
-        passType: 0
       - keywords: CIRCLE
         passType: 0
   - first: {fileID: 4800000, guid: 25e0483ecf14bb3449cd07f4db87043f, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 36e335017ad71d54fbb10842863188ae, type: 3}
     second:
       variants:
       - keywords: 
