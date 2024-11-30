@@ -5,28 +5,28 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "4e172129d8694c4006faf45d0a763f761a3c4c66"
+      "hash": "1f0053a3c91cbe041bbf9d1522e441bbb738d13c"
     },
     "com.code-philosophy.luban": {
       "version": "https://github.com/focus-creative-games/luban_unity.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "7dcd33fd67c7ffe73e88c741bf9ef89ee04aa521"
+      "hash": "57e577126c4bac9abef927babb848a457ad5d563"
     },
     "com.monitor1394.xcharts": {
       "version": "https://github.com/XCharts-Team/XCharts.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "d0d25b0221db6c3d4d7d4ad83250790b496d6e27"
+      "hash": "6c42fe63998b8bbf66e727b52486d55594e1df4e"
     },
     "com.qq.weixin.minigame": {
       "version": "https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "3d141a9620e185a1eedc10af1aad133dc849c536"
+      "hash": "65b7e866110df9c6fb2a9d6ee7ff5a57c6d77924"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -35,7 +35,7 @@
       "dependencies": {}
     },
     "com.unity.ai.navigation": {
-      "version": "2.0.4",
+      "version": "2.0.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
