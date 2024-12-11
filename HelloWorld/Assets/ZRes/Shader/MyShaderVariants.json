@@ -1,6 +1,6 @@
 {
-    "ShaderTotalCount": 22,
-    "VariantTotalCount": 24,
+    "ShaderTotalCount": 24,
+    "VariantTotalCount": 27,
     "ShaderVariantInfos": [
         {
             "AssetPath": "Assets/ZRes/Shader/BRGTemplate.shader",
@@ -76,8 +76,7 @@
                 {
                     "PassType": 13,
                     "Keywords": [
-                        "_ADDITIONAL_LIGHTS",
-                        "_MAIN_LIGHT_SHADOWS_CASCADE"
+                        ""
                     ]
                 },
                 {
@@ -97,14 +96,46 @@
             ]
         },
         {
-            "AssetPath": "Packages/com.unity.render-pipelines.universal/Shaders/Utils/CopyDepth.shader",
-            "ShaderName": "Hidden/Universal Render Pipeline/CopyDepth",
+            "AssetPath": "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/LutBuilderLdr.shader",
+            "ShaderName": "Hidden/Universal Render Pipeline/LutBuilderLdr",
             "ShaderVariantCount": 1,
             "ShaderVariantElements": [
                 {
                     "PassType": 0,
                     "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Packages/com.unity.render-pipelines.universal/Shaders/PostProcessing/UberPost.shader",
+            "ShaderName": "Hidden/Universal Render Pipeline/UberPost",
+            "ShaderVariantCount": 1,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        ""
+                    ]
+                }
+            ]
+        },
+        {
+            "AssetPath": "Packages/com.unity.render-pipelines.universal/Shaders/Utils/CopyDepth.shader",
+            "ShaderName": "Hidden/Universal Render Pipeline/CopyDepth",
+            "ShaderVariantCount": 2,
+            "ShaderVariantElements": [
+                {
+                    "PassType": 0,
+                    "Keywords": [
                         "_DEPTH_MSAA_4"
+                    ]
+                },
+                {
+                    "PassType": 0,
+                    "Keywords": [
+                        "_OUTPUT_DEPTH"
                     ]
                 }
             ]

@@ -78,6 +78,18 @@ ShaderVariantCollection:
       variants:
       - keywords: _DEPTH_MSAA_4
         passType: 0
+      - keywords: _OUTPUT_DEPTH
+        passType: 0
+  - first: {fileID: 4800000, guid: 65df88701913c224d95fc554db28381a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e7857e9d0c934dc4f83f270f8447b006, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
   - first: {fileID: 4800000, guid: e6e9a19c3678ded42a3bc431ebef7dbd, type: 3}
     second:
       variants:
@@ -93,7 +105,7 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 8
-      - keywords: _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE
+      - keywords: 
         passType: 13
       - keywords: _ADDITIONAL_LIGHTS _MAIN_LIGHT_SHADOWS_CASCADE _SHADOWS_SOFT
         passType: 13
