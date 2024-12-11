@@ -5,6 +5,8 @@ using Object = UnityEngine.Object;
 using Newtonsoft.Json;
 using HybridCLR;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering;
+
 #if WEIXINMINIGAME
 using WeChatWASM;
 #endif
@@ -13,13 +15,18 @@ public class GameStart : MonoSingletion<GameStart>
 {
     private int loadId;
 
-    [RuntimeInitializeOnLoadMethod]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
     private static void _()
     {
-        var scene = SceneManager.GetActiveScene();
-        if (scene.buildIndex == 0) Instance.__();
+        SplashScreen.Stop(SplashScreen.StopBehavior.StopImmediate);
     }
-    private void __()
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+    private static void __()
+    {
+        var scene = SceneManager.GetActiveScene();
+        if (scene.buildIndex == 0) Instance.___();
+    }
+    private void ___()
     {
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;

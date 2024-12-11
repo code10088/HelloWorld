@@ -13,6 +13,7 @@ namespace HotAssembly
         public Transform tUIRoot;
         public Camera UICamera;
         private EventSystem eventSystem;
+        private int eventSystemState = 0;
         private Vector2 anchorMin = Vector2.zero;
         public Vector2 anchorMinFull = Vector2.zero;
         public Dictionary<UIWindowType, Transform> Layers;
@@ -131,6 +132,8 @@ namespace HotAssembly
 
         public void SetEventSystemState(bool state)
         {
+            eventSystemState = state ? Math.Max(eventSystemState - 1, 0) : eventSystemState + 1;
+            state = eventSystemState == 0;
             bool cur = eventSystem.enabled;
             if (cur != state) eventSystem.enabled = state;
         }
