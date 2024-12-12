@@ -7,13 +7,14 @@ namespace HotAssembly
     public class WeChatAd : Singletion<WeChatAd>, SingletionInterface
     {
         public const string WeChatAdUnitId1 = "adunit-19a8b14fbb55ce9e";
+        public const string WeChatAdUnitId2 = "adunit-b200302c87953f66";
 
         class WeChatAdUnit
         {
             public string name;
             public string id;
-            public bool load;
-            public int retry;
+            public bool load = false;
+            public int retry = 0;
         }
 
         private List<WeChatAdUnit> list = new List<WeChatAdUnit>();
@@ -63,18 +64,25 @@ namespace HotAssembly
         {
             onClose?.Invoke(end);
         }
-        public void Init(string adUnitId)
+        public void InitVideo(string adUnitId)
         {
             var index = list.FindIndex(a => a.name == adUnitId);
             if (index >= 0) return;
             var unit = new WeChatAdUnit();
             unit.name = adUnitId;
-            unit.id = MainAssemblyInterface.InitWeChatAd(adUnitId);
-            unit.load = false;
-            unit.retry = 0;
+            unit.id = MainAssemblyInterface.InitWeChatAdVideo(adUnitId);
             list.Add(unit);
         }
-        public void Show(string adUnitId, Action<bool> onClose)
+        public void InitCustom(string adUnitId, int adIntervals, int left, int top, int width)
+        {
+            var index = list.FindIndex(a => a.name == adUnitId);
+            if (index >= 0) return;
+            var unit = new WeChatAdUnit();
+            unit.name = adUnitId;
+            unit.id = MainAssemblyInterface.InitWeChatAdCustom(adUnitId, adIntervals, left, top, width);
+            list.Add(unit);
+        }
+        public void ShowVideo(string adUnitId, Action<bool> onClose)
         {
             var unit = list.Find(a => a.name == adUnitId);
             if (unit == null)
@@ -91,6 +99,27 @@ namespace HotAssembly
             MainAssemblyInterface.ShowWeChatAd(unit.id);
             unit.load = false;
             unit.retry = 0;
+        }
+        public void ShowCustom(string adUnitId)
+        {
+            var unit = list.Find(a => a.name == adUnitId);
+            if (unit == null)
+            {
+                UICommonTips.ShowTips("广告准备失败，请重新登录重试");
+                return;
+            }
+            if (!unit.load)
+            {
+                UICommonTips.ShowTips("广告准备中，请稍后重试");
+                return;
+            }
+            MainAssemblyInterface.ShowWeChatAd(unit.id);
+        }
+        public void Hide(string adUnitId)
+        {
+            var unit = list.Find(a => a.name == adUnitId);
+            if (unit == null) return;
+            MainAssemblyInterface.HideWeChatAd(unit.id);
         }
     }
 }

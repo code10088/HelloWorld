@@ -18,8 +18,11 @@ public static class MainAssemblyInterface
         weChatAdLoad = _weChatAdLoad;
         weChatAdClose = _weChatAdClose;
     }
-    public static string InitWeChatAd(string adUnitId)
+    public static string InitWeChatAdVideo(string adUnitId)
     {
+#if UNITY_EDITOR
+        return string.Empty;
+#endif
         var param = new WXCreateRewardedVideoAdParam();
         param.adUnitId = adUnitId;
         param.multiton = true;
@@ -28,6 +31,20 @@ public static class MainAssemblyInterface
         ad.onLoadActon = OnLoad;
         ad.onCloseAction = OnClose;
         ad.Load();
+        return ad.instanceId;
+    }
+    public static string InitWeChatAdCustom(string adUnitId, int adIntervals, int left, int top, int width)
+    {
+#if UNITY_EDITOR
+        return string.Empty;
+#endif
+        var param = new WXCreateCustomAdParam();
+        param.adUnitId = adUnitId;
+        param.adIntervals = adIntervals;
+        param.style = new CustomStyle() { left = left, top = top, width = width };
+        var ad = WX.CreateCustomAd(param);
+        ad.onErrorAction = OnError;
+        ad.onLoadActon = OnLoad;
         return ad.instanceId;
     }
     private static void OnError(WXADErrorResponse response)
@@ -44,17 +61,47 @@ public static class MainAssemblyInterface
     }
     public static void LoadWeChatAd(string instanceId)
     {
-        if (WXBaseAd.Dict.TryGetValue(instanceId, out WXBaseAd ad)) ((WXRewardedVideoAd)ad).Load();
-        else weChatAdLoad?.Invoke(instanceId, "init fail");
+        if (WXBaseAd.Dict.TryGetValue(instanceId, out WXBaseAd ad))
+        {
+            if (ad is WXRewardedVideoAd) ((WXRewardedVideoAd)ad).Load();
+        }
+        else
+        {
+            weChatAdLoad?.Invoke(instanceId, "init fail");
+        }
     }
     public static void ShowWeChatAd(string instanceId)
     {
-        if (WXBaseAd.Dict.TryGetValue(instanceId, out WXBaseAd ad)) ad.Show();
-        else weChatAdError?.Invoke(instanceId, -100);
+        if (WXBaseAd.Dict.TryGetValue(instanceId, out WXBaseAd ad))
+        {
+            ad.Show();
+        }
+        else
+        {
+            weChatAdError?.Invoke(instanceId, -100);
+        }
+    }
+    public static void HideWeChatAd(string instanceId)
+    {
+        if (WXBaseAd.Dict.TryGetValue(instanceId, out WXBaseAd ad))
+        {
+            if (ad is WXCustomAd) ((WXCustomAd)ad).Hide();
+        }
+        else
+        {
+            weChatAdError?.Invoke(instanceId, -100);
+        }
     }
     public static void DestroyWeChatAd(string instanceId)
     {
-        if (WXBaseAd.Dict.TryGetValue(instanceId, out WXBaseAd ad)) ad.Destroy();
+        if (WXBaseAd.Dict.TryGetValue(instanceId, out WXBaseAd ad))
+        {
+            ad.Destroy();
+        }
+        else
+        {
+            weChatAdError?.Invoke(instanceId, -100);
+        }
     }
     #endregion
 }
