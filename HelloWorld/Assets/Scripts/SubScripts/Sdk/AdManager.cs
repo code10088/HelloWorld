@@ -73,6 +73,10 @@ namespace HotAssembly
             unit.id = MainAssemblyInterface.InitWeChatAdVideo(adUnitId);
             list.Add(unit);
         }
+        /// <summary>
+        /// 微信PC端分辨率是Screen的1/2
+        /// 原生模板广告宽是高的3倍
+        /// </summary>
         public void InitCustom(string adUnitId, int adIntervals, int left, int top, int width)
         {
             var index = list.FindIndex(a => a.name == adUnitId);
