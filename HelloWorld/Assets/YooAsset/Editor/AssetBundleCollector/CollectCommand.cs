@@ -4,10 +4,15 @@ namespace YooAsset.Editor
     public class CollectCommand
     {
         /// <summary>
-        /// 构建模式
+        /// 模拟构建模式
         /// </summary>
-        public EBuildMode BuildMode { private set; get; }
+        public bool SimulateBuild { private set; get; }
 
+        /// <summary>
+        /// 使用资源依赖数据库
+        /// </summary>
+        public bool UseAssetDependencyDB { private set; get; }
+        
         /// <summary>
         /// 包裹名称
         /// </summary>
@@ -49,11 +54,12 @@ namespace YooAsset.Editor
         public IIgnoreRule IgnoreRule { private set; get; }
 
 
-        public CollectCommand(EBuildMode buildMode, string packageName,
-            bool enableAddressable, bool locationToLower, bool includeAssetGUID, 
+        public CollectCommand(bool simulateBuild, bool useAssetDependencyDB, string packageName,
+            bool enableAddressable, bool locationToLower, bool includeAssetGUID,
             bool autoCollectShaders, bool uniqueBundleName, IIgnoreRule ignoreRule)
         {
-            BuildMode = buildMode;
+            SimulateBuild = simulateBuild;
+            UseAssetDependencyDB = useAssetDependencyDB;
             PackageName = packageName;
             EnableAddressable = enableAddressable;
             LocationToLower = locationToLower;
@@ -65,6 +71,17 @@ namespace YooAsset.Editor
             // 着色器统一全名称
             var packRuleResult = DefaultPackRule.CreateShadersPackRuleResult();
             ShadersBundleName = packRuleResult.GetBundleName(packageName, uniqueBundleName);
+        }
+
+        private AssetDependencyCache _assetDependency;
+        public AssetDependencyCache AssetDependency
+        {
+            get
+            {
+                if (_assetDependency == null)
+                    _assetDependency = new AssetDependencyCache(UseAssetDependencyDB);
+                return _assetDependency;
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 namespace YooAsset
 {
-    public class SimulateBuildResult
+    public class EditorSimulateBuildResult
     {
         public string PackageRootDirectory;
     }

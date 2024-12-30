@@ -225,7 +225,7 @@ namespace YooAsset
                 return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain, timeout);
             }
 
-            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByAll(_manifest, _impl.BuildinFileSystem, _impl.DeliveryFileSystem, _impl.CacheFileSystem);
+            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByAll(_manifest, _impl.BuildinFileSystem, _impl.CacheFileSystem);
             var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
             return operation;
         }
@@ -237,7 +237,7 @@ namespace YooAsset
                 return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain, timeout);
             }
 
-            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByTags(_manifest, new string[] { tag }, _impl.BuildinFileSystem, _impl.DeliveryFileSystem, _impl.CacheFileSystem);
+            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByTags(_manifest, new string[] { tag }, _impl.BuildinFileSystem, _impl.CacheFileSystem);
             var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
             return operation;
         }
@@ -249,7 +249,7 @@ namespace YooAsset
                 return ResourceDownloaderOperation.CreateEmptyDownloader(_impl.PackageName, downloadingMaxNumber, failedTryAgain, timeout);
             }
 
-            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByTags(_manifest, tags, _impl.BuildinFileSystem, _impl.DeliveryFileSystem, _impl.CacheFileSystem);
+            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByTags(_manifest, tags, _impl.BuildinFileSystem, _impl.CacheFileSystem);
             var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
             return operation;
         }
@@ -265,7 +265,7 @@ namespace YooAsset
             var assetInfo = _manifest.ConvertLocationToAssetInfo(location, null);
             assetInfos.Add(assetInfo);
 
-            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByPaths(_manifest, assetInfos.ToArray(), _impl.BuildinFileSystem, _impl.DeliveryFileSystem, _impl.CacheFileSystem);
+            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByPaths(_manifest, assetInfos.ToArray(), _impl.BuildinFileSystem, _impl.CacheFileSystem);
             var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
             return operation;
         }
@@ -284,7 +284,7 @@ namespace YooAsset
                 assetInfos.Add(assetInfo);
             }
 
-            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByPaths(_manifest, assetInfos.ToArray(), _impl.BuildinFileSystem, _impl.DeliveryFileSystem, _impl.CacheFileSystem);
+            List<BundleInfo> downloadList = PlayModeHelper.GetDownloadListByPaths(_manifest, assetInfos.ToArray(), _impl.BuildinFileSystem, _impl.CacheFileSystem);
             var operation = new ResourceDownloaderOperation(_impl.PackageName, downloadList, downloadingMaxNumber, failedTryAgain, timeout);
             return operation;
         }

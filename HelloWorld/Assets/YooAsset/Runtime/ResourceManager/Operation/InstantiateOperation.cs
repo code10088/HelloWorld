@@ -22,7 +22,7 @@ namespace YooAsset
         private readonly bool _actived;
         private ESteps _steps = ESteps.None;
 
-#if UNITY_2022_3_OR_NEWER
+#if UNITY_2023_3_OR_NEWER
         private AsyncInstantiateOperation _instantiateAsync;
 #endif
 
@@ -73,8 +73,8 @@ namespace YooAsset
                     return;
                 }
 
-#if UNITY_2022_3_OR_NEWER
-                //TODO
+#if UNITY_2023_3_OR_NEWER
+                //TODO 官方BUG
                 // BUG环境：Windows平台，Unity2022.3.41f1版本，编辑器模式。
                 // BUG描述：异步实例化Prefab预制体，有概率丢失Mono脚本里序列化的数组里某个成员！
                 //_steps = ESteps.CloneAsync;
@@ -95,7 +95,7 @@ namespace YooAsset
                 Status = EOperationStatus.Succeed;
             }
 
-#if UNITY_2022_3_OR_NEWER
+#if UNITY_2023_3_OR_NEWER
             if (_steps == ESteps.CloneAsync)
             {
                 if (_instantiateAsync == null)
@@ -157,7 +157,7 @@ namespace YooAsset
         /// </summary>
         public void Cancel()
         {
-#if UNITY_2022_3_OR_NEWER
+#if UNITY_2023_3_OR_NEWER
             if (_instantiateAsync != null && _instantiateAsync.isDone == false)
                 _instantiateAsync.Cancel();
 #endif
@@ -189,10 +189,10 @@ namespace YooAsset
             }
         }
 
-#if UNITY_2022_3_OR_NEWER
+#if UNITY_2023_3_OR_NEWER
         /// <summary>
         /// 异步实例化
-        /// 注意：Unity2022.3及以上版本生效
+        /// 注意：Unity2022.3.20f1及以上版本生效
         /// https://docs.unity3d.com/2022.3/Documentation/ScriptReference/Object.InstantiateAsync.html
         /// </summary>
         internal static AsyncInstantiateOperation InstantiateAsyncInternal(UnityEngine.Object assetObject, bool setPositionAndRotation, Vector3 position, Quaternion rotation, Transform parent, bool worldPositionStays)

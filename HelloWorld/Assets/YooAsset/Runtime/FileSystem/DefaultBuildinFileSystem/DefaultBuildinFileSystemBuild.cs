@@ -17,12 +17,12 @@ namespace YooAsset
         {
             YooLogger.Log("Begin to create catalog file !");
 
-            string savePath = $"Assets/Resources/{YooAssetSettingsData.Setting.DefaultYooFolderName}";
+            string savePath = YooAssetSettingsData.GetYooResourcesFullPath();
             DirectoryInfo saveDirectory = new DirectoryInfo(savePath);
             if (saveDirectory.Exists)
                 saveDirectory.Delete(true);
 
-            string rootPath = $"{Application.dataPath}/StreamingAssets/{YooAssetSettingsData.Setting.DefaultYooFolderName}";
+            string rootPath = YooAssetSettingsData.GetYooEditorBuildinRoot();
             DirectoryInfo rootDirectory = new DirectoryInfo(rootPath);
             if (rootDirectory.Exists == false)
             {
@@ -105,7 +105,8 @@ namespace YooAsset
                 }
             }
 
-            string saveFilePath = $"Assets/YooAsset/Config/Resources/{YooAssetSettingsData.Setting.DefaultYooFolderName}/{packageName}/{DefaultBuildinFileSystemDefine.BuildinCatalogFileName}";
+            string fullPath = YooAssetSettingsData.GetYooResourcesFullPath();
+            string saveFilePath = $"{fullPath}/{packageName}/{DefaultBuildinFileSystemDefine.BuildinCatalogFileName}";
             FileUtility.CreateFileDirectory(saveFilePath);
 
             UnityEditor.AssetDatabase.CreateAsset(buildinFileCatalog, saveFilePath);

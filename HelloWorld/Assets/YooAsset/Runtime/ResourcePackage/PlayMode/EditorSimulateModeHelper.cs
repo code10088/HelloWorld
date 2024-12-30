@@ -10,20 +10,12 @@ namespace YooAsset
         /// <summary>
         /// 编辑器下模拟构建清单
         /// </summary>
-        public static SimulateBuildResult SimulateBuild(string buildPipelineName, string packageName)
+        public static EditorSimulateBuildResult SimulateBuild(EditorSimulateBuildParam buildParam)
         {
             if (_classType == null)
                 _classType = Assembly.Load("YooAsset.Editor").GetType("YooAsset.Editor.AssetBundleSimulateBuilder");
 
-            return (SimulateBuildResult)InvokePublicStaticMethod(_classType, "SimulateBuild", buildPipelineName, packageName);
-        }
-
-        /// <summary>
-        /// 编辑器下模拟构建清单
-        /// </summary>
-        public static SimulateBuildResult SimulateBuild(EDefaultBuildPipeline buildPipeline, string packageName)
-        {
-            return SimulateBuild(buildPipeline.ToString(), packageName);
+            return (EditorSimulateBuildResult)InvokePublicStaticMethod(_classType, "SimulateBuild", buildParam);
         }
 
         private static object InvokePublicStaticMethod(System.Type type, string method, params object[] parameters)
@@ -43,12 +35,7 @@ namespace YooAsset
 { 
     public static class EditorSimulateModeHelper
     {
-        public static SimulateBuildResult SimulateBuild(string buildPipelineName, string packageName) 
-        {
-            throw new System.Exception("Only support in unity editor !");
-        }
-
-        public static SimulateBuildResult SimulateBuild(EDefaultBuildPipeline buildPipeline, string packageName)
+        public static EditorSimulateBuildResult SimulateBuild(EditorSimulateBuildParam buildParam) 
         {
             throw new System.Exception("Only support in unity editor !");
         }

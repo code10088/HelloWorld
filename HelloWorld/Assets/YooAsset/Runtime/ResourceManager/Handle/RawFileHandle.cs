@@ -1,10 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Text;
-
+﻿
 namespace YooAsset
 {
-    public class RawFileHandle : HandleBase, IDisposable
+    public class RawFileHandle : HandleBase
     {
         private System.Action<RawFileHandle> _callback;
 
@@ -48,22 +45,6 @@ namespace YooAsset
             Provider.WaitForAsyncComplete();
         }
 
-        /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Release()
-        {
-            this.ReleaseInternal();
-        }
-
-        /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Dispose()
-        {
-            this.ReleaseInternal();
-        }
-
 
         /// <summary>
         /// 获取原生文件的二进制数据
@@ -72,7 +53,7 @@ namespace YooAsset
         {
             if (IsValidWithWarning == false)
                 return null;
-            return Provider.RawBundleObject.ReadFileData();
+            return Provider.BundleResultObject.ReadBundleFileData();
         }
 
         /// <summary>
@@ -82,7 +63,7 @@ namespace YooAsset
         {
             if (IsValidWithWarning == false)
                 return null;
-            return Provider.RawBundleObject.ReadFileText();
+            return Provider.BundleResultObject.ReadBundleFileText();
         }
 
         /// <summary>
@@ -92,7 +73,7 @@ namespace YooAsset
         {
             if (IsValidWithWarning == false)
                 return string.Empty;
-            return Provider.RawBundleObject.GetFilePath();
+            return Provider.BundleResultObject.GetBundleFilePath();
         }
     }
 }

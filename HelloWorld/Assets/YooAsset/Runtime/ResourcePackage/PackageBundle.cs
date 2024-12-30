@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace YooAsset
 {
@@ -46,23 +47,24 @@ namespace YooAsset
         /// </summary>
         public int[] DependIDs;
 
-
-        /// <summary>
-        /// 所属的包裹名称
-        /// </summary>
-        public string PackageName { private set; get; }
-
-        /// <summary>
-        /// 所属的构建管线
-        /// </summary>
-        public string BuildPipeline { private set; get; }
-
         /// <summary>
         /// 资源包GUID
         /// </summary>
         public string BundleGUID
         {
             get { return FileHash; }
+        }
+
+        /// <summary>
+        /// 资源包类型
+        /// </summary>
+        private int _bundleType;
+        public int BundleType
+        {
+            get
+            {
+                return _bundleType;
+            }
         }
 
         /// <summary>
@@ -93,18 +95,23 @@ namespace YooAsset
             }
         }
 
+        /// <summary>
+        /// 包含的主资源集合
+        /// </summary>
+        [NonSerialized]
+        public readonly List<PackageAsset> IncludeMainAssets = new List<PackageAsset>(10);
+
 
         public PackageBundle()
         {
         }
 
         /// <summary>
-        /// 解析资源包
+        /// 初始化资源包
         /// </summary>
-        public void ParseBundle(PackageManifest manifest)
+        public void InitBundle(PackageManifest manifest)
         {
-            PackageName = manifest.PackageName;
-            BuildPipeline = manifest.BuildPipeline;
+            _bundleType = manifest.BuildBundleType;
             _fileExtension = ManifestTools.GetRemoteBundleFileExtension(BundleName);
             _fileName = ManifestTools.GetRemoteBundleFileName(manifest.OutputNameStyle, BundleName, _fileExtension, FileHash);
         }

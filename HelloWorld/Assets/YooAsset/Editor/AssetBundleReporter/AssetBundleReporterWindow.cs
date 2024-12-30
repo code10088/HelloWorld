@@ -104,7 +104,7 @@ namespace YooAsset.Editor
 
         private void ImportBtn_onClick()
         {
-            string selectFilePath = EditorUtility.OpenFilePanel("导入报告", EditorTools.GetProjectPath(), "json");
+            string selectFilePath = EditorUtility.OpenFilePanel("导入报告", EditorTools.GetProjectPath(), "report");
             if (string.IsNullOrEmpty(selectFilePath))
                 return;
 

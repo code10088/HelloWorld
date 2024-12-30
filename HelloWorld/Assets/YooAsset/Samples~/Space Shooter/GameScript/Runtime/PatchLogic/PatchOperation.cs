@@ -17,10 +17,13 @@ public class PatchOperation : GameAsyncOperation
 
     private readonly EventGroup _eventGroup = new EventGroup();
     private readonly StateMachine _machine;
+    private readonly string _packageName;
     private ESteps _steps = ESteps.None;
 
-    public PatchOperation(string packageName, string buildPipeline, bool rawFileSystem, EPlayMode playMode)
+    public PatchOperation(string packageName, EPlayMode playMode)
     {
+        _packageName = packageName;
+
         // 注册监听事件
         _eventGroup.AddListener<UserEventDefine.UserTryInitialize>(OnHandleEventMessage);
         _eventGroup.AddListener<UserEventDefine.UserBeginDownloadWebFiles>(OnHandleEventMessage);
@@ -41,8 +44,6 @@ public class PatchOperation : GameAsyncOperation
 
         _machine.SetBlackboardValue("PackageName", packageName);
         _machine.SetBlackboardValue("PlayMode", playMode);
-        _machine.SetBlackboardValue("BuildPipeline", buildPipeline);
-        _machine.SetBlackboardValue("RawFileSystem", rawFileSystem);
     }
     protected override void OnStart()
     {
@@ -57,16 +58,18 @@ public class PatchOperation : GameAsyncOperation
         if(_steps == ESteps.Update)
         {
             _machine.Update();
-            if(_machine.CurrentNode == typeof(FsmUpdaterDone).FullName)
-            {
-                _eventGroup.RemoveAllListener();
-                Status = EOperationStatus.Succeed;
-                _steps = ESteps.Done;
-            }
         }
     }
     protected override void OnAbort()
     {
+    }
+
+    public void SetFinish()
+    {
+        _steps = ESteps.Done;
+        _eventGroup.RemoveAllListener();
+        Status = EOperationStatus.Succeed;
+        Debug.Log($"Package {_packageName} patch done !");
     }
 
     /// <summary>

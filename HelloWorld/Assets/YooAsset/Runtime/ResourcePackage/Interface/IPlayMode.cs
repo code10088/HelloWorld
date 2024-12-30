@@ -29,14 +29,9 @@ namespace YooAsset
         PreDownloadContentOperation PreDownloadContentAsync(string packageVersion, int timeout);
 
         /// <summary>
-        /// 清空所有文件
+        /// 清理缓存文件
         /// </summary>
-        ClearAllBundleFilesOperation ClearAllBundleFilesAsync();
-
-        /// <summary>
-        /// 清空未使用的文件
-        /// </summary>
-        ClearUnusedBundleFilesOperation ClearUnusedBundleFilesAsync();
+        ClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(string clearMode, object clearParam);
 
         // 下载相关
         ResourceDownloaderOperation CreateResourceDownloaderByAll(int downloadingMaxNumber, int failedTryAgain, int timeout);

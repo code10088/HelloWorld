@@ -7,12 +7,7 @@ namespace YooAsset.Editor
         {
             var buildParameters = context.GetContextObject<BuildParametersContext>();
             var buildMapContext = context.GetContextObject<BuildMapContext>();
-
-            var buildMode = buildParameters.Parameters.BuildMode;
-            if (buildMode == EBuildMode.ForceRebuild || buildMode == EBuildMode.IncrementalBuild)
-            {
-                EncryptingBundleFiles(buildParameters, buildMapContext);
-            }
+            EncryptingBundleFiles(buildParameters, buildMapContext);
         }
     }
 }

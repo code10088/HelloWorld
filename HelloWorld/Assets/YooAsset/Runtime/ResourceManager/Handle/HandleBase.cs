@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace YooAsset
 {
-    public abstract class HandleBase : IEnumerator
+    public abstract class HandleBase : IEnumerator, IDisposable
     {
         private readonly AssetInfo _assetInfo;
         internal ProviderOperation Provider { private set; get; }
@@ -14,6 +14,25 @@ namespace YooAsset
             _assetInfo = provider.MainAssetInfo;
         }
         internal abstract void InvokeCallback();
+
+        /// <summary>
+        /// 释放资源句柄
+        /// </summary>
+        public void Release()
+        {
+            if (IsValidWithWarning == false)
+                return;
+            Provider.ReleaseHandle(this);
+            Provider = null;
+        }
+
+        /// <summary>
+        /// 释放资源句柄
+        /// </summary>
+        public void Dispose()
+        {
+            this.Release();
+        }
 
         /// <summary>
         /// 获取资源信息
@@ -119,17 +138,6 @@ namespace YooAsset
                     return false;
                 }
             }
-        }
-
-        /// <summary>
-        /// 释放句柄
-        /// </summary>
-        internal void ReleaseInternal()
-        {
-            if (IsValidWithWarning == false)
-                return;
-            Provider.ReleaseHandle(this);
-            Provider = null;
         }
 
         #region 异步操作相关

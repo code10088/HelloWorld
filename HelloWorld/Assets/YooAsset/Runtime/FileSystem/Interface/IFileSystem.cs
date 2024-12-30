@@ -35,14 +35,9 @@ namespace YooAsset
         FSRequestPackageVersionOperation RequestPackageVersionAsync(bool appendTimeTicks, int timeout);
 
         /// <summary>
-        /// 清空所有的文件
+        /// 清理缓存文件
         /// </summary>
-        FSClearAllBundleFilesOperation ClearAllBundleFilesAsync();
-
-        /// <summary>
-        /// 清空未使用的文件
-        /// </summary>
-        FSClearUnusedBundleFilesOperation ClearUnusedBundleFilesAsync(PackageManifest manifest);
+        FSClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(PackageManifest manifest, string clearMode, object clearParam);
 
         /// <summary>
         /// 下载远端文件
@@ -53,12 +48,7 @@ namespace YooAsset
         /// 加载Bundle文件
         /// </summary>
         FSLoadBundleOperation LoadBundleFile(PackageBundle bundle);
-
-        /// <summary>
-        /// 卸载Bundle文件
-        /// </summary>
-        void UnloadBundleFile(PackageBundle bundle, object result);
-
+        
 
         /// <summary>
         /// 设置自定义参数
@@ -103,13 +93,18 @@ namespace YooAsset
 
 
         /// <summary>
-        /// 读取文件二进制数据
+        /// 获取Bundle文件路径
         /// </summary>
-        byte[] ReadFileData(PackageBundle bundle);
+        string GetBundleFilePath(PackageBundle bundle);
 
         /// <summary>
-        /// 读取文件文本数据
+        /// 读取Bundle文件的二进制数据
         /// </summary>
-        string ReadFileText(PackageBundle bundle);
+        byte[] ReadBundleFileData(PackageBundle bundle);
+
+        /// <summary>
+        /// 读取Bundle文件的文本数据
+        /// </summary>
+        string ReadBundleFileText(PackageBundle bundle);
     }
 }

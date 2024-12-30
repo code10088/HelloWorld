@@ -10,9 +10,8 @@ namespace YooAsset
         protected enum ESteps
         {
             None = 0,
-            CheckBundle,
-            Loading,
-            Checking,
+            LoadBundleFile,
+            ProcessBundleResult,
             Done,
         }
 
@@ -20,11 +19,6 @@ namespace YooAsset
         /// 资源提供者唯一标识符
         /// </summary>
         public string ProviderGUID { private set; get; }
-
-        /// <summary>
-        /// 所属资源系统
-        /// </summary>
-        public ResourceManager ResourceMgr { private set; get; }
 
         /// <summary>
         /// 资源信息
@@ -42,14 +36,19 @@ namespace YooAsset
         public UnityEngine.Object[] AllAssetObjects { protected set; get; }
 
         /// <summary>
+        /// 获取的资源对象集合
+        /// </summary>
+        public UnityEngine.Object[] SubAssetObjects { protected set; get; }
+
+        /// <summary>
         /// 获取的场景对象
         /// </summary>
         public UnityEngine.SceneManagement.Scene SceneObject { protected set; get; }
 
         /// <summary>
-        /// 获取的原生对象
+        /// 获取的资源包对象
         /// </summary>
-        public RawBundle RawBundleObject { protected set; get; }
+        public BundleResult BundleResultObject { protected set; get; }
 
         /// <summary>
         /// 加载的场景名称
@@ -67,38 +66,88 @@ namespace YooAsset
         public bool IsDestroyed { private set; get; } = false;
 
 
-        protected ESteps _steps = ESteps.None;
-        protected LoadBundleFileOperation LoadBundleFileOp { private set; get; }
-        protected LoadDependBundleFileOperation LoadDependBundleFileOp { private set; get; }
+        private ESteps _steps = ESteps.None;
+        private readonly LoadBundleFileOperation _mainBundleLoader;
+        private readonly List<LoadBundleFileOperation> _bundleLoaders = new List<LoadBundleFileOperation>();
         private readonly List<HandleBase> _handles = new List<HandleBase>();
 
 
         public ProviderOperation(ResourceManager manager, string providerGUID, AssetInfo assetInfo)
         {
-            ResourceMgr = manager;
             ProviderGUID = providerGUID;
             MainAssetInfo = assetInfo;
 
             if (string.IsNullOrEmpty(providerGUID) == false)
             {
-                LoadBundleFileOp = manager.CreateMainBundleFileLoader(assetInfo);
-                LoadBundleFileOp.Reference();
-                LoadBundleFileOp.AddProvider(this);
+                // 主资源包加载器
+                _mainBundleLoader = manager.CreateMainBundleFileLoader(assetInfo);
+                _mainBundleLoader.AddProvider(this);
+                _bundleLoaders.Add(_mainBundleLoader);
 
-                LoadDependBundleFileOp = manager.CreateDependFileLoaders(assetInfo);
-                LoadDependBundleFileOp.Reference();
+                // 依赖资源包加载器集合
+                var dependLoaders = manager.CreateDependBundleFileLoaders(assetInfo);
+                if(dependLoaders.Count > 0)
+                    _bundleLoaders.AddRange(dependLoaders);
+
+                // 增加引用计数
+                foreach (var bundleLoader in _bundleLoaders)
+                {
+                    bundleLoader.Reference();
+                }
             }
         }
+        internal override void InternalOnStart()
+        {
+            DebugBeginRecording();
+            _steps = ESteps.LoadBundleFile;
+        }
+        internal override void InternalOnUpdate()
+        {
+            if (_steps == ESteps.None || _steps == ESteps.Done)
+                return;
 
+            if (_steps == ESteps.LoadBundleFile)
+            {
+                if (IsWaitForAsyncComplete)
+                {
+                    foreach (var bundleLoader in _bundleLoaders)
+                    {
+                        bundleLoader.WaitForAsyncComplete();
+                    }
+                }
+
+                foreach (var bundleLoader in _bundleLoaders)
+                {
+                    if (bundleLoader.IsDone == false)
+                        return;
+
+                    if (bundleLoader.Status != EOperationStatus.Succeed)
+                    {
+                        InvokeCompletion(bundleLoader.Error, EOperationStatus.Failed);
+                        return;
+                    }
+                }
+
+                BundleResultObject = _mainBundleLoader.Result;
+                if (BundleResultObject == null)
+                {
+                    string error = $"Loaded bundle result is null !";
+                    InvokeCompletion(error, EOperationStatus.Failed);
+                    return;
+                }
+
+                _steps = ESteps.ProcessBundleResult;
+            }
+
+            if (_steps == ESteps.ProcessBundleResult)
+            {
+                ProcessBundleResult();
+            }
+        }
         internal override void InternalWaitForAsyncComplete()
         {
             while (true)
             {
-                if (LoadDependBundleFileOp != null)
-                    LoadDependBundleFileOp.WaitForAsyncComplete();
-                if (LoadBundleFileOp != null)
-                    LoadBundleFileOp.WaitForAsyncComplete();
-
                 if (ExecuteWhileDone())
                 {
                     _steps = ESteps.Done;
@@ -106,6 +155,7 @@ namespace YooAsset
                 }
             }
         }
+        protected abstract void ProcessBundleResult();
 
         /// <summary>
         /// 销毁资源提供者
@@ -121,16 +171,10 @@ namespace YooAsset
                 Status = EOperationStatus.Failed;
             }
 
-            // 释放资源包加载器
-            if (LoadBundleFileOp != null)
+            // 减少引用计数
+            foreach (var bundleLoader in _bundleLoaders)
             {
-                LoadBundleFileOp.Release();
-                LoadBundleFileOp = null;
-            }
-            if (LoadDependBundleFileOp != null)
-            {
-                LoadDependBundleFileOp.Release();
-                LoadDependBundleFileOp = null;
+                bundleLoader.Release();
             }
         }
 
@@ -140,7 +184,7 @@ namespace YooAsset
         public bool CanDestroyProvider()
         {
             // 注意：在进行资源加载过程时不可以销毁
-            if (_steps == ESteps.Loading || _steps == ESteps.Checking)
+            if (_steps == ESteps.ProcessBundleResult)
                 return false;
 
             return RefCount <= 0;
@@ -195,21 +239,8 @@ namespace YooAsset
             for (int i = _handles.Count - 1; i >= 0; i--)
             {
                 var handle = _handles[i];
-                handle.ReleaseInternal();
+                handle.Release();
             }
-        }
-
-        /// <summary>
-        /// 处理致命问题
-        /// </summary>
-        protected void ProcessFatalEvent()
-        {
-            if (LoadBundleFileOp.IsDestroyed)
-                throw new System.Exception("Should never get here !");
-
-            string error = $"The bundle {LoadBundleFileOp.BundleFileInfo.Bundle.BundleName} has been destroyed by unity bugs !";
-            YooLogger.Error(error);
-            InvokeCompletion(Error, EOperationStatus.Failed);
         }
 
         /// <summary>
@@ -241,12 +272,10 @@ namespace YooAsset
         public DownloadStatus GetDownloadStatus()
         {
             DownloadStatus status = new DownloadStatus();
-            status.TotalBytes = LoadBundleFileOp.BundleFileInfo.Bundle.FileSize;
-            status.DownloadedBytes = LoadBundleFileOp.DownloadedBytes;
-            foreach (var dependBundle in LoadDependBundleFileOp.Depends)
+            foreach (var bundleLoader in _bundleLoaders)
             {
-                status.TotalBytes += dependBundle.BundleFileInfo.Bundle.FileSize;
-                status.DownloadedBytes += dependBundle.DownloadedBytes;
+                status.TotalBytes += bundleLoader.LoadBundleInfo.Bundle.FileSize;
+                status.DownloadedBytes += bundleLoader.DownloadedBytes;
             }
 
             if (status.TotalBytes == 0)
@@ -314,13 +343,14 @@ namespace YooAsset
         /// </summary>
         internal void GetBundleDebugInfos(List<DebugBundleInfo> output)
         {
-            var bundleInfo = new DebugBundleInfo();
-            bundleInfo.BundleName = LoadBundleFileOp.BundleFileInfo.Bundle.BundleName;
-            bundleInfo.RefCount = LoadBundleFileOp.RefCount;
-            bundleInfo.Status = LoadBundleFileOp.Status;
-            output.Add(bundleInfo);
-
-            LoadDependBundleFileOp.GetBundleDebugInfos(output);
+            foreach (var bundleLoader in _bundleLoaders)
+            {
+                var bundleInfo = new DebugBundleInfo();
+                bundleInfo.BundleName = bundleLoader.LoadBundleInfo.Bundle.BundleName;
+                bundleInfo.RefCount = bundleLoader.RefCount;
+                bundleInfo.Status = bundleLoader.Status;
+                output.Add(bundleInfo);
+            }
         }
         #endregion
     }

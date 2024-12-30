@@ -48,7 +48,15 @@ namespace YooAsset
 
                 if (_initUnpackFIleSystemOp.Status == EOperationStatus.Succeed)
                 {
-                    _steps = ESteps.LoadCatalogFile;
+                    if (_fileSystem.DisableCatalogFile)
+                    {
+                        _steps = ESteps.Done;
+                        Status = EOperationStatus.Succeed;
+                    }
+                    else
+                    {
+                        _steps = ESteps.LoadCatalogFile;
+                    }
                 }
                 else
                 {
@@ -65,7 +73,8 @@ namespace YooAsset
 #if UNITY_EDITOR
                     // 兼容性初始化
                     // 说明：内置文件系统在编辑器下运行时需要动态生成
-                    string packageRoot = _fileSystem.GetStreamingAssetsPackageRoot();
+                    string buildinRoot = YooAssetSettingsData.GetYooEditorBuildinRoot();
+                    string packageRoot = PathUtility.Combine(buildinRoot, _fileSystem.PackageName);
                     DefaultBuildinFileSystemBuild.CreateBuildinCatalogFile(_fileSystem.PackageName, packageRoot);
 #endif
 

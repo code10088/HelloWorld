@@ -38,6 +38,11 @@ namespace YooAsset
         public int OutputNameStyle;
 
         /// <summary>
+        /// 构建资源包类型
+        /// </summary>
+        public int BuildBundleType;
+
+        /// <summary>
         /// 构建管线名称
         /// </summary>
         public string BuildPipeline;
@@ -53,6 +58,11 @@ namespace YooAsset
         public string PackageVersion;
 
         /// <summary>
+        /// 资源包裹的备注信息
+        /// </summary>
+        public string PackageNote;
+
+        /// <summary>
         /// 资源列表（主动收集的资源列表）
         /// </summary>
         public List<PackageAsset> AssetList = new List<PackageAsset>();
@@ -61,25 +71,6 @@ namespace YooAsset
         /// 资源包列表
         /// </summary>
         public List<PackageBundle> BundleList = new List<PackageBundle>();
-
-
-        /// <summary>
-        /// 资源包集合（提供BundleName获取PackageBundle）
-        /// </summary>
-        [NonSerialized]
-        public Dictionary<string, PackageBundle> BundleDic1;
-
-        /// <summary>
-        /// 资源包集合（提供FileName获取PackageBundle）
-        /// </summary>
-        [NonSerialized]
-        public Dictionary<string, PackageBundle> BundleDic2;
-
-        /// <summary>
-        /// 资源包集合（提供BundleGUID获取PackageBundle）
-        /// </summary>
-        [NonSerialized]
-        public Dictionary<string, PackageBundle> BundleDic3;
 
         /// <summary>
         /// 资源映射集合（提供AssetPath获取PackageAsset）
@@ -99,6 +90,45 @@ namespace YooAsset
         [NonSerialized]
         public Dictionary<string, string> AssetPathMapping2;
 
+        /// <summary>
+        /// 资源包集合（提供BundleName获取PackageBundle）
+        /// </summary>
+        [NonSerialized]
+        public Dictionary<string, PackageBundle> BundleDic1;
+
+        /// <summary>
+        /// 资源包集合（提供FileName获取PackageBundle）
+        /// </summary>
+        [NonSerialized]
+        public Dictionary<string, PackageBundle> BundleDic2;
+
+        /// <summary>
+        /// 资源包集合（提供BundleGUID获取PackageBundle）
+        /// </summary>
+        [NonSerialized]
+        public Dictionary<string, PackageBundle> BundleDic3;
+
+
+        /// <summary>
+        /// 获取包裹的详细信息
+        /// </summary>
+        public PackageDetails GetPackageDetails()
+        {
+            PackageDetails details = new PackageDetails();
+            details.FileVersion = FileVersion;
+            details.EnableAddressable = EnableAddressable;
+            details.LocationToLower = LocationToLower;
+            details.IncludeAssetGUID = IncludeAssetGUID;
+            details.OutputNameStyle = OutputNameStyle;
+            details.BuildBundleType = BuildBundleType;
+            details.BuildPipeline = BuildPipeline;
+            details.PackageName = PackageName;
+            details.PackageVersion = PackageVersion;
+            details.PackageNote = PackageNote;
+            details.AssetTotalCount = AssetList.Count;
+            details.BundleTotalCount = BundleList.Count;
+            return details;
+        }
 
         /// <summary>
         /// 尝试映射为资源路径
@@ -206,9 +236,23 @@ namespace YooAsset
         }
 
         /// <summary>
+        /// 获取所有的资源信息
+        /// </summary>
+        public AssetInfo[] GetAllAssetInfos()
+        {
+            List<AssetInfo> result = new List<AssetInfo>(AssetList.Count);
+            foreach (var packageAsset in AssetList)
+            {
+                AssetInfo assetInfo = new AssetInfo(PackageName, packageAsset, null);
+                result.Add(assetInfo);
+            }
+            return result.ToArray();
+        }
+
+        /// <summary>
         /// 获取资源信息列表
         /// </summary>
-        public AssetInfo[] GetAssetsInfoByTags(string[] tags)
+        public AssetInfo[] GetAssetInfosByTags(string[] tags)
         {
             List<AssetInfo> result = new List<AssetInfo>(100);
             foreach (var packageAsset in AssetList)
@@ -316,25 +360,6 @@ namespace YooAsset
                 YooLogger.Warning($"Failed to mapping assetGUID to asset path : {assetGUID}");
                 return string.Empty;
             }
-        }
-
-        /// <summary>
-        /// 获取资源包内的主资源列表
-        /// </summary>
-        public string[] GetBundleIncludeAssets(string assetPath)
-        {
-            List<string> assetList = new List<string>();
-            if (TryGetPackageAsset(assetPath, out PackageAsset result))
-            {
-                foreach (var packageAsset in AssetList)
-                {
-                    if (packageAsset.BundleID == result.BundleID)
-                    {
-                        assetList.Add(packageAsset.AssetPath);
-                    }
-                }
-            }
-            return assetList.ToArray();
         }
 
         #region 调试方法

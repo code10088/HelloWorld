@@ -32,6 +32,12 @@ namespace YooAsset
         public int BundleID;
 
         /// <summary>
+        /// 所属资源包名称（仅编辑器有效）
+        /// </summary>
+        [NonSerialized]
+        public string BundleNameInEditor;
+
+        /// <summary>
         /// 是否包含Tag
         /// </summary>
         public bool HasTag(string[] tags)

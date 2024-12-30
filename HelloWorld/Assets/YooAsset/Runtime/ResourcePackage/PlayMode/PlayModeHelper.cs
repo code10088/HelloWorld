@@ -5,32 +5,6 @@ namespace YooAsset
 {
     internal class PlayModeHelper
     {
-        public static IFileSystem CreateFileSystem(string packageName, FileSystemParameters parameters)
-        {
-            YooLogger.Log($"The package {packageName} create file system : {parameters.FileSystemClass}");
-
-            Type classType = Type.GetType(parameters.FileSystemClass);
-            if (classType == null)
-            {
-                YooLogger.Error($"Can not found file system class type {parameters.FileSystemClass}");
-                return null;
-            }
-
-            var instance = (IFileSystem)System.Activator.CreateInstance(classType, true);
-            if (instance == null)
-            {
-                YooLogger.Error($"Failed to create file system instance {parameters.FileSystemClass}");
-                return null;
-            }
-
-            foreach (var param in parameters.CreateParameters)
-            {
-                instance.SetParameter(param.Key, param.Value);
-            }
-            instance.OnCreate(packageName, parameters.RootDirectory);
-            return instance;
-        }
-
         public static List<BundleInfo> GetDownloadListByAll(PackageManifest manifest, IFileSystem fileSystemA = null, IFileSystem fileSystemB = null, IFileSystem fileSystemC = null)
         {
             List<BundleInfo> result = new List<BundleInfo>(1000);

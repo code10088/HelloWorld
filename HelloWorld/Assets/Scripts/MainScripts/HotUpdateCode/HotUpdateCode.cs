@@ -88,7 +88,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     }
     private void ClearPackageUnusedCacheFiles()
     {
-        var operation = AssetManager.Package.ClearUnusedBundleFilesAsync();
+        var operation = AssetManager.Package.ClearCacheBundleFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
         operation.Completed += ClearPackageUnusedCacheFiles;
     }
     private void ClearPackageUnusedCacheFiles(AsyncOperationBase o)
@@ -105,8 +105,8 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         downloaderOperation = AssetManager.Package.CreateBundleDownloader(GameSetting.HotUpdateConfigPath, 1, GameSetting.retryTime, GameSetting.timeoutS);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
-            downloaderOperation.OnDownloadOverCallback = CheckDownloadHotUpdateConfig;
-            downloaderOperation.OnDownloadErrorCallback = DownloadError;
+            downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateConfig;
+            downloaderOperation.DownloadErrorCallback = DownloadError;
             downloaderOperation.BeginDownload();
         }
         else
@@ -115,16 +115,16 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
             LoadHotUpdateConfig();
         }
     }
-    private void CheckDownloadHotUpdateConfig(bool isSucceed)
+    private void CheckDownloadHotUpdateConfig(DownloaderFinishData data)
     {
         UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.DownloadingHotUpdateConfig / (float)HotUpdateCodeStep.Max);
 
-        if (isSucceed) LoadHotUpdateConfig();
+        if (data.Succeed) LoadHotUpdateConfig();
         else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckDownloadHotUpdateConfig);
     }
-    private void DownloadError(string fileName, string error)
+    private void DownloadError(DownloadErrorData data)
     {
-        GameDebug.LogError($"DownloadError：{fileName}:{error}");
+        GameDebug.LogError($"DownloadError：{data.FileName}:{data.ErrorInfo}");
     }
     private void LoadHotUpdateConfig()
     {
@@ -151,9 +151,9 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeoutS);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
-            downloaderOperation.OnDownloadOverCallback = CheckDownloadHotUpdateRes;
-            downloaderOperation.OnDownloadProgressCallback = DownloadingHotUpdateRes;
-            downloaderOperation.OnDownloadErrorCallback = DownloadError;
+            downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateRes;
+            downloaderOperation.DownloadUpdateCallback = DownloadingHotUpdateRes;
+            downloaderOperation.DownloadErrorCallback = DownloadError;
             downloaderOperation.BeginDownload();
         }
         else
@@ -162,18 +162,18 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
             UpdateFinish();
         }
     }
-    private void CheckDownloadHotUpdateRes(bool isSucceed)
+    private void CheckDownloadHotUpdateRes(DownloaderFinishData data)
     {
         UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.DownloadingHotUpdateRes / (float)HotUpdateCodeStep.Max);
 
-        if (isSucceed) UpdateFinish();
+        if (data.Succeed) UpdateFinish();
         else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", LoadHotUpdateConfig);
     }
-    private void DownloadingHotUpdateRes(int totalDownloadCount, int currentDownloadCount, long totalDownloadBytes, long currentDownloadBytes)
+    private void DownloadingHotUpdateRes(DownloadUpdateData data)
     {
         float f = (float)HotUpdateCodeStep.LoadHotUpdateConfig / (float)HotUpdateCodeStep.Max;
         float w = (HotUpdateCodeStep.DownloadingHotUpdateRes - HotUpdateCodeStep.LoadHotUpdateConfig) / (float)HotUpdateCodeStep.Max;
-        f += currentDownloadBytes / totalDownloadBytes * w;
+        f += data.Progress * w;
         UIHotUpdateCode.Instance.SetSlider(f);
     }
     #endregion

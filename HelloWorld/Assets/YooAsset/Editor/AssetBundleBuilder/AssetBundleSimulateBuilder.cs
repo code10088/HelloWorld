@@ -8,77 +8,42 @@ namespace YooAsset.Editor
         /// <summary>
         /// 模拟构建
         /// </summary>
-        public static SimulateBuildResult SimulateBuild(string buildPipelineName, string packageName)
+        public static EditorSimulateBuildResult SimulateBuild(EditorSimulateBuildParam buildParam)
         {
-            string packageVersion = "Simulate";
-            BuildResult buildResult;
+            string packageName = buildParam.PackageName;
+            string buildPipelineName = buildParam.BuildPipelineName;
 
-            if (buildPipelineName == EBuildPipeline.BuiltinBuildPipeline.ToString())
+            if (buildPipelineName == "EditorSimulateBuildPipeline")
             {
-                BuiltinBuildParameters buildParameters = new BuiltinBuildParameters();
+                var buildParameters = new EditorSimulateBuildParameters();
                 buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
                 buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
-                buildParameters.BuildPipeline = buildPipelineName;
+                buildParameters.BuildPipeline = EBuildPipeline.EditorSimulateBuildPipeline.ToString();
+                buildParameters.BuildBundleType = (int)EBuildBundleType.VirtualBundle;
                 buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-                buildParameters.BuildMode = EBuildMode.SimulateBuild;
                 buildParameters.PackageName = packageName;
-                buildParameters.PackageVersion = packageVersion;
+                buildParameters.PackageVersion = "Simulate";
                 buildParameters.FileNameStyle = EFileNameStyle.HashName;
                 buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.None;
                 buildParameters.BuildinFileCopyParams = string.Empty;
 
-                BuiltinBuildPipeline pipeline = new BuiltinBuildPipeline();
-                buildResult = pipeline.Run(buildParameters, false);
-            }
-            else if (buildPipelineName == EBuildPipeline.ScriptableBuildPipeline.ToString())
-            {
-                ScriptableBuildParameters buildParameters = new ScriptableBuildParameters();
-                buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
-                buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
-                buildParameters.BuildPipeline = buildPipelineName;
-                buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-                buildParameters.BuildMode = EBuildMode.SimulateBuild;
-                buildParameters.PackageName = packageName;
-                buildParameters.PackageVersion = packageVersion;
-                buildParameters.FileNameStyle = EFileNameStyle.HashName;
-                buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.None;
-                buildParameters.BuildinFileCopyParams = string.Empty;
-
-                ScriptableBuildPipeline pipeline = new ScriptableBuildPipeline();
-                buildResult = pipeline.Run(buildParameters, true);
-            }
-            else if (buildPipelineName == EBuildPipeline.RawFileBuildPipeline.ToString())
-            {
-                RawFileBuildParameters buildParameters = new RawFileBuildParameters();
-                buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
-                buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
-                buildParameters.BuildPipeline = buildPipelineName;
-                buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-                buildParameters.BuildMode = EBuildMode.SimulateBuild;
-                buildParameters.PackageName = packageName;
-                buildParameters.PackageVersion = packageVersion;
-                buildParameters.FileNameStyle = EFileNameStyle.HashName;
-                buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.None;
-                buildParameters.BuildinFileCopyParams = string.Empty;
-
-                RawFileBuildPipeline pipeline = new RawFileBuildPipeline();
-                buildResult = pipeline.Run(buildParameters, true);
+                var pipeline = new EditorSimulateBuildPipeline();
+                BuildResult buildResult = pipeline.Run(buildParameters, false);
+                if (buildResult.Success)
+                {
+                    var reulst = new EditorSimulateBuildResult();
+                    reulst.PackageRootDirectory = buildResult.OutputPackageDirectory;
+                    return reulst;
+                }
+                else
+                {
+                    Debug.LogError(buildResult.ErrorInfo);
+                    throw new System.Exception($"{nameof(EditorSimulateBuildPipeline)} build failed !");
+                }
             }
             else
             {
                 throw new System.NotImplementedException(buildPipelineName);
-            }
-
-            // 返回结果
-            if (buildResult.Success)
-            {
-                SimulateBuildResult reulst = new SimulateBuildResult();
-                reulst.PackageRootDirectory = buildResult.OutputPackageDirectory;
-                return reulst;
-            }
-            else
-            {
-                return null;
             }
         }
     }

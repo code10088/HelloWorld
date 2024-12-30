@@ -7,7 +7,7 @@ namespace YooAsset
         /// <summary>
         /// 加载结果
         /// </summary>
-        public object Result { protected set; get; }
+        public BundleResult Result { protected set; get; }
 
         /// <summary>
         /// 下载进度
@@ -23,5 +23,26 @@ namespace YooAsset
         /// 终止下载任务
         /// </summary>
         public abstract void AbortDownloadOperation();
+    }
+
+    internal sealed class FSLoadBundleCompleteOperation : FSLoadBundleOperation
+    {
+        private readonly string _error;
+
+        internal FSLoadBundleCompleteOperation(string error)
+        {
+            _error = error;
+        }
+        internal override void InternalOnStart()
+        {
+            Status = EOperationStatus.Failed;
+            Error = _error;
+        }
+        internal override void InternalOnUpdate()
+        {
+        }
+        public override void AbortDownloadOperation()
+        {
+        }
     }
 }

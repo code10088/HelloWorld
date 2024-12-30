@@ -13,8 +13,6 @@ namespace YooAsset.Editor
         BuildinFileRootIsNullOrEmpty = 114,
         PackageOutputDirectoryExists = 115,
         RecommendScriptBuildPipeline = 130,
-        BuildPipelineNotSupportBuildMode = 140,
-        BuildPipelineNotSupportSharePackRule = 141,
 
         // TaskGetBuildMap
         RemoveInvalidTags = 200,
@@ -39,5 +37,6 @@ namespace YooAsset.Editor
         // TaskCreateManifest
         NotFoundUnityBundleInBuildResult = 600,
         FoundStrayBundle = 601,
+        BundleHashConflict = 602,
     }
 }

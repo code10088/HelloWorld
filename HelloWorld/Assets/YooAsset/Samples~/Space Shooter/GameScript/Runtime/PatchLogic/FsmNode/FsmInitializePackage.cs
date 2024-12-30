@@ -33,8 +33,6 @@ internal class FsmInitializePackage : IStateNode
     {
         var playMode = (EPlayMode)_machine.GetBlackboardValue("PlayMode");
         var packageName = (string)_machine.GetBlackboardValue("PackageName");
-        var buildPipeline = (string)_machine.GetBlackboardValue("BuildPipeline");
-        var rawFileSystem = (bool)_machine.GetBlackboardValue("RawFileSystem");
 
         // 创建资源包裹类
         var package = YooAssets.TryGetPackage(packageName);
@@ -45,7 +43,9 @@ internal class FsmInitializePackage : IStateNode
         InitializationOperation initializationOperation = null;
         if (playMode == EPlayMode.EditorSimulateMode)
         {
-            var simulateBuildResult = EditorSimulateModeHelper.SimulateBuild(buildPipeline, packageName);
+            var simulateBuildParam = new EditorSimulateBuildParam();
+            simulateBuildParam.PackageName = packageName;
+            var simulateBuildResult = EditorSimulateModeHelper.SimulateBuild(simulateBuildParam);
             var createParameters = new EditorSimulateModeParameters();
             createParameters.EditorFileSystemParameters = FileSystemParameters.CreateDefaultEditorFileSystemParameters(simulateBuildResult);
             initializationOperation = package.InitializeAsync(createParameters);
@@ -55,10 +55,7 @@ internal class FsmInitializePackage : IStateNode
         if (playMode == EPlayMode.OfflinePlayMode)
         {
             var createParameters = new OfflinePlayModeParameters();
-            if (rawFileSystem)
-                createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinRawFileSystemParameters();
-            else
-                createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
+            createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
             initializationOperation = package.InitializeAsync(createParameters);
         }
 
@@ -69,16 +66,8 @@ internal class FsmInitializePackage : IStateNode
             string fallbackHostServer = GetHostServerURL();
             IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
             var createParameters = new HostPlayModeParameters();
-            if (rawFileSystem)
-            {
-                createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinRawFileSystemParameters();
-                createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheRawFileSystemParameters(remoteServices);
-            }
-            else
-            {
-                createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
-                createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices);
-            }
+            createParameters.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
+            createParameters.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices);
             initializationOperation = package.InitializeAsync(createParameters);
         }
 
@@ -90,9 +79,9 @@ internal class FsmInitializePackage : IStateNode
 			string defaultHostServer = GetHostServerURL();
             string fallbackHostServer = GetHostServerURL();
             IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-            createParameters.WebFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(remoteServices);
+            createParameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(remoteServices);
 #else
-            createParameters.WebFileSystemParameters = FileSystemParameters.CreateDefaultWebFileSystemParameters();
+            createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
 #endif
             initializationOperation = package.InitializeAsync(createParameters);
         }
@@ -173,22 +162,26 @@ internal class FsmInitializePackage : IStateNode
         /// 同步方式获取解密的资源包对象
         /// 注意：加载流对象在资源包对象释放的时候会自动释放
         /// </summary>
-        AssetBundle IDecryptionServices.LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
+        DecryptResult IDecryptionServices.LoadAssetBundle(DecryptFileInfo fileInfo)
         {
             BundleStream bundleStream = new BundleStream(fileInfo.FileLoadPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            managedStream = bundleStream;
-            return AssetBundle.LoadFromStream(bundleStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
+            DecryptResult decryptResult = new DecryptResult();
+            decryptResult.ManagedStream = bundleStream;
+            decryptResult.Result = AssetBundle.LoadFromStream(bundleStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
+            return decryptResult;
         }
 
         /// <summary>
         /// 异步方式获取解密的资源包对象
         /// 注意：加载流对象在资源包对象释放的时候会自动释放
         /// </summary>
-        AssetBundleCreateRequest IDecryptionServices.LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
+        DecryptResult IDecryptionServices.LoadAssetBundleAsync(DecryptFileInfo fileInfo)
         {
             BundleStream bundleStream = new BundleStream(fileInfo.FileLoadPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            managedStream = bundleStream;
-            return AssetBundle.LoadFromStreamAsync(bundleStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
+            DecryptResult decryptResult = new DecryptResult();
+            decryptResult.ManagedStream = bundleStream;
+            decryptResult.CreateRequest = AssetBundle.LoadFromStreamAsync(bundleStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
+            return decryptResult;
         }
 
         /// <summary>
@@ -222,20 +215,24 @@ internal class FsmInitializePackage : IStateNode
         /// 同步方式获取解密的资源包对象
         /// 注意：加载流对象在资源包对象释放的时候会自动释放
         /// </summary>
-        AssetBundle IDecryptionServices.LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
+        DecryptResult IDecryptionServices.LoadAssetBundle(DecryptFileInfo fileInfo)
         {
-            managedStream = null;
-            return AssetBundle.LoadFromFile(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, GetFileOffset());
+            DecryptResult decryptResult = new DecryptResult();
+            decryptResult.ManagedStream = null;
+            decryptResult.Result = AssetBundle.LoadFromFile(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, GetFileOffset());
+            return decryptResult;
         }
 
         /// <summary>
         /// 异步方式获取解密的资源包对象
         /// 注意：加载流对象在资源包对象释放的时候会自动释放
         /// </summary>
-        AssetBundleCreateRequest IDecryptionServices.LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
+        DecryptResult IDecryptionServices.LoadAssetBundleAsync(DecryptFileInfo fileInfo)
         {
-            managedStream = null;
-            return AssetBundle.LoadFromFileAsync(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, GetFileOffset());
+            DecryptResult decryptResult = new DecryptResult();
+            decryptResult.ManagedStream = null;
+            decryptResult.CreateRequest = AssetBundle.LoadFromFileAsync(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, GetFileOffset());
+            return decryptResult;
         }
 
         /// <summary>

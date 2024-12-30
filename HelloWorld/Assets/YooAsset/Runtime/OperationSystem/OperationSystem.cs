@@ -106,7 +106,7 @@ namespace YooAsset
             // 终止临时队列里的任务
             foreach (var operation in _newList)
             {
-                if (operation.GetPackageName() == packageName)
+                if (operation.PackageName == packageName)
                 {
                     operation.SetAbort();
                 }
@@ -115,7 +115,7 @@ namespace YooAsset
             // 终止正在进行的任务
             foreach (var operation in _operations)
             {
-                if (operation.GetPackageName() == packageName)
+                if (operation.PackageName == packageName)
                 {
                     operation.SetAbort();
                 }

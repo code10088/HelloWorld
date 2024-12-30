@@ -11,6 +11,7 @@ using COSXML.Model.Object;
 using YooAsset.Editor;
 using System.Text;
 using WeChatWASM;
+using YooAsset;
 
 public class BuildEditor
 {
@@ -79,8 +80,8 @@ public class BuildEditor
             else if (args[i].StartsWith("--debug:"))
             {
                 bool b = bool.Parse(args[i].Replace("--debug:", string.Empty));
-                if (b) EditorTools.AddScriptingDefineSymbols("Debug");
-                else EditorTools.RemoveScriptingDefineSymbols("Debug");
+                if (b) GameEditorTools.AddScriptingDefineSymbols("Debug");
+                else GameEditorTools.RemoveScriptingDefineSymbols("Debug");
             }
         }
     }
@@ -174,10 +175,13 @@ public class BuildEditor
         buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
         buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
         buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
+        buildParameters.BuildBundleType = (int)EBuildBundleType.AssetBundle;
         buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
-        buildParameters.BuildMode = EBuildMode.IncrementalBuild;
         buildParameters.PackageName = AssetManager.PackageName;
         buildParameters.PackageVersion = resversion;
+        buildParameters.PackageNote = string.Empty;
+        buildParameters.ClearBuildCacheFiles = false;
+        buildParameters.UseAssetDependencyDB = true;
         buildParameters.EnableSharePackRule = false;
         buildParameters.VerifyBuildingResult = true;
         buildParameters.FileNameStyle = EFileNameStyle.BundleName_HashName;
@@ -189,6 +193,9 @@ public class BuildEditor
         buildParameters.EncryptionServices = new EncryptionServices();
 #endif
         buildParameters.CompressOption = ECompressOption.LZ4;
+        buildParameters.DisableWriteTypeTree = false;
+        buildParameters.IgnoreTypeTreeChanges = true;
+        buildParameters.WriteLinkXML = true;
 
         try
         {

@@ -52,13 +52,14 @@ namespace YooAsset
                 // 销毁文件加载器
                 foreach (var loader in removeList)
                 {
-                    string bundleName = loader.BundleFileInfo.Bundle.BundleName;
+                    string bundleName = loader.LoadBundleInfo.Bundle.BundleName;
                     loader.DestroyLoader();
                     _resManager._loaderDic.Remove(bundleName);
                 }
 
                 // 注意：调用底层接口释放所有资源
-                Resources.UnloadUnusedAssets();
+                if (removeList.Count > 0)
+                    Resources.UnloadUnusedAssets();
 
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Succeed;

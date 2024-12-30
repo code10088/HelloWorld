@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using YooAsset.Editor;
-using Debug = UnityEngine.Debug;
 
 public static class ShaderVariantCollector
 {
@@ -127,7 +126,7 @@ public static class ShaderVariantCollector
                 ShaderVariantCollectionHelper.SaveCurrentShaderVariantCollection(_savePath);
                 CreateManifest();
 
-                Debug.Log($"搜集SVC完毕！");
+                UnityEngine.Debug.Log($"搜集SVC完毕！");
                 EditorApplication.update -= EditorUpdate;
                 _completedCallback?.Invoke();
             }
@@ -139,39 +138,35 @@ public static class ShaderVariantCollector
     }
     private static List<string> GetAllMaterials()
     {
-        int progressValue = 0;
-        List<string> allAssets = new List<string>(1000);
-
         // 获取所有打包的资源
-        CollectResult collectResult = AssetBundleCollectorSettingData.Setting.GetPackageAssets(EBuildMode.DryRunBuild, _packageName);
-        foreach (var assetInfo in collectResult.CollectAssets)
-        {
-            string[] depends = AssetDatabase.GetDependencies(assetInfo.AssetInfo.AssetPath, true);
-            foreach (var dependAsset in depends)
-            {
-                if (allAssets.Contains(dependAsset) == false)
-                    allAssets.Add(dependAsset);
-            }
-            EditorTools.DisplayProgressBar("获取所有打包资源", ++progressValue, collectResult.CollectAssets.Count);
-        }
-        EditorTools.ClearProgressBar();
+        CollectResult collectResult = AssetBundleCollectorSettingData.Setting.GetPackageAssets(false, false,  _packageName);
 
         // 搜集所有材质球
-        progressValue = 0;
-        List<string> allMaterial = new List<string>(1000);
-        foreach (var assetPath in allAssets)
+        int progressValue = 0;
+        HashSet<string> result = new HashSet<string>();
+        foreach (var collectAssetInfo in collectResult.CollectAssets)
         {
-            System.Type assetType = AssetDatabase.GetMainAssetTypeAtPath(assetPath);
-            if (assetType == typeof(UnityEngine.Material))
+            if (collectAssetInfo.AssetInfo.AssetType == typeof(UnityEngine.Material))
             {
-                allMaterial.Add(assetPath);
+                string assetPath = collectAssetInfo.AssetInfo.AssetPath;
+                if (result.Contains(assetPath) == false)
+                    result.Add(assetPath);
             }
-            EditorTools.DisplayProgressBar("搜集所有材质球", ++progressValue, allAssets.Count);
+            foreach(var dependAssetInfo in collectAssetInfo.DependAssets)
+            {
+                if (dependAssetInfo.AssetType == typeof(UnityEngine.Material))
+                {
+                    string assetPath = dependAssetInfo.AssetPath;
+                    if (result.Contains(assetPath) == false)
+                        result.Add(assetPath);
+                }
+            }
+            EditorTools.DisplayProgressBar("搜集所有材质球", ++progressValue, collectResult.CollectAssets.Count);
         }
         EditorTools.ClearProgressBar();
 
         // 返回结果
-        return allMaterial;
+        return result.ToList();
     }
     private static void CollectVariants(List<string> materials)
     {

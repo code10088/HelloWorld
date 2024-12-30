@@ -21,18 +21,13 @@ namespace YooAsset.Editor
             var buildMapContext = context.GetContextObject<BuildMapContext>();
             var scriptableBuildParameters = buildParametersContext.Parameters as ScriptableBuildParameters;
 
-            // 模拟构建模式下跳过引擎构建
-            var buildMode = buildParametersContext.Parameters.BuildMode;
-            if (buildMode == EBuildMode.SimulateBuild)
-                return;
-
             // 构建内容
             var buildContent = new BundleBuildContent(buildMapContext.GetPipelineBuilds());
 
             // 开始构建
             IBundleBuildResults buildResults;
             var buildParameters = scriptableBuildParameters.GetBundleBuildParameters();
-            var taskList = SBPBuildTasks.Create(buildMapContext.Command.ShadersBundleName);
+            var taskList = SBPBuildTasks.Create(buildMapContext.Command.ShadersBundleName, null);
             ReturnCode exitCode = ContentPipeline.BuildAssetBundles(buildParameters, buildContent, out buildResults, taskList);
             if (exitCode < 0)
             {

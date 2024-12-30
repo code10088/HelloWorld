@@ -19,6 +19,8 @@ namespace YooAsset
         private readonly DefaultBuildinFileSystem _fileSystem;
         private readonly PackageBundle _bundle;
         private AssetBundleCreateRequest _createRequest;
+        private AssetBundle _assetBundle;
+        private Stream _managedStream;
         private ESteps _steps = ESteps.None;
 
 
@@ -56,19 +58,23 @@ namespace YooAsset
                 {
                     if (_bundle.Encrypted)
                     {
-                        Result = _fileSystem.LoadEncryptedAssetBundle(_bundle);
+                        var decryptResult = _fileSystem.LoadEncryptedAssetBundle(_bundle);
+                        _assetBundle = decryptResult.Result;
+                        _managedStream = decryptResult.ManagedStream;
                     }
                     else
                     {
                         string filePath = _fileSystem.GetBuildinFileLoadPath(_bundle);
-                        Result = AssetBundle.LoadFromFile(filePath);
+                        _assetBundle = AssetBundle.LoadFromFile(filePath);
                     }
                 }
                 else
                 {
                     if (_bundle.Encrypted)
                     {
-                        _createRequest = _fileSystem.LoadEncryptedAssetBundleAsync(_bundle);
+                        var decryptResult = _fileSystem.LoadEncryptedAssetBundleAsync(_bundle);
+                        _createRequest = decryptResult.CreateRequest;
+                        _managedStream = decryptResult.ManagedStream;
                     }
                     else
                     {
@@ -88,19 +94,20 @@ namespace YooAsset
                     {
                         // 强制挂起主线程（注意：该操作会很耗时）
                         YooLogger.Warning("Suspend the main thread to load unity bundle.");
-                        Result = _createRequest.assetBundle;
+                        _assetBundle = _createRequest.assetBundle;
                     }
                     else
                     {
                         if (_createRequest.isDone == false)
                             return;
-                        Result = _createRequest.assetBundle;
+                        _assetBundle = _createRequest.assetBundle;
                     }
                 }
 
-                if (Result != null)
+                if (_assetBundle != null)
                 {
                     _steps = ESteps.Done;
+                    Result = new AssetBundleResult(_fileSystem, _bundle, _assetBundle, _managedStream);
                     Status = EOperationStatus.Succeed;
                     return;
                 }
@@ -176,7 +183,7 @@ namespace YooAsset
                 if (File.Exists(filePath))
                 {
                     _steps = ESteps.Done;
-                    Result = new RawBundle(_fileSystem, _bundle, filePath);
+                    Result = new RawBundleResult(_fileSystem, _bundle);
                     Status = EOperationStatus.Succeed;
                 }
                 else

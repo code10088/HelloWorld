@@ -58,6 +58,9 @@ namespace YooAsset
                 var loaderDic = _resManager._loaderDic;
                 var providerDic = _resManager._providerDic;
 
+                // 清空所有场景句柄
+                _resManager._sceneHandles.Clear();
+
                 // 释放所有资源句柄
                 foreach (var provider in providerDic.Values)
                 {
@@ -79,7 +82,6 @@ namespace YooAsset
                 // 清空数据
                 providerDic.Clear();
                 loaderDic.Clear();
-                _resManager.ClearSceneHandle();
 
                 // 注意：调用底层接口释放所有资源
                 Resources.UnloadUnusedAssets();

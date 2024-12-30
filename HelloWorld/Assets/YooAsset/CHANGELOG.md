@@ -2,6 +2,221 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.2.6-preview] - 2024-12-27
+
+### Improvements
+
+- 增强了对Steam平台DLC拓展包的支持。
+
+  ```csharp
+  // 新增参数关闭Catalog目录查询内置文件的功能
+  var fileSystemParams = CreateDefaultBuildinFileSystemParameters();
+  fileSystemParams .AddParameter(FileSystemParametersDefine.DISABLE_CATALOG_FILE, true);
+  ```
+
+- 资源句柄基类提供了统一的Release方法。
+
+  ```csharp
+  public abstract class HandleBase : IEnumerator, IDisposable
+  {
+      /// <summary>
+      /// 释放资源句柄
+      /// </summary>
+      public void Release();
+  
+      /// <summary>
+      /// 释放资源句柄
+      /// </summary>
+      public void Dispose();
+  }
+  ```
+
+- 优化了场景卸载逻辑。
+
+  ```csharp
+  //框架内不在区分主场景和附加场景。
+  //场景卸载后自动释放资源句柄。
+  ```
+
+### Fixed
+
+- 修复了Unity2020版本提示的脚本编译错误。
+- (#417) 修复了DefaultWebServerFileSystem文件系统内Catalog未起效的问题。
+
+### Added
+
+- 新增示例文件 GetCacheBundleSizeOperation.cs
+
+  可以获取指定Package的缓存资源总大小。
+
+### Removed
+
+- 移除了SceneHandle.IsMainScene()方法。
+
+## [2.2.5-preview] - 2024-12-25
+
+依赖的ScriptableBuildPipeline (SBP) 插件库版本切换为1.21.25版本！
+
+重构了ResourceManager相关的核心代码，方便借助文件系统扩展和支持更复杂的需求！
+
+### Editor
+
+- 新增了编辑器模拟构建管线 EditorSimulateBuildPipeline
+- 移除了EBuildMode枚举类型，构建界面有变动。
+- IActiveRule分组激活接口新增GroupData类。
+
+### Improvements
+
+- 增加抖音小游戏文件系统，见扩展示例代码。
+
+- 微信小游戏文件系统支持删除无用缓存文件和全部缓存文件。
+
+- 资源构建管线现在默认剔除了Gizmos和编辑器资源。
+
+- 优化了资源构建管线里资源收集速度。
+
+  资源收集速度提升100倍！
+
+  ```csharp
+  class BuildParameters
+  {
+      /// <summary>
+      /// 使用资源依赖缓存数据库
+      /// 说明：开启此项可以极大提高资源收集速度
+      /// </summary>
+      public bool UseAssetDependencyDB = false;
+  }
+  ```
+
+- WebPlayMode支持跨域加载。
+
+  ```csharp
+  // 创建默认的WebServer文件系统参数
+  public static FileSystemParameters CreateDefaultWebServerFileSystemParameters(bool disableUnityWebCache = false)
+  
+  // 创建默认的WebRemote文件系统参数（支持跨域加载）
+  public static FileSystemParameters CreateDefaultWebRemoteFileSystemParameters(IRemoteServices remoteServices, bool disableUnityWebCache = false)
+  ```
+
+- 编辑器模拟文件系统新增初始化参数：支持异步模拟加载帧数。
+
+  ```csharp
+  /// <summary>
+  /// 异步模拟加载最小帧数
+  /// </summary>
+  FileSystemParametersDefine.ASYNC_SIMULATE_MIN_FRAME
+  
+  /// <summary>
+  /// 异步模拟加载最大帧数
+  /// </summary>
+  FileSystemParametersDefine.ASYNC_SIMULATE_MAX_FRAME
+  ```
+
+- 缓存文件系统新增初始化参数：支持设置下载器最大并发连接数和单帧最大请求数
+
+  ```csharp
+  var fileSystremParams = FileSystemParameters.CreateDefaultCacheFileSystemParameters();
+  fileSystremParams .AddParameter(FileSystemParametersDefine.DOWNLOAD_MAX_CONCURRENCY, 99);
+  fileSystremParams .AddParameter(FileSystemParametersDefine.DOWNLOAD_MAX_REQUEST_PER_FRAME, 10);
+  ```
+
+### Fixed
+
+- (#349) 修复了在加载清单的时候，即使本地存在缓存文件还会去远端下载。
+- (#361) 修复了协程里等待的asset handle被release，会无限等待并输出警告信息。
+- (#359) 修复了SubAssetsHandle.GetSubAssetObject会获取到同名的主资源。
+- (#387) 修复了加密后文件哈希冲突的时候没有抛出异常错误。
+- (#404) 修复了Unity2022.3.8版本提示编译错误：Cannot resolve symbol 'AsyncInstantiateOperation' 
+
+### Added
+
+- 新增示例文件 CopyBuildinManifestOperation.cs
+
+- 新增示例文件 LoadGameObjectOperation.cs
+
+- 新增了获取配置清单详情的方法
+
+  ```csharp
+  class ResourcePackage
+  {
+     public PackageDetails GetPackageDetails() 
+  }
+  ```
+
+- 新增了获取所有资源信息的方法
+
+  ```csharp
+  class ResourcePackage
+  {
+      public AssetInfo[] GetAllAssetInfos() 
+  }
+  ```
+
+- 新增了清理缓存文件的通用方法
+
+  ```csharp
+  /// <summary>
+  /// 文件清理方式
+  /// </summary>
+  public enum EFileClearMode
+  {
+      /// <summary>
+      /// 清理所有文件
+      /// </summary>
+      ClearAllBundleFiles = 1,
+      /// <summary>
+      /// 清理未在使用的文件
+      /// </summary>
+      ClearUnusedBundleFiles = 2,
+      /// <summary>   
+      /// 清理指定标签的文件   
+      /// 说明：需要指定参数，可选：string, string[], List<string>   
+      /// </summary>   
+      ClearBundleFilesByTags = 3,
+  }
+  class ResourcePackage
+  {
+      /// <summary>
+      /// 清理缓存文件
+      /// </summary>
+      /// <param name="clearMode">清理方式</param>
+      /// <param name="clearParam">执行参数</param>
+      public ClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(EFileClearMode clearMode, object clearParam = null)
+  }
+  ```
+
+### Changed
+
+- 修改了EditorSimulateModeHelper.SimulateBuild()方法
+
+- 重命名ResourcePackage.GetAssetsInfoByTags()方法为GetAssetInfosByTags()
+
+- 实例化对象方法增加激活参数。
+
+  ```csharp
+  public InstantiateOperation InstantiateAsync(bool actived = true)
+  ```
+
+- 清单文件的版本提升到2.2.5版本
+
+  ```csharp
+  /// <summary>
+  /// 资源包裹的备注信息
+  /// </summary>
+  public string PackageNote;
+  ```
+  
+
+### Removed
+
+- 移除了HostPlayModeParameters.DeliveryFileSystemParameters字段
+- 移除了ResourcePackage.ClearAllBundleFilesAsync()方法
+- 移除了ResourcePackage.ClearUnusedBundleFilesAsync()方法
+- 移除了FileSystemParameters.CreateDefaultBuildinRawFileSystemParameters()方法
+- 移除了FileSystemParameters.CreateDefaultCacheRawFileSystemParameters()方法
+- 移除了枚举类型：EDefaultBuildPipeline
+- 移除了配置参数：YooAssetSettings.ManifestFileName
+
 ## [2.2.4-preview] - 2024-08-15
 
 ### Fixed

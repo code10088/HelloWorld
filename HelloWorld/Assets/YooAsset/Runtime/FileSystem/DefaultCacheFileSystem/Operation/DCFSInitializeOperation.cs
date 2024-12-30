@@ -12,7 +12,7 @@ namespace YooAsset
             Done,
         }
 
-        private readonly DefaultCacheFileSystem _fileSytem;
+        private readonly DefaultCacheFileSystem _fileSystem;
         private SearchCacheFilesOperation _searchCacheFilesOp;
         private VerifyCacheFilesOperation _verifyCacheFilesOp;
         private ESteps _steps = ESteps.None;
@@ -20,7 +20,7 @@ namespace YooAsset
 
         internal DCFSInitializeOperation(DefaultCacheFileSystem fileSystem)
         {
-            _fileSytem = fileSystem;
+            _fileSystem = fileSystem;
         }
         internal override void InternalOnStart()
         {
@@ -39,14 +39,14 @@ namespace YooAsset
 
             if (_steps == ESteps.CheckAppFootPrint)
             {
-                var appFootPrint = new ApplicationFootPrint(_fileSytem);
-                appFootPrint.Load(_fileSytem.PackageName);
+                var appFootPrint = new ApplicationFootPrint(_fileSystem);
+                appFootPrint.Load(_fileSystem.PackageName);
 
                 // 如果水印发生变化，则说明覆盖安装后首次打开游戏
                 if (appFootPrint.IsDirty())
                 {
-                    _fileSytem.DeleteAllManifestFiles();
-                    appFootPrint.Coverage(_fileSytem.PackageName);
+                    _fileSystem.DeleteAllManifestFiles();
+                    appFootPrint.Coverage(_fileSystem.PackageName);
                     YooLogger.Warning("Delete manifest files when application foot print dirty !");
                 }
 
@@ -57,8 +57,8 @@ namespace YooAsset
             {
                 if (_searchCacheFilesOp == null)
                 {
-                    _searchCacheFilesOp = new SearchCacheFilesOperation(_fileSytem);
-                    OperationSystem.StartOperation(_fileSytem.PackageName, _searchCacheFilesOp);
+                    _searchCacheFilesOp = new SearchCacheFilesOperation(_fileSystem, _fileSystem.PackageName, _fileSystem.AppendFileExtension);
+                    OperationSystem.StartOperation(_fileSystem.PackageName, _searchCacheFilesOp);
                 }
 
                 Progress = _searchCacheFilesOp.Progress;
@@ -72,8 +72,8 @@ namespace YooAsset
             {
                 if (_verifyCacheFilesOp == null)
                 {
-                    _verifyCacheFilesOp = new VerifyCacheFilesOperation(_fileSytem, _searchCacheFilesOp.Result);
-                    OperationSystem.StartOperation(_fileSytem.PackageName, _verifyCacheFilesOp);
+                    _verifyCacheFilesOp = new VerifyCacheFilesOperation(_fileSystem, _fileSystem.FileVerifyLevel, _searchCacheFilesOp.Result);
+                    OperationSystem.StartOperation(_fileSystem.PackageName, _verifyCacheFilesOp);
                 }
 
                 Progress = _verifyCacheFilesOp.Progress;
@@ -84,7 +84,7 @@ namespace YooAsset
                 {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Succeed;
-                    YooLogger.Log($"Package '{_fileSytem.PackageName}' cached files count : {_fileSytem.FileCount}");
+                    YooLogger.Log($"Package '{_fileSystem.PackageName}' cached files count : {_fileSystem.FileCount}");
                 }
                 else
                 {

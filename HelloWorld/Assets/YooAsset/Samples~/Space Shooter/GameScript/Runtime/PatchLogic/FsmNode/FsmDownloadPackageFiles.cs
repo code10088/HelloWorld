@@ -29,8 +29,8 @@ public class FsmDownloadPackageFiles : IStateNode
     private IEnumerator BeginDownload()
     {
         var downloader = (ResourceDownloaderOperation)_machine.GetBlackboardValue("Downloader");
-        downloader.OnDownloadErrorCallback = PatchEventDefine.WebFileDownloadFailed.SendEventMessage;
-        downloader.OnDownloadProgressCallback = PatchEventDefine.DownloadProgressUpdate.SendEventMessage;
+        downloader.DownloadErrorCallback = PatchEventDefine.WebFileDownloadFailed.SendEventMessage;
+        downloader.DownloadUpdateCallback = PatchEventDefine.DownloadProgressUpdate.SendEventMessage;
         downloader.BeginDownload();
         yield return downloader;
 

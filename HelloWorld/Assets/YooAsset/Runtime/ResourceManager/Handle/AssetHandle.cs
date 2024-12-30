@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace YooAsset
 {
-    public sealed class AssetHandle : HandleBase, IDisposable
+    public sealed class AssetHandle : HandleBase
     {
         private System.Action<AssetHandle> _callback;
 
@@ -46,22 +44,6 @@ namespace YooAsset
             if (IsValidWithWarning == false)
                 return;
             Provider.WaitForAsyncComplete();
-        }
-
-        /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Release()
-        {
-            this.ReleaseInternal();
-        }
-
-        /// <summary>
-        /// 释放资源句柄
-        /// </summary>
-        public void Dispose()
-        {
-            this.ReleaseInternal();
         }
 
 

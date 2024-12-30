@@ -15,10 +15,27 @@ namespace YooAsset
 
         private const int MAX_LOADER_COUNT = 64;
 
-        public delegate void OnDownloadOver(bool isSucceed);
-        public delegate void OnDownloadProgress(int totalDownloadCount, int currentDownloadCount, long totalDownloadBytes, long currentDownloadBytes);
-        public delegate void OnDownloadError(string fileName, string error);
-        public delegate void OnStartDownloadFile(string fileName, long sizeBytes);
+        #region 委托定义
+        /// <summary>
+        /// 下载器结束
+        /// </summary>
+        public delegate void DownloaderFinish(DownloaderFinishData data);
+
+        /// <summary>
+        /// 下载进度更新
+        /// </summary>
+        public delegate void DownloadUpdate(DownloadUpdateData data);
+
+        /// <summary>
+        /// 下载发生错误
+        /// </summary>
+        public delegate void DownloadError(DownloadErrorData data);
+
+        /// <summary>
+        /// 开始下载某个文件
+        /// </summary>
+        public delegate void DownloadFileBegin(DownloadFileData data);
+        #endregion
 
         private readonly string _packageName;
         private readonly int _downloadingMaxNumber;
@@ -67,23 +84,23 @@ namespace YooAsset
         /// <summary>
         /// 当下载器结束（无论成功或失败）
         /// </summary>
-        public OnDownloadOver OnDownloadOverCallback { set; get; }
+        public DownloaderFinish DownloadFinishCallback { set; get; }
 
         /// <summary>
         /// 当下载进度发生变化
         /// </summary>
-        public OnDownloadProgress OnDownloadProgressCallback { set; get; }
+        public DownloadUpdate DownloadUpdateCallback { set; get; }
 
         /// <summary>
-        /// 当某个文件下载失败
+        /// 当下载器发生错误
         /// </summary>
-        public OnDownloadError OnDownloadErrorCallback { set; get; }
+        public DownloadError DownloadErrorCallback { set; get; }
 
         /// <summary>
         /// 当开始下载某个文件
         /// </summary>
-        public OnStartDownloadFile OnStartDownloadFileCallback { set; get; }
-
+        public DownloadFileBegin DownloadFileBeginCallback { set; get; }
+        
 
         internal DownloaderOperation(string packageName, List<BundleInfo> downloadList, int downloadingMaxNumber, int failedTryAgain, int timeout)
         {
@@ -160,7 +177,18 @@ namespace YooAsset
                     _lastDownloadBytes = downloadBytes;
                     _lastDownloadCount = _cachedDownloadCount;
                     Progress = (float)_lastDownloadBytes / TotalDownloadBytes;
-                    OnDownloadProgressCallback?.Invoke(TotalDownloadCount, _lastDownloadCount, TotalDownloadBytes, _lastDownloadBytes);
+
+                    if (DownloadUpdateCallback != null)
+                    {
+                        var data = new DownloadUpdateData();
+                        data.PackageName = _packageName;
+                        data.Progress = Progress;
+                        data.TotalDownloadCount = TotalDownloadCount;
+                        data.CurrentDownloadCount = _lastDownloadCount;
+                        data.TotalDownloadBytes = TotalDownloadBytes;
+                        data.CurrentDownloadBytes = _lastDownloadBytes;
+                        DownloadUpdateCallback.Invoke(data);
+                    }
                 }
 
                 // 动态创建新的下载器到最大数量限制
@@ -177,7 +205,15 @@ namespace YooAsset
                         var downloader = bundleInfo.CreateDownloader(_failedTryAgain, _timeout);
                         _downloaders.Add(downloader);
                         _bundleInfoList.RemoveAt(index);
-                        OnStartDownloadFileCallback?.Invoke(bundleInfo.Bundle.BundleName, bundleInfo.Bundle.FileSize);
+
+                        if (DownloadFileBeginCallback != null)
+                        {
+                            var data = new DownloadFileData();
+                            data.PackageName = _packageName;
+                            data.FileName = bundleInfo.Bundle.BundleName;
+                            data.FileSize = bundleInfo.Bundle.FileSize;
+                            DownloadFileBeginCallback.Invoke(data);
+                        }
                     }
                 }
 
@@ -191,15 +227,37 @@ namespace YooAsset
                         _steps = ESteps.Done;
                         Status = EOperationStatus.Failed;
                         Error = $"Failed to download file : {bundleName}";
-                        OnDownloadErrorCallback?.Invoke(bundleName, failedDownloader.Error);
-                        OnDownloadOverCallback?.Invoke(false);
+
+                        if (DownloadErrorCallback != null)
+                        {
+                            var data = new DownloadErrorData();
+                            data.PackageName = _packageName;
+                            data.FileName = bundleName;
+                            data.ErrorInfo = failedDownloader.Error;
+                            DownloadErrorCallback.Invoke(data);
+                        }
+
+                        if (DownloadFinishCallback != null)
+                        {
+                            var data = new DownloaderFinishData();
+                            data.PackageName = _packageName;
+                            data.Succeed = false;
+                            DownloadFinishCallback.Invoke(data);
+                        }
                     }
                     else
                     {
                         // 结算成功
                         _steps = ESteps.Done;
                         Status = EOperationStatus.Succeed;
-                        OnDownloadOverCallback?.Invoke(true);
+
+                        if (DownloadFinishCallback != null)
+                        {
+                            var data = new DownloaderFinishData();
+                            data.PackageName = _packageName;
+                            data.Succeed = true;
+                            DownloadFinishCallback.Invoke(data);
+                        }
                     }
                 }
             }

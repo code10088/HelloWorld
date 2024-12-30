@@ -10,36 +10,6 @@ namespace YooAsset
     /// </summary>
     internal class DefaultBuildinFileSystem : IFileSystem
     {
-        private class UnpackRemoteServices : IRemoteServices
-        {
-            private readonly string _buildinPackageRoot;
-            protected readonly Dictionary<string, string> _mapping = new Dictionary<string, string>(10000);
-
-            public UnpackRemoteServices(string buildinPackRoot)
-            {
-                _buildinPackageRoot = buildinPackRoot;
-            }
-            string IRemoteServices.GetRemoteMainURL(string fileName)
-            {
-                return GetFileLoadURL(fileName);
-            }
-            string IRemoteServices.GetRemoteFallbackURL(string fileName)
-            {
-                return GetFileLoadURL(fileName);
-            }
-
-            private string GetFileLoadURL(string fileName)
-            {
-                if (_mapping.TryGetValue(fileName, out string url) == false)
-                {
-                    string filePath = PathUtility.Combine(_buildinPackageRoot, fileName);
-                    url = DownloadSystemHelper.ConvertToWWWPath(filePath);
-                    _mapping.Add(fileName, url);
-                }
-                return url;
-            }
-        }
-
         public class FileWrapper
         {
             public string FileName { private set; get; }
@@ -51,7 +21,6 @@ namespace YooAsset
         }
 
         protected readonly Dictionary<string, FileWrapper> _wrappers = new Dictionary<string, FileWrapper>(10000);
-        protected readonly Dictionary<string, Stream> _loadedStream = new Dictionary<string, Stream>(10000);
         protected readonly Dictionary<string, string> _buildinFilePaths = new Dictionary<string, string>(10000);
         protected IFileSystem _unpackFileSystem;
         protected string _packageRoot;
@@ -95,9 +64,9 @@ namespace YooAsset
         public bool AppendFileExtension { private set; get; } = false;
 
         /// <summary>
-        /// 自定义参数：原生文件构建管线
+        /// 自定义参数：禁用Catalog目录查询文件
         /// </summary>
-        public bool RawFileBuildPipeline { private set; get; } = false;
+        public bool DisableCatalogFile { private set; get; } = false;
 
         /// <summary>
         ///  自定义参数：解密方法类
@@ -127,13 +96,9 @@ namespace YooAsset
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
-        public virtual FSClearAllBundleFilesOperation ClearAllBundleFilesAsync()
+        public virtual FSClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
         {
-            return _unpackFileSystem.ClearAllBundleFilesAsync();
-        }
-        public virtual FSClearUnusedBundleFilesOperation ClearUnusedBundleFilesAsync(PackageManifest manifest)
-        {
-            return _unpackFileSystem.ClearUnusedBundleFilesAsync(manifest);
+            return _unpackFileSystem.ClearCacheBundleFilesAsync(manifest, clearMode, clearParam);
         }
         public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadParam param)
         {
@@ -147,7 +112,13 @@ namespace YooAsset
                 return _unpackFileSystem.LoadBundleFile(bundle);
             }
 
-            if (RawFileBuildPipeline)
+            if (bundle.BundleType == (int)EBuildBundleType.AssetBundle)
+            {
+                var operation = new DBFSLoadAssetBundleOperation(this, bundle);
+                OperationSystem.StartOperation(PackageName, operation);
+                return operation;
+            }
+            else if (bundle.BundleType == (int)EBuildBundleType.RawBundle)
             {
                 var operation = new DBFSLoadRawBundleOperation(this, bundle);
                 OperationSystem.StartOperation(PackageName, operation);
@@ -155,35 +126,10 @@ namespace YooAsset
             }
             else
             {
-                var operation = new DBFSLoadAssetBundleOperation(this, bundle);
+                string error = $"{nameof(DefaultBuildinFileSystem)} not support load bundle type : {bundle.BundleType}";
+                var operation = new FSLoadBundleCompleteOperation(error);
                 OperationSystem.StartOperation(PackageName, operation);
                 return operation;
-            }
-        }
-        public virtual void UnloadBundleFile(PackageBundle bundle, object result)
-        {
-            AssetBundle assetBundle = result as AssetBundle;
-            if (assetBundle == null)
-                return;
-
-            if (_unpackFileSystem.Exists(bundle))
-            {
-                _unpackFileSystem.UnloadBundleFile(bundle, assetBundle);
-            }
-            else
-            {
-                if (assetBundle != null)
-                    assetBundle.Unload(true);
-
-                if (_loadedStream.TryGetValue(bundle.BundleGUID, out Stream managedStream))
-                {
-                    if (managedStream != null)
-                    {
-                        managedStream.Close();
-                        managedStream.Dispose();
-                    }
-                    _loadedStream.Remove(bundle.BundleGUID);
-                }
             }
         }
 
@@ -197,9 +143,9 @@ namespace YooAsset
             {
                 AppendFileExtension = (bool)value;
             }
-            else if (name == FileSystemParametersDefine.RAW_FILE_BUILD_PIPELINE)
+            else if (name == FileSystemParametersDefine.DISABLE_CATALOG_FILE)
             {
-                RawFileBuildPipeline = (bool)value;
+                DisableCatalogFile = (bool)value;
             }
             else if (name == FileSystemParametersDefine.DECRYPTION_SERVICES)
             {
@@ -215,30 +161,34 @@ namespace YooAsset
             PackageName = packageName;
 
             if (string.IsNullOrEmpty(rootDirectory))
-                rootDirectory = GetDefaultRoot();
+                rootDirectory = GetDefaultBuildinRoot();
 
             _packageRoot = PathUtility.Combine(rootDirectory, packageName);
 
             // 创建解压文件系统
-            var remoteServices = new UnpackRemoteServices(_packageRoot);
+            var remoteServices = new DefaultUnpackRemoteServices(_packageRoot);
             _unpackFileSystem = new DefaultUnpackFileSystem();
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.REMOTE_SERVICES, remoteServices);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.FILE_VERIFY_LEVEL, FileVerifyLevel);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, AppendFileExtension);
-            _unpackFileSystem.SetParameter(FileSystemParametersDefine.RAW_FILE_BUILD_PIPELINE, RawFileBuildPipeline);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.DECRYPTION_SERVICES, DecryptionServices);
             _unpackFileSystem.OnCreate(packageName, null);
         }
         public virtual void OnUpdate()
         {
+            _unpackFileSystem.OnUpdate();
         }
 
         public virtual bool Belong(PackageBundle bundle)
         {
+            if (DisableCatalogFile)
+                return true;
             return _wrappers.ContainsKey(bundle.BundleGUID);
         }
         public virtual bool Exists(PackageBundle bundle)
         {
+            if (DisableCatalogFile)
+                return true;
             return _wrappers.ContainsKey(bundle.BundleGUID);
         }
         public virtual bool NeedDownload(PackageBundle bundle)
@@ -251,7 +201,7 @@ namespace YooAsset
                 return false;
 
 #if UNITY_ANDROID
-            return RawFileBuildPipeline || bundle.Encrypted;
+            return bundle.BundleType == (int)EBuildBundleType.RawBundle || bundle.Encrypted;
 #else
             return false;
 #endif
@@ -261,10 +211,17 @@ namespace YooAsset
             return false;
         }
 
-        public virtual byte[] ReadFileData(PackageBundle bundle)
+        public virtual string GetBundleFilePath(PackageBundle bundle)
         {
             if (NeedUnpack(bundle))
-                return _unpackFileSystem.ReadFileData(bundle);
+                return _unpackFileSystem.GetBundleFilePath(bundle);
+
+            return GetBuildinFileLoadPath(bundle);
+        }
+        public virtual byte[] ReadBundleFileData(PackageBundle bundle)
+        {
+            if (NeedUnpack(bundle))
+                return _unpackFileSystem.ReadBundleFileData(bundle);
 
             if (Exists(bundle) == false)
                 return null;
@@ -292,10 +249,10 @@ namespace YooAsset
                 return FileUtility.ReadAllBytes(filePath);
             }
         }
-        public virtual string ReadFileText(PackageBundle bundle)
+        public virtual string ReadBundleFileText(PackageBundle bundle)
         {
             if (NeedUnpack(bundle))
-                return _unpackFileSystem.ReadFileText(bundle);
+                return _unpackFileSystem.ReadBundleFileText(bundle);
 
             if (Exists(bundle) == false)
                 return null;
@@ -325,9 +282,9 @@ namespace YooAsset
         }
 
         #region 内部方法
-        protected string GetDefaultRoot()
+        protected string GetDefaultBuildinRoot()
         {
-            return PathUtility.Combine(Application.streamingAssetsPath, YooAssetSettingsData.Setting.DefaultYooFolderName);
+            return YooAssetSettingsData.GetYooMobileBuildinRoot();
         }
         public string GetBuildinFileLoadPath(PackageBundle bundle)
         {
@@ -338,36 +295,31 @@ namespace YooAsset
             }
             return filePath;
         }
-        public string GetBuildinCatalogFileLoadPath()
-        {
-            string fileName = Path.GetFileNameWithoutExtension(DefaultBuildinFileSystemDefine.BuildinCatalogFileName);
-            return PathUtility.Combine(YooAssetSettingsData.Setting.DefaultYooFolderName, PackageName, fileName);
-        }
         public string GetBuildinPackageVersionFilePath()
         {
             string fileName = YooAssetSettingsData.GetPackageVersionFileName(PackageName);
-            return PathUtility.Combine(FileRoot, fileName);
+            return PathUtility.Combine(_packageRoot, fileName);
         }
         public string GetBuildinPackageHashFilePath(string packageVersion)
         {
             string fileName = YooAssetSettingsData.GetPackageHashFileName(PackageName, packageVersion);
-            return PathUtility.Combine(FileRoot, fileName);
+            return PathUtility.Combine(_packageRoot, fileName);
         }
         public string GetBuildinPackageManifestFilePath(string packageVersion)
         {
             string fileName = YooAssetSettingsData.GetManifestBinaryFileName(PackageName, packageVersion);
-            return PathUtility.Combine(FileRoot, fileName);
+            return PathUtility.Combine(_packageRoot, fileName);
         }
-        public string GetStreamingAssetsPackageRoot()
+        public string GetCatalogFileLoadPath()
         {
-            string rootPath = PathUtility.Combine(Application.dataPath, "StreamingAssets", YooAssetSettingsData.Setting.DefaultYooFolderName);
-            return PathUtility.Combine(rootPath, PackageName);
+            string fileName = Path.GetFileNameWithoutExtension(DefaultBuildinFileSystemDefine.BuildinCatalogFileName);
+            return YooAssetSettingsData.GetYooResourcesLoadPath(PackageName, fileName);
         }
 
         /// <summary>
         /// 记录文件信息
         /// </summary>
-        public bool RecordFile(string bundleGUID, FileWrapper wrapper)
+        public bool RecordCatalogFile(string bundleGUID, FileWrapper wrapper)
         {
             if (_wrappers.ContainsKey(bundleGUID))
             {
@@ -388,9 +340,9 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 加载加密资源文件
+        /// 加载加密的资源文件
         /// </summary>
-        public AssetBundle LoadEncryptedAssetBundle(PackageBundle bundle)
+        public DecryptResult LoadEncryptedAssetBundle(PackageBundle bundle)
         {
             string filePath = GetBuildinFileLoadPath(bundle);
             var fileInfo = new DecryptFileInfo()
@@ -399,16 +351,13 @@ namespace YooAsset
                 FileLoadCRC = bundle.UnityCRC,
                 FileLoadPath = filePath,
             };
-
-            var assetBundle = DecryptionServices.LoadAssetBundle(fileInfo, out var managedStream);
-            _loadedStream.Add(bundle.BundleGUID, managedStream);
-            return assetBundle;
+            return DecryptionServices.LoadAssetBundle(fileInfo);
         }
 
         /// <summary>
-        /// 加载加密资源文件
+        /// 加载加密的资源文件
         /// </summary>
-        public AssetBundleCreateRequest LoadEncryptedAssetBundleAsync(PackageBundle bundle)
+        public DecryptResult LoadEncryptedAssetBundleAsync(PackageBundle bundle)
         {
             string filePath = GetBuildinFileLoadPath(bundle);
             var fileInfo = new DecryptFileInfo()
@@ -417,10 +366,7 @@ namespace YooAsset
                 FileLoadCRC = bundle.UnityCRC,
                 FileLoadPath = filePath,
             };
-
-            var createRequest = DecryptionServices.LoadAssetBundleAsync(fileInfo, out var managedStream);
-            _loadedStream.Add(bundle.BundleGUID, managedStream);
-            return createRequest;
+            return DecryptionServices.LoadAssetBundleAsync(fileInfo);
         }
         #endregion
     }

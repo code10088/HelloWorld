@@ -8,11 +8,15 @@ using UniFramework.Machine;
 /// </summary>
 internal class FsmUpdaterDone : IStateNode
 {
+    private PatchOperation _owner;
+
     void IStateNode.OnCreate(StateMachine machine)
     {
+        _owner = machine.Owner as PatchOperation;
     }
     void IStateNode.OnEnter()
     {
+        _owner.SetFinish();
     }
     void IStateNode.OnUpdate()
     {

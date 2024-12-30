@@ -1,4 +1,5 @@
 ﻿using UniFramework.Event;
+using YooAsset;
 
 public class PatchEventDefine
 {
@@ -36,7 +37,7 @@ public class PatchEventDefine
     {
         public int TotalCount;
         public long TotalSizeBytes;
-        
+
         public static void SendEventMessage(int totalCount, long totalSizeBytes)
         {
             var msg = new FoundUpdateFiles();
@@ -55,14 +56,14 @@ public class PatchEventDefine
         public int CurrentDownloadCount;
         public long TotalDownloadSizeBytes;
         public long CurrentDownloadSizeBytes;
-        
-        public static void SendEventMessage(int totalDownloadCount, int currentDownloadCount, long totalDownloadSizeBytes, long currentDownloadSizeBytes)
+
+        public static void SendEventMessage(DownloadUpdateData updateData)
         {
             var msg = new DownloadProgressUpdate();
-            msg.TotalDownloadCount = totalDownloadCount;
-            msg.CurrentDownloadCount = currentDownloadCount;
-            msg.TotalDownloadSizeBytes = totalDownloadSizeBytes;
-            msg.CurrentDownloadSizeBytes = currentDownloadSizeBytes;
+            msg.TotalDownloadCount = updateData.TotalDownloadCount;
+            msg.CurrentDownloadCount = updateData.CurrentDownloadCount;
+            msg.TotalDownloadSizeBytes = updateData.TotalDownloadBytes;
+            msg.CurrentDownloadSizeBytes = updateData.CurrentDownloadBytes;
             UniEvent.SendMessage(msg);
         }
     }
@@ -99,11 +100,11 @@ public class PatchEventDefine
         public string FileName;
         public string Error;
 
-        public static void SendEventMessage(string fileName, string error)
+        public static void SendEventMessage(DownloadErrorData errorData)
         {
             var msg = new WebFileDownloadFailed();
-            msg.FileName = fileName;
-            msg.Error = error;
+            msg.FileName = errorData.FileName;
+            msg.Error = errorData.ErrorInfo;
             UniEvent.SendMessage(msg);
         }
     }

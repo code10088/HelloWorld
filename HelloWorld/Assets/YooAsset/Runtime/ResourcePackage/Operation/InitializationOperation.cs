@@ -47,7 +47,7 @@ namespace YooAsset
                     return;
                 }
 
-                _impl.EditorFileSystem = PlayModeHelper.CreateFileSystem(_impl.PackageName, _parameters.EditorFileSystemParameters);
+                _impl.EditorFileSystem = _parameters.EditorFileSystemParameters.CreateFileSystem(_impl.PackageName);
                 if (_impl.EditorFileSystem == null)
                 {
                     _steps = ESteps.Done;
@@ -127,7 +127,7 @@ namespace YooAsset
                     return;
                 }
 
-                _impl.BuildinFileSystem = PlayModeHelper.CreateFileSystem(_impl.PackageName, _parameters.BuildinFileSystemParameters);
+                _impl.BuildinFileSystem = _parameters.BuildinFileSystemParameters.CreateFileSystem(_impl.PackageName);
                 if (_impl.BuildinFileSystem == null)
                 {
                     _steps = ESteps.Done;
@@ -171,9 +171,9 @@ namespace YooAsset
         private enum ESteps
         {
             None,
-            CreateFileSystem,
+            CreateBuildinFileSystem,
             InitBuildinFileSystem,
-            InitDeliveryFileSystem,
+            CreateCacheFileSystem,
             InitCacheFileSystem,
             Done,
         }
@@ -181,7 +181,6 @@ namespace YooAsset
         private readonly HostPlayModeImpl _impl;
         private readonly HostPlayModeParameters _parameters;
         private FSInitializeFileSystemOperation _initBuildinFileSystemOp;
-        private FSInitializeFileSystemOperation _initDeliveryFileSystemOp;
         private FSInitializeFileSystemOperation _initCacheFileSystemOp;
         private ESteps _steps = ESteps.None;
 
@@ -192,53 +191,27 @@ namespace YooAsset
         }
         internal override void InternalOnStart()
         {
-            _steps = ESteps.CreateFileSystem;
+            _steps = ESteps.CreateBuildinFileSystem;
         }
         internal override void InternalOnUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
 
-            if (_steps == ESteps.CreateFileSystem)
+            if (_steps == ESteps.CreateBuildinFileSystem)
             {
-                if (_parameters.CacheFileSystemParameters == null)
+                if (_parameters.BuildinFileSystemParameters == null)
                 {
-                    _steps = ESteps.Done;
-                    Status = EOperationStatus.Failed;
-                    Error = "Cache file system parameters is null";
+                    _steps = ESteps.CreateCacheFileSystem;
                     return;
                 }
 
-                if (_parameters.BuildinFileSystemParameters != null)
-                {
-                    _impl.BuildinFileSystem = PlayModeHelper.CreateFileSystem(_impl.PackageName, _parameters.BuildinFileSystemParameters);
-                    if (_impl.BuildinFileSystem == null)
-                    {
-                        _steps = ESteps.Done;
-                        Status = EOperationStatus.Failed;
-                        Error = "Failed to create buildin file system";
-                        return;
-                    }
-                }
-
-                if (_parameters.DeliveryFileSystemParameters != null)
-                {
-                    _impl.DeliveryFileSystem = PlayModeHelper.CreateFileSystem(_impl.PackageName, _parameters.DeliveryFileSystemParameters);
-                    if (_impl.DeliveryFileSystem == null)
-                    {
-                        _steps = ESteps.Done;
-                        Status = EOperationStatus.Failed;
-                        Error = "Failed to create delivery file system";
-                        return;
-                    }
-                }
-
-                _impl.CacheFileSystem = PlayModeHelper.CreateFileSystem(_impl.PackageName, _parameters.CacheFileSystemParameters);
-                if (_impl.CacheFileSystem == null)
+                _impl.BuildinFileSystem = _parameters.BuildinFileSystemParameters.CreateFileSystem(_impl.PackageName);
+                if (_impl.BuildinFileSystem == null)
                 {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Failed;
-                    Error = "Failed to create cache file system";
+                    Error = "Failed to create buildin file system";
                     return;
                 }
 
@@ -247,13 +220,6 @@ namespace YooAsset
 
             if (_steps == ESteps.InitBuildinFileSystem)
             {
-                // 注意：内置文件系统可以为空
-                if (_impl.BuildinFileSystem == null)
-                {
-                    _steps = ESteps.InitDeliveryFileSystem;
-                    return;
-                }
-
                 if (_initBuildinFileSystemOp == null)
                     _initBuildinFileSystemOp = _impl.BuildinFileSystem.InitializeFileSystemAsync();
 
@@ -263,7 +229,7 @@ namespace YooAsset
 
                 if (_initBuildinFileSystemOp.Status == EOperationStatus.Succeed)
                 {
-                    _steps = ESteps.InitDeliveryFileSystem;
+                    _steps = ESteps.CreateCacheFileSystem;
                 }
                 else
                 {
@@ -273,32 +239,26 @@ namespace YooAsset
                 }
             }
 
-            if (_steps == ESteps.InitDeliveryFileSystem)
+            if (_steps == ESteps.CreateCacheFileSystem)
             {
-                // 注意：分发文件系统可以为空
-                if (_impl.DeliveryFileSystem == null)
-                {
-                    _steps = ESteps.InitCacheFileSystem;
-                    return;
-                }
-
-                Progress = _initDeliveryFileSystemOp.Progress;
-                if (_initDeliveryFileSystemOp == null)
-                    _initDeliveryFileSystemOp = _impl.DeliveryFileSystem.InitializeFileSystemAsync();
-
-                if (_initDeliveryFileSystemOp.IsDone == false)
-                    return;
-
-                if (_initDeliveryFileSystemOp.Status == EOperationStatus.Succeed)
-                {
-                    _steps = ESteps.InitCacheFileSystem;
-                }
-                else
+                if (_parameters.CacheFileSystemParameters == null)
                 {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Failed;
-                    Error = _initDeliveryFileSystemOp.Error;
+                    Error = "Cache file system parameters is null";
+                    return;
                 }
+
+                _impl.CacheFileSystem = _parameters.CacheFileSystemParameters.CreateFileSystem(_impl.PackageName);
+                if (_impl.CacheFileSystem == null)
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = "Failed to create cache file system";
+                    return;
+                }
+
+                _steps = ESteps.InitCacheFileSystem;
             }
 
             if (_steps == ESteps.InitCacheFileSystem)
@@ -333,14 +293,18 @@ namespace YooAsset
         private enum ESteps
         {
             None,
-            CreateFileSystem,
-            InitWebFileSystem,
+            CreateWebServerFileSystem,
+            InitWebServerFileSystem,
+            CreateWebRemoteFileSystem,
+            InitWebRemoteFileSystem,
+            CheckResult,
             Done,
         }
 
         private readonly WebPlayModeImpl _impl;
         private readonly WebPlayModeParameters _parameters;
-        private FSInitializeFileSystemOperation _initWebFileSystemOp;
+        private FSInitializeFileSystemOperation _initWebServerFileSystemOp;
+        private FSInitializeFileSystemOperation _initWebRemoteFileSystemOp;
         private ESteps _steps = ESteps.None;
 
         internal WebPlayModeInitializationOperation(WebPlayModeImpl impl, WebPlayModeParameters parameters)
@@ -350,54 +314,107 @@ namespace YooAsset
         }
         internal override void InternalOnStart()
         {
-            _steps = ESteps.CreateFileSystem;
+            _steps = ESteps.CreateWebServerFileSystem;
         }
         internal override void InternalOnUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
 
-            if (_steps == ESteps.CreateFileSystem)
+            if (_steps == ESteps.CreateWebServerFileSystem)
             {
-                if (_parameters.WebFileSystemParameters == null)
+                if (_parameters.WebServerFileSystemParameters == null)
                 {
-                    _steps = ESteps.Done;
-                    Status = EOperationStatus.Failed;
-                    Error = "Web file system parameters is null";
+                    _steps = ESteps.CreateWebRemoteFileSystem;
                     return;
                 }
 
-                _impl.WebFileSystem = PlayModeHelper.CreateFileSystem(_impl.PackageName, _parameters.WebFileSystemParameters);
-                if (_impl.WebFileSystem == null)
+                _impl.WebServerFileSystem = _parameters.WebServerFileSystemParameters.CreateFileSystem(_impl.PackageName);
+                if (_impl.WebServerFileSystem == null)
                 {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Failed;
-                    Error = "Failed to create web file system";
+                    Error = "Failed to create web server file system";
                     return;
                 }
 
-                _steps = ESteps.InitWebFileSystem;
+                _steps = ESteps.InitWebServerFileSystem;
             }
 
-            if (_steps == ESteps.InitWebFileSystem)
+            if (_steps == ESteps.InitWebServerFileSystem)
             {
-                if (_initWebFileSystemOp == null)
-                    _initWebFileSystemOp = _impl.WebFileSystem.InitializeFileSystemAsync();
+                if (_initWebServerFileSystemOp == null)
+                    _initWebServerFileSystemOp = _impl.WebServerFileSystem.InitializeFileSystemAsync();
 
-                Progress = _initWebFileSystemOp.Progress;
-                if (_initWebFileSystemOp.IsDone == false)
+                Progress = _initWebServerFileSystemOp.Progress;
+                if (_initWebServerFileSystemOp.IsDone == false)
                     return;
 
-                if (_initWebFileSystemOp.Status == EOperationStatus.Succeed)
+                if (_initWebServerFileSystemOp.Status == EOperationStatus.Succeed)
                 {
-                    _steps = ESteps.Done;
-                    Status = EOperationStatus.Succeed;
+                    _steps = ESteps.CreateWebRemoteFileSystem;
                 }
                 else
                 {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Failed;
-                    Error = _initWebFileSystemOp.Error;
+                    Error = _initWebServerFileSystemOp.Error;
+                }
+            }
+
+            if (_steps == ESteps.CreateWebRemoteFileSystem)
+            {
+                if (_parameters.WebRemoteFileSystemParameters == null)
+                {
+                    _steps = ESteps.CheckResult;
+                    return;
+                }
+
+                _impl.WebRemoteFileSystem = _parameters.WebRemoteFileSystemParameters.CreateFileSystem(_impl.PackageName);
+                if (_impl.WebRemoteFileSystem == null)
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = "Failed to create web remote file system";
+                    return;
+                }
+
+                _steps = ESteps.InitWebRemoteFileSystem;
+            }
+
+            if (_steps == ESteps.InitWebRemoteFileSystem)
+            {
+                if (_initWebRemoteFileSystemOp == null)
+                    _initWebRemoteFileSystemOp = _impl.WebRemoteFileSystem.InitializeFileSystemAsync();
+
+                Progress = _initWebRemoteFileSystemOp.Progress;
+                if (_initWebRemoteFileSystemOp.IsDone == false)
+                    return;
+
+                if (_initWebRemoteFileSystemOp.Status == EOperationStatus.Succeed)
+                {
+                    _steps = ESteps.CheckResult;
+                }
+                else
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = _initWebRemoteFileSystemOp.Error;
+                }
+            }
+
+            if (_steps == ESteps.CheckResult)
+            {
+                if (_impl.WebServerFileSystem == null && _impl.WebRemoteFileSystem == null)
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = "Not found any file system !";
+                }
+                else
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Succeed;
                 }
             }
         }

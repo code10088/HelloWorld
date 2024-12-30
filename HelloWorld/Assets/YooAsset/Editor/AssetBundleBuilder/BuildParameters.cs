@@ -22,19 +22,19 @@ namespace YooAsset.Editor
         public string BuildinFileRoot;
 
         /// <summary>
-        /// 构建管线
+        /// 构建管线名称
         /// </summary>
         public string BuildPipeline;
+
+        /// <summary>
+        /// 构建资源包类型
+        /// </summary>
+        public int BuildBundleType;
 
         /// <summary>
         /// 构建的平台
         /// </summary>
         public BuildTarget BuildTarget;
-
-        /// <summary>
-        /// 构建模式
-        /// </summary>
-        public EBuildMode BuildMode;
 
         /// <summary>
         /// 构建的包裹名称
@@ -46,9 +46,24 @@ namespace YooAsset.Editor
         /// </summary>
         public string PackageVersion;
 
+        /// <summary>
+        /// 构建的包裹备注
+        /// </summary>
+        public string PackageNote;
 
         /// <summary>
-        /// 是否启用共享资源打包
+        /// 清空构建缓存文件
+        /// </summary>
+        public bool ClearBuildCacheFiles = false;
+
+        /// <summary>
+        /// 使用资源依赖缓存数据库
+        /// 说明：开启此项可以极大提高资源收集速度
+        /// </summary>
+        public bool UseAssetDependencyDB = false;
+
+        /// <summary>
+        /// 启用共享资源打包
         /// </summary>
         public bool EnableSharePackRule = false;
 
@@ -95,16 +110,6 @@ namespace YooAsset.Editor
                 throw new Exception(message);
             }
 
-            // 检测是否有未保存场景
-            if (BuildMode != EBuildMode.SimulateBuild)
-            {
-                if (EditorTools.HasDirtyScenes())
-                {
-                    string message = BuildLogger.GetErrorMessage(ErrorCode.FoundUnsavedScene, "Found unsaved scene !");
-                    throw new Exception(message);
-                }
-            }
-
             // 检测构建参数合法性
             if (BuildTarget == BuildTarget.NoTarget)
             {
@@ -132,31 +137,10 @@ namespace YooAsset.Editor
                 throw new Exception(message);
             }
 
-            // 强制构建删除包裹目录
-            if (BuildMode == EBuildMode.ForceRebuild)
+            // 设置默认备注信息
+            if (string.IsNullOrEmpty(PackageNote))
             {
-                string packageRootDirectory = GetPackageRootDirectory();
-                if (EditorTools.DeleteDirectory(packageRootDirectory))
-                {
-                    BuildLogger.Log($"Delete package root directory: {packageRootDirectory}");
-                }
-            }
-
-            // 检测包裹输出目录是否存在
-            if (BuildMode != EBuildMode.SimulateBuild)
-            {
-                string packageOutputDirectory = GetPackageOutputDirectory();
-                if (Directory.Exists(packageOutputDirectory))
-                {
-                    BuildLogger.Log($"Package outout directory exists: {packageOutputDirectory}");
-                }
-            }
-
-            // 如果输出目录不存在
-            string pipelineOutputDirectory = GetPipelineOutputDirectory();
-            if (EditorTools.CreateDirectory(pipelineOutputDirectory))
-            {
-                BuildLogger.Log($"Create pipeline output directory: {pipelineOutputDirectory}");
+                PackageNote = DateTime.Now.ToString();
             }
         }
 

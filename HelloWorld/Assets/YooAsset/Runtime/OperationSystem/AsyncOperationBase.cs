@@ -43,6 +43,17 @@ namespace YooAsset
         public float Progress { get; protected set; }
 
         /// <summary>
+        /// 所属包裹名称
+        /// </summary>
+        public string PackageName
+        {
+            get
+            {
+                return _packageName;
+            }
+        }
+
+        /// <summary>
         /// 是否已经完成
         /// </summary>
         public bool IsDone
@@ -98,10 +109,6 @@ namespace YooAsset
             throw new System.NotImplementedException(this.GetType().Name);
         }
 
-        internal string GetPackageName()
-        {
-            return _packageName;
-        }
         internal void SetPackageName(string packageName)
         {
             _packageName = packageName;
@@ -147,7 +154,7 @@ namespace YooAsset
 
                 // 当执行次数用完时
                 _whileFrame--;
-                if (_whileFrame == 0)
+                if (_whileFrame <= 0)
                 {
                     Status = EOperationStatus.Failed;
                     Error = $"Operation {this.GetType().Name} failed to wait for async complete !";

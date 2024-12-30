@@ -36,10 +36,10 @@ YooAsset
 	使用对比工具
 	DefaultFilterRule添加CollectUserData
 	屏蔽[MenuItem("YooAsset/AssetBundle Builder", false, 102)]
-	BuildParameters检测输出目录是否存在，存在的情况下也可以打包，避免频繁修改VersionConfig文件
+	TaskPrepare_SBP检测输出目录是否存在，存在的情况下也可以打包，避免频繁修改VersionConfig文件
 	修改OperationSystem的计时方式
 	TaskCopyBuildinFiles添加写入BuildinFile.txt（2.2.x版本不需要）
-	DefaultBuildinFileSystemBuild中修改BuildinCatalog文件路径
+	YooAssetSettingData中修改GetYooResourcesFullPath路径
 WebGL
 	System.Net无法使用
 	socket库使用 https://github.com/sta/websocket-sharp 编译dll

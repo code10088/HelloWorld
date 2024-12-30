@@ -40,14 +40,14 @@ namespace HotAssembly
         }
         private void StartDownload()
         {
-            downloaderOperation.OnDownloadOverCallback = CheckDownloadHotUpdateRes;
-            downloaderOperation.OnDownloadProgressCallback = Downloading;
-            downloaderOperation.OnDownloadErrorCallback = DownloadError;
+            downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateRes;
+            downloaderOperation.DownloadUpdateCallback = Downloading;
+            downloaderOperation.DownloadErrorCallback = DownloadError;
             downloaderOperation.BeginDownload();
         }
-        private void CheckDownloadHotUpdateRes(bool isSucceed)
+        private void CheckDownloadHotUpdateRes(DownloaderFinishData data)
         {
-            if (isSucceed)
+            if (data.Succeed)
             {
                 UpdateFinish();
             }
@@ -61,15 +61,15 @@ namespace HotAssembly
                 UICommonBox.OpenCommonBox(param);
             }
         }
-        private void Downloading(int totalDownloadCount, int currentDownloadCount, long totalDownloadBytes, long currentDownloadBytes)
+        private void Downloading(DownloadUpdateData data)
         {
             var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
-            hotUpdateRes.SetText($"HotUpdateRes£º{currentDownloadBytes}/{totalDownloadBytes}");
-            hotUpdateRes.SetSlider(currentDownloadBytes/totalDownloadBytes);
+            hotUpdateRes.SetText($"HotUpdateRes£º{data.CurrentDownloadBytes}/{data.TotalDownloadBytes}");
+            hotUpdateRes.SetSlider(data.Progress);
         }
-        private void DownloadError(string fileName, string error)
+        private void DownloadError(DownloadErrorData data)
         {
-            GameDebug.LogError($"DownloadError£º{fileName}:{error}");
+            GameDebug.LogError($"DownloadError£º{data.FileName}:{data.ErrorInfo}");
         }
         private void UpdateFinish()
         {

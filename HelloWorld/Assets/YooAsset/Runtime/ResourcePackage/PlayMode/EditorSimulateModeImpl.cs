@@ -52,16 +52,9 @@ namespace YooAsset
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
-
-        ClearAllBundleFilesOperation IPlayMode.ClearAllBundleFilesAsync()
+        ClearCacheBundleFilesOperation IPlayMode.ClearCacheBundleFilesAsync(string clearMode, object clearParam)
         {
-            var operation = new ClearAllBundleFilesImplOperation(this, EditorFileSystem, null, null);
-            OperationSystem.StartOperation(PackageName, operation);
-            return operation;
-        }
-        ClearUnusedBundleFilesOperation IPlayMode.ClearUnusedBundleFilesAsync()
-        {
-            var operation = new ClearUnusedBundleFilesImplOperation(this, EditorFileSystem, null, null);
+            var operation = new ClearCacheBundleFilesImplOperation(this, EditorFileSystem, null, null, clearMode, clearParam);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
@@ -113,7 +106,6 @@ namespace YooAsset
             if (EditorFileSystem.Belong(packageBundle))
             {
                 BundleInfo bundleInfo = new BundleInfo(EditorFileSystem, packageBundle);
-                bundleInfo.IncludeAssetsInEditor = ActiveManifest.GetBundleIncludeAssets(assetInfo.AssetPath);
                 return bundleInfo;
             }
 

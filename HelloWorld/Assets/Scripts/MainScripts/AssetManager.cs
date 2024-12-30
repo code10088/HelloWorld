@@ -23,19 +23,24 @@ public class AssetManager : Singletion<AssetManager>
         YooAssets.Initialize();
         package = YooAssets.CreatePackage(PackageName);
 #if UNITY_EDITOR && !HotUpdateDebug
-        var simulate = EditorSimulateModeHelper.SimulateBuild(EDefaultBuildPipeline.ScriptableBuildPipeline, PackageName);
+        var param = new EditorSimulateBuildParam() { PackageName = PackageName };
+        var simulate = EditorSimulateModeHelper.SimulateBuild(param);
         var editorFileSystem = FileSystemParameters.CreateDefaultEditorFileSystemParameters(simulate);
         var parameters = new EditorSimulateModeParameters();
         parameters.EditorFileSystemParameters = editorFileSystem;
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
-#elif WEIXINMINIGAME
+#elif UNITY_WEBGL
         string defaultHostServer = GameSetting.Instance.CDNVersion;
         string fallbackHostServer = GameSetting.Instance.CDNVersion;
         IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-        var wechatFileSystem = WechatFileSystemCreater.CreateWechatFileSystemParameters(remoteServices);
         var parameters = new WebPlayModeParameters();
-        parameters.WebFileSystemParameters = wechatFileSystem;
+#if WEIXINMINIGAME
+        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(remoteServices);
+#else
+        parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
+        parameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices);
+#endif
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
 #else

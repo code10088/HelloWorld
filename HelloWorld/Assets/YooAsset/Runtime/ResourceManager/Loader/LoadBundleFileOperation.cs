@@ -22,7 +22,7 @@ namespace YooAsset
         /// <summary>
         /// 资源包文件信息
         /// </summary>
-        public BundleInfo BundleFileInfo { private set; get; }
+        public BundleInfo LoadBundleInfo { private set; get; }
 
         /// <summary>
         /// 是否已经销毁
@@ -47,13 +47,13 @@ namespace YooAsset
         /// <summary>
         /// 加载结果
         /// </summary>
-        public object Result { set; get; }
+        public BundleResult Result { set; get; }
 
 
         internal LoadBundleFileOperation(ResourceManager resourceManager, BundleInfo bundleInfo)
         {
             _resourceManager = resourceManager;
-            BundleFileInfo = bundleInfo;
+            LoadBundleInfo = bundleInfo;
         }
         internal override void InternalOnStart()
         {
@@ -67,7 +67,10 @@ namespace YooAsset
             if (_steps == ESteps.LoadFile)
             {
                 if (_loadBundleOp == null)
-                    _loadBundleOp = BundleFileInfo.LoadBundleFile();
+                    _loadBundleOp = LoadBundleInfo.LoadBundleFile();
+
+                if (IsWaitForAsyncComplete)
+                    _loadBundleOp.WaitForAsyncComplete();
 
                 DownloadProgress = _loadBundleOp.DownloadProgress;
                 DownloadedBytes = _loadBundleOp.DownloadedBytes;
@@ -76,9 +79,18 @@ namespace YooAsset
 
                 if (_loadBundleOp.Status == EOperationStatus.Succeed)
                 {
-                    _steps = ESteps.Done;
-                    Result = _loadBundleOp.Result;
-                    Status = EOperationStatus.Succeed;
+                    if (_loadBundleOp.Result == null)
+                    {
+                        _steps = ESteps.Done;
+                        Status = EOperationStatus.Failed;
+                        Error = $"The bundle loader result is null ! {LoadBundleInfo.Bundle.BundleName}";
+                    }
+                    else
+                    {
+                        _steps = ESteps.Done;
+                        Result = _loadBundleOp.Result;
+                        Status = EOperationStatus.Succeed;
+                    }
                 }
                 else
                 {
@@ -92,9 +104,6 @@ namespace YooAsset
         {
             while (true)
             {
-                if (_loadBundleOp != null)
-                    _loadBundleOp.WaitForAsyncComplete();
-
                 if (ExecuteWhileDone())
                 {
                     _steps = ESteps.Done;
@@ -128,11 +137,12 @@ namespace YooAsset
 
             // Check fatal
             if (RefCount > 0)
-                throw new Exception($"Bundle file loader ref is not zero : {BundleFileInfo.Bundle.BundleName}");
+                throw new Exception($"Bundle file loader ref is not zero : {LoadBundleInfo.Bundle.BundleName}");
             if (IsDone == false)
-                throw new Exception($"Bundle file loader is not done : {BundleFileInfo.Bundle.BundleName}");
+                throw new Exception($"Bundle file loader is not done : {LoadBundleInfo.Bundle.BundleName}");
 
-            BundleFileInfo.UnloadBundleFile(Result);
+            if (Result != null)
+                Result.UnloadBundleFile();
         }
 
         /// <summary>

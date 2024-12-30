@@ -126,19 +126,5 @@ namespace YooAsset
             }
 #endif
         }
-
-        /// <summary>
-        /// 是否请求的本地文件
-        /// </summary>
-        protected bool IsRequestLocalFile()
-        {
-            //TODO : UNITY_STANDALONE_OSX平台目前无法确定
-            if (Param.MainURL.StartsWith("file:"))
-                return true;
-            if (Param.MainURL.StartsWith("jar:file:"))
-                return true;
-
-            return false;
-        }
     }
 }

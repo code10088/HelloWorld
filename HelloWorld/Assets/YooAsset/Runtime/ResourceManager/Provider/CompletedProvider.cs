@@ -6,20 +6,13 @@ namespace YooAsset
         public CompletedProvider(ResourceManager manager, AssetInfo assetInfo) : base(manager, string.Empty, assetInfo)
         {
         }
-
-        internal override void InternalOnStart()
-        {
-        }
-        internal override void InternalOnUpdate()
+        protected override void ProcessBundleResult()
         {
         }
 
-        public void SetCompleted(string error)
+        public void SetCompletedWithError(string error)
         {
-            if (_steps == ESteps.None)
-            {
-                InvokeCompletion(error, EOperationStatus.Failed);
-            }
+            InvokeCompletion(error, EOperationStatus.Failed);
         }
     }
 }

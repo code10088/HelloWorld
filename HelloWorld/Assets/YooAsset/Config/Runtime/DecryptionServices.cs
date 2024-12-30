@@ -1,19 +1,22 @@
-using System.IO;
 using UnityEngine;
 using YooAsset;
 
 public class DecryptionServices : IDecryptionServices
 {
-    public AssetBundle LoadAssetBundle(DecryptFileInfo fileInfo, out Stream managedStream)
+    public DecryptResult LoadAssetBundle(DecryptFileInfo fileInfo)
     {
-        managedStream = null;
-        return AssetBundle.LoadFromFile(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, 8);
+        DecryptResult decryptResult = new DecryptResult();
+        decryptResult.ManagedStream = null;
+        decryptResult.Result = AssetBundle.LoadFromFile(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, 8);
+        return decryptResult;
     }
 
-    public AssetBundleCreateRequest LoadAssetBundleAsync(DecryptFileInfo fileInfo, out Stream managedStream)
+    public DecryptResult LoadAssetBundleAsync(DecryptFileInfo fileInfo)
     {
-        managedStream = null;
-        return AssetBundle.LoadFromFileAsync(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, 8);
+        DecryptResult decryptResult = new DecryptResult();
+        decryptResult.ManagedStream = null;
+        decryptResult.CreateRequest = AssetBundle.LoadFromFileAsync(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, 8);
+        return decryptResult;
     }
 
     public byte[] ReadFileData(DecryptFileInfo fileInfo)

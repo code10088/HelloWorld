@@ -25,26 +25,46 @@ namespace YooAsset
         /// </summary>
         public static string ConvertToWWWPath(string path)
         {
+            string url;
+
+            // 获取对应平台的URL地址
 #if UNITY_EDITOR
-            return StringUtility.Format("file:///{0}", path);
+            url = StringUtility.Format("file:///{0}", path);
 #elif UNITY_WEBGL
-            return path;
+            url = path;
 #elif UNITY_IPHONE
-            return StringUtility.Format("file://{0}", path);
+            url = StringUtility.Format("file://{0}", path);
 #elif UNITY_ANDROID
             if (path.StartsWith("jar:file://"))
-                return path;
+                url = path;
             else
-                return StringUtility.Format("jar:file://{0}", path);
+                url = StringUtility.Format("jar:file://{0}", path);
 #elif UNITY_STANDALONE_OSX
-            return new System.Uri(path).ToString();
+            url = new System.Uri(path).ToString();
 #elif UNITY_STANDALONE
-            return StringUtility.Format("file:///{0}", path);
+            url = StringUtility.Format("file:///{0}", path);
 #elif UNITY_OPENHARMONY
-            return StringUtility.Format("file://{0}", path);
+            url = StringUtility.Format("file://{0}", path);
 #else
-            throw new System.NotImplementedException(); 
+            throw new System.NotImplementedException();
 #endif
+
+            // For some special cases when users have special characters in their devices, url paths can not be identified correctly.
+            return url.Replace("+", "%2B").Replace("#", "%23").Replace("?", "%3F");
+        }
+
+        /// <summary>
+        /// 是否请求的本地文件
+        /// </summary>
+        public static bool IsRequestLocalFile(string url)
+        {
+            //TODO UNITY_STANDALONE_OSX平台目前无法确定
+            if (url.StartsWith("file:"))
+                return true;
+            if (url.StartsWith("jar:file:"))
+                return true;
+
+            return false;
         }
     }
 }
