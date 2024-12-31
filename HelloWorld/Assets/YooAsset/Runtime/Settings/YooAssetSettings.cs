@@ -6,10 +6,15 @@ namespace YooAsset
     internal class YooAssetSettings : ScriptableObject
     {
         /// <summary>
-        /// 默认的YooAsset文件夹名称
+        /// YooAsset文件夹名称
         /// </summary>
         public string DefaultYooFolderName = "yoo";
 
+        /// <summary>
+        /// 资源清单前缀名称（默认为空)
+        /// </summary>
+        public string PackageManifestPrefix = string.Empty;
+        
 
         /// <summary>
         /// 清单文件头标记

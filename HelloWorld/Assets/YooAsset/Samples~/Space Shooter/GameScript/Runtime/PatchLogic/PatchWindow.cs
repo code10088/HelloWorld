@@ -52,7 +52,6 @@ public class PatchWindow : MonoBehaviour
         }
     }
 
-
     private readonly EventGroup _eventGroup = new EventGroup();
     private readonly List<MessageBox> _msgBoxList = new List<MessageBox>();
 
@@ -60,7 +59,6 @@ public class PatchWindow : MonoBehaviour
     private GameObject _messageBoxObj;
     private Slider _slider;
     private Text _tips;
-
 
     void Awake()
     {
@@ -71,11 +69,11 @@ public class PatchWindow : MonoBehaviour
         _messageBoxObj.SetActive(false);
 
         _eventGroup.AddListener<PatchEventDefine.InitializeFailed>(OnHandleEventMessage);
-        _eventGroup.AddListener<PatchEventDefine.PatchStatesChange>(OnHandleEventMessage);
+        _eventGroup.AddListener<PatchEventDefine.PatchStepsChange>(OnHandleEventMessage);
         _eventGroup.AddListener<PatchEventDefine.FoundUpdateFiles>(OnHandleEventMessage);
-        _eventGroup.AddListener<PatchEventDefine.DownloadProgressUpdate>(OnHandleEventMessage);
-        _eventGroup.AddListener<PatchEventDefine.PackageVersionUpdateFailed>(OnHandleEventMessage);
-        _eventGroup.AddListener<PatchEventDefine.PatchManifestUpdateFailed>(OnHandleEventMessage);
+        _eventGroup.AddListener<PatchEventDefine.DownloadUpdate>(OnHandleEventMessage);
+        _eventGroup.AddListener<PatchEventDefine.PackageVersionRequestFailed>(OnHandleEventMessage);
+        _eventGroup.AddListener<PatchEventDefine.PackageManifestUpdateFailed>(OnHandleEventMessage);
         _eventGroup.AddListener<PatchEventDefine.WebFileDownloadFailed>(OnHandleEventMessage);
     }
     void OnDestroy()
@@ -96,10 +94,11 @@ public class PatchWindow : MonoBehaviour
             };
             ShowMessageBox($"Failed to initialize package !", callback);
         }
-        else if (message is PatchEventDefine.PatchStatesChange)
+        else if (message is PatchEventDefine.PatchStepsChange)
         {
-            var msg = message as PatchEventDefine.PatchStatesChange;
+            var msg = message as PatchEventDefine.PatchStepsChange;
             _tips.text = msg.Tips;
+            UnityEngine.Debug.Log(msg.Tips);
         }
         else if (message is PatchEventDefine.FoundUpdateFiles)
         {
@@ -113,27 +112,27 @@ public class PatchWindow : MonoBehaviour
             string totalSizeMB = sizeMB.ToString("f1");
             ShowMessageBox($"Found update patch files, Total count {msg.TotalCount} Total szie {totalSizeMB}MB", callback);
         }
-        else if (message is PatchEventDefine.DownloadProgressUpdate)
+        else if (message is PatchEventDefine.DownloadUpdate)
         {
-            var msg = message as PatchEventDefine.DownloadProgressUpdate;
+            var msg = message as PatchEventDefine.DownloadUpdate;
             _slider.value = (float)msg.CurrentDownloadCount / msg.TotalDownloadCount;
             string currentSizeMB = (msg.CurrentDownloadSizeBytes / 1048576f).ToString("f1");
             string totalSizeMB = (msg.TotalDownloadSizeBytes / 1048576f).ToString("f1");
             _tips.text = $"{msg.CurrentDownloadCount}/{msg.TotalDownloadCount} {currentSizeMB}MB/{totalSizeMB}MB";
         }
-        else if (message is PatchEventDefine.PackageVersionUpdateFailed)
+        else if (message is PatchEventDefine.PackageVersionRequestFailed)
         {
             System.Action callback = () =>
             {
-                UserEventDefine.UserTryUpdatePackageVersion.SendEventMessage();
+                UserEventDefine.UserTryRequestPackageVersion.SendEventMessage();
             };
             ShowMessageBox($"Failed to update static version, please check the network status.", callback);
         }
-        else if (message is PatchEventDefine.PatchManifestUpdateFailed)
+        else if (message is PatchEventDefine.PackageManifestUpdateFailed)
         {
             System.Action callback = () =>
             {
-                UserEventDefine.UserTryUpdatePatchManifest.SendEventMessage();
+                UserEventDefine.UserTryUpdatePackageManifest.SendEventMessage();
             };
             ShowMessageBox($"Failed to update patch manifest, please check the network status.", callback);
         }

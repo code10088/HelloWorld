@@ -13,11 +13,10 @@ public class UIHomeWindow : MonoBehaviour
         _version = this.transform.Find("version").GetComponent<Text>();
         _aboutView = this.transform.Find("AboutView").gameObject;
 
+        var loginBtn = this.transform.Find("PlayGameButton").GetComponent<Button>();
+        loginBtn.onClick.AddListener(OnClickPlayGameBtn);
 
-        var loginBtn = this.transform.Find("Start").GetComponent<Button>();
-        loginBtn.onClick.AddListener(OnClickLoginBtn);
-
-        var aboutBtn = this.transform.Find("About").GetComponent<Button>();
+        var aboutBtn = this.transform.Find("AboutButton").GetComponent<Button>();
         aboutBtn.onClick.AddListener(OnClicAboutBtn);
 
         var maskBtn = this.transform.Find("AboutView/mask").GetComponent<Button>();
@@ -26,10 +25,10 @@ public class UIHomeWindow : MonoBehaviour
     private void Start()
     {
         var package = YooAsset.YooAssets.GetPackage("DefaultPackage");
-        _version.text = "Ver : " + package.GetPackageVersion();
+        _version.text = "Version : " + package.GetPackageVersion();
     }
 
-    private void OnClickLoginBtn()
+    private void OnClickPlayGameBtn()
     {
         SceneEventDefine.ChangeToBattleScene.SendEventMessage();
     }

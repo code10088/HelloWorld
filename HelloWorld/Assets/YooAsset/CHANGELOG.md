@@ -2,6 +2,39 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.2.7-preview] - 2024-12-30
+
+### Improvements
+
+- 重构了下载器的委托方法。
+
+- YooAssetSettings配置文件新增Package Manifest Prefix参数。
+
+  ```csharp
+  /// <summary>
+  /// 资源清单前缀名称（默认为空)
+  /// </summary>
+  public string PackageManifestPrefix = string.Empty;
+  ```
+
+### Fixed
+
+- (#422) 修复了同步加载场景的NotImplementedException异常报错。
+- (#418) 修复了web远程文件系统初始化不正确的问题
+- (#392) 修复了引擎版本代码兼容相关的警告。
+- (#332) 修复了当用户的设备中有特殊字符时，URL路径无法被正确识别的问题。
+
+### Added
+
+- 新增代码字段：AsyncOperationBase.PackageName
+
+### Changed
+
+- 重命名DownloaderOperation.OnDownloadOver()方法为DownloaderFinish()
+- 重命名DownloaderOperation.OnDownloadProgress()方法为DownloadUpdate()
+- 重命名DownloaderOperation.OnDownloadError()方法为DownloadError()
+- 重命名DownloaderOperation.OnStartDownloadFile()方法为DownloadFileBegin()
+
 ## [2.2.6-preview] - 2024-12-27
 
 ### Improvements

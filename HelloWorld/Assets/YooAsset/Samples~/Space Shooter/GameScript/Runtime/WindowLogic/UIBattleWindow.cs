@@ -16,10 +16,10 @@ public class UIBattleWindow : MonoBehaviour
         _scoreLabel = this.transform.Find("ScoreView/Score").GetComponent<Text>();
         _scoreLabel.text = "Score : 0";
 
-        var restartBtn = this.transform.Find("OverView/Restart").GetComponent<Button>();
-        restartBtn.onClick.AddListener(OnClickRestartBtn);
+        var restartBtn = this.transform.Find("OverView/ReplayButton").GetComponent<Button>();
+        restartBtn.onClick.AddListener(OnClickReplayBtn);
 
-        var homeBtn = this.transform.Find("OverView/Home").GetComponent<Button>();
+        var homeBtn = this.transform.Find("OverView/HomeButton").GetComponent<Button>();
         homeBtn.onClick.AddListener(OnClickHomeBtn);
 
         _eventGroup.AddListener<BattleEventDefine.ScoreChange>(OnHandleEventMessage);
@@ -30,7 +30,7 @@ public class UIBattleWindow : MonoBehaviour
         _eventGroup.RemoveAllListener();
     }
 
-    private void OnClickRestartBtn()
+    private void OnClickReplayBtn()
     {
         SceneEventDefine.ChangeToBattleScene.SendEventMessage();
     }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UniFramework.Machine;
 using UniFramework.Event;
 using YooAsset;
@@ -27,20 +24,20 @@ public class PatchOperation : GameAsyncOperation
         // 注册监听事件
         _eventGroup.AddListener<UserEventDefine.UserTryInitialize>(OnHandleEventMessage);
         _eventGroup.AddListener<UserEventDefine.UserBeginDownloadWebFiles>(OnHandleEventMessage);
-        _eventGroup.AddListener<UserEventDefine.UserTryUpdatePackageVersion>(OnHandleEventMessage);
-        _eventGroup.AddListener<UserEventDefine.UserTryUpdatePatchManifest>(OnHandleEventMessage);
+        _eventGroup.AddListener<UserEventDefine.UserTryRequestPackageVersion>(OnHandleEventMessage);
+        _eventGroup.AddListener<UserEventDefine.UserTryUpdatePackageManifest>(OnHandleEventMessage);
         _eventGroup.AddListener<UserEventDefine.UserTryDownloadWebFiles>(OnHandleEventMessage);
 
         // 创建状态机
         _machine = new StateMachine(this);
         _machine.AddNode<FsmInitializePackage>();
-        _machine.AddNode<FsmUpdatePackageVersion>();
+        _machine.AddNode<FsmRequestPackageVersion>();
         _machine.AddNode<FsmUpdatePackageManifest>();
-        _machine.AddNode<FsmCreatePackageDownloader>();
+        _machine.AddNode<FsmCreateDownloader>();
         _machine.AddNode<FsmDownloadPackageFiles>();
         _machine.AddNode<FsmDownloadPackageOver>();
-        _machine.AddNode<FsmClearPackageCache>();
-        _machine.AddNode<FsmUpdaterDone>();
+        _machine.AddNode<FsmClearCacheBundle>();
+        _machine.AddNode<FsmStartGame>();
 
         _machine.SetBlackboardValue("PackageName", packageName);
         _machine.SetBlackboardValue("PlayMode", playMode);
@@ -55,7 +52,7 @@ public class PatchOperation : GameAsyncOperation
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
 
-        if(_steps == ESteps.Update)
+        if (_steps == ESteps.Update)
         {
             _machine.Update();
         }
@@ -85,17 +82,17 @@ public class PatchOperation : GameAsyncOperation
         {
             _machine.ChangeState<FsmDownloadPackageFiles>();
         }
-        else if (message is UserEventDefine.UserTryUpdatePackageVersion)
+        else if (message is UserEventDefine.UserTryRequestPackageVersion)
         {
-            _machine.ChangeState<FsmUpdatePackageVersion>();
+            _machine.ChangeState<FsmRequestPackageVersion>();
         }
-        else if (message is UserEventDefine.UserTryUpdatePatchManifest)
+        else if (message is UserEventDefine.UserTryUpdatePackageManifest)
         {
             _machine.ChangeState<FsmUpdatePackageManifest>();
         }
         else if (message is UserEventDefine.UserTryDownloadWebFiles)
         {
-            _machine.ChangeState<FsmCreatePackageDownloader>();
+            _machine.ChangeState<FsmCreateDownloader>();
         }
         else
         {

@@ -4,7 +4,7 @@ using UnityEngine;
 using UniFramework.Machine;
 using YooAsset;
 
-public class FsmUpdatePackageManifest : IStateNode
+internal class FsmRequestPackageVersion : IStateNode
 {
     private StateMachine _machine;
 
@@ -14,8 +14,8 @@ public class FsmUpdatePackageManifest : IStateNode
     }
     void IStateNode.OnEnter()
     {
-        PatchEventDefine.PatchStepsChange.SendEventMessage("更新资源清单！");
-        GameManager.Instance.StartCoroutine(UpdateManifest());
+        PatchEventDefine.PatchStepsChange.SendEventMessage("请求资源版本 !");
+        GameManager.Instance.StartCoroutine(UpdatePackageVersion());
     }
     void IStateNode.OnUpdate()
     {
@@ -24,23 +24,23 @@ public class FsmUpdatePackageManifest : IStateNode
     {
     }
 
-    private IEnumerator UpdateManifest()
+    private IEnumerator UpdatePackageVersion()
     {
         var packageName = (string)_machine.GetBlackboardValue("PackageName");
-        var packageVersion = (string)_machine.GetBlackboardValue("PackageVersion");
         var package = YooAssets.GetPackage(packageName);
-        var operation = package.UpdatePackageManifestAsync(packageVersion);
+        var operation = package.RequestPackageVersionAsync();
         yield return operation;
 
         if (operation.Status != EOperationStatus.Succeed)
         {
             Debug.LogWarning(operation.Error);
-            PatchEventDefine.PackageManifestUpdateFailed.SendEventMessage();
-            yield break;
+            PatchEventDefine.PackageVersionRequestFailed.SendEventMessage();
         }
         else
         {
-            _machine.ChangeState<FsmCreateDownloader>();
+            Debug.Log($"Request package version : {operation.PackageVersion}");
+            _machine.SetBlackboardValue("PackageVersion", operation.PackageVersion);
+            _machine.ChangeState<FsmUpdatePackageManifest>();
         }
     }
 }

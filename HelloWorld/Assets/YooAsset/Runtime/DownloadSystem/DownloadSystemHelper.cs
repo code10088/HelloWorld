@@ -44,7 +44,10 @@ namespace YooAsset
 #elif UNITY_STANDALONE
             url = StringUtility.Format("file:///{0}", path);
 #elif UNITY_OPENHARMONY
-            url = StringUtility.Format("file://{0}", path);
+            if (path.StartsWith("jar:file://"))
+                url = path;
+            else
+                url = StringUtility.Format("file://{0}", path);
 #else
             throw new System.NotImplementedException();
 #endif

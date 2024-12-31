@@ -6,9 +6,6 @@ using UnityEngine;
 using UniFramework.Machine;
 using YooAsset;
 
-/// <summary>
-/// 初始化资源包
-/// </summary>
 internal class FsmInitializePackage : IStateNode
 {
     private StateMachine _machine;
@@ -19,7 +16,7 @@ internal class FsmInitializePackage : IStateNode
     }
     void IStateNode.OnEnter()
     {
-        PatchEventDefine.PatchStatesChange.SendEventMessage("初始化资源包！");
+        PatchEventDefine.PatchStepsChange.SendEventMessage("初始化资源包！");
         GameManager.Instance.StartCoroutine(InitPackage());
     }
     void IStateNode.OnUpdate()
@@ -96,7 +93,7 @@ internal class FsmInitializePackage : IStateNode
         }
         else
         {
-            _machine.ChangeState<FsmUpdatePackageVersion>();
+            _machine.ChangeState<FsmRequestPackageVersion>();
         }
     }
 
@@ -151,134 +148,5 @@ internal class FsmInitializePackage : IStateNode
         {
             return $"{_fallbackHostServer}/{fileName}";
         }
-    }
-
-    /// <summary>
-    /// 资源文件流加载解密类
-    /// </summary>
-    private class FileStreamDecryption : IDecryptionServices
-    {
-        /// <summary>
-        /// 同步方式获取解密的资源包对象
-        /// 注意：加载流对象在资源包对象释放的时候会自动释放
-        /// </summary>
-        DecryptResult IDecryptionServices.LoadAssetBundle(DecryptFileInfo fileInfo)
-        {
-            BundleStream bundleStream = new BundleStream(fileInfo.FileLoadPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            DecryptResult decryptResult = new DecryptResult();
-            decryptResult.ManagedStream = bundleStream;
-            decryptResult.Result = AssetBundle.LoadFromStream(bundleStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return decryptResult;
-        }
-
-        /// <summary>
-        /// 异步方式获取解密的资源包对象
-        /// 注意：加载流对象在资源包对象释放的时候会自动释放
-        /// </summary>
-        DecryptResult IDecryptionServices.LoadAssetBundleAsync(DecryptFileInfo fileInfo)
-        {
-            BundleStream bundleStream = new BundleStream(fileInfo.FileLoadPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            DecryptResult decryptResult = new DecryptResult();
-            decryptResult.ManagedStream = bundleStream;
-            decryptResult.CreateRequest = AssetBundle.LoadFromStreamAsync(bundleStream, fileInfo.FileLoadCRC, GetManagedReadBufferSize());
-            return decryptResult;
-        }
-
-        /// <summary>
-        /// 获取解密的字节数据
-        /// </summary>
-        byte[] IDecryptionServices.ReadFileData(DecryptFileInfo fileInfo)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /// <summary>
-        /// 获取解密的文本数据
-        /// </summary>
-        string IDecryptionServices.ReadFileText(DecryptFileInfo fileInfo)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private static uint GetManagedReadBufferSize()
-        {
-            return 1024;
-        }
-    }
-
-    /// <summary>
-    /// 资源文件偏移加载解密类
-    /// </summary>
-    private class FileOffsetDecryption : IDecryptionServices
-    {
-        /// <summary>
-        /// 同步方式获取解密的资源包对象
-        /// 注意：加载流对象在资源包对象释放的时候会自动释放
-        /// </summary>
-        DecryptResult IDecryptionServices.LoadAssetBundle(DecryptFileInfo fileInfo)
-        {
-            DecryptResult decryptResult = new DecryptResult();
-            decryptResult.ManagedStream = null;
-            decryptResult.Result = AssetBundle.LoadFromFile(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, GetFileOffset());
-            return decryptResult;
-        }
-
-        /// <summary>
-        /// 异步方式获取解密的资源包对象
-        /// 注意：加载流对象在资源包对象释放的时候会自动释放
-        /// </summary>
-        DecryptResult IDecryptionServices.LoadAssetBundleAsync(DecryptFileInfo fileInfo)
-        {
-            DecryptResult decryptResult = new DecryptResult();
-            decryptResult.ManagedStream = null;
-            decryptResult.CreateRequest = AssetBundle.LoadFromFileAsync(fileInfo.FileLoadPath, fileInfo.FileLoadCRC, GetFileOffset());
-            return decryptResult;
-        }
-
-        /// <summary>
-        /// 获取解密的字节数据
-        /// </summary>
-        byte[] IDecryptionServices.ReadFileData(DecryptFileInfo fileInfo)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        /// <summary>
-        /// 获取解密的文本数据
-        /// </summary>
-        string IDecryptionServices.ReadFileText(DecryptFileInfo fileInfo)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private static ulong GetFileOffset()
-        {
-            return 32;
-        }
-    }
-}
-
-/// <summary>
-/// 资源文件解密流
-/// </summary>
-public class BundleStream : FileStream
-{
-    public const byte KEY = 64;
-
-    public BundleStream(string path, FileMode mode, FileAccess access, FileShare share) : base(path, mode, access, share)
-    {
-    }
-    public BundleStream(string path, FileMode mode) : base(path, mode)
-    {
-    }
-
-    public override int Read(byte[] array, int offset, int count)
-    {
-        var index = base.Read(array, offset, count);
-        for (int i = 0; i < array.Length; i++)
-        {
-            array[i] ^= KEY;
-        }
-        return index;
     }
 }

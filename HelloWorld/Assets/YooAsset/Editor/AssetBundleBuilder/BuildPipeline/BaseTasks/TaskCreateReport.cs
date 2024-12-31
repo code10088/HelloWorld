@@ -116,7 +116,7 @@ namespace YooAsset.Editor
             buildReport.IndependAssets = new List<ReportIndependAsset>(buildMapContext.IndependAssets);
 
             // 序列化文件
-            string fileName = YooAssetSettingsData.GetReportFileName(buildParameters.PackageName, buildParameters.PackageVersion);
+            string fileName = YooAssetSettingsData.GetBuildReportFileName(buildParameters.PackageName, buildParameters.PackageVersion);
             string filePath = $"{packageOutputDirectory}/{fileName}";
             BuildReport.Serialize(filePath, buildReport);
             BuildLogger.Log($"Create build report file: {filePath}");

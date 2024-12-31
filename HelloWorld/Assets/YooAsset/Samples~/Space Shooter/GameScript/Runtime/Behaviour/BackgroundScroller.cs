@@ -8,12 +8,12 @@ public class BackgroundScroller : MonoBehaviour
 
     private Vector3 _startPosition;
 
-    void Start ()
+    void Start()
     {
         _startPosition = transform.position;
     }
 
-    void Update ()
+    void Update()
     {
         float newPosition = Mathf.Repeat(Time.time * ScrollSpeed, TileSizeZ);
         this.transform.position = _startPosition + Vector3.forward * newPosition;

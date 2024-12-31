@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniFramework.Machine;
 
-internal class FsmDownloadPackageOver : IStateNode
+internal class FsmStartGame : IStateNode
 {
-    private StateMachine _machine;
+    private PatchOperation _owner;
 
     void IStateNode.OnCreate(StateMachine machine)
     {
-        _machine = machine;
+        _owner = machine.Owner as PatchOperation;
     }
     void IStateNode.OnEnter()
     {
-        PatchEventDefine.PatchStepsChange.SendEventMessage("资源文件下载完毕！");
-        _machine.ChangeState<FsmClearCacheBundle>();
+        PatchEventDefine.PatchStepsChange.SendEventMessage("开始游戏！");
+        _owner.SetFinish();
     }
     void IStateNode.OnUpdate()
     {

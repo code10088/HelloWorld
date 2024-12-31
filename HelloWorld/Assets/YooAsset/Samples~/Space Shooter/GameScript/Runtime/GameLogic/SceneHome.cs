@@ -8,26 +8,17 @@ public class SceneHome : MonoBehaviour
     public GameObject CanvasDesktop;
     private AssetHandle _windowHandle;
 
-#if UNITY_WEBGL
     private IEnumerator Start()
-    {
-        // 同步加载登录页面
+    {        
+        // 加载主页面
         _windowHandle = YooAssets.LoadAssetAsync<GameObject>("UIHome");
         yield return _windowHandle;
         _windowHandle.InstantiateSync(CanvasDesktop.transform);
     }
-#else
-    private void Start()
-    {
-        // 异步加载登录页面
-        _windowHandle = YooAssets.LoadAssetSync<GameObject>("UIHome");
-        _windowHandle.InstantiateSync(CanvasDesktop.transform);
-    }
-#endif
-
 
     private void OnDestroy()
     {
+        // 释放资源句柄
         if (_windowHandle != null)
         {
             _windowHandle.Release();

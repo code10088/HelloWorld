@@ -19,7 +19,6 @@ namespace YooAsset
             Done,
         }
 
-        private readonly ThreadSyncContext _syncContext = new ThreadSyncContext();
         private readonly ICacheSystem _cacheSystem;
         private readonly EFileVerifyLevel _verifyLevel;
         private List<CacheFileElement> _waitingList;
@@ -66,7 +65,17 @@ namespace YooAsset
 
             if (_steps == ESteps.UpdateVerify)
             {
-                _syncContext.Update();
+                // 检测校验结果
+                for (int i = _verifyingList.Count - 1; i >= 0; i--)
+                {
+                    var verifyElement = _verifyingList[i];
+                    int result = verifyElement.Result;
+                    if (result != 0)
+                    {
+                        _verifyingList.RemoveAt(i);
+                        RecordVerifyFile(verifyElement);
+                    }
+                }
 
                 Progress = GetProgress();
                 if (_waitingList.Count == 0 && _verifyingList.Count == 0)
@@ -86,7 +95,8 @@ namespace YooAsset
                         break;
 
                     var element = _waitingList[i];
-                    if (BeginVerifyFileWithThread(element))
+                    bool succeed = ThreadPool.QueueUserWorkItem(new WaitCallback(VerifyInThread), element);
+                    if (succeed)
                     {
                         _waitingList.RemoveAt(i);
                         _verifyingList.Add(element);
@@ -106,22 +116,15 @@ namespace YooAsset
                 return 1f;
             return (float)(_succeedCount + _failedCount) / _verifyTotalCount;
         }
-        private bool BeginVerifyFileWithThread(CacheFileElement element)
-        {
-            return ThreadPool.QueueUserWorkItem(new WaitCallback(VerifyInThread), element);
-        }
         private void VerifyInThread(object obj)
         {
             CacheFileElement element = (CacheFileElement)obj;
-            element.Result = VerifyingCacheFile(element, _verifyLevel);
-            _syncContext.Post(VerifyCallback, element);
+            int verifyResult = (int)VerifyingCacheFile(element, _verifyLevel);
+            element.Result = verifyResult;
         }
-        private void VerifyCallback(object obj)
+        private void RecordVerifyFile(CacheFileElement element)
         {
-            CacheFileElement element = (CacheFileElement)obj;
-            _verifyingList.Remove(element);
-
-            if (element.Result == EFileVerifyResult.Succeed)
+            if (element.Result == (int)EFileVerifyResult.Succeed)
             {
                 _succeedCount++;
                 var fileWrapper = new CacheWrapper(element.InfoFilePath, element.DataFilePath, element.DataFileCRC, element.DataFileSize);

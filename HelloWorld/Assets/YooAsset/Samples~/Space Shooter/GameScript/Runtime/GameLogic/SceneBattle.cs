@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UniFramework.Event;
-using UniFramework.Machine;
 using YooAsset;
 
 internal class SceneBattle : MonoBehaviour
@@ -37,18 +34,21 @@ internal class SceneBattle : MonoBehaviour
     }
     private void OnDestroy()
     {
+        // 释放资源句柄
         if (_windowHandle != null)
         {
             _windowHandle.Release();
             _windowHandle = null;
         }
 
+        // 释放资源句柄
         if (_musicHandle != null)
         {
             _musicHandle.Release();
             _musicHandle = null;
         }
 
+        // 释放资源句柄
         if (_battleRoom != null)
         {
             _battleRoom.DestroyRoom();

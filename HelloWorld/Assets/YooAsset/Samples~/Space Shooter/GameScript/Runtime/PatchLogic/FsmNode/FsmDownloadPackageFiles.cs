@@ -3,9 +3,6 @@ using UnityEngine;
 using UniFramework.Machine;
 using YooAsset;
 
-/// <summary>
-/// 下载更新文件
-/// </summary>
 public class FsmDownloadPackageFiles : IStateNode
 {
     private StateMachine _machine;
@@ -16,7 +13,7 @@ public class FsmDownloadPackageFiles : IStateNode
     }
     void IStateNode.OnEnter()
     {
-        PatchEventDefine.PatchStatesChange.SendEventMessage("开始下载补丁文件！");
+        PatchEventDefine.PatchStepsChange.SendEventMessage("开始下载资源文件！");
         GameManager.Instance.StartCoroutine(BeginDownload());
     }
     void IStateNode.OnUpdate()
@@ -30,7 +27,7 @@ public class FsmDownloadPackageFiles : IStateNode
     {
         var downloader = (ResourceDownloaderOperation)_machine.GetBlackboardValue("Downloader");
         downloader.DownloadErrorCallback = PatchEventDefine.WebFileDownloadFailed.SendEventMessage;
-        downloader.DownloadUpdateCallback = PatchEventDefine.DownloadProgressUpdate.SendEventMessage;
+        downloader.DownloadUpdateCallback = PatchEventDefine.DownloadUpdate.SendEventMessage;
         downloader.BeginDownload();
         yield return downloader;
 

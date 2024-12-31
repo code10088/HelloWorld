@@ -10,9 +10,13 @@ namespace YooAsset
         public string DataFilePath { private set; get; }
         public string InfoFilePath { private set; get; }
 
-        public EFileVerifyResult Result;
         public string DataFileCRC;
         public long DataFileSize;
+
+        /// <summary>
+        /// 注意：原子操作对象
+        /// </summary>
+        public volatile int Result = 0;
 
         public CacheFileElement(string packageName, string bundleGUID, string fileRootPath, string dataFilePath, string infoFilePath)
         {

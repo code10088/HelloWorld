@@ -18,13 +18,13 @@ public class PatchEventDefine
     /// <summary>
     /// 补丁流程步骤改变
     /// </summary>
-    public class PatchStatesChange : IEventMessage
+    public class PatchStepsChange : IEventMessage
     {
         public string Tips;
 
         public static void SendEventMessage(string tips)
         {
-            var msg = new PatchStatesChange();
+            var msg = new PatchStepsChange();
             msg.Tips = tips;
             UniEvent.SendMessage(msg);
         }
@@ -50,7 +50,7 @@ public class PatchEventDefine
     /// <summary>
     /// 下载进度更新
     /// </summary>
-    public class DownloadProgressUpdate : IEventMessage
+    public class DownloadUpdate : IEventMessage
     {
         public int TotalDownloadCount;
         public int CurrentDownloadCount;
@@ -59,7 +59,7 @@ public class PatchEventDefine
 
         public static void SendEventMessage(DownloadUpdateData updateData)
         {
-            var msg = new DownloadProgressUpdate();
+            var msg = new DownloadUpdate();
             msg.TotalDownloadCount = updateData.TotalDownloadCount;
             msg.CurrentDownloadCount = updateData.CurrentDownloadCount;
             msg.TotalDownloadSizeBytes = updateData.TotalDownloadBytes;
@@ -69,25 +69,25 @@ public class PatchEventDefine
     }
 
     /// <summary>
-    /// 资源版本号更新失败
+    /// 资源版本请求失败
     /// </summary>
-    public class PackageVersionUpdateFailed : IEventMessage
+    public class PackageVersionRequestFailed : IEventMessage
     {
         public static void SendEventMessage()
         {
-            var msg = new PackageVersionUpdateFailed();
+            var msg = new PackageVersionRequestFailed();
             UniEvent.SendMessage(msg);
         }
     }
 
     /// <summary>
-    /// 补丁清单更新失败
+    /// 资源清单更新失败
     /// </summary>
-    public class PatchManifestUpdateFailed : IEventMessage
+    public class PackageManifestUpdateFailed : IEventMessage
     {
         public static void SendEventMessage()
         {
-            var msg = new PatchManifestUpdateFailed();
+            var msg = new PackageManifestUpdateFailed();
             UniEvent.SendMessage(msg);
         }
     }

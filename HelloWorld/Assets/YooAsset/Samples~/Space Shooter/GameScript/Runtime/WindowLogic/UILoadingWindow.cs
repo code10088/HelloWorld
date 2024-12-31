@@ -6,9 +6,9 @@ using UniFramework.Utility;
 
 public class UILoadingWindow : MonoBehaviour
 {
+    private readonly UniTimer _timer = UniTimer.CreatePepeatTimer(0, 0.2f);
     private Text _info;
     private int _countdown;
-    private UniTimer _timer = UniTimer.CreatePepeatTimer(0, 0.2f);
 
     private void Awake()
     {
@@ -22,14 +22,14 @@ public class UILoadingWindow : MonoBehaviour
     }
     private void Update()
     {
-        if(_timer.Update(Time.deltaTime))
+        if (_timer.Update(Time.deltaTime))
         {
             _countdown++;
             if (_countdown > 6)
                 _countdown = 0;
 
             string tips = "Loading";
-            for(int i=0; i<_countdown; i++)
+            for (int i = 0; i < _countdown; i++)
             {
                 tips += ".";
             }

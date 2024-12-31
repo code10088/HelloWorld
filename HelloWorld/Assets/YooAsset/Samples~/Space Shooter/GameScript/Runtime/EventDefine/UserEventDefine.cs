@@ -27,13 +27,13 @@ public class UserEventDefine
     }
 
     /// <summary>
-    /// 用户尝试再次更新静态版本
+    /// 用户尝试再次请求资源版本
     /// </summary>
-    public class UserTryUpdatePackageVersion : IEventMessage
+    public class UserTryRequestPackageVersion : IEventMessage
     {
         public static void SendEventMessage()
         {
-            var msg = new UserTryUpdatePackageVersion();
+            var msg = new UserTryRequestPackageVersion();
             UniEvent.SendMessage(msg);
         }
     }
@@ -41,11 +41,11 @@ public class UserEventDefine
     /// <summary>
     /// 用户尝试再次更新补丁清单
     /// </summary>
-    public class UserTryUpdatePatchManifest : IEventMessage
+    public class UserTryUpdatePackageManifest : IEventMessage
     {
         public static void SendEventMessage()
         {
-            var msg = new UserTryUpdatePatchManifest();
+            var msg = new UserTryUpdatePackageManifest();
             UniEvent.SendMessage(msg);
         }
     }

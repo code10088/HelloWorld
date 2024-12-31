@@ -113,7 +113,8 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 异步卸载子场景
+        /// 异步卸载场景对象
+        /// 注意：场景卸载成功后，会自动释放该handle的引用计数！
         /// </summary>
         public UnloadSceneOperation UnloadAsync()
         {

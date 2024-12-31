@@ -36,9 +36,12 @@ namespace YooAsset
         /// <summary>
         /// 获取构建报告文件名
         /// </summary>
-        public static string GetReportFileName(string packageName, string packageVersion)
+        public static string GetBuildReportFileName(string packageName, string packageVersion)
         {
-            return $"{packageName}_{packageVersion}.report";
+            if (string.IsNullOrEmpty(Setting.PackageManifestPrefix))
+                return $"{packageName}_{packageVersion}.report";
+            else
+                return $"{Setting.PackageManifestPrefix}_{packageName}_{packageVersion}.report";
         }
 
         /// <summary>
@@ -46,7 +49,10 @@ namespace YooAsset
         /// </summary>
         public static string GetManifestBinaryFileName(string packageName, string packageVersion)
         {
-            return $"{packageName}_{packageVersion}.bytes";
+            if (string.IsNullOrEmpty(Setting.PackageManifestPrefix))
+                return $"{packageName}_{packageVersion}.bytes";
+            else
+                return $"{Setting.PackageManifestPrefix}_{packageName}_{packageVersion}.bytes";
         }
 
         /// <summary>
@@ -54,7 +60,10 @@ namespace YooAsset
         /// </summary>
         public static string GetManifestJsonFileName(string packageName, string packageVersion)
         {
-            return $"{packageName}_{packageVersion}.json";
+            if (string.IsNullOrEmpty(Setting.PackageManifestPrefix))
+                return $"{packageName}_{packageVersion}.json";
+            else
+                return $"{Setting.PackageManifestPrefix}_{packageName}_{packageVersion}.json";
         }
 
         /// <summary>
@@ -62,7 +71,10 @@ namespace YooAsset
         /// </summary>
         public static string GetPackageHashFileName(string packageName, string packageVersion)
         {
-            return $"{packageName}_{packageVersion}.hash";
+            if (string.IsNullOrEmpty(Setting.PackageManifestPrefix))
+                return $"{packageName}_{packageVersion}.hash";
+            else
+                return $"{Setting.PackageManifestPrefix}_{packageName}_{packageVersion}.hash";
         }
 
         /// <summary>
@@ -70,7 +82,10 @@ namespace YooAsset
         /// </summary>
         public static string GetPackageVersionFileName(string packageName)
         {
-            return $"{packageName}.version";
+            if (string.IsNullOrEmpty(Setting.PackageManifestPrefix))
+                return $"{packageName}.version";
+            else
+                return $"{Setting.PackageManifestPrefix}_{packageName}.version";
         }
 
         #region 路径相关
