@@ -19,14 +19,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "f5ec47c105d73c5d74dd03ad0a60bfc6ba97bb51"
+      "hash": "be6a91b4c2a0f5e8cb43207fb176a472b94babd7"
     },
     "com.qq.weixin.minigame": {
       "version": "https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "65b7e866110df9c6fb2a9d6ee7ff5a57c6d77924"
+      "hash": "e6be0c083459d1eaa4147d5e16b5602d8e670abe"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -138,7 +138,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.performance.profile-analyzer": {
-      "version": "1.2.2",
+      "version": "1.2.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
