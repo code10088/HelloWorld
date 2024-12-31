@@ -187,7 +187,7 @@ public class BuildEditor
         buildParameters.FileNameStyle = EFileNameStyle.BundleName_HashName;
         buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;
         buildParameters.BuildinFileCopyParams = "Builtin";
-#if WEIXINMINIGAME
+#if UNITY_WEBGL
         buildParameters.EncryptionServices = null;
 #else
         buildParameters.EncryptionServices = new EncryptionServices();
