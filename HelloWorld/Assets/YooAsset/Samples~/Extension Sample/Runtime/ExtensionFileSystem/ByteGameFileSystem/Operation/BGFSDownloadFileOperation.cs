@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using YooAsset;
+using StarkSDKSpace;
 
 internal class BGFSDownloadFileOperation : DefaultDownloadFileOperation
 {

@@ -1,8 +1,8 @@
 ﻿#if UNITY_WEBGL && BYTEMINIGAME
 using UnityEngine;
 using UnityEngine.Networking;
-using WeChatWASM;
 using YooAsset;
+using StarkSDKSpace;
 
 internal class BGFSLoadBundleOperation : FSLoadBundleOperation
 {
@@ -37,7 +37,7 @@ internal class BGFSLoadBundleOperation : FSLoadBundleOperation
             if (_webRequest == null)
             {
                 string mainURL = _fileSystem.RemoteServices.GetRemoteMainURL(_bundle.FileName);
-                _webRequest = UnityWebRequestAssetBundle.GetAssetBundle(mainURL);
+                _webRequest = TTAssetBundle.GetAssetBundle(mainURL);
                 _webRequest.SendWebRequest();
             }
 
@@ -49,11 +49,11 @@ internal class BGFSLoadBundleOperation : FSLoadBundleOperation
 
             if (CheckRequestResult())
             {
-                var assetBundle = (_webRequest.downloadHandler as DownloadHandlerAssetBundle).assetBundle;
+                var assetBundle = (_webRequest.downloadHandler as DownloadHandlerTTAssetBundle).assetBundle;
                 if (assetBundle == null)
                 {
                     _steps = ESteps.Done;
-                    Error = $"{nameof(DownloadHandlerAssetBundle)} loaded asset bundle is null !";
+                    Error = $"{nameof(DownloadHandlerTTAssetBundle)} loaded asset bundle is null !";
                     Status = EOperationStatus.Failed;
                 }
                 else

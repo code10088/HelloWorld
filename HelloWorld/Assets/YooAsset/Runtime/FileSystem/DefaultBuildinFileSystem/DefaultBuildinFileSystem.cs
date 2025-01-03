@@ -156,14 +156,14 @@ namespace YooAsset
                 YooLogger.Warning($"Invalid parameter : {name}");
             }
         }
-        public virtual void OnCreate(string packageName, string rootDirectory)
+        public virtual void OnCreate(string packageName, string packageRoot)
         {
             PackageName = packageName;
 
-            if (string.IsNullOrEmpty(rootDirectory))
-                rootDirectory = GetDefaultBuildinRoot();
-
-            _packageRoot = PathUtility.Combine(rootDirectory, packageName);
+            if (string.IsNullOrEmpty(packageRoot))
+                _packageRoot = GetDefaultBuildinPackageRoot(packageName);
+            else
+                _packageRoot = packageRoot;
 
             // 创建解压文件系统
             var remoteServices = new DefaultUnpackRemoteServices(_packageRoot);
@@ -282,9 +282,10 @@ namespace YooAsset
         }
 
         #region 内部方法
-        protected string GetDefaultBuildinRoot()
+        protected string GetDefaultBuildinPackageRoot(string packageName)
         {
-            return YooAssetSettingsData.GetYooMobileBuildinRoot();
+            string rootDirectory = YooAssetSettingsData.GetYooMobileBuildinRoot();
+            return PathUtility.Combine(rootDirectory, packageName);
         }
         public string GetBuildinFileLoadPath(PackageBundle bundle)
         {

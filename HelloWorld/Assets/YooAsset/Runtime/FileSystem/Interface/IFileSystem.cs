@@ -54,11 +54,11 @@ namespace YooAsset
         /// 设置自定义参数
         /// </summary>
         void SetParameter(string name, object value);
-
+        
         /// <summary>
         /// 创建缓存系统
         /// </summary>
-        void OnCreate(string packageName, string rootDirectory);
+        void OnCreate(string packageName, string packageRoot);
 
         /// <summary>
         /// 更新文件系统

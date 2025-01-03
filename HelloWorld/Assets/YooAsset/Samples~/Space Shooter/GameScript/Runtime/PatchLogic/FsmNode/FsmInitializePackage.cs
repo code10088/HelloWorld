@@ -40,11 +40,11 @@ internal class FsmInitializePackage : IStateNode
         InitializationOperation initializationOperation = null;
         if (playMode == EPlayMode.EditorSimulateMode)
         {
-            var simulateBuildParam = new EditorSimulateBuildParam();
-            simulateBuildParam.PackageName = packageName;
+            var simulateBuildParam = new EditorSimulateBuildParam(packageName);
             var simulateBuildResult = EditorSimulateModeHelper.SimulateBuild(simulateBuildParam);
+            var packageRoot = simulateBuildResult.PackageRootDirectory;
             var createParameters = new EditorSimulateModeParameters();
-            createParameters.EditorFileSystemParameters = FileSystemParameters.CreateDefaultEditorFileSystemParameters(simulateBuildResult);
+            createParameters.EditorFileSystemParameters = FileSystemParameters.CreateDefaultEditorFileSystemParameters(packageRoot);
             initializationOperation = package.InitializeAsync(createParameters);
         }
 

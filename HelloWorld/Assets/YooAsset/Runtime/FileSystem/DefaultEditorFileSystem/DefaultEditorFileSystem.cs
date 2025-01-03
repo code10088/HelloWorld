@@ -111,15 +111,14 @@ namespace YooAsset
                 YooLogger.Warning($"Invalid parameter : {name}");
             }
         }
-        public virtual void OnCreate(string packageName, string rootDirectory)
+        public virtual void OnCreate(string packageName, string packageRoot)
         {
             PackageName = packageName;
 
-            if (string.IsNullOrEmpty(rootDirectory))
+            if (string.IsNullOrEmpty(packageRoot))
                 throw new Exception($"{nameof(DefaultEditorFileSystem)} root directory is null or empty !");
 
-            // 注意：基础目录即为包裹目录
-            _packageRoot = rootDirectory;
+            _packageRoot = packageRoot;
         }
         public virtual void OnUpdate()
         {

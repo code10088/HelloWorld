@@ -201,7 +201,6 @@ namespace YooAsset.Editor
         public static void ClearAll()
         {
             Setting.ClearAll();
-            SaveFile();
         }
 
         public static List<RuleDisplayName> GetActiveRuleNames()

@@ -208,14 +208,15 @@ namespace YooAsset
                 YooLogger.Warning($"Invalid parameter : {name}");
             }
         }
-        public virtual void OnCreate(string packageName, string rootDirectory)
+        public virtual void OnCreate(string packageName, string packageRoot)
         {
             PackageName = packageName;
 
-            if (string.IsNullOrEmpty(rootDirectory))
-                rootDirectory = GetDefaultCacheRoot();
+            if (string.IsNullOrEmpty(packageRoot))
+                _packageRoot = GetDefaultCachePackageRoot(packageName);
+            else
+                _packageRoot = packageRoot;
 
-            _packageRoot = PathUtility.Combine(rootDirectory, packageName);
             _cacheFileRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.SaveFilesFolderName);
             _tempFileRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.TempFilesFolderName);
             _manifestFileRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.ManifestFilesFolderName);
@@ -462,15 +463,19 @@ namespace YooAsset
         #endregion
 
         #region 内部方法
-        public string GetDefaultCacheRoot()
+        public string GetDefaultCachePackageRoot(string packageName)
         {
+            string rootDirectory;
+
 #if UNITY_EDITOR
-            return YooAssetSettingsData.GetYooEditorCacheRoot();
+            rootDirectory = YooAssetSettingsData.GetYooEditorCacheRoot();
 #elif UNITY_STANDALONE
-            return YooAssetSettingsData.GetYooStandaloneCacheRoot();
+            rootDirectory = YooAssetSettingsData.GetYooStandaloneCacheRoot();
 #else
-            return YooAssetSettingsData.GetYooMobileCacheRoot();
+            rootDirectory = YooAssetSettingsData.GetYooMobileCacheRoot();
 #endif
+
+            return PathUtility.Combine(rootDirectory, packageName);
         }
         public string GetCacheFileLoadPath(PackageBundle bundle)
         {

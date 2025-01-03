@@ -23,9 +23,9 @@ public class AssetManager : Singletion<AssetManager>
         YooAssets.Initialize();
         package = YooAssets.CreatePackage(PackageName);
 #if UNITY_EDITOR && !HotUpdateDebug
-        var param = new EditorSimulateBuildParam() { PackageName = PackageName };
+        var param = new EditorSimulateBuildParam(PackageName);
         var simulate = EditorSimulateModeHelper.SimulateBuild(param);
-        var editorFileSystem = FileSystemParameters.CreateDefaultEditorFileSystemParameters(simulate);
+        var editorFileSystem = FileSystemParameters.CreateDefaultEditorFileSystemParameters(simulate.PackageRootDirectory);
         var parameters = new EditorSimulateModeParameters();
         parameters.EditorFileSystemParameters = editorFileSystem;
         var operation = package.InitializeAsync(parameters);

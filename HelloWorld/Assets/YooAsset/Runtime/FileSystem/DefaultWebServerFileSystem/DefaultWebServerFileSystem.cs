@@ -118,14 +118,14 @@ namespace YooAsset
                 YooLogger.Warning($"Invalid parameter : {name}");
             }
         }
-        public virtual void OnCreate(string packageName, string rootDirectory)
+        public virtual void OnCreate(string packageName, string packageRoot)
         {
             PackageName = packageName;
 
-            if (string.IsNullOrEmpty(rootDirectory))
-                rootDirectory = GetDefaultWebRoot();
-
-            _webPackageRoot = PathUtility.Combine(rootDirectory, packageName);
+            if (string.IsNullOrEmpty(packageRoot))
+                _webPackageRoot = GetDefaultWebPackageRoot(packageName);
+            else
+                _webPackageRoot = packageRoot;
         }
         public virtual void OnUpdate()
         {
@@ -166,9 +166,10 @@ namespace YooAsset
         }
 
         #region 内部方法
-        protected string GetDefaultWebRoot()
+        protected string GetDefaultWebPackageRoot(string packageName)
         {
-            return YooAssetSettingsData.GetYooWebBuildinRoot();
+            string rootDirectory = YooAssetSettingsData.GetYooWebBuildinRoot();
+            return PathUtility.Combine(rootDirectory, packageName);
         }
         public string GetWebFileLoadPath(PackageBundle bundle)
         {

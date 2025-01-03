@@ -26,7 +26,8 @@ namespace YooAsset
             DirectoryInfo rootDirectory = new DirectoryInfo(rootPath);
             if (rootDirectory.Exists == false)
             {
-                throw new System.Exception($"Can not found StreamingAssets root directory : {rootPath}");
+                UnityEngine.Debug.LogWarning($"Can not found StreamingAssets root directory : {rootPath}");
+                return;
             }
 
             // 搜索所有Package目录
@@ -88,9 +89,20 @@ namespace YooAsset
             FileInfo[] fileInfos = rootDirectory.GetFiles();
             foreach (var fileInfo in fileInfos)
             {
-                if (fileInfo.Extension == ".meta" || fileInfo.Extension == ".version" ||
-                    fileInfo.Extension == ".hash" || fileInfo.Extension == ".bytes" ||
-                    fileInfo.Extension == ".json")
+                if (fileInfo.Extension == ".meta")
+                    continue;
+
+                if (fileInfo.Name == "link.xml" || fileInfo.Name == "buildlogtep.json")
+                    continue;
+                if (fileInfo.Name == $"{packageName}.version")
+                    continue;
+                if (fileInfo.Name == $"{packageName}_{packageVersion}.bytes")
+                    continue;
+                if (fileInfo.Name == $"{packageName}_{packageVersion}.hash")
+                    continue;
+                if (fileInfo.Name == $"{packageName}_{packageVersion}.json")
+                    continue;
+                if (fileInfo.Name == $"{packageName}_{packageVersion}.report")
                     continue;
 
                 string fileName = fileInfo.Name;

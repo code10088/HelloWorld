@@ -20,13 +20,13 @@ namespace YooAsset
         /// <summary>
         /// 文件系统的根目录
         /// </summary>
-        public string RootDirectory { private set; get; }
+        public string PackageRoot { private set; get; }
 
 
-        public FileSystemParameters(string fileSystemClass, string rootDirectory)
+        public FileSystemParameters(string fileSystemClass, string packageRoot)
         {
             FileSystemClass = fileSystemClass;
-            RootDirectory = rootDirectory;
+            PackageRoot = packageRoot;
         }
 
         /// <summary>
@@ -62,19 +62,19 @@ namespace YooAsset
             {
                 instance.SetParameter(param.Key, param.Value);
             }
-            instance.OnCreate(packageName, RootDirectory);
+            instance.OnCreate(packageName, PackageRoot);
             return instance;
         }
 
         #region 创建默认的文件系统类
         /// <summary>
         /// 创建默认的编辑器文件系统参数
-        /// <param name="simulateBuildResult">模拟构建结果</param>
+        /// <param name="packageRoot">文件系统的根目录</param>
         /// </summary>
-        public static FileSystemParameters CreateDefaultEditorFileSystemParameters(EditorSimulateBuildResult simulateBuildResult)
+        public static FileSystemParameters CreateDefaultEditorFileSystemParameters(string packageRoot)
         {
             string fileSystemClass = typeof(DefaultEditorFileSystem).FullName;
-            var fileSystemParams = new FileSystemParameters(fileSystemClass, simulateBuildResult.PackageRootDirectory);
+            var fileSystemParams = new FileSystemParameters(fileSystemClass, packageRoot);
             return fileSystemParams;
         }
 
@@ -82,14 +82,12 @@ namespace YooAsset
         /// 创建默认的内置文件系统参数
         /// </summary>
         /// <param name="decryptionServices">加密文件解密服务类</param>
-        /// <param name="verifyLevel">缓存文件的校验等级</param>
-        /// <param name="rootDirectory">内置文件的根路径</param>
-        public static FileSystemParameters CreateDefaultBuildinFileSystemParameters(IDecryptionServices decryptionServices = null, EFileVerifyLevel verifyLevel = EFileVerifyLevel.Middle, string rootDirectory = null)
+        /// <param name="packageRoot">文件系统的根目录</param>
+        public static FileSystemParameters CreateDefaultBuildinFileSystemParameters(IDecryptionServices decryptionServices = null, string packageRoot = null)
         {
             string fileSystemClass = typeof(DefaultBuildinFileSystem).FullName;
-            var fileSystemParams = new FileSystemParameters(fileSystemClass, rootDirectory);
+            var fileSystemParams = new FileSystemParameters(fileSystemClass, packageRoot);
             fileSystemParams.AddParameter(FileSystemParametersDefine.DECRYPTION_SERVICES, decryptionServices);
-            fileSystemParams.AddParameter(FileSystemParametersDefine.FILE_VERIFY_LEVEL, verifyLevel);
             return fileSystemParams;
         }
 
@@ -98,15 +96,13 @@ namespace YooAsset
         /// </summary>
         /// <param name="remoteServices">远端资源地址查询服务类</param>
         /// <param name="decryptionServices">加密文件解密服务类</param>
-        /// <param name="verifyLevel">缓存文件的校验等级</param>
-        /// <param name="rootDirectory">文件系统的根目录</param>
-        public static FileSystemParameters CreateDefaultCacheFileSystemParameters(IRemoteServices remoteServices, IDecryptionServices decryptionServices = null, EFileVerifyLevel verifyLevel = EFileVerifyLevel.Middle, string rootDirectory = null)
+        /// <param name="packageRoot">文件系统的根目录</param>
+        public static FileSystemParameters CreateDefaultCacheFileSystemParameters(IRemoteServices remoteServices, IDecryptionServices decryptionServices = null, string packageRoot = null)
         {
             string fileSystemClass = typeof(DefaultCacheFileSystem).FullName;
-            var fileSystemParams = new FileSystemParameters(fileSystemClass, rootDirectory);
+            var fileSystemParams = new FileSystemParameters(fileSystemClass, packageRoot);
             fileSystemParams.AddParameter(FileSystemParametersDefine.REMOTE_SERVICES, remoteServices);
             fileSystemParams.AddParameter(FileSystemParametersDefine.DECRYPTION_SERVICES, decryptionServices);
-            fileSystemParams.AddParameter(FileSystemParametersDefine.FILE_VERIFY_LEVEL, verifyLevel);
             return fileSystemParams;
         }
 

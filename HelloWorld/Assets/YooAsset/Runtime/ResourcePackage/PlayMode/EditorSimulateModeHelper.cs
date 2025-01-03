@@ -5,17 +5,16 @@ namespace YooAsset
 {
     public static class EditorSimulateModeHelper
     {
-        private static System.Type _classType;
-
         /// <summary>
         /// 编辑器下模拟构建清单
         /// </summary>
         public static EditorSimulateBuildResult SimulateBuild(EditorSimulateBuildParam buildParam)
         {
-            if (_classType == null)
-                _classType = Assembly.Load("YooAsset.Editor").GetType("YooAsset.Editor.AssetBundleSimulateBuilder");
-
-            return (EditorSimulateBuildResult)InvokePublicStaticMethod(_classType, "SimulateBuild", buildParam);
+            var assemblyName = buildParam.InvokeAssmeblyName;
+            var className = buildParam.InvokeClassFullName;
+            var methodName = buildParam.InvokeMethodName;
+            var classType = Assembly.Load(assemblyName).GetType(className);
+            return (EditorSimulateBuildResult)InvokePublicStaticMethod(classType, methodName, buildParam);
         }
 
         private static object InvokePublicStaticMethod(System.Type type, string method, params object[] parameters)
