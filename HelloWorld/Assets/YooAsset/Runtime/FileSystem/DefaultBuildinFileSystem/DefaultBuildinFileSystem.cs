@@ -96,9 +96,9 @@ namespace YooAsset
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
-        public virtual FSClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
+        public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
         {
-            return _unpackFileSystem.ClearCacheBundleFilesAsync(manifest, clearMode, clearParam);
+            return _unpackFileSystem.ClearCacheFilesAsync(manifest, clearMode, clearParam);
         }
         public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadParam param)
         {

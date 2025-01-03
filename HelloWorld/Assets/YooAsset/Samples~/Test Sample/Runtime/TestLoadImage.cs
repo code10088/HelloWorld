@@ -11,20 +11,35 @@ using YooAsset;
 
 public class TestLoadImage
 {
-    [UnityTest]
     public IEnumerator RuntimeTester()
     {
-        ResourcePackage package = YooAssets.GetPackage("TestPackage");
+        ResourcePackage package = YooAssets.GetPackage(AssetBundleCollectorDefine.TestPackageName);
         Assert.IsNotNull(package);
 
-        var subAssetsHandle = package.LoadSubAssetsAsync<Sprite>("image_a");
-        yield return subAssetsHandle;
-        Assert.AreEqual(EOperationStatus.Succeed, subAssetsHandle.Status);
+        // 异步加载子对象
+        {
+            var subAssetsHandle = package.LoadSubAssetsAsync<Sprite>("image_a");
+            yield return subAssetsHandle;
+            Assert.AreEqual(EOperationStatus.Succeed, subAssetsHandle.Status);
 
-        var subAssetObjects = subAssetsHandle.SubAssetObjects;
-        Assert.IsNotNull(subAssetObjects);
+            var subAssetObjects = subAssetsHandle.SubAssetObjects;
+            Assert.IsNotNull(subAssetObjects);
 
-        int count = subAssetObjects.Count;
-        Assert.AreEqual(count, 3);
+            int count = subAssetObjects.Count;
+            Assert.AreEqual(count, 3);
+        }
+
+        // 同步加载子对象
+        {
+            var subAssetsHandle = package.LoadSubAssetsSync<Sprite>("image_b");
+            yield return subAssetsHandle;
+            Assert.AreEqual(EOperationStatus.Succeed, subAssetsHandle.Status);
+
+            var subAssetObjects = subAssetsHandle.SubAssetObjects;
+            Assert.IsNotNull(subAssetObjects);
+
+            int count = subAssetObjects.Count;
+            Assert.AreEqual(count, 3);
+        }
     }
 }

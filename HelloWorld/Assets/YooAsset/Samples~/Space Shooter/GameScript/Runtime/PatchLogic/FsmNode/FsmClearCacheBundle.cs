@@ -17,7 +17,7 @@ internal class FsmClearCacheBundle : IStateNode
         PatchEventDefine.PatchStepsChange.SendEventMessage("清理未使用的缓存文件！");
         var packageName = (string)_machine.GetBlackboardValue("PackageName");
         var package = YooAssets.GetPackage(packageName);
-        var operation = package.ClearCacheBundleFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
+        var operation = package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
         operation.Completed += Operation_Completed;
     }
     void IStateNode.OnUpdate()

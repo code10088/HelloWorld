@@ -12,10 +12,9 @@ using UnityEngine.Video;
 
 public class TestLoadVideo
 {
-    [UnityTest]
     public IEnumerator RuntimeTester()
     {
-        ResourcePackage package = YooAssets.GetPackage("RawPackage");
+        ResourcePackage package = YooAssets.GetPackage(AssetBundleCollectorDefine.RawPackageName);
         Assert.IsNotNull(package);
 
         var rawFileHandle = package.LoadRawFileAsync("video_logo");

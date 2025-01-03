@@ -25,7 +25,7 @@ namespace YooAsset
                 // 再验证文件CRC
                 if (verifyLevel == EFileVerifyLevel.High)
                 {
-                    string crc = HashUtility.FileCRC32Safely(filePath);
+                    string crc = HashUtility.FileCRC32(filePath);
                     if (crc == fileCRC)
                         return EFileVerifyResult.Succeed;
                     else

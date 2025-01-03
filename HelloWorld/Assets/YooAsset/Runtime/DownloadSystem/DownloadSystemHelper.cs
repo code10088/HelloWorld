@@ -39,15 +39,15 @@ namespace YooAsset
                 url = path;
             else
                 url = StringUtility.Format("jar:file://{0}", path);
-#elif UNITY_STANDALONE_OSX
-            url = new System.Uri(path).ToString();
-#elif UNITY_STANDALONE
-            url = StringUtility.Format("file:///{0}", path);
 #elif UNITY_OPENHARMONY
             if (path.StartsWith("jar:file://"))
                 url = path;
             else
-                url = StringUtility.Format("file://{0}", path);
+                url = StringUtility.Format("jar:file://{0}", path);
+#elif UNITY_STANDALONE_OSX
+            url = new System.Uri(path).ToString();
+#elif UNITY_STANDALONE
+            url = StringUtility.Format("file:///{0}", path);
 #else
             throw new System.NotImplementedException();
 #endif

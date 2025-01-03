@@ -11,13 +11,12 @@ using YooAsset;
 
 public class TestLoadPrefab
 {
-    [UnityTest]
     public IEnumerator RuntimeTester()
     {
-        ResourcePackage package = YooAssets.GetPackage("TestPackage");
+        ResourcePackage package = YooAssets.GetPackage(AssetBundleCollectorDefine.TestPackageName);
         Assert.IsNotNull(package);
 
-        // 加载所有预制体
+        // 异步加载所有预制体
         {
             var allAssetsHandle = package.LoadAllAssetsAsync<GameObject>("prefab_a");
             yield return allAssetsHandle;
@@ -30,9 +29,24 @@ public class TestLoadPrefab
             Assert.AreEqual(count, 3);
         }
 
-        // 加载指定预制体
+        // 异步加载指定预制体
         {
-            var assetsHandle = package.LoadAssetAsync<GameObject>("prefab_a");
+            var assetsHandle = package.LoadAssetAsync<GameObject>("prefab_b");
+            yield return assetsHandle;
+            Assert.AreEqual(EOperationStatus.Succeed, assetsHandle.Status);
+            Assert.IsNotNull(assetsHandle.AssetObject);
+
+            var instantiateOp = assetsHandle.InstantiateAsync();
+            yield return instantiateOp;
+            Assert.AreEqual(EOperationStatus.Succeed, instantiateOp.Status);
+
+            Assert.IsNotNull(instantiateOp.Result);
+            TestLogger.Log(this, instantiateOp.Result.name);
+        }
+
+        // 同步加载指定预制体
+        {
+            var assetsHandle = package.LoadAssetSync<GameObject>("prefab_c");
             yield return assetsHandle;
             Assert.AreEqual(EOperationStatus.Succeed, assetsHandle.Status);
             Assert.IsNotNull(assetsHandle.AssetObject);

@@ -11,10 +11,9 @@ using YooAsset;
 
 public class TestLoadSpriteAtlas
 {
-    [UnityTest]
     public IEnumerator RuntimeTester()
     {
-        ResourcePackage package = YooAssets.GetPackage("TestPackage");
+        ResourcePackage package = YooAssets.GetPackage(AssetBundleCollectorDefine.TestPackageName);
         Assert.IsNotNull(package);
 
         var assetHandle = package.LoadAssetAsync<SpriteAtlas>("atlas_icon");

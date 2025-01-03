@@ -220,7 +220,7 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 加载指定版本的资源清单
+        /// 更新并加载指定版本的资源清单
         /// </summary>
         /// <param name="packageVersion">包裹版本</param>
         /// <param name="timeout">超时时间（默认值：60秒）</param>
@@ -253,22 +253,23 @@ namespace YooAsset
         /// </summary>
         /// <param name="clearMode">清理方式</param>
         /// <param name="clearParam">执行参数</param>
-        public ClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(EFileClearMode clearMode, object clearParam = null)
+        public ClearCacheFilesOperation ClearCacheFilesAsync(EFileClearMode clearMode, object clearParam = null)
         {
             DebugCheckInitialize();
-            return _playModeImpl.ClearCacheBundleFilesAsync(clearMode.ToString(), clearParam);
+            return _playModeImpl.ClearCacheFilesAsync(clearMode.ToString(), clearParam);
         }
-
+        
         /// <summary>
         /// 清理缓存文件
         /// </summary>
         /// <param name="clearMode">清理方式</param>
         /// <param name="clearParam">执行参数</param>
-        public ClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(string clearMode, object clearParam = null)
+        public ClearCacheFilesOperation ClearCacheFilesAsync(string clearMode, object clearParam = null)
         {
             DebugCheckInitialize();
-            return _playModeImpl.ClearCacheBundleFilesAsync(clearMode, clearParam);
+            return _playModeImpl.ClearCacheFilesAsync(clearMode, clearParam);
         }
+
 
         #region 包裹信息
         /// <summary>

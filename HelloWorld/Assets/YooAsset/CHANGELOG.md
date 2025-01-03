@@ -2,6 +2,80 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.2.8-preview] - 2025-01-03
+
+新增了单元测试用例。
+
+### Improvements
+
+- EditorSimulateModeHelper.SimulateBuild()方法提供指定自定义构建类
+
+  ```csharp
+  public class EditorSimulateBuildParam
+  {
+      /// <summary>
+      /// 模拟构建类所属程序集名称
+      /// </summary>
+      public string InvokeAssmeblyName = "YooAsset.Editor";
+  
+      /// <summary>
+      /// 模拟构建执行的类名全称       
+      /// 注意：类名必须包含命名空间！  
+      /// </summary>    
+      public string InvokeClassFullName = "YooAsset.Editor.AssetBundleSimulateBuilder";
+  
+      /// <summary>     
+      /// 模拟构建执行的方法名称    
+      /// 注意：执行方法必须满足 BindingFlags.Public | BindingFlags.Static      
+      /// </summary>       
+      public string InvokeMethodName = "SimulateBuild";
+  }
+  ```
+
+- 文件清理方式新增清理缓存清单。
+
+  ```csharp
+  /// <summary>
+  /// 文件清理方式
+  /// </summary>
+  public enum EFileClearMode
+  {
+      /// <summary>
+      /// 清理所有清单
+      /// </summary>
+      ClearAllManifestFiles,
+  
+      /// <summary>
+      /// 清理未在使用的清单 
+      /// </summary> 
+      ClearUnusedManifestFiles,    
+  }
+  ```
+
+### Fixed
+
+- (#426) 修复了鸿蒙next平台加载内置文件路径报错的问题。
+- (#428) 修复了鸿蒙next平台加载内置文件路径报错的问题。
+- (#434) 修复了2.2版本 catalog文件对Json格式原生文件不记录的问题。
+- (#435) 修复了WebGL平台调用MD5算法触发异常的问题。
+
+### Added
+
+- 新增了视频打包规则。
+
+  ```csharp
+  /// <summary>
+  /// 打包视频文件
+  /// </summary>
+  [DisplayName("打包视频文件")]
+  public class PackVideoFile : IPackRule
+  ```
+
+### Changed
+
+- 重命名FileSystemParameters.RootDirectory字段为PackageRoot
+- 重命名ResourcePackage.ClearCacheBundleFilesAsync()方法为ClearCacheFilesAsync()
+
 ## [2.2.7-preview] - 2024-12-30
 
 ### Improvements

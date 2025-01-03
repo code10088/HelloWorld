@@ -59,7 +59,7 @@ namespace YooAsset
 
             if (_steps == ESteps.VerifyFileData)
             {
-                string fileHash = HashUtility.BytesMD5(_fileData);
+                string fileHash = HashUtility.BytesCRC32(_fileData);
                 if (fileHash == _packageHash)
                 {
                     _steps = ESteps.LoadManifest;

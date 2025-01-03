@@ -68,7 +68,7 @@ namespace YooAsset.Editor
                 string fileName = YooAssetSettingsData.GetManifestBinaryFileName(buildParameters.PackageName, buildParameters.PackageVersion);
                 string filePath = $"{packageOutputDirectory}/{fileName}";
                 ManifestTools.SerializeToBinary(filePath, manifest);
-                packageHash = HashUtility.FileMD5(filePath);
+                packageHash = HashUtility.FileCRC32(filePath);
                 BuildLogger.Log($"Create package manifest file: {filePath}");
 
                 ManifestContext manifestContext = new ManifestContext();

@@ -11,13 +11,12 @@ using YooAsset;
 
 public class TestLoadAudio
 {
-    [UnityTest]
     public IEnumerator RuntimeTester()
     {
-        ResourcePackage package = YooAssets.GetPackage("TestPackage");
+        ResourcePackage package = YooAssets.GetPackage(AssetBundleCollectorDefine.TestPackageName);
         Assert.IsNotNull(package);
 
-        // 音乐
+        // 音乐异步加载
         {
             var assetHandle = package.LoadAssetAsync<AudioClip>("music_a");
             yield return assetHandle;
@@ -27,9 +26,19 @@ public class TestLoadAudio
             Assert.IsNotNull(audioClip);
         }
 
-        // 音效
+        // 音效异步加载
         {
             var assetHandle = package.LoadAssetAsync<AudioClip>("sound_a");
+            yield return assetHandle;
+            Assert.AreEqual(EOperationStatus.Succeed, assetHandle.Status);
+
+            var audioClip = assetHandle.AssetObject as AudioClip;
+            Assert.IsNotNull(audioClip);
+        }
+
+        // 音效同步加载
+        {
+            var assetHandle = package.LoadAssetSync<AudioClip>("sound_b");
             yield return assetHandle;
             Assert.AreEqual(EOperationStatus.Succeed, assetHandle.Status);
 

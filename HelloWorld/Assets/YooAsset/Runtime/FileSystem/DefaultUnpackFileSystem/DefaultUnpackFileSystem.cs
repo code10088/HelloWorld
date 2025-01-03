@@ -14,8 +14,8 @@ namespace YooAsset
             base.OnCreate(packageName, rootDirectory);
 
             // 注意：重写保存根目录和临时目录
-            _cacheFileRoot = PathUtility.Combine(_packageRoot, DefaultUnpackFileSystemDefine.SaveFilesFolderName);
-            _tempFileRoot = PathUtility.Combine(_packageRoot, DefaultUnpackFileSystemDefine.TempFilesFolderName);
+            _cacheBundleFilesRoot = PathUtility.Combine(_packageRoot, DefaultUnpackFileSystemDefine.SaveFilesFolderName);
+            _tempFilesRoot = PathUtility.Combine(_packageRoot, DefaultUnpackFileSystemDefine.TempFilesFolderName);
         }
     }
 }

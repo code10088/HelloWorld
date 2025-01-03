@@ -65,6 +65,6 @@ public class GetCacheBundleSizeOperation : GameAsyncOperation
     {
         string rootDirectory = YooAssetSettingsData.GetYooMobileCacheRoot();
         string packageRoot = PathUtility.Combine(rootDirectory, _packageName);
-        return PathUtility.Combine(packageRoot, DefaultCacheFileSystemDefine.SaveFilesFolderName);
+        return PathUtility.Combine(packageRoot, DefaultCacheFileSystemDefine.BundleFilesFolderName);
     }
 }

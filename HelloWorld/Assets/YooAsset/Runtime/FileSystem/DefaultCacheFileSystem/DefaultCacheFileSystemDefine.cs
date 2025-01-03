@@ -4,27 +4,27 @@ namespace YooAsset
     internal class DefaultCacheFileSystemDefine
     {
         /// <summary>
-        /// 保存的数据文件名称
+        /// 数据文件名称
         /// </summary>
-        public const string SaveBundleDataFileName = "__data";
+        public const string BundleDataFileName = "__data";
 
         /// <summary>
-        /// 保存的信息文件名称
+        /// 信息文件名称
         /// </summary>
-        public const string SaveBundleInfoFileName = "__info";
+        public const string BundleInfoFileName = "__info";
 
         /// <summary>
-        /// 保存的资源文件的文件夹名称
+        /// 资源文件的文件夹名称
         /// </summary>
-        public const string SaveFilesFolderName = "CacheFiles";
+        public const string BundleFilesFolderName = "BundleFiles";
 
         /// <summary>
-        /// 下载的临时文件的文件夹名称
+        /// 临时文件的文件夹名称
         /// </summary>
-        public const string TempFilesFolderName = "CacheTempFiles";
+        public const string TempFilesFolderName = "TempFiles";
 
         /// <summary>
-        /// 保存的清单文件的文件夹名称
+        /// 清单文件的文件夹名称
         /// </summary>
         public const string ManifestFilesFolderName = "ManifestFiles";
 

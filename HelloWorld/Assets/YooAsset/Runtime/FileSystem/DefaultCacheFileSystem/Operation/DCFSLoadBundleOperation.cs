@@ -104,7 +104,7 @@ namespace YooAsset
                     }
                     else
                     {
-                        string filePath = _fileSystem.GetCacheFileLoadPath(_bundle);
+                        string filePath = _fileSystem.GetCacheBundleFileLoadPath(_bundle);
                         _assetBundle = AssetBundle.LoadFromFile(filePath);
                     }
                 }
@@ -118,7 +118,7 @@ namespace YooAsset
                     }
                     else
                     {
-                        string filePath = _fileSystem.GetCacheFileLoadPath(_bundle);
+                        string filePath = _fileSystem.GetCacheBundleFileLoadPath(_bundle);
                         _createRequest = AssetBundle.LoadFromFileAsync(filePath);
                     }
                 }
@@ -168,7 +168,7 @@ namespace YooAsset
 
                     // 注意：在安卓移动平台，华为和三星真机上有极小概率加载资源包失败。
                     // 说明：大多数情况在首次安装下载资源到沙盒内，游戏过程中切换到后台再回到游戏内有很大概率触发！
-                    string filePath = _fileSystem.GetCacheFileLoadPath(_bundle);
+                    string filePath = _fileSystem.GetCacheBundleFileLoadPath(_bundle);
                     byte[] fileData = FileUtility.ReadAllBytes(filePath);
                     if (fileData != null && fileData.Length > 0)
                     {
@@ -198,7 +198,7 @@ namespace YooAsset
                 else
                 {
                     _steps = ESteps.Done;
-                    _fileSystem.DeleteCacheFile(_bundle.BundleGUID);
+                    _fileSystem.DeleteCacheBundleFile(_bundle.BundleGUID);
                     Status = EOperationStatus.Failed;
                     Error = $"Find corrupted asset bundle file and delete : {_bundle.BundleName}";
                     YooLogger.Error(Error);
@@ -304,7 +304,7 @@ namespace YooAsset
 
             if (_steps == ESteps.LoadCacheRawBundle)
             {
-                string filePath = _fileSystem.GetCacheFileLoadPath(_bundle);
+                string filePath = _fileSystem.GetCacheBundleFileLoadPath(_bundle);
                 if (File.Exists(filePath))
                 {
                     _steps = ESteps.Done;

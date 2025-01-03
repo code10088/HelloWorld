@@ -37,7 +37,7 @@ namespace YooAsset
         /// <summary>
         /// 清理缓存文件
         /// </summary>
-        FSClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(PackageManifest manifest, string clearMode, object clearParam);
+        FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam);
 
         /// <summary>
         /// 下载远端文件
@@ -48,13 +48,13 @@ namespace YooAsset
         /// 加载Bundle文件
         /// </summary>
         FSLoadBundleOperation LoadBundleFile(PackageBundle bundle);
-        
+
 
         /// <summary>
         /// 设置自定义参数
         /// </summary>
         void SetParameter(string name, object value);
-        
+
         /// <summary>
         /// 创建缓存系统
         /// </summary>

@@ -11,10 +11,9 @@ using YooAsset;
 
 public class TestLoadRawFile
 {
-    [UnityTest]
     public IEnumerator RuntimeTester()
     {
-        ResourcePackage package = YooAssets.GetPackage("RawPackage");
+        ResourcePackage package = YooAssets.GetPackage(AssetBundleCollectorDefine.RawPackageName);
         Assert.IsNotNull(package);
 
         // 测试异步加载

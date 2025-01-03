@@ -11,18 +11,31 @@ using YooAsset;
 
 public class TestLoadScriptableObject
 {
-    [UnityTest]
     public IEnumerator RuntimeTester()
     {
-        ResourcePackage package = YooAssets.GetPackage("TestPackage");
+        ResourcePackage package = YooAssets.GetPackage(AssetBundleCollectorDefine.TestPackageName);
         Assert.IsNotNull(package);
 
-        var assetHandle = package.LoadAssetAsync("game_config");
-        yield return assetHandle;
-        Assert.AreEqual(EOperationStatus.Succeed, assetHandle.Status);
+        // 异步加载序列化对象
+        {
+            var assetHandle = package.LoadAssetAsync("config_a");
+            yield return assetHandle;
+            Assert.AreEqual(EOperationStatus.Succeed, assetHandle.Status);
 
-        var testScriptableObject = assetHandle.AssetObject as TestScriptableObject;
-        Assert.IsNotNull(testScriptableObject);
-        TestLogger.Log(this, testScriptableObject.ConfigName);
+            var testScriptableObject = assetHandle.AssetObject as TestScriptableObject;
+            Assert.IsNotNull(testScriptableObject);
+            TestLogger.Log(this, testScriptableObject.ConfigName);
+        }
+
+        // 同步加载序列化对象
+        {
+            var assetHandle = package.LoadAssetSync("config_b");
+            yield return assetHandle;
+            Assert.AreEqual(EOperationStatus.Succeed, assetHandle.Status);
+
+            var testScriptableObject = assetHandle.AssetObject as TestScriptableObject;
+            Assert.IsNotNull(testScriptableObject);
+            TestLogger.Log(this, testScriptableObject.ConfigName);
+        }
     }
 }

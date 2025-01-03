@@ -100,13 +100,13 @@ namespace YooAsset
             DefaultDownloadFileOperation newDownloader;
             if (bundle.FileSize >= _fileSystem.ResumeDownloadMinimumSize)
             {
-                newDownloader = new DownloadResumeFileOperation(_fileSystem, _fileSystem, bundle, param, _fileSystem.ResumeDownloadResponseCodes);
+                newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, param);
                 newDownloader.Reference();
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }
             else
             {
-                newDownloader = new DownloadNormalFileOperation(_fileSystem, _fileSystem, bundle, param);
+                newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, param);
                 newDownloader.Reference();
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }

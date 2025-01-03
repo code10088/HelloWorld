@@ -15,7 +15,7 @@ public static class AssetBundleCollectorMaker
         YooAsset.Editor.AssetBundleCollectorSettingData.ClearAll();
 
         // 创建正常文件Package
-        var testPackage = YooAsset.Editor.AssetBundleCollectorSettingData.CreatePackage("TestPackage");
+        var testPackage = YooAsset.Editor.AssetBundleCollectorSettingData.CreatePackage(AssetBundleCollectorDefine.TestPackageName);
         testPackage.EnableAddressable = true;
         testPackage.AutoCollectShaders = true;
         testPackage.IgnoreRuleName = "NormalIgnoreRule";
@@ -27,7 +27,7 @@ public static class AssetBundleCollectorMaker
             collector1.CollectPath = "";
             collector1.CollectorGUID = "bbce3e09a17b55c46b5615e995b5fc70"; //TestRes/Audios目录
             collector1.CollectorType = YooAsset.Editor.ECollectorType.MainAssetCollector;
-            collector1.PackRuleName = nameof(YooAsset.Editor.PackDirectory);
+            collector1.PackRuleName = nameof(YooAsset.Editor.PackSeparately);
             YooAsset.Editor.AssetBundleCollectorSettingData.CreateCollector(audioGroup, collector1);
         }
 
@@ -38,7 +38,7 @@ public static class AssetBundleCollectorMaker
             collector1.CollectPath = "";
             collector1.CollectorGUID = "d4768b7c3d3101d4ea693f95b337861d"; //TestRes/Image目录
             collector1.CollectorType = YooAsset.Editor.ECollectorType.MainAssetCollector;
-            collector1.PackRuleName = nameof(YooAsset.Editor.PackDirectory);
+            collector1.PackRuleName = nameof(YooAsset.Editor.PackSeparately);
             YooAsset.Editor.AssetBundleCollectorSettingData.CreateCollector(imageGroup, collector1);
         }
 
@@ -89,11 +89,12 @@ public static class AssetBundleCollectorMaker
             collector1.CollectPath = "";
             collector1.CollectorGUID = "af885cf1a7abb8c44bd9d139409d2961"; //TestRes/ScriptableObject目录
             collector1.CollectorType = YooAsset.Editor.ECollectorType.MainAssetCollector;
+            collector1.PackRuleName = nameof(YooAsset.Editor.PackSeparately);
             YooAsset.Editor.AssetBundleCollectorSettingData.CreateCollector(scriptableObjectGroup, collector1);
         }
 
         // 创建原生文件Package
-        var rawPackage = YooAsset.Editor.AssetBundleCollectorSettingData.CreatePackage("RawPackage");
+        var rawPackage = YooAsset.Editor.AssetBundleCollectorSettingData.CreatePackage(AssetBundleCollectorDefine.RawPackageName);
         rawPackage.EnableAddressable = true;
         rawPackage.AutoCollectShaders = true;
         rawPackage.IgnoreRuleName = "RawFileIgnoreRule";

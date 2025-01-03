@@ -11,57 +11,52 @@ using YooAsset;
 
 public class BuildinFileSystemTester : IPrebuildSetup, IPostBuildCleanup
 {
-    private const string TEST_PACKAGE_ROOT_KEY = "TEST_PACKAGE_ROOT_KEY";
-    private const string RAW_PACKAGE_ROOT_KEY = "RAW_PACKAGE_ROOT_KEY";
+    private const string BFS_TEST_PACKAGE_ROOT_KEY = "BFS_TEST_PACKAGE_ROOT_KEY";
+    private const string BFS_RAW_PACKAGE_ROOT_KEY = "BFS_RAW_PACKAGE_ROOT_KEY";
 
     void IPrebuildSetup.Setup()
     {
 #if UNITY_EDITOR
-        AssetBundleCollectorMaker.MakeCollectorSettingData();
-
         // 构建TestPackage
         {
-            var simulateParams = new EditorSimulateBuildParam("TestPackage");
-            simulateParams.BuildPipelineName = "ScriptableBuildPipeline";
-            simulateParams.InvokeAssmeblyName = "YooAsset.Test.Editor";
-            simulateParams.InvokeClassFullName = "TestSimulateBuilder";
-            simulateParams.InvokeMethodName = "SimulateBuild";
-            var simulateResult = EditorSimulateModeHelper.SimulateBuild(simulateParams);
-            UnityEditor.EditorPrefs.SetString(TEST_PACKAGE_ROOT_KEY, simulateResult.PackageRootDirectory);
+            var buildParams = new PackageInvokeBuildParam(AssetBundleCollectorDefine.TestPackageName);
+            buildParams.BuildPipelineName = "ScriptableBuildPipeline";
+            buildParams.InvokeAssmeblyName = "YooAsset.Test.Editor";
+            buildParams.InvokeClassFullName = "TestPackageBuilder";
+            buildParams.InvokeMethodName = "BuildPackage";
+            var simulateResult = PakcageInvokeBuilder.InvokeBuilder(buildParams);
+            UnityEditor.EditorPrefs.SetString(BFS_TEST_PACKAGE_ROOT_KEY, simulateResult.PackageRootDirectory);
         }
 
         // 构建RawPackage
         {
-            var simulateParams = new EditorSimulateBuildParam("RawPackage");
-            simulateParams.BuildPipelineName = "RawFileBuildPipeline";
-            simulateParams.InvokeAssmeblyName = "YooAsset.Test.Editor";
-            simulateParams.InvokeClassFullName = "TestSimulateBuilder";
-            simulateParams.InvokeMethodName = "SimulateBuild";
-            var simulateResult = EditorSimulateModeHelper.SimulateBuild(simulateParams);
-            UnityEditor.EditorPrefs.SetString(RAW_PACKAGE_ROOT_KEY, simulateResult.PackageRootDirectory);
+            var buildParams = new PackageInvokeBuildParam(AssetBundleCollectorDefine.RawPackageName);
+            buildParams.BuildPipelineName = "RawFileBuildPipeline";
+            buildParams.InvokeAssmeblyName = "YooAsset.Test.Editor";
+            buildParams.InvokeClassFullName = "TestPackageBuilder";
+            buildParams.InvokeMethodName = "BuildPackage";
+            var simulateResult = PakcageInvokeBuilder.InvokeBuilder(buildParams);
+            UnityEditor.EditorPrefs.SetString(BFS_RAW_PACKAGE_ROOT_KEY, simulateResult.PackageRootDirectory);
         }
 #endif
     }
     void IPostBuildCleanup.Cleanup()
     {
     }
-
-    [UnitySetUp]
-    public virtual IEnumerator RuntimeSetup()
+    
+    [UnityTest]
+    public IEnumerator InitializePackage()
     {
-        // 初始化YooAsset
-        YooAssets.Initialize();
-
         // 初始化TestPackage
         {
             string packageRoot = string.Empty;
 #if UNITY_EDITOR
-            packageRoot = UnityEditor.EditorPrefs.GetString(TEST_PACKAGE_ROOT_KEY);
+            packageRoot = UnityEditor.EditorPrefs.GetString(BFS_TEST_PACKAGE_ROOT_KEY);
 #endif
             if (Directory.Exists(packageRoot) == false)
                 throw new Exception($"Not found package root : {packageRoot}");
 
-            var package = YooAssets.CreatePackage("TestPackage");
+            var package = YooAssets.CreatePackage(AssetBundleCollectorDefine.TestPackageName);
 
             // 初始化资源包
             var initParams = new OfflinePlayModeParameters();
@@ -91,12 +86,12 @@ public class BuildinFileSystemTester : IPrebuildSetup, IPostBuildCleanup
         {
             string packageRoot = string.Empty;
 #if UNITY_EDITOR
-            packageRoot = UnityEditor.EditorPrefs.GetString(RAW_PACKAGE_ROOT_KEY);
+            packageRoot = UnityEditor.EditorPrefs.GetString(BFS_RAW_PACKAGE_ROOT_KEY);
 #endif
             if (Directory.Exists(packageRoot) == false)
                 throw new Exception($"Not found package root : {packageRoot}");
 
-            var package = YooAssets.CreatePackage("RawPackage");
+            var package = YooAssets.CreatePackage(AssetBundleCollectorDefine.RawPackageName);
 
             // 初始化资源包
             var initParams = new OfflinePlayModeParameters();
@@ -125,9 +120,58 @@ public class BuildinFileSystemTester : IPrebuildSetup, IPostBuildCleanup
     }
 
     [UnityTest]
-    public IEnumerator RuntimeInit()
+    public IEnumerator TestLoadAudio()
     {
-        // 声明该方法可以被自动化流程识别！
-        yield break;
+        var tester = new TestLoadAudio();
+        yield return tester.RuntimeTester();
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadImage()
+    {
+        var tester = new TestLoadImage();
+        yield return tester.RuntimeTester();
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadPrefab()
+    {
+        var tester = new TestLoadPrefab();
+        yield return tester.RuntimeTester();
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadScene()
+    {
+        var tester = new TestLoadScene();
+        yield return tester.RuntimeTester();
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadScriptableObject()
+    {
+        var tester = new TestLoadScriptableObject();
+        yield return tester.RuntimeTester();
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadSpriteAtlas()
+    {
+        var tester = new TestLoadSpriteAtlas();
+        yield return tester.RuntimeTester();
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadRawFile()
+    {
+        var tester = new TestLoadRawFile();
+        yield return tester.RuntimeTester();
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadVideo()
+    {
+        var tester = new TestLoadVideo();
+        yield return tester.RuntimeTester();
     }
 }
