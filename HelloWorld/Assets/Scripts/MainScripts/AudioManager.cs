@@ -7,6 +7,8 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     public static readonly string ResSoundPath = "Assets/ZRes/Audio/Sound/";
 
     private GameObject root;
+    private bool musicMute = false;
+    private bool soundMute = false;
 
     private int loadId = -1;
     private AudioSource music;
@@ -18,6 +20,16 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
         root = new GameObject("Sound");
         music = root.AddComponent<AudioSource>();
     }
+    public void SetMusicMute(bool state)
+    {
+        musicMute = state;
+        if (musicMute) StopMusic();
+    }
+    public void SetSoundMute(bool state)
+    {
+        soundMute = state;
+        if (soundMute) StopAllSoud();
+    }
 
     #region 背景音乐
     /// <summary>
@@ -26,6 +38,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     /// <param name="path">相对于Assets/ZRes/Audio/Bgm的相对路径</param>
     public void PlayMusic(string path, bool loop = true)
     {
+        if (musicMute) return;
         AssetManager.Instance.Load<AudioClip>(ref loadId, $"{ResBgmPath}{path}.mp3", LoadMusicFinish);
         music.loop = loop;
     }
@@ -48,6 +61,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     /// <param name="path">相对于Assets/ZRes/Audio/Sound的相对路径</param>
     public int PlaySound(string path, bool loop = false)
     {
+        if (soundMute) return -1;
         AssetPool<SoundItem> pool;
         path = $"{ResSoundPath}{path}";
         if (!audioPool.TryGetValue(path, out pool))
