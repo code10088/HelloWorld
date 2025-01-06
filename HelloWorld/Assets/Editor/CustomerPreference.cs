@@ -8,6 +8,7 @@ public enum CustomerPreferenceEnum
     BuildPlayerPath,
     MSBuildPath,
     LubanPath,
+    CosBucketConfig,
 }
 public class CustomerPreference
 {
@@ -43,6 +44,7 @@ public class CustomerPreference
                 BuildPlayerPathGUI();
                 MSBuildPathGUI();
                 LubanPathGUI();
+                CosBucketConfigGUI();
             }
         };
     }
@@ -65,7 +67,7 @@ public class CustomerPreference
     {
         GUILayout.BeginHorizontal();
         {
-            GUILayout.Label("BuildPlayer路径", GUILayout.Width(50f));
+            GUILayout.Label("BuildPlayer路径", GUILayout.Width(100f));
             GUILayout.TextField(data.BuildPlayerPath);
             if (GUILayout.Button("浏览", GUILayout.Width(50f)))
             {
@@ -79,7 +81,7 @@ public class CustomerPreference
     {
         GUILayout.BeginHorizontal();
         {
-            GUILayout.Label("MSBuild路径", GUILayout.Width(50f));
+            GUILayout.Label("MSBuild路径", GUILayout.Width(100f));
             GUILayout.TextField(data.MSBuildPath);
             if (GUILayout.Button("浏览", GUILayout.Width(50f)))
             {
@@ -93,11 +95,37 @@ public class CustomerPreference
     {
         GUILayout.BeginHorizontal();
         {
-            GUILayout.Label("Luban路径", GUILayout.Width(50f));
+            GUILayout.Label("Luban路径", GUILayout.Width(100f));
             GUILayout.TextField(data.LubanPath);
             if (GUILayout.Button("浏览", GUILayout.Width(50f)))
             {
                 data.LubanPath = EditorUtility.OpenFolderPanel("选择文件夹", Environment.CurrentDirectory, "Luban");
+                Save();
+            }
+        }
+        GUILayout.EndHorizontal();
+    }
+    static void CosBucketConfigGUI()
+    {
+        GUILayout.BeginHorizontal();
+        {
+            GUILayout.Label("腾讯储存桶设置", GUILayout.Width(100f));
+            var temp = GUILayout.TextField(data.CosBucketConfig.Name);
+            if (temp != data.CosBucketConfig.Name)
+            {
+                data.CosBucketConfig.Name = temp;
+                Save();
+            }
+            temp = GUILayout.TextField(data.CosBucketConfig.SecretId);
+            if (temp != data.CosBucketConfig.SecretId)
+            {
+                data.CosBucketConfig.SecretId = temp;
+                Save();
+            }
+            temp = GUILayout.TextField(data.CosBucketConfig.SecretKey);
+            if (temp != data.CosBucketConfig.SecretKey)
+            {
+                data.CosBucketConfig.SecretKey = temp;
                 Save();
             }
         }

@@ -226,14 +226,12 @@ public class BuildEditor
     public static void UploadBundles2CDN()
     {
         CheckAppVersion();
-        CosXmlConfig config = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
-        string secretId = "AKIDHSjP5iQG1byLl3mNnnolv3879KYj2OpJ";
-        string secretKey = "jKnx21ADT1OfkpyGRSLHPVXgjkhllfS6";
+        CosBucketConfig cosBucketConfig = CustomerPreference.GetConfig<CosBucketConfig>(CustomerPreferenceEnum.CosBucketConfig);
+        CosXmlConfig cosXmlConfig = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
         long durationSecond = 600;
-        QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(secretId, secretKey, durationSecond);
-        CosXml cosXml = new CosXmlServer(config, qCloudCredentialProvider);
+        QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(cosBucketConfig.SecretId, cosBucketConfig.SecretKey, durationSecond);
+        CosXml cosXml = new CosXmlServer(cosXmlConfig, qCloudCredentialProvider);
 
-        string bucket = "assets-1321503079";
         string packageOutputDir = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
         packageOutputDir = $"{packageOutputDir}/{EditorUserBuildSettings.activeBuildTarget}/{AssetManager.PackageName}/{resversion}";
         List<FileInfo> fileList = new List<FileInfo>();
@@ -242,7 +240,7 @@ public class BuildEditor
         {
             string path = fileList[i].FullName;
             string key = $"{EditorUserBuildSettings.activeBuildTarget}/{appversion}/{fileList[i].Name}";
-            PutObjectRequest request = new PutObjectRequest(bucket, key, path);
+            PutObjectRequest request = new PutObjectRequest(cosBucketConfig.Name, key, path);
             PutObjectResult result = cosXml.PutObject(request);
             if (result.IsSuccessful())
             {
@@ -260,16 +258,14 @@ public class BuildEditor
     }
     private static void UploadFile2CDN(string key, string path)
     {
-        CosXmlConfig config = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
-        string secretId = "AKIDHSjP5iQG1byLl3mNnnolv3879KYj2OpJ";
-        string secretKey = "jKnx21ADT1OfkpyGRSLHPVXgjkhllfS6";
+        CosBucketConfig cosBucketConfig = CustomerPreference.GetConfig<CosBucketConfig>(CustomerPreferenceEnum.CosBucketConfig);
+        CosXmlConfig cosXmlConfig = new CosXmlConfig.Builder().SetRegion("ap-beijing").Build();
         long durationSecond = 600;
-        QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(secretId, secretKey, durationSecond);
-        CosXml cosXml = new CosXmlServer(config, qCloudCredentialProvider);
+        QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(cosBucketConfig.SecretId, cosBucketConfig.SecretKey, durationSecond);
+        CosXml cosXml = new CosXmlServer(cosXmlConfig, qCloudCredentialProvider);
 
-        string bucket = "assets-1321503079";
         key = key.Replace("\\", "/");
-        PutObjectRequest request = new PutObjectRequest(bucket, key, path);
+        PutObjectRequest request = new PutObjectRequest(cosBucketConfig.Name, key, path);
         PutObjectResult result = cosXml.PutObject(request);
         if (result.IsSuccessful())
         {
