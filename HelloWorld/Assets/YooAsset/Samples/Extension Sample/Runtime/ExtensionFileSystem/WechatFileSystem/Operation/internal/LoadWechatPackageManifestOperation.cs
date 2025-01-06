@@ -73,7 +73,7 @@ internal class LoadWechatPackageManifestOperation : AsyncOperationBase
 
         if (_steps == ESteps.VerifyFileData)
         {
-            string fileHash = HashUtility.BytesMD5(_webDataRequestOp.Result);
+            string fileHash = HashUtility.BytesCRC32(_webDataRequestOp.Result);
             if (fileHash == _packageHash)
             {
                 _steps = ESteps.LoadManifest;
@@ -82,7 +82,7 @@ internal class LoadWechatPackageManifestOperation : AsyncOperationBase
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Failed;
-                Error = "Failed to verify wechat package manifest file!";
+                Error = "Failed to verify package manifest file!";
             }
         }
 

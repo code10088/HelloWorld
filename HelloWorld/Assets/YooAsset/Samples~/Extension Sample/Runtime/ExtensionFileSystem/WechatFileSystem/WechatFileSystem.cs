@@ -115,7 +115,7 @@ internal class WechatFileSystem : IFileSystem
         OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
-    public virtual FSClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
+    public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
     {
         if (clearMode == EFileClearMode.ClearAllBundleFiles.ToString())
         {
@@ -132,7 +132,7 @@ internal class WechatFileSystem : IFileSystem
         else
         {
             string error = $"Invalid clear mode : {clearMode}";
-            var operation = new FSClearCacheBundleFilesCompleteOperation(error);
+            var operation = new FSClearCacheFilesCompleteOperation(error);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }

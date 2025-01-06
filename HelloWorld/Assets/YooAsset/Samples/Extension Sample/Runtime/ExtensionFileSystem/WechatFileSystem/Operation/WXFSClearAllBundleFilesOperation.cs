@@ -5,7 +5,7 @@ using UnityEngine;
 using YooAsset;
 using WeChatWASM;
 
-internal class WXFSClearAllBundleFilesOperation : FSClearCacheBundleFilesOperation
+internal class WXFSClearAllBundleFilesOperation : FSClearCacheFilesOperation
 {
     private enum ESteps
     {

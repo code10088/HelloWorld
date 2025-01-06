@@ -6,7 +6,7 @@ using YooAsset;
 using WeChatWASM;
 
 
-internal class WXFSClearUnusedBundleFilesAsync : FSClearCacheBundleFilesOperation
+internal class WXFSClearUnusedBundleFilesAsync : FSClearCacheFilesOperation
 {
     private enum ESteps
     {

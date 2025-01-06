@@ -110,9 +110,9 @@ internal class ByteGameFileSystem : IFileSystem
         OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
-    public virtual FSClearCacheBundleFilesOperation ClearCacheBundleFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
+    public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
     {
-        var operation = new FSClearCacheBundleFilesCompleteOperation(null);
+        var operation = new FSClearCacheFilesCompleteOperation();
         OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
