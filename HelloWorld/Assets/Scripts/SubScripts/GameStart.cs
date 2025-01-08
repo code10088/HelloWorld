@@ -25,6 +25,7 @@ namespace HotAssembly
         }
         private void InitConfig(bool success)
         {
+            UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             ConfigManager.Instance.Init(WarmUpShader);
         }
         private void WarmUpShader()
@@ -43,7 +44,6 @@ namespace HotAssembly
         }
         private void EnterMainScene()
         {
-            UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
             DataManager.Instance.GuideData.Init();
             UIManager.Instance.OpenUI(UIType.UITest, CloseSceneLoading);
         }
