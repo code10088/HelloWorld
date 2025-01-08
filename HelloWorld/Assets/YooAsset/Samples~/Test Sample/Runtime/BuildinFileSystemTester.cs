@@ -120,6 +120,13 @@ public class BuildinFileSystemTester : IPrebuildSetup, IPostBuildCleanup
     }
 
     [UnityTest]
+    public IEnumerator TestLoadAsyncTask()
+    {
+        var tester = new TestLoadPanel();
+        yield return tester.RuntimeTester();
+    }
+
+    [UnityTest]
     public IEnumerator TestLoadAudio()
     {
         var tester = new TestLoadAudio();

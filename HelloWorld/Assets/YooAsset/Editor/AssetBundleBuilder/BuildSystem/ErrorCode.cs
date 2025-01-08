@@ -12,6 +12,8 @@ namespace YooAsset.Editor
         BuildOutputRootIsNullOrEmpty = 113,
         BuildinFileRootIsNullOrEmpty = 114,
         PackageOutputDirectoryExists = 115,
+        BuildPipelineIsNullOrEmpty = 116,
+        BuildBundleTypeIsUnknown = 117,
         RecommendScriptBuildPipeline = 130,
 
         // TaskGetBuildMap

@@ -60,6 +60,17 @@ public static class AssetBundleCollectorMaker
             YooAsset.Editor.AssetBundleCollectorSettingData.CreateCollector(spriteGroup, collector2);
         }
 
+        // 面板
+        var panelGroup = YooAsset.Editor.AssetBundleCollectorSettingData.CreateGroup(testPackage, "PanelGroup");
+        {
+            var collector1 = new YooAsset.Editor.AssetBundleCollector();
+            collector1.CollectPath = "";
+            collector1.CollectorGUID = "4e9a00d6e825d644b9be75155d88daa6"; //TestRes/Panel目录
+            collector1.CollectorType = YooAsset.Editor.ECollectorType.MainAssetCollector;
+            collector1.PackRuleName = nameof(YooAsset.Editor.PackSeparately);
+            YooAsset.Editor.AssetBundleCollectorSettingData.CreateCollector(panelGroup, collector1);
+        }
+
         // 预制体
         var prefabGroup = YooAsset.Editor.AssetBundleCollectorSettingData.CreateGroup(testPackage, "PrefabGroup");
         {

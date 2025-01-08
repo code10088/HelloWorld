@@ -75,12 +75,12 @@ namespace YooAsset.Editor
         /// <summary>
         /// 资源包名称样式
         /// </summary>
-        public EFileNameStyle FileNameStyle;
+        public EFileNameStyle FileNameStyle = EFileNameStyle.HashName;
 
         /// <summary>
         /// 内置文件的拷贝选项
         /// </summary>
-        public EBuildinFileCopyOption BuildinFileCopyOption;
+        public EBuildinFileCopyOption BuildinFileCopyOption = EBuildinFileCopyOption.None;
 
         /// <summary>
         /// 内置文件的拷贝参数
@@ -116,16 +116,6 @@ namespace YooAsset.Editor
                 string message = BuildLogger.GetErrorMessage(ErrorCode.NoBuildTarget, "Please select the build target platform !");
                 throw new Exception(message);
             }
-            if (string.IsNullOrEmpty(PackageName))
-            {
-                string message = BuildLogger.GetErrorMessage(ErrorCode.PackageNameIsNullOrEmpty, "Package name is null or empty !");
-                throw new Exception(message);
-            }
-            if (string.IsNullOrEmpty(PackageVersion))
-            {
-                string message = BuildLogger.GetErrorMessage(ErrorCode.PackageVersionIsNullOrEmpty, "Package version is null or empty !");
-                throw new Exception(message);
-            }
             if (string.IsNullOrEmpty(BuildOutputRoot))
             {
                 string message = BuildLogger.GetErrorMessage(ErrorCode.BuildOutputRootIsNullOrEmpty, "Build output root is null or empty !");
@@ -134,6 +124,26 @@ namespace YooAsset.Editor
             if (string.IsNullOrEmpty(BuildinFileRoot))
             {
                 string message = BuildLogger.GetErrorMessage(ErrorCode.BuildinFileRootIsNullOrEmpty, "Buildin file root is null or empty !");
+                throw new Exception(message);
+            }
+            if (string.IsNullOrEmpty(BuildPipeline))
+            {
+                string message = BuildLogger.GetErrorMessage(ErrorCode.BuildPipelineIsNullOrEmpty, "Build pipeline is null or empty !");
+                throw new Exception(message);
+            }
+            if (BuildBundleType == (int)EBuildBundleType.Unknown)
+            {
+                string message = BuildLogger.GetErrorMessage(ErrorCode.BuildBundleTypeIsUnknown, $"Build bundle type is unknown {BuildBundleType} !");
+                throw new Exception(message);
+            }
+            if (string.IsNullOrEmpty(PackageName))
+            {
+                string message = BuildLogger.GetErrorMessage(ErrorCode.PackageNameIsNullOrEmpty, "Package name is null or empty !");
+                throw new Exception(message);
+            }
+            if (string.IsNullOrEmpty(PackageVersion))
+            {
+                string message = BuildLogger.GetErrorMessage(ErrorCode.PackageVersionIsNullOrEmpty, "Package version is null or empty !");
                 throw new Exception(message);
             }
 
