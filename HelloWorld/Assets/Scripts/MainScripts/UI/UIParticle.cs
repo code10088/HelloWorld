@@ -11,14 +11,7 @@ public class UIParticle : MonoBehaviour
     //²Ã¼ôÌØÐ§RectTransform.Scale.z=0
     private RectTransform rt;
     private MaterialPropertyBlock mpb;
-    private void Awake()
-    {
-        Init();
-    }
-    private void OnEnable()
-    {
-        Refresh();
-    }
+
     private void Init()
     {
         ps = GetComponentsInChildren<ParticleSystemRenderer>(true);
@@ -36,6 +29,7 @@ public class UIParticle : MonoBehaviour
     }
     public void Refresh()
     {
+        if (ps == null) Init();
         Canvas c = GetComponentInParent<Canvas>();
         if (c.sortingLayerName == sortingLayerName && c.sortingOrder == sortingOrder) return;
         sortingLayerName = c.sortingLayerName;
