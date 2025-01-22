@@ -112,16 +112,16 @@ namespace YooAsset.Editor
             string jsonData = FileUtility.ReadAllText(_reportFilePath);
             _buildReport = BuildReport.Deserialize(jsonData);
             _summaryViewer.FillViewData(_buildReport);
-            _assetListViewer.FillViewData(_buildReport, _searchKeyWord);
-            _bundleListViewer.FillViewData(_buildReport, _reportFilePath, _searchKeyWord);
+            _assetListViewer.FillViewData(_buildReport, _reportFilePath);
+            _bundleListViewer.FillViewData(_buildReport, _reportFilePath);
         }
         private void OnSearchKeyWordChange(ChangeEvent<string> e)
         {
             _searchKeyWord = e.newValue;
             if (_buildReport != null)
             {
-                _assetListViewer.FillViewData(_buildReport, _searchKeyWord);
-                _bundleListViewer.FillViewData(_buildReport, _reportFilePath, _searchKeyWord);
+                _assetListViewer.RebuildView(_searchKeyWord);
+                _bundleListViewer.RebuildView(_searchKeyWord);
             }
         }
         private void ViewModeMenuAction0(DropdownMenuAction action)

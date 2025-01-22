@@ -131,6 +131,17 @@ namespace YooAsset
             if (package == null)
                 return false;
 
+            return RemovePackage(package);
+        }
+
+        /// <summary>
+        /// 移除资源包
+        /// </summary>
+        /// <param name="package">资源包实例对象</param>
+        public static bool RemovePackage(ResourcePackage package)
+        {
+            CheckException(package);
+            string packageName = package.PackageName;
             if (package.InitializeStatus != EOperationStatus.None)
             {
                 YooLogger.Error($"The resource package {packageName} has not been destroyed, please call the method {nameof(ResourcePackage.DestroyAsync)} to destroy!");
@@ -180,6 +191,14 @@ namespace YooAsset
 
             if (string.IsNullOrEmpty(packageName))
                 throw new Exception("Package name is null or empty !");
+        }
+        private static void CheckException(ResourcePackage package)
+        {
+            if (_isInitialize == false)
+                throw new Exception($"{nameof(YooAssets)} not initialize !");
+
+            if (package == null)
+                throw new Exception("Package instance is null !");
         }
 
         #region 系统参数

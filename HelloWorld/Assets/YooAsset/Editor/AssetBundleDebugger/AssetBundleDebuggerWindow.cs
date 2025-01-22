@@ -240,8 +240,8 @@ namespace YooAsset.Editor
             {
                 _currentReport = debugReport;
                 _frameSlider.label = $"Frame: {debugReport.FrameCount}";
-                _assetListViewer.FillViewData(debugReport, _searchKeyWord);
-                _bundleListViewer.FillViewData(debugReport, _searchKeyWord);
+                _assetListViewer.FillViewData(debugReport);
+                _bundleListViewer.FillViewData(debugReport);
             }
         }
 
@@ -286,8 +286,8 @@ namespace YooAsset.Editor
             _searchKeyWord = e.newValue;
             if (_currentReport != null)
             {
-                _assetListViewer.FillViewData(_currentReport, _searchKeyWord);
-                _bundleListViewer.FillViewData(_currentReport, _searchKeyWord);
+                _assetListViewer.RebuildView(_searchKeyWord);
+                _bundleListViewer.RebuildView(_searchKeyWord);
             }
         }
         private void OnViewModeMenuChange(DropdownMenuAction action)

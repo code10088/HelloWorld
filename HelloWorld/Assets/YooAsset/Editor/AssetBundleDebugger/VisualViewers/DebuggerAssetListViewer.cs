@@ -11,12 +11,24 @@ namespace YooAsset.Editor
 {
     internal class DebuggerAssetListViewer
     {
+        private class ProviderTableData : DefaultTableData
+        {
+            public DebugProviderInfo ProviderInfo;
+        }
+        private class DependTableData : DefaultTableData
+        {
+            public DebugBundleInfo BundleInfo;
+        }
+
         private VisualTreeAsset _visualAsset;
         private TemplateContainer _root;
 
-        private ListView _assetListView;
-        private ListView _dependListView;
+        private TableView _providerTableView;
+        private TableView _dependTableView;
+
         private DebugReport _debugReport;
+        private List<ITableData> _sourceDatas;
+
 
         /// <summary>
         /// 初始化页面
@@ -32,25 +44,342 @@ namespace YooAsset.Editor
             _root.style.flexGrow = 1f;
 
             // 资源列表
-            _assetListView = _root.Q<ListView>("TopListView");
-            _assetListView.makeItem = MakeAssetListViewItem;
-            _assetListView.bindItem = BindAssetListViewItem;
-#if UNITY_2022_3_OR_NEWER
-            _assetListView.selectionChanged += AssetListView_onSelectionChange;
-#elif UNITY_2020_1_OR_NEWER
-            _assetListView.onSelectionChange += AssetListView_onSelectionChange;
-#else
-            _assetListView.onSelectionChanged += AssetListView_onSelectionChange;
-#endif
+            _providerTableView = _root.Q<TableView>("TopTableView");
+            _providerTableView.SelectionChangedEvent = OnProviderTableViewSelectionChanged;
+            CreateAssetTableViewColumns();
 
             // 依赖列表
-            _dependListView = _root.Q<ListView>("BottomListView");
-            _dependListView.makeItem = MakeDependListViewItem;
-            _dependListView.bindItem = BindDependListViewItem;
+            _dependTableView = _root.Q<TableView>("BottomTableView");
+            CreateDependTableViewColumns();
 
 #if UNITY_2020_3_OR_NEWER
             SplitView.Adjuster(_root);
 #endif
+        }
+        private void CreateAssetTableViewColumns()
+        {
+            // PackageName
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 150;
+                columnStyle.Stretchable = false;
+                columnStyle.Searchable = false;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("PackageName", "Package Name", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                };
+                _providerTableView.AddColumn(column);
+            }
+
+            // AssetPath
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 300;
+                columnStyle.Stretchable = true;
+                columnStyle.Searchable = true;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("AssetPath", "Asset Path", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                };
+                _providerTableView.AddColumn(column);
+            }
+
+            // SpawnScene
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 150;
+                columnStyle.Stretchable = false;
+                columnStyle.Searchable = false;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("SpawnScene", "Spawn Scene", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                };
+                _providerTableView.AddColumn(column);
+            }
+
+            // SpawnTime
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 150;
+                columnStyle.Stretchable = false;
+                columnStyle.Searchable = false;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("SpawnTime", "Spawn Time", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                };
+                _providerTableView.AddColumn(column);
+            }
+
+            // LoadingTime
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 150;
+                columnStyle.Stretchable = false;
+                columnStyle.Searchable = false;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("LoadingTime", "Loading Time", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                };
+                _providerTableView.AddColumn(column);
+            }
+
+            // RefCount
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 150;
+                columnStyle.Stretchable = false;
+                columnStyle.Searchable = false;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("RefCount", "Ref Count", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                };
+                _providerTableView.AddColumn(column);
+            }
+
+            // Status
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 150;
+                columnStyle.Stretchable = false;
+                columnStyle.Searchable = false;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("Status", "Status", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    StyleColor textColor;
+                    var providerTableData = data as ProviderTableData;
+                    if(providerTableData.ProviderInfo.Status == EOperationStatus.Failed.ToString())
+                        textColor = new StyleColor(Color.yellow);
+                    else
+                        textColor = new StyleColor(Color.white);
+
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                    infoLabel.style.color = textColor;
+                };
+                _providerTableView.AddColumn(column);
+            }
+        }
+        private void CreateDependTableViewColumns()
+        {
+            //DependBundles
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 300;
+                columnStyle.Stretchable = true;
+                columnStyle.Searchable = true;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("DependBundles", "Depend Bundles", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                };
+                _dependTableView.AddColumn(column);
+            }
+
+            // RefCount
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 150;
+                columnStyle.Stretchable = false;
+                columnStyle.Searchable = false;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("RefCount", "Ref Count", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                };
+                _dependTableView.AddColumn(column);
+            }
+
+            // Status
+            {
+                var columnStyle = new ColumnStyle();
+                columnStyle.Width = 150;
+                columnStyle.Stretchable = false;
+                columnStyle.Searchable = false;
+                columnStyle.Sortable = true;
+                var column = new TableColumn("Status", "Status", columnStyle);
+                column.MakeCell = () =>
+                {
+                    var label = new Label();
+                    label.style.unityTextAlign = TextAnchor.MiddleLeft;
+                    label.style.marginLeft = 3f;
+                    label.style.flexGrow = columnStyle.Stretchable ? 1f : 0f;
+                    label.style.width = columnStyle.Width;
+                    label.style.maxWidth = columnStyle.MaxWidth;
+                    label.style.minWidth = columnStyle.MinWidth;
+                    return label;
+                };
+                column.BindCell = (VisualElement element, ITableData data, ITableCell cell) =>
+                {
+                    StyleColor textColor;
+                    var dependTableData = data as DependTableData;
+                    if (dependTableData.BundleInfo.Status == EOperationStatus.Failed)
+                        textColor = new StyleColor(Color.yellow);
+                    else
+                        textColor = new StyleColor(Color.white);
+
+                    var infoLabel = element as Label;
+                    infoLabel.text = (string)cell.GetDisplayObject();
+                    infoLabel.style.color = textColor;
+                };
+                _dependTableView.AddColumn(column);
+            }
+        }
+
+        /// <summary>
+        /// 填充页面数据
+        /// </summary>
+        public void FillViewData(DebugReport debugReport)
+        {
+            _debugReport = debugReport;
+
+            // 清空旧数据
+            _providerTableView.ClearAll(false, true);
+            _dependTableView.ClearAll(false, true);
+
+            // 填充数据源
+            _sourceDatas = new List<ITableData>(1000);
+            foreach (var packageData in debugReport.PackageDatas)
+            {
+                foreach (var providerInfo in packageData.ProviderInfos)
+                {
+                    var rowData = new ProviderTableData();
+                    rowData.ProviderInfo = providerInfo;
+                    rowData.AddAssetPathCell("PackageName", packageData.PackageName);
+                    rowData.AddStringValueCell("AssetPath", providerInfo.AssetPath);
+                    rowData.AddStringValueCell("SpawnScene", providerInfo.SpawnScene);
+                    rowData.AddStringValueCell("SpawnTime", providerInfo.SpawnTime);
+                    rowData.AddLongValueCell("LoadingTime", providerInfo.LoadingTime);
+                    rowData.AddLongValueCell("RefCount", providerInfo.RefCount);
+                    rowData.AddStringValueCell("Status", providerInfo.Status.ToString());
+                    _sourceDatas.Add(rowData);
+                }
+            }
+            _providerTableView.itemsSource = _sourceDatas;
+
+            // 重建视图
+            RebuildView(null);
         }
 
         /// <summary>
@@ -59,45 +388,21 @@ namespace YooAsset.Editor
         public void ClearView()
         {
             _debugReport = null;
-            _assetListView.Clear();
-            _assetListView.ClearSelection();
-            _assetListView.itemsSource.Clear();
-            _assetListView.Rebuild();
+            _providerTableView.ClearAll(false, true);
+            _dependTableView.ClearAll(false, true);
+            RebuildView(null);
         }
 
         /// <summary>
-        /// 填充页面数据
+        /// 重建视图
         /// </summary>
-        public void FillViewData(DebugReport debugReport, string searchKeyWord)
+        public void RebuildView(string searchKeyWord)
         {
-            _debugReport = debugReport;
-            _assetListView.Clear();
-            _assetListView.ClearSelection();
-            _assetListView.itemsSource = FilterViewItems(debugReport, searchKeyWord);
-            _assetListView.Rebuild();
-        }
-        private List<DebugProviderInfo> FilterViewItems(DebugReport debugReport, string searchKeyWord)
-        {
-            List<DebugProviderInfo> result = new List<DebugProviderInfo>(1000);
-            foreach (var packageData in debugReport.PackageDatas)
-            {
-                var tempList = new List<DebugProviderInfo>(packageData.ProviderInfos.Count);
-                foreach (var providerInfo in packageData.ProviderInfos)
-                {
-                    if (string.IsNullOrEmpty(searchKeyWord) == false)
-                    {
-                        if (providerInfo.AssetPath.Contains(searchKeyWord) == false)
-                            continue;
-                    }
+            // 搜索匹配
+            DefaultSearchSystem.Search(_sourceDatas, searchKeyWord);
 
-                    providerInfo.PackageName = packageData.PackageName;
-                    tempList.Add(providerInfo);
-                }
-
-                tempList.Sort();
-                result.AddRange(tempList);
-            }
-            return result;
+            // 重建视图
+            _providerTableView.RebuildView();
         }
 
         /// <summary>
@@ -116,194 +421,24 @@ namespace YooAsset.Editor
             _root.RemoveFromHierarchy();
         }
 
-
-        // 顶部列表相关
-        private VisualElement MakeAssetListViewItem()
+        private void OnProviderTableViewSelectionChanged(ITableData data)
         {
-            VisualElement element = new VisualElement();
-            element.style.flexDirection = FlexDirection.Row;
+            var providerTableData = data as ProviderTableData;
+            DebugProviderInfo providerInfo = providerTableData.ProviderInfo;
 
+            // 填充依赖数据
+            var sourceDatas = new List<ITableData>(providerInfo.DependBundleInfos.Count);
+            foreach (var dependBundleInfo in providerInfo.DependBundleInfos)
             {
-                var label = new Label();
-                label.name = "Label0";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                //label.style.flexGrow = 1f;
-                label.style.width = 150;
-                element.Add(label);
+                var rowData = new DependTableData();
+                rowData.BundleInfo = dependBundleInfo;
+                rowData.AddStringValueCell("DependBundles", dependBundleInfo.BundleName);
+                rowData.AddLongValueCell("RefCount", dependBundleInfo.RefCount);
+                rowData.AddStringValueCell("Status", dependBundleInfo.Status.ToString());
+                sourceDatas.Add(rowData);
             }
-
-            {
-                var label = new Label();
-                label.name = "Label1";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                label.style.flexGrow = 1f;
-                label.style.width = 280;
-                element.Add(label);
-            }
-
-            {
-                var label = new Label();
-                label.name = "Label2";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                //label.style.flexGrow = 1f;
-                label.style.width = 150;
-                element.Add(label);
-            }
-
-            {
-                var label = new Label();
-                label.name = "Label3";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                //label.style.flexGrow = 1f;
-                label.style.width = 150;
-                element.Add(label);
-            }
-
-            {
-                var label = new Label();
-                label.name = "Label4";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                //label.style.flexGrow = 1f;
-                label.style.width = 150;
-                element.Add(label);
-            }
-
-            {
-                var label = new Label();
-                label.name = "Label5";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                //label.style.flexGrow = 1f;
-                label.style.width = 100;
-                element.Add(label);
-            }
-
-            {
-                var label = new Label();
-                label.name = "Label6";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                //label.style.flexGrow = 1f;
-                label.style.width = 120;
-                element.Add(label);
-            }
-
-            return element;
-        }
-        private void BindAssetListViewItem(VisualElement element, int index)
-        {
-            var sourceData = _assetListView.itemsSource as List<DebugProviderInfo>;
-            var providerInfo = sourceData[index];
-
-            // Package Name
-            var label0 = element.Q<Label>("Label0");
-            label0.text = providerInfo.PackageName;
-
-            // Asset Path
-            var label1 = element.Q<Label>("Label1");
-            label1.text = providerInfo.AssetPath;
-
-            // Spawn Scene
-            var label2 = element.Q<Label>("Label2");
-            label2.text = providerInfo.SpawnScene;
-
-            // Spawn Time
-            var label3 = element.Q<Label>("Label3");
-            label3.text = providerInfo.SpawnTime;
-
-            // Loading Time
-            var label4 = element.Q<Label>("Label4");
-            label4.text = providerInfo.LoadingTime.ToString();
-
-            // Ref Count
-            var label5 = element.Q<Label>("Label5");
-            label5.text = providerInfo.RefCount.ToString();
-
-            // Status
-            StyleColor textColor;
-            if (providerInfo.Status == EOperationStatus.Failed.ToString())
-                textColor = new StyleColor(Color.yellow);
-            else
-                textColor = label1.style.color;
-            var label6 = element.Q<Label>("Label6");
-            label6.text = providerInfo.Status.ToString();
-            label6.style.color = textColor;
-        }
-        private void AssetListView_onSelectionChange(IEnumerable<object> objs)
-        {
-            foreach (var item in objs)
-            {
-                DebugProviderInfo providerInfo = item as DebugProviderInfo;
-                FillDependListView(providerInfo);
-            }
-        }
-
-        // 底部列表相关
-        private VisualElement MakeDependListViewItem()
-        {
-            VisualElement element = new VisualElement();
-            element.style.flexDirection = FlexDirection.Row;
-
-            {
-                var label = new Label();
-                label.name = "Label1";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                label.style.flexGrow = 1f;
-                label.style.width = 280;
-                element.Add(label);
-            }
-
-            {
-                var label = new Label();
-                label.name = "Label3";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                //label.style.flexGrow = 1f;
-                label.style.width = 100;
-                element.Add(label);
-            }
-
-            {
-                var label = new Label();
-                label.name = "Label4";
-                label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                label.style.marginLeft = 3f;
-                //label.style.flexGrow = 1f;
-                label.style.width = 120;
-                element.Add(label);
-            }
-
-            return element;
-        }
-        private void BindDependListViewItem(VisualElement element, int index)
-        {
-            List<DebugBundleInfo> bundles = _dependListView.itemsSource as List<DebugBundleInfo>;
-            DebugBundleInfo bundleInfo = bundles[index];
-
-            // Bundle Name
-            var label1 = element.Q<Label>("Label1");
-            label1.text = bundleInfo.BundleName;
-
-            // Ref Count
-            var label3 = element.Q<Label>("Label3");
-            label3.text = bundleInfo.RefCount.ToString();
-
-            // Status
-            var label4 = element.Q<Label>("Label4");
-            label4.text = bundleInfo.Status.ToString();
-        }
-        private void FillDependListView(DebugProviderInfo selectedProviderInfo)
-        {
-            _dependListView.Clear();
-            _dependListView.ClearSelection();
-            _dependListView.itemsSource = selectedProviderInfo.DependBundleInfos;
-            _dependListView.Rebuild();
+            _dependTableView.itemsSource = sourceDatas;
+            _dependTableView.RebuildView();
         }
     }
 }

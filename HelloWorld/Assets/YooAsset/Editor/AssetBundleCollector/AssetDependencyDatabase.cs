@@ -40,13 +40,15 @@ namespace YooAsset.Editor
             _databaseFilePath = databaseFilePath;
             _database.Clear();
 
+            FileStream stream = null;
+            BinaryReader reader = null;
             try
             {
                 if (readCacheDatabaseFile && File.Exists(databaseFilePath))
                 {
                     // 解析缓存文件
-                    using var stream = File.OpenRead(databaseFilePath);
-                    using var reader = new BinaryReader(stream);
+                    stream = File.OpenRead(databaseFilePath);
+                    reader = new BinaryReader(stream);
                     string fileVersion = reader.ReadString();
                     if (fileVersion != FILE_VERSION)
                         throw new Exception("The database file version not match !");
@@ -85,6 +87,13 @@ namespace YooAsset.Editor
                 ClearDatabase(true);
                 Debug.LogError($"Failed to load cache database : {ex.Message}");
             }
+            finally
+            {
+                if (reader != null)
+                    reader.Close();
+                if (stream != null)
+                    stream.Close();
+            }
 
             // 查找新增或变动资源
             var allAssetPaths = AssetDatabase.GetAllAssetPaths();
@@ -114,10 +123,12 @@ namespace YooAsset.Editor
             if (File.Exists(_databaseFilePath))
                 File.Delete(_databaseFilePath);
 
+            FileStream stream = null;
+            BinaryWriter writer = null;
             try
             {
-                using var stream = File.Create(_databaseFilePath);
-                using var writer = new BinaryWriter(stream);
+                stream = File.Create(_databaseFilePath);
+                writer = new BinaryWriter(stream);
                 writer.Write(FILE_VERSION);
                 writer.Write(_database.Count);
                 foreach (var assetPair in _database)
@@ -133,6 +144,13 @@ namespace YooAsset.Editor
             catch (Exception ex)
             {
                 Debug.LogError($"Failed to save cache database : {ex.Message}");
+            }
+            finally
+            {
+                if (writer != null)
+                    writer.Close();
+                if (stream != null)
+                    stream.Close();
             }
         }
 

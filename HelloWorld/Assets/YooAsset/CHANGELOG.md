@@ -2,6 +2,21 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.2.9] - 2025-01-14
+
+### Fixed
+
+- (#438) 修复了纯血鸿蒙加载本地文件失败的问题。
+- (#445) 修复了小游戏扩展文件系统脚本编译错误。
+
+### Changed
+
+- EditorSimulateModeHelper.SimulateBuild()方法变更
+
+  ```csharp
+  public static PackageInvokeBuildResult SimulateBuild(string packageName);
+  ```
+
 ## [2.2.8-preview] - 2025-01-03
 
 新增了单元测试用例。
