@@ -61,5 +61,11 @@ namespace YooAsset.Editor
             HeaderTitles.Add(reportHeader);
             return reportHeader;
         }
+        public ReportHeader AddHeader(string headerTitle, int width, int minWidth, int maxWidth)
+        {
+            var reportHeader = new ReportHeader(headerTitle, width, minWidth, maxWidth);
+            HeaderTitles.Add(reportHeader);
+            return reportHeader;
+        }
     }
 }

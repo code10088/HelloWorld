@@ -31,6 +31,19 @@ namespace YooAsset
             get { return _initializeStatus; }
         }
 
+        /// <summary>
+        /// 包裹是否有效
+        /// </summary>
+        public bool PackageValid
+        {
+            get
+            {
+                if (_playModeImpl == null)
+                    return false;
+                return _playModeImpl.ActiveManifest != null;
+            }
+        }
+
 
         internal ResourcePackage(string packageName)
         {
@@ -258,7 +271,7 @@ namespace YooAsset
             DebugCheckInitialize();
             return _playModeImpl.ClearCacheFilesAsync(clearMode.ToString(), clearParam);
         }
-        
+
         /// <summary>
         /// 清理缓存文件
         /// </summary>

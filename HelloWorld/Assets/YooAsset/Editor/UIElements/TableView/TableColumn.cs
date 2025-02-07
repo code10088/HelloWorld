@@ -1,5 +1,6 @@
 ﻿#if UNITY_2019_4_OR_NEWER
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEditor.UIElements;
@@ -14,6 +15,11 @@ namespace YooAsset.Editor
         /// </summary>
         internal int ColumnIndex;
 
+        /// <summary>
+        /// 单元元素集合
+        /// </summary>
+        internal List<VisualElement> CellElements = new List<VisualElement>(1000);
+        
         /// <summary>
         /// UI元素名称
         /// </summary>

@@ -168,7 +168,7 @@ namespace YooAsset
         #region 内部方法
         protected string GetDefaultWebPackageRoot(string packageName)
         {
-            string rootDirectory = YooAssetSettingsData.GetYooWebBuildinRoot();
+            string rootDirectory = YooAssetSettingsData.GetYooDefaultBuildinRoot();
             return PathUtility.Combine(rootDirectory, packageName);
         }
         public string GetWebFileLoadPath(PackageBundle bundle)

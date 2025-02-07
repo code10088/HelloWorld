@@ -123,7 +123,7 @@ public class CopyBuildinManifestOperation : GameAsyncOperation
 
     private string GetBuildinYooRoot()
     {
-        return YooAssetSettingsData.GetYooMobileBuildinRoot();
+        return YooAssetSettingsData.GetYooDefaultBuildinRoot();
     }
     private string GetBuildinHashFilePath()
     {
@@ -140,7 +140,7 @@ public class CopyBuildinManifestOperation : GameAsyncOperation
 
     private string GetCacheYooRoot()
     {
-        return YooAssetSettingsData.GetYooMobileCacheRoot();
+        return YooAssetSettingsData.GetYooDefaultCacheRoot();
     }
     private string GetCacheHashFilePath()
     {

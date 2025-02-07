@@ -6,6 +6,7 @@ namespace YooAsset
         private enum ESteps
         {
             None,
+            CheckInitStatus,
             UnloadAllAssets,
             DestroyPackage,
             Done,
@@ -23,12 +24,41 @@ namespace YooAsset
 
         internal override void InternalOnStart()
         {
-            _steps = ESteps.UnloadAllAssets;
+            _steps = ESteps.CheckInitStatus;
         }
         internal override void InternalOnUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
+
+            if (_steps == ESteps.CheckInitStatus)
+            {
+                if (_resourcePackage.InitializeStatus == EOperationStatus.None)
+                {
+                    _steps = ESteps.DestroyPackage;
+                }
+                else if (_resourcePackage.InitializeStatus == EOperationStatus.Processing)
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = "The Package is initializing ! Please try to destroy the package again later.";
+                }
+                else if (_resourcePackage.InitializeStatus == EOperationStatus.Failed)
+                {
+                    _steps = ESteps.DestroyPackage;
+                }
+                else if (_resourcePackage.InitializeStatus == EOperationStatus.Succeed)
+                {
+                    if (_resourcePackage.PackageValid)
+                        _steps = ESteps.UnloadAllAssets;
+                    else
+                        _steps = ESteps.DestroyPackage;
+                }
+                else
+                {
+                    throw new System.NotImplementedException(_resourcePackage.InitializeStatus.ToString());
+                }
+            }
 
             if (_steps == ESteps.UnloadAllAssets)
             {

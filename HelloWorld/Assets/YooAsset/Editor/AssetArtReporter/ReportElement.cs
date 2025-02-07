@@ -62,6 +62,11 @@ namespace YooAsset.Editor
         /// 是否在白名单里
         /// </summary>
         public bool IsWhiteList { set; get; }
+
+        /// <summary>
+        /// 是否隐藏元素
+        /// </summary>
+        public bool Hidden { set; get; }
         #endregion
     }
 }

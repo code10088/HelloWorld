@@ -108,13 +108,11 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// 设置标题
+        /// 获取标题UI元素
         /// </summary>
-        public void SetHeaderTitle(string elementName, string headerTitle)
+        public VisualElement GetHeaderElement(string elementName)
         {
-            var toolbarBtn = _toolbar.Q<ToolbarButton>(elementName);
-            if (toolbarBtn != null)
-                toolbarBtn.text = headerTitle;
+            return _toolbar.Q<ToolbarButton>(elementName);
         }
 
         /// <summary>
@@ -126,15 +124,36 @@ namespace YooAsset.Editor
             toolbarBtn.userData = column;
             toolbarBtn.name = column.ElementName;
             toolbarBtn.text = column.HeaderTitle;
-            toolbarBtn.style.unityTextAlign = TextAnchor.MiddleLeft;
-            toolbarBtn.style.flexGrow = column.ColumnStyle.Stretchable ? 1f : 0f;
+            toolbarBtn.style.flexGrow = 0;
             toolbarBtn.style.width = column.ColumnStyle.Width;
-            toolbarBtn.style.minWidth = column.ColumnStyle.MinWidth;
-            toolbarBtn.style.maxWidth = column.ColumnStyle.MaxWidth;
+            toolbarBtn.style.minWidth = column.ColumnStyle.Width;
+            toolbarBtn.style.maxWidth = column.ColumnStyle.Width;
             toolbarBtn.clickable.clickedWithEventInfo += OnClickTableHead;
             SetCellElementStyle(toolbarBtn);
             _toolbar.Add(toolbarBtn);
             _columns.Add(column);
+
+            // 可伸缩控制柄
+            if (column.ColumnStyle.Stretchable)
+            {
+                int handleWidth = 3;
+                int minWidth = (int)column.ColumnStyle.MinWidth.value;
+                int maxWidth = (int)column.ColumnStyle.MaxWidth.value;
+                var resizeHandle = new ResizeHandle(handleWidth, toolbarBtn, minWidth, maxWidth);
+                resizeHandle.ResizeChanged += (float value) =>
+                {
+                    float width = Mathf.Clamp(value, column.ColumnStyle.MinWidth.value, column.ColumnStyle.MaxWidth.value);
+                    column.ColumnStyle.Width = width;
+
+                    foreach (var element in column.CellElements)
+                    {
+                        element.style.width = width;
+                        element.style.minWidth = width;
+                        element.style.maxWidth = width;
+                    }
+                };
+                _toolbar.Add(resizeHandle);
+            }
 
             // 计算索引值
             column.ColumnIndex = _columns.Count - 1;
@@ -289,12 +308,17 @@ namespace YooAsset.Editor
         {
             VisualElement listViewElement = new VisualElement();
             listViewElement.style.flexDirection = FlexDirection.Row;
-            foreach (var colum in _columns)
+            foreach (var column in _columns)
             {
-                var cellElement = colum.MakeCell.Invoke();
-                cellElement.name = colum.ElementName;
+                var cellElement = column.MakeCell.Invoke();
+                cellElement.name = column.ElementName;
+                cellElement.style.flexGrow = 0f;
+                cellElement.style.width = column.ColumnStyle.Width;
+                cellElement.style.minWidth = column.ColumnStyle.Width;
+                cellElement.style.maxWidth = column.ColumnStyle.Width;
                 SetCellElementStyle(cellElement);
                 listViewElement.Add(cellElement);
+                column.CellElements.Add(cellElement);
             }
             return listViewElement;
         }
@@ -314,12 +338,13 @@ namespace YooAsset.Editor
             StyleLength defaultStyle = new StyleLength(1f);
             element.style.paddingTop = defaultStyle;
             element.style.paddingBottom = defaultStyle;
-            element.style.paddingLeft = defaultStyle;
-            element.style.paddingRight = defaultStyle;
             element.style.marginTop = defaultStyle;
             element.style.marginBottom = defaultStyle;
-            element.style.marginLeft = defaultStyle;
-            element.style.marginRight = defaultStyle;
+
+            element.style.paddingLeft = 1;
+            element.style.paddingRight = 1;
+            element.style.marginLeft = 0;
+            element.style.marginRight = 0;
         }
     }
 }

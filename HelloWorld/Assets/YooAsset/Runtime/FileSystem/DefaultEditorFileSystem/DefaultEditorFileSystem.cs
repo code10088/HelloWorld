@@ -174,17 +174,17 @@ namespace YooAsset
         public string GetEditorPackageVersionFilePath()
         {
             string fileName = YooAssetSettingsData.GetPackageVersionFileName(PackageName);
-            return PathUtility.Combine(FileRoot, fileName);
+            return PathUtility.Combine(_packageRoot, fileName);
         }
         public string GetEditorPackageHashFilePath(string packageVersion)
         {
             string fileName = YooAssetSettingsData.GetPackageHashFileName(PackageName, packageVersion);
-            return PathUtility.Combine(FileRoot, fileName);
+            return PathUtility.Combine(_packageRoot, fileName);
         }
         public string GetEditorPackageManifestFilePath(string packageVersion)
         {
             string fileName = YooAssetSettingsData.GetManifestBinaryFileName(PackageName, packageVersion);
-            return PathUtility.Combine(FileRoot, fileName);
+            return PathUtility.Combine(_packageRoot, fileName);
         }
         public int GetAsyncSimulateFrame()
         {

@@ -473,16 +473,7 @@ namespace YooAsset
         #region 内部方法
         public string GetDefaultCachePackageRoot(string packageName)
         {
-            string rootDirectory;
-
-#if UNITY_EDITOR
-            rootDirectory = YooAssetSettingsData.GetYooEditorCacheRoot();
-#elif UNITY_STANDALONE
-            rootDirectory = YooAssetSettingsData.GetYooStandaloneCacheRoot();
-#else
-            rootDirectory = YooAssetSettingsData.GetYooMobileCacheRoot();
-#endif
-
+            string rootDirectory = YooAssetSettingsData.GetYooDefaultCacheRoot();
             return PathUtility.Combine(rootDirectory, packageName);
         }
         public string GetCacheBundleFileLoadPath(PackageBundle bundle)

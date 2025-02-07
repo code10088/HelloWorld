@@ -22,7 +22,7 @@ namespace YooAsset
             if (saveDirectory.Exists)
                 saveDirectory.Delete(true);
 
-            string rootPath = YooAssetSettingsData.GetYooEditorBuildinRoot();
+            string rootPath = YooAssetSettingsData.GetYooDefaultBuildinRoot();
             DirectoryInfo rootDirectory = new DirectoryInfo(rootPath);
             if (rootDirectory.Exists == false)
             {
@@ -34,14 +34,20 @@ namespace YooAsset
             DirectoryInfo[] subDirectories = rootDirectory.GetDirectories();
             foreach (var subDirectory in subDirectories)
             {
-                CreateBuildinCatalogFile(subDirectory.Name, subDirectory.FullName);
+                string packageName = subDirectory.Name;
+                string pacakgeDirectory = subDirectory.FullName;
+                bool result = CreateBuildinCatalogFile(packageName, pacakgeDirectory);
+                if (result == false)
+                {
+                    throw new System.Exception($"Create package {packageName} catalog file failed ! See the detail error in console !");
+                }
             }
         }
 
         /// <summary>
         /// 生成包裹的内置资源目录文件
         /// </summary>
-        public static void CreateBuildinCatalogFile(string packageName, string pacakgeDirectory)
+        public static bool CreateBuildinCatalogFile(string packageName, string pacakgeDirectory)
         {
             // 获取资源清单版本
             string packageVersion;
@@ -50,7 +56,8 @@ namespace YooAsset
                 string versionFilePath = $"{pacakgeDirectory}/{versionFileName}";
                 if (File.Exists(versionFilePath) == false)
                 {
-                    throw new System.Exception($"Can not found package version file : {versionFilePath}");
+                    Debug.LogError($"Can not found package version file : {versionFilePath}");
+                    return false;
                 }
 
                 packageVersion = FileUtility.ReadAllText(versionFilePath);
@@ -63,7 +70,8 @@ namespace YooAsset
                 string manifestFilePath = $"{pacakgeDirectory}/{manifestFileName}";
                 if (File.Exists(manifestFilePath) == false)
                 {
-                    throw new System.Exception($"Can not found package manifest file : {manifestFilePath}");
+                    Debug.LogError($"Can not found package manifest file : {manifestFilePath}");
+                    return false;
                 }
 
                 var binaryData = FileUtility.ReadAllBytes(manifestFilePath);
@@ -117,10 +125,12 @@ namespace YooAsset
                 }
             }
 
+            // 创建输出目录
             string fullPath = YooAssetSettingsData.GetYooResourcesFullPath();
             string saveFilePath = $"{fullPath}/{packageName}/{DefaultBuildinFileSystemDefine.BuildinCatalogFileName}";
             FileUtility.CreateFileDirectory(saveFilePath);
 
+            // 创建输出文件
             UnityEditor.AssetDatabase.CreateAsset(buildinFileCatalog, saveFilePath);
             UnityEditor.EditorUtility.SetDirty(buildinFileCatalog);
 #if UNITY_2019
@@ -128,7 +138,9 @@ namespace YooAsset
 #else
             UnityEditor.AssetDatabase.SaveAssetIfDirty(buildinFileCatalog);
 #endif
+
             Debug.Log($"Succeed to save buildin file catalog : {saveFilePath}");
+            return true;
         }
     }
 }

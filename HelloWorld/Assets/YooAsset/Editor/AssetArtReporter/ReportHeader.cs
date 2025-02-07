@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace YooAsset.Editor
 {
@@ -22,7 +20,7 @@ namespace YooAsset.Editor
         /// <summary>
         /// 单元列最小宽度
         /// </summary>
-        public int MinWidth = 30;
+        public int MinWidth = 50;
 
         /// <summary>
         /// 单元列最大宽度
@@ -54,7 +52,17 @@ namespace YooAsset.Editor
         {
             HeaderTitle = headerTitle;
             Width = width;
+            MinWidth = width;
+            MaxWidth = width;
         }
+        public ReportHeader(string headerTitle, int width, int minWidth, int maxWidth)
+        {
+            HeaderTitle = headerTitle;
+            Width = width;
+            MinWidth = minWidth;
+            MaxWidth = maxWidth;
+        }
+
         public ReportHeader SetMinWidth(int value)
         {
             MinWidth = value;

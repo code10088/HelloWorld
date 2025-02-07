@@ -26,6 +26,7 @@ namespace YooAsset.Editor
 
         /// <summary>
         /// 扫描模式
+        /// 注意：文件路径或文件GUID
         /// </summary>
         public string ScannerSchema = string.Empty;
 

@@ -20,5 +20,13 @@ namespace YooAsset.Editor
         /// 修复扫描结果
         /// </summary>
         public abstract void FixResult(List<ReportElement> fixList);
+
+        /// <summary>
+        /// 创建检视面板
+        /// </summary>
+        public virtual SchemaInspector CreateInspector()
+        {
+            return null;
+        }
     }
 }

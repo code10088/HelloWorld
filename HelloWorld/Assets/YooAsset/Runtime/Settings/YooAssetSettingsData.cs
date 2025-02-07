@@ -112,50 +112,6 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 获取YOO的编辑器下内置文件根目录
-        /// </summary>
-        public static string GetYooEditorBuildinRoot()
-        {
-            if (string.IsNullOrEmpty(Setting.DefaultYooFolderName))
-                return PathUtility.Combine(Application.dataPath, "StreamingAssets");
-            else
-                return PathUtility.Combine(Application.dataPath, "StreamingAssets", Setting.DefaultYooFolderName);
-        }
-
-        /// <summary>
-        /// 获取YOO的PC端内置文件根目录
-        /// </summary>
-        public static string GetYooStandaloneBuildinRoot()
-        {
-            if (string.IsNullOrEmpty(Setting.DefaultYooFolderName))
-                return Application.streamingAssetsPath;
-            else
-                return PathUtility.Combine(Application.streamingAssetsPath, Setting.DefaultYooFolderName);
-        }
-
-        /// <summary>
-        /// 获取YOO的移动端内置文件根目录
-        /// </summary>
-        public static string GetYooMobileBuildinRoot()
-        {
-            if (string.IsNullOrEmpty(Setting.DefaultYooFolderName))
-                return Application.streamingAssetsPath;
-            else
-                return PathUtility.Combine(Application.streamingAssetsPath, Setting.DefaultYooFolderName);
-        }
-
-        /// <summary>
-        /// 获取YOO的Web端内置文件根目录
-        /// </summary>
-        public static string GetYooWebBuildinRoot()
-        {
-            if (string.IsNullOrEmpty(Setting.DefaultYooFolderName))
-                return Application.streamingAssetsPath;
-            else
-                return PathUtility.Combine(Application.streamingAssetsPath, Setting.DefaultYooFolderName);
-        }
-
-        /// <summary>
         /// 获取YOO的编辑器下缓存文件根目录
         /// </summary>
         public static string GetYooEditorCacheRoot()
@@ -195,6 +151,31 @@ namespace YooAsset
                 return Application.persistentDataPath;
             else
                 return PathUtility.Combine(Application.persistentDataPath, Setting.DefaultYooFolderName);
+        }
+
+        /// <summary>
+        /// 获取YOO默认的缓存文件根目录
+        /// </summary>
+        public static string GetYooDefaultCacheRoot()
+        {
+#if UNITY_EDITOR
+            return GetYooEditorCacheRoot();
+#elif UNITY_STANDALONE
+            return GetYooStandaloneCacheRoot();
+#else
+            return GetYooMobileCacheRoot();
+#endif
+        }
+
+        /// <summary>
+        /// 获取YOO默认的内置文件根目录
+        /// </summary>
+        public static string GetYooDefaultBuildinRoot()
+        {
+            if (string.IsNullOrEmpty(Setting.DefaultYooFolderName))
+                return Application.streamingAssetsPath;
+            else
+                return PathUtility.Combine(Application.streamingAssetsPath, Setting.DefaultYooFolderName);
         }
         #endregion
     }
