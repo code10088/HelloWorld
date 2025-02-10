@@ -373,7 +373,7 @@ namespace YooAsset
         {
             if (_wrappers.ContainsKey(bundleGUID))
             {
-                YooLogger.Error($"{nameof(DefaultCacheFileSystem)} has record file element : {bundleGUID}");
+                YooLogger.Error($"{nameof(DefaultCacheFileSystem)} has element : {bundleGUID}");
                 return false;
             }
 

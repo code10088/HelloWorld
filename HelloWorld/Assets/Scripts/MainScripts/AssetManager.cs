@@ -35,7 +35,8 @@ public class AssetManager : Singletion<AssetManager>
         IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
         var parameters = new WebPlayModeParameters();
 #if WEIXINMINIGAME
-        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(remoteServices);
+        var packageRoot = $"{WeChatWASM.WX.env.USER_DATA_PATH}/__GAME_FILE_CACHE/{Application.version}";
+        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(remoteServices, packageRoot);
 #else
         parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
         parameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices);

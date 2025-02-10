@@ -56,7 +56,6 @@ WebGL
 		BuildEditor打包需要EFileNameStyle.BundleName_HashName格式
 		微信小游戏需要关闭WebGL的缓存系统YooAssets.SetCacheSystemDisableCacheOnWebGL()（2.2.x版本不需要）
 		微信小游戏热更需要修改resversion，需要保证不同于StreamingAssets下的resversion（2.2.x版本不需要）
-		微信小游戏根据minigame缓存策略修改缓存目录WechatFileSystem _fileCacheRoot = $"{WX.env.USER_DATA_PATH}/__GAME_FILE_CACHE/{Application.version}";
 		bundleExcludeExtension缓存需要.version;.bytes;.hash;.json;
 		bundlePathIdentifier缓存需要1.2.0
 	

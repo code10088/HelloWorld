@@ -6,16 +6,16 @@ internal class WXFSLoadPackageManifestOperation : FSLoadPackageManifestOperation
     private enum ESteps
     {
         None,
-        RequestRemotePackageHash,
-        LoadRemotePackageManifest,
+        RequestPackageHash,
+        LoadPackageManifest,
         Done,
     }
 
     private readonly WechatFileSystem _fileSystem;
     private readonly string _packageVersion;
     private readonly int _timeout;
-    private RequestWechatPackageHashOperation _requestRemotePackageHashOp;
-    private LoadWechatPackageManifestOperation _loadRemotePackageManifestOp;
+    private RequestWechatPackageHashOperation _requestPackageHashOp;
+    private LoadWechatPackageManifestOperation _loadPackageManifestOp;
     private ESteps _steps = ESteps.None;
 
     
@@ -27,60 +27,60 @@ internal class WXFSLoadPackageManifestOperation : FSLoadPackageManifestOperation
     }
     internal override void InternalOnStart()
     {
-        _steps = ESteps.RequestRemotePackageHash;
+        _steps = ESteps.RequestPackageHash;
     }
     internal override void InternalOnUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
 
-        if (_steps == ESteps.RequestRemotePackageHash)
+        if (_steps == ESteps.RequestPackageHash)
         {
-            if (_requestRemotePackageHashOp == null)
+            if (_requestPackageHashOp == null)
             {
-                _requestRemotePackageHashOp = new RequestWechatPackageHashOperation(_fileSystem, _packageVersion, _timeout);
-                OperationSystem.StartOperation(_fileSystem.PackageName, _requestRemotePackageHashOp);
+                _requestPackageHashOp = new RequestWechatPackageHashOperation(_fileSystem, _packageVersion, _timeout);
+                OperationSystem.StartOperation(_fileSystem.PackageName, _requestPackageHashOp);
             }
 
-            if (_requestRemotePackageHashOp.IsDone == false)
+            if (_requestPackageHashOp.IsDone == false)
                 return;
 
-            if (_requestRemotePackageHashOp.Status == EOperationStatus.Succeed)
+            if (_requestPackageHashOp.Status == EOperationStatus.Succeed)
             {
-                _steps = ESteps.LoadRemotePackageManifest;
+                _steps = ESteps.LoadPackageManifest;
             }
             else
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Failed;
-                Error = _requestRemotePackageHashOp.Error;
+                Error = _requestPackageHashOp.Error;
             }
         }
 
-        if (_steps == ESteps.LoadRemotePackageManifest)
+        if (_steps == ESteps.LoadPackageManifest)
         {
-            if (_loadRemotePackageManifestOp == null)
+            if (_loadPackageManifestOp == null)
             {
-                string packageHash = _requestRemotePackageHashOp.PackageHash;
-                _loadRemotePackageManifestOp = new LoadWechatPackageManifestOperation(_fileSystem, _packageVersion, packageHash, _timeout);
-                OperationSystem.StartOperation(_fileSystem.PackageName, _loadRemotePackageManifestOp);
+                string packageHash = _requestPackageHashOp.PackageHash;
+                _loadPackageManifestOp = new LoadWechatPackageManifestOperation(_fileSystem, _packageVersion, packageHash, _timeout);
+                OperationSystem.StartOperation(_fileSystem.PackageName, _loadPackageManifestOp);
             }
 
-            Progress = _loadRemotePackageManifestOp.Progress;
-            if (_loadRemotePackageManifestOp.IsDone == false)
+            Progress = _loadPackageManifestOp.Progress;
+            if (_loadPackageManifestOp.IsDone == false)
                 return;
 
-            if (_loadRemotePackageManifestOp.Status == EOperationStatus.Succeed)
+            if (_loadPackageManifestOp.Status == EOperationStatus.Succeed)
             {
                 _steps = ESteps.Done;
-                Manifest = _loadRemotePackageManifestOp.Manifest;
+                Manifest = _loadPackageManifestOp.Manifest;
                 Status = EOperationStatus.Succeed;
             }
             else
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Failed;
-                Error = _loadRemotePackageManifestOp.Error;
+                Error = _loadPackageManifestOp.Error;
             }
         }
     }

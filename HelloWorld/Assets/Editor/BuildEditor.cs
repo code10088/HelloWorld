@@ -183,6 +183,7 @@ public class BuildEditor
         buildParameters.ClearBuildCacheFiles = false;
         buildParameters.UseAssetDependencyDB = true;
         buildParameters.EnableSharePackRule = false;
+        buildParameters.SingleReferencedPackAlone = true;
         buildParameters.VerifyBuildingResult = true;
         buildParameters.FileNameStyle = EFileNameStyle.BundleName_HashName;
         buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;

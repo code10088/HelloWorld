@@ -139,7 +139,7 @@ public static class ShaderVariantCollector
     private static List<string> GetAllMaterials()
     {
         // 获取所有打包的资源
-        CollectResult collectResult = AssetBundleCollectorSettingData.Setting.GetPackageAssets(false, false,  _packageName);
+        CollectResult collectResult = AssetBundleCollectorSettingData.Setting.BeginCollect(_packageName, false, false);
 
         // 搜集所有材质球
         int progressValue = 0;

@@ -43,6 +43,8 @@ public static class TestPackageBuilder
         }
         else if (buildPipelineName == EBuildPipeline.ScriptableBuildPipeline.ToString())
         {
+            // 内置着色器资源包名称
+            var builtinShaderBundleName = GetBuiltinShaderBundleName(packageName);
             var buildParameters = new ScriptableBuildParameters();
             buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
             buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
@@ -59,6 +61,7 @@ public static class TestPackageBuilder
             buildParameters.CompressOption = ECompressOption.LZ4;
             buildParameters.ClearBuildCacheFiles = true;
             buildParameters.UseAssetDependencyDB = true;
+            buildParameters.BuiltinShadersBundleName = builtinShaderBundleName;
 
             var pipeline = new ScriptableBuildPipeline();
             BuildResult buildResult = pipeline.Run(buildParameters, false);
@@ -142,5 +145,16 @@ public static class TestPackageBuilder
         {
             throw new System.NotImplementedException(buildPipelineName);
         }
+    }
+
+    /// <summary>
+    /// 内置着色器资源包名称
+    /// 注意：和自动收集的着色器资源包名保持一致！
+    /// </summary>
+    private static string GetBuiltinShaderBundleName(string packageName)
+    {
+        var uniqueBundleName = AssetBundleCollectorSettingData.Setting.UniqueBundleName;
+        var packRuleResult = DefaultPackRule.CreateShadersPackRuleResult();
+        return packRuleResult.GetBundleName(packageName, uniqueBundleName);
     }
 }

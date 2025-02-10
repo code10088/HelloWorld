@@ -11,12 +11,12 @@ internal class WXFSClearAllBundleFilesOperation : FSClearCacheFilesOperation
     {
         None,
         ClearAllCacheFiles,
+        WaitResult,
         Done,
     }
 
     private readonly WechatFileSystem _fileSystem;
     private ESteps _steps = ESteps.None;
-
 
     internal WXFSClearAllBundleFilesOperation(WechatFileSystem fileSystem)
     {
@@ -33,16 +33,25 @@ internal class WXFSClearAllBundleFilesOperation : FSClearCacheFilesOperation
 
         if (_steps == ESteps.ClearAllCacheFiles)
         {
+            _steps = ESteps.WaitResult;
+
             WX.CleanAllFileCache((bool isOk) =>
             {
                 if (isOk)
+                {
                     YooLogger.Log("微信缓存清理成功！");
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Succeed;
+                    _fileSystem.ClearAllRecords();
+                }
                 else
+                {
                     YooLogger.Log("微信缓存清理失败！");
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = "微信缓存清理失败！";
+                }
             });
-
-            _steps = ESteps.Done;
-            Status = EOperationStatus.Succeed;
         }
     }
 }

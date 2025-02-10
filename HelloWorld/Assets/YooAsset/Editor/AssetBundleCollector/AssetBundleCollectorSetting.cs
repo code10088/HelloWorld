@@ -86,10 +86,16 @@ namespace YooAsset.Editor
             return package.GetAllTags();
         }
 
-        /// <summary>
-        /// 获取包裹收集的资源文件
-        /// </summary>
+        [Obsolete("This method will be removed in a future ! Use BeginCollect instead.", true)]
         public CollectResult GetPackageAssets(bool simulateBuild, bool useAssetDependencyDB, string packageName)
+        {
+            return BeginCollect(packageName, simulateBuild, useAssetDependencyDB);
+        }
+
+        /// <summary>
+        /// 收集指定包裹的资源文件
+        /// </summary>
+        public CollectResult BeginCollect(string packageName, bool simulateBuild, bool useAssetDependencyDB)
         {
             if (string.IsNullOrEmpty(packageName))
                 throw new Exception("Build package name is null or empty !");
@@ -100,16 +106,17 @@ namespace YooAsset.Editor
 
             // 创建资源收集命令
             IIgnoreRule ignoreRule = AssetBundleCollectorSettingData.GetIgnoreRuleInstance(package.IgnoreRuleName);
-            CollectCommand command = new CollectCommand(simulateBuild, useAssetDependencyDB, packageName,
-                 package.EnableAddressable,
-                 package.LocationToLower,
-                 package.IncludeAssetGUID,
-                 package.AutoCollectShaders,
-                 UniqueBundleName, ignoreRule);
+            var command = new CollectCommand(packageName, ignoreRule);
+            command.SimulateBuild = simulateBuild;
+            command.UniqueBundleName = UniqueBundleName;
+            command.UseAssetDependencyDB = useAssetDependencyDB;
+            command.EnableAddressable = package.EnableAddressable;
+            command.LocationToLower = package.LocationToLower;
+            command.IncludeAssetGUID = package.IncludeAssetGUID;
+            command.AutoCollectShaders = package.AutoCollectShaders;
 
-            // 获取收集的资源集合
-            CollectResult collectResult = new CollectResult(command);
-            collectResult.SetCollectAssets(package.GetAllCollectAssets(command));
+            // 开始收集工作
+            CollectResult collectResult = package.BeginCollect(command);
             return collectResult;
         }
 

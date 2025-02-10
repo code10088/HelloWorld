@@ -2,6 +2,47 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.2.10] - 2025-02-08
+
+### Improvements
+
+- 新增了可扩展的AssetArtScanner资源扫描工具，详细请见官方说明文档。
+- 优化了AssetBundleReporter页面。
+- 优化了AssetBundleDebugger页面。
+- 优化了微信小游戏文件系统的缓存查询机制。
+- 优化了抖音小游戏文件系统的缓存查询机制。
+
+### Fixed
+
+- (#447) 修复了Unity2019平台代码编译错误问题。
+- (#456) 修复了在Package未激活有效清单之前，无法销毁的问题。
+- (#452) 修复了内置文件系统类NeedPack方法总是返回TRUE的问题。
+- (#424) 适配了Unity6000版本替换了过时方法。
+
+### Added
+
+- 新增了SBP构建管线构建参数：BuiltinShadersBundleName
+
+- 新增了SBP构建管线构建参数：MonoScriptsBundleName
+
+- 新增了全局构建管线构建参数：SingleReferencedPackAlone
+
+  ```csharp
+  /// <summary>
+  /// 对单独引用的共享资源进行独立打包
+  /// 说明：关闭该选项单独引用的共享资源将会构建到引用它的资源包内！
+  /// </summary>
+  public bool SingleReferencedPackAlone = true;
+  ```
+
+- 新增了内置文件系统初始化参数：COPY_BUILDIN_PACKAGE_MANIFEST
+
+  ```csharp
+  // 内置文件系统初始化的时候，自动拷贝内置清单到沙盒目录。
+  var systemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters();
+  systemParameters.AddParameter(FileSystemParametersDefine.COPY_BUILDIN_PACKAGE_MANIFEST, true);
+  ```
+
 ## [2.2.9] - 2025-01-14
 
 ### Fixed

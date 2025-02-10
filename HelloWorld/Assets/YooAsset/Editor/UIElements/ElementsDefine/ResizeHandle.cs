@@ -9,12 +9,15 @@ namespace YooAsset.Editor
 {
     public class ResizeHandle : VisualElement
     {
-        /// <summary>
-        ///  Instantiates a TableView using data from a UXML file.
-        /// </summary>
+#if UNITY_6000_0_OR_NEWER
+        public new class UxmlFactory : UxmlElementAttribute
+        {
+        }
+#else
         public new class UxmlFactory : UxmlFactory<ResizeHandle, UxmlTraits>
         {
         }
+#endif
 
         private bool _isResizing = false;
         private float _initialWidth;

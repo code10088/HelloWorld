@@ -15,12 +15,15 @@ namespace YooAsset.Editor
     /// </summary>
     public class TableView : VisualElement
     {
-        /// <summary>
-        ///  Instantiates a TableView using data from a UXML file.
-        /// </summary>
+#if UNITY_6000_0_OR_NEWER
+        public new class UxmlFactory : UxmlElementAttribute
+        {
+        }
+#else
         public new class UxmlFactory : UxmlFactory<TableView, UxmlTraits>
         {
         }
+#endif
 
         private readonly Toolbar _toolbar;
         private readonly ListView _listView;

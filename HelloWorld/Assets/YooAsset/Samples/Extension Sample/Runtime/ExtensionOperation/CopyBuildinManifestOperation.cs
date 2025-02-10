@@ -129,13 +129,13 @@ public class CopyBuildinManifestOperation : GameAsyncOperation
     {
         string fileRoot = GetBuildinYooRoot();
         string fileName = YooAssetSettingsData.GetPackageHashFileName(_packageName, _packageVersion);
-        return PathUtility.Combine(fileRoot, fileName);
+        return PathUtility.Combine(fileRoot, _packageName, fileName);
     }
     private string GetBuildinManifestFilePath()
     {
         string fileRoot = GetBuildinYooRoot();
         string fileName = YooAssetSettingsData.GetManifestBinaryFileName(_packageName, _packageVersion);
-        return PathUtility.Combine(fileRoot, fileName);
+        return PathUtility.Combine(fileRoot, _packageName, fileName);
     }
 
     private string GetCacheYooRoot()
@@ -146,12 +146,12 @@ public class CopyBuildinManifestOperation : GameAsyncOperation
     {
         string fileRoot = GetCacheYooRoot();
         string fileName = YooAssetSettingsData.GetPackageHashFileName(_packageName, _packageVersion);
-        return PathUtility.Combine(fileRoot, fileName);
+        return PathUtility.Combine(fileRoot, _packageName, fileName);
     }
     private string GetCacheManifestFilePath()
     {
         string fileRoot = GetCacheYooRoot();
         string fileName = YooAssetSettingsData.GetManifestBinaryFileName(_packageName, _packageVersion);
-        return PathUtility.Combine(fileRoot, fileName);
+        return PathUtility.Combine(fileRoot, _packageName, fileName);
     }
 }

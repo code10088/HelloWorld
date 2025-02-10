@@ -28,6 +28,7 @@ namespace YooAsset.Editor
             var compressOption = AssetBundleBuilderSetting.GetPackageCompressOption(PackageName, BuildPipeline);
             var clearBuildCache = AssetBundleBuilderSetting.GetPackageClearBuildCache(PackageName, BuildPipeline);
             var useAssetDependencyDB = AssetBundleBuilderSetting.GetPackageUseAssetDependencyDB(PackageName, BuildPipeline);
+            var builtinShaderBundleName = GetBuiltinShaderBundleName();
 
             ScriptableBuildParameters buildParameters = new ScriptableBuildParameters();
             buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
@@ -45,12 +46,24 @@ namespace YooAsset.Editor
             buildParameters.CompressOption = compressOption;
             buildParameters.ClearBuildCacheFiles = clearBuildCache;
             buildParameters.UseAssetDependencyDB = useAssetDependencyDB;
+            buildParameters.BuiltinShadersBundleName = builtinShaderBundleName;
             buildParameters.EncryptionServices = CreateEncryptionInstance();
 
             ScriptableBuildPipeline pipeline = new ScriptableBuildPipeline();
             var buildResult = pipeline.Run(buildParameters, true);
             if (buildResult.Success)
                 EditorUtility.RevealInFinder(buildResult.OutputPackageDirectory);
+        }
+
+        /// <summary>
+        /// 内置着色器资源包名称
+        /// 注意：和自动收集的着色器资源包名保持一致！
+        /// </summary>
+        private string GetBuiltinShaderBundleName()
+        {
+            var uniqueBundleName = AssetBundleCollectorSettingData.Setting.UniqueBundleName;
+            var packRuleResult = DefaultPackRule.CreateShadersPackRuleResult();
+            return packRuleResult.GetBundleName(PackageName, uniqueBundleName);
         }
     }
 }

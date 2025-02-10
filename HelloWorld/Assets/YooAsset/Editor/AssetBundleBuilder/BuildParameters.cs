@@ -58,7 +58,7 @@ namespace YooAsset.Editor
 
         /// <summary>
         /// 使用资源依赖缓存数据库
-        /// 说明：开启此项可以极大提高资源收集速度
+        /// 说明：开启此项可以极大提高资源收集速度！
         /// </summary>
         public bool UseAssetDependencyDB = false;
 
@@ -66,6 +66,12 @@ namespace YooAsset.Editor
         /// 启用共享资源打包
         /// </summary>
         public bool EnableSharePackRule = false;
+
+        /// <summary>
+        /// 对单独引用的共享资源进行独立打包
+        /// 说明：关闭该选项单独引用的共享资源将会构建到引用它的资源包内！
+        /// </summary>
+        public bool SingleReferencedPackAlone = true;
 
         /// <summary>
         /// 验证构建结果

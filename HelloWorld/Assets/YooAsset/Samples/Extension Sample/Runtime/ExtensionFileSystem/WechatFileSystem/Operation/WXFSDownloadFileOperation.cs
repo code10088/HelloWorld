@@ -51,6 +51,7 @@ internal class WXFSDownloadFileOperation : DefaultDownloadFileOperation
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Succeed;
+                _fileSystem.TryRecordBundle(Bundle); //记录下载文件
             }
             else
             {

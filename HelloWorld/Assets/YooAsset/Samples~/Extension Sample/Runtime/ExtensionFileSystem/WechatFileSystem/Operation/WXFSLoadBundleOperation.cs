@@ -61,6 +61,7 @@ internal class WXFSLoadBundleOperation : FSLoadBundleOperation
                     _steps = ESteps.Done;
                     Result = new WXAssetBundleResult(_fileSystem, _bundle, assetBundle);
                     Status = EOperationStatus.Succeed;
+                    _fileSystem.TryRecordBundle(_bundle); //记录下载文件
                 }
             }
             else
