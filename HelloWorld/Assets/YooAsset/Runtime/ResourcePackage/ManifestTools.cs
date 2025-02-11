@@ -318,8 +318,15 @@ namespace YooAsset
             }
             else if (nameStyle == (int)EFileNameStyle.BundleName_HashName)
             {
-                string fileName = bundleName.Remove(bundleName.LastIndexOf('.'));
-                return StringUtility.Format("{0}_{1}{2}", fileName, fileHash, fileExtension);
+                if (string.IsNullOrEmpty(fileExtension))
+                {
+                    return StringUtility.Format("{0}_{1}", bundleName, fileHash);
+                }
+                else
+                {
+                    string fileName = bundleName.Remove(bundleName.LastIndexOf('.'));
+                    return StringUtility.Format("{0}_{1}{2}", fileName, fileHash, fileExtension);
+                }
             }
             else
             {

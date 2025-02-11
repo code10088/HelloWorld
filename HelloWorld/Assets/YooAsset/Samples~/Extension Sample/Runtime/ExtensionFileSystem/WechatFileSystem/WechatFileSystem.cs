@@ -62,6 +62,8 @@ internal class WechatFileSystem : IFileSystem
     /// 包裹名称
     /// </summary>
     public string PackageName { private set; get; }
+    
+    private readonly string _packageRoot = YooAssetSettingsData.Setting.DefaultYooFolderName;
 
     /// <summary>
     /// 文件根目录
@@ -255,7 +257,7 @@ internal class WechatFileSystem : IFileSystem
     {
         if (_cacheFilePaths.TryGetValue(bundle.BundleGUID, out string filePath) == false)
         {
-            filePath = PathUtility.Combine(_wxCacheRoot, bundle.FileName);
+            filePath = PathUtility.Combine(_wxCacheRoot, "__GAME_FILE_CACHE", _packageRoot, bundle.FileName);
             _cacheFilePaths.Add(bundle.BundleGUID, filePath);
         }
         return filePath;

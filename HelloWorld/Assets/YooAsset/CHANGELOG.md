@@ -2,6 +2,17 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.2.11] - 2025-02-10
+
+### Improvements
+
+- AssetArtScanner配置和生成报告的容错性检测。
+
+### Fixed
+
+- (#465) 修复了特殊情况下，没有配置资源包文件后缀名构建失败的问题。
+- (#468) 修复了安卓平台二次启动加载原生文件或加密文件失败的问题。
+
 ## [2.2.10] - 2025-02-08
 
 ### Improvements

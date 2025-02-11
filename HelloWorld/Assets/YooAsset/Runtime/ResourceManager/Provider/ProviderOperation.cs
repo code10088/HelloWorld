@@ -86,7 +86,7 @@ namespace YooAsset
 
                 // 依赖资源包加载器集合
                 var dependLoaders = manager.CreateDependBundleFileLoaders(assetInfo);
-                if(dependLoaders.Count > 0)
+                if (dependLoaders.Count > 0)
                     _bundleLoaders.AddRange(dependLoaders);
 
                 // 增加引用计数

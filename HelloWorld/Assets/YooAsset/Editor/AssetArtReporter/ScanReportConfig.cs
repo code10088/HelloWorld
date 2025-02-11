@@ -30,7 +30,7 @@ namespace YooAsset.Editor
             // 检测标题数和内容是否匹配
             foreach (var element in report.ReportElements)
             {
-                if (element.ScanInfos.Count != report.HeaderTitles.Count)
+                if (element.ScanInfos.Count != report.ReportHeaders.Count)
                 {
                     throw new Exception($"报告的标题数和内容不匹配！");
                 }

@@ -31,10 +31,26 @@ namespace YooAsset.Editor
         /// <summary>
         /// 添加扫描信息
         /// </summary>
-        public void AddScanInfo(string headerTitle, string scanInfo)
+        public void AddScanInfo(string headerTitle, string value)
         {
-            var reportScanInfo = new ReportScanInfo(headerTitle, scanInfo);
+            var reportScanInfo = new ReportScanInfo(headerTitle, value);
             ScanInfos.Add(reportScanInfo);
+        }
+
+        /// <summary>
+        /// 添加扫描信息
+        /// </summary>
+        public void AddScanInfo(string headerTitle, long value)
+        {
+            AddScanInfo(headerTitle, value.ToString());
+        }
+
+        /// <summary>
+        /// 添加扫描信息
+        /// </summary>
+        public void AddScanInfo(string headerTitle, double value)
+        {
+            AddScanInfo(headerTitle, value.ToString());
         }
 
         /// <summary>

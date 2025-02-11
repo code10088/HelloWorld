@@ -116,7 +116,8 @@ namespace YooAsset.Editor
             command.AutoCollectShaders = package.AutoCollectShaders;
 
             // 开始收集工作
-            CollectResult collectResult = package.BeginCollect(command);
+            var collectAssets = package.GetCollectAssets(command);
+            var collectResult = new CollectResult(command, collectAssets);
             return collectResult;
         }
 

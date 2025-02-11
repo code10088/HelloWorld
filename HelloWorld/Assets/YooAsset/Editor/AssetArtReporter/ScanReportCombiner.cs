@@ -55,9 +55,9 @@ namespace YooAsset.Editor
             if (string.IsNullOrEmpty(SchemaType))
             {
                 SchemaType = scanReport.SchemaType;
-                ReportTitle = scanReport.ReportTitle;
+                ReportTitle = scanReport.ReportName;
                 ReportDesc = scanReport.ReportDesc;
-                Headers = scanReport.HeaderTitles;
+                Headers = scanReport.ReportHeaders;
             }
 
             if (SchemaType != scanReport.SchemaType)
@@ -82,7 +82,7 @@ namespace YooAsset.Editor
             List<ReportElement> elements = scanReport.ReportElements;
 
             // 设置白名单
-            var scanner = AssetArtScannerSettingData.GetScannerByGUID(scannerGUID);
+            var scanner = AssetArtScannerSettingData.Setting.GetScanner(scannerGUID);
             if (scanner != null)
             {
                 foreach (var element in elements)
@@ -144,7 +144,7 @@ namespace YooAsset.Editor
                 string scannerGUID = scanReport.ScannerGUID;
                 var elements = scanReport.ReportElements;
 
-                var scanner = AssetArtScannerSettingData.GetScannerByGUID(scannerGUID);
+                var scanner = AssetArtScannerSettingData.Setting.GetScanner(scannerGUID);
                 if (scanner != null)
                 {
                     List<string> whiteList = new List<string>(elements.Count);
@@ -207,7 +207,7 @@ namespace YooAsset.Editor
 
         private void FixInternal(string scannerGUID, List<ReportElement> fixList)
         {
-            AssetArtScanner scanner = AssetArtScannerSettingData.GetScannerByGUID(scannerGUID);
+            AssetArtScanner scanner = AssetArtScannerSettingData.Setting.GetScanner(scannerGUID);
             if (scanner != null)
             {
                 var schema = scanner.LoadSchema();

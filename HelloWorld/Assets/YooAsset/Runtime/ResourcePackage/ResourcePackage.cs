@@ -319,8 +319,18 @@ namespace YooAsset
         /// </summary>
         public UnloadAllAssetsOperation UnloadAllAssetsAsync()
         {
+            var options = new UnloadAllAssetsOptions();
+            return UnloadAllAssetsAsync(options);
+        }
+
+        /// <summary>
+        /// 强制回收所有资源
+        /// </summary>
+        /// <param name="options">卸载选项</param>
+        public UnloadAllAssetsOperation UnloadAllAssetsAsync(UnloadAllAssetsOptions options)
+        {
             DebugCheckInitialize();
-            var operation = new UnloadAllAssetsOperation(_resourceManager);
+            var operation = new UnloadAllAssetsOperation(_resourceManager, options);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }

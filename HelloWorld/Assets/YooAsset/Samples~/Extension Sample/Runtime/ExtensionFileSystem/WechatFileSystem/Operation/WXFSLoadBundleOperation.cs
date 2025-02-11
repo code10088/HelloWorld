@@ -62,6 +62,12 @@ internal class WXFSLoadBundleOperation : FSLoadBundleOperation
                     Result = new WXAssetBundleResult(_fileSystem, _bundle, assetBundle);
                     Status = EOperationStatus.Succeed;
                     _fileSystem.TryRecordBundle(_bundle); //记录下载文件
+
+                    //TODO 解决微信小游戏插件问题
+                    // Issue : https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/issues/108#
+                    DownloadProgress = 1f;
+                    DownloadedBytes = _bundle.FileSize;
+                    Progress = 1f;
                 }
             }
             else

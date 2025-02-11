@@ -11,10 +11,10 @@ namespace YooAsset
     /// </summary>
     internal class DefaultCacheFileSystem : IFileSystem
     {
-        protected readonly Dictionary<string, RecordFileElement> _wrappers = new Dictionary<string, RecordFileElement>(10000);
-        protected readonly Dictionary<string, string> _bundleDataFilePaths = new Dictionary<string, string>(10000);
-        protected readonly Dictionary<string, string> _bundleInfoFilePaths = new Dictionary<string, string>(10000);
-        protected readonly Dictionary<string, string> _tempFilePaths = new Dictionary<string, string>(10000);
+        protected readonly Dictionary<string, RecordFileElement> _records = new Dictionary<string, RecordFileElement>(10000);
+        protected readonly Dictionary<string, string> _bundleDataFilePathMapping = new Dictionary<string, string>(10000);
+        protected readonly Dictionary<string, string> _bundleInfoFilePathMapping = new Dictionary<string, string>(10000);
+        protected readonly Dictionary<string, string> _tempFilePathMapping = new Dictionary<string, string>(10000);
         protected DefaultCacheDownloadCenter _downloadCenter;
 
         protected string _packageRoot;
@@ -45,7 +45,7 @@ namespace YooAsset
         {
             get
             {
-                return _wrappers.Count;
+                return _records.Count;
             }
         }
 
@@ -245,7 +245,7 @@ namespace YooAsset
         }
         public virtual bool Exists(PackageBundle bundle)
         {
-            return _wrappers.ContainsKey(bundle.BundleGUID);
+            return _records.ContainsKey(bundle.BundleGUID);
         }
         public virtual bool NeedDownload(PackageBundle bundle)
         {
@@ -330,60 +330,60 @@ namespace YooAsset
         #region 缓存相关
         public List<string> GetAllCachedBundleGUIDs()
         {
-            return _wrappers.Keys.ToList();
+            return _records.Keys.ToList();
         }
 
         public string GetTempFilePath(PackageBundle bundle)
         {
-            if (_tempFilePaths.TryGetValue(bundle.BundleGUID, out string filePath) == false)
+            if (_tempFilePathMapping.TryGetValue(bundle.BundleGUID, out string filePath) == false)
             {
                 filePath = PathUtility.Combine(_tempFilesRoot, bundle.BundleGUID);
-                _tempFilePaths.Add(bundle.BundleGUID, filePath);
+                _tempFilePathMapping.Add(bundle.BundleGUID, filePath);
             }
             return filePath;
         }
         public string GetBundleDataFilePath(PackageBundle bundle)
         {
-            if (_bundleDataFilePaths.TryGetValue(bundle.BundleGUID, out string filePath) == false)
+            if (_bundleDataFilePathMapping.TryGetValue(bundle.BundleGUID, out string filePath) == false)
             {
                 string folderName = bundle.FileHash.Substring(0, 2);
                 filePath = PathUtility.Combine(_cacheBundleFilesRoot, folderName, bundle.BundleGUID, DefaultCacheFileSystemDefine.BundleDataFileName);
                 if (AppendFileExtension)
                     filePath += bundle.FileExtension;
-                _bundleDataFilePaths.Add(bundle.BundleGUID, filePath);
+                _bundleDataFilePathMapping.Add(bundle.BundleGUID, filePath);
             }
             return filePath;
         }
         public string GetBundleInfoFilePath(PackageBundle bundle)
         {
-            if (_bundleInfoFilePaths.TryGetValue(bundle.BundleGUID, out string filePath) == false)
+            if (_bundleInfoFilePathMapping.TryGetValue(bundle.BundleGUID, out string filePath) == false)
             {
                 string folderName = bundle.FileHash.Substring(0, 2);
                 filePath = PathUtility.Combine(_cacheBundleFilesRoot, folderName, bundle.BundleGUID, DefaultCacheFileSystemDefine.BundleInfoFileName);
-                _bundleInfoFilePaths.Add(bundle.BundleGUID, filePath);
+                _bundleInfoFilePathMapping.Add(bundle.BundleGUID, filePath);
             }
             return filePath;
         }
 
         public bool IsRecordBundleFile(string bundleGUID)
         {
-            return _wrappers.ContainsKey(bundleGUID);
+            return _records.ContainsKey(bundleGUID);
         }
         public bool RecordBundleFile(string bundleGUID, RecordFileElement element)
         {
-            if (_wrappers.ContainsKey(bundleGUID))
+            if (_records.ContainsKey(bundleGUID))
             {
                 YooLogger.Error($"{nameof(DefaultCacheFileSystem)} has element : {bundleGUID}");
                 return false;
             }
 
-            _wrappers.Add(bundleGUID, element);
+            _records.Add(bundleGUID, element);
             return true;
         }
 
         public EFileVerifyResult VerifyCacheFile(PackageBundle bundle)
         {
-            if (_wrappers.TryGetValue(bundle.BundleGUID, out RecordFileElement wrapper) == false)
+            if (_records.TryGetValue(bundle.BundleGUID, out RecordFileElement wrapper) == false)
                 return EFileVerifyResult.CacheNotFound;
 
             EFileVerifyResult result = FileVerifyHelper.FileVerify(wrapper.DataFilePath, wrapper.DataFileSize, wrapper.DataFileCRC, EFileVerifyLevel.High);
@@ -391,7 +391,7 @@ namespace YooAsset
         }
         public bool WriteCacheBundleFile(PackageBundle bundle, string copyPath)
         {
-            if (_wrappers.ContainsKey(bundle.BundleGUID))
+            if (_records.ContainsKey(bundle.BundleGUID))
             {
                 throw new Exception("Should never get here !");
             }
@@ -426,7 +426,7 @@ namespace YooAsset
         }
         public bool DeleteCacheBundleFile(string bundleGUID)
         {
-            if (_wrappers.TryGetValue(bundleGUID, out RecordFileElement wrapper))
+            if (_records.TryGetValue(bundleGUID, out RecordFileElement wrapper))
             {
                 try
                 {
@@ -434,7 +434,7 @@ namespace YooAsset
                     FileInfo fileInfo = new FileInfo(dataFilePath);
                     if (fileInfo.Exists)
                         fileInfo.Directory.Delete(true);
-                    _wrappers.Remove(bundleGUID);
+                    _records.Remove(bundleGUID);
                     return true;
                 }
                 catch (Exception e)

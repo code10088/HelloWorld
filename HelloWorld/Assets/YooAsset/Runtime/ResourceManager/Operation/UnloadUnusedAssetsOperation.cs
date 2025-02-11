@@ -31,17 +31,16 @@ namespace YooAsset
 
             if (_steps == ESteps.UnloadUnused)
             {
-                var loaderDic = _resManager._loaderDic;
-                var removeList = new List<LoadBundleFileOperation>(loaderDic.Count);
+                var removeList = new List<LoadBundleFileOperation>(_resManager.LoaderDic.Count);
 
                 // 注意：优先销毁资源提供者
-                foreach (var loader in loaderDic.Values)
+                foreach (var loader in _resManager.LoaderDic.Values)
                 {
                     loader.TryDestroyProviders();
                 }
 
                 // 获取销毁列表
-                foreach (var loader in loaderDic.Values)
+                foreach (var loader in _resManager.LoaderDic.Values)
                 {
                     if (loader.CanDestroyLoader())
                     {
@@ -54,7 +53,7 @@ namespace YooAsset
                 {
                     string bundleName = loader.LoadBundleInfo.Bundle.BundleName;
                     loader.DestroyLoader();
-                    _resManager._loaderDic.Remove(bundleName);
+                    _resManager.LoaderDic.Remove(bundleName);
                 }
 
                 // 注意：调用底层接口释放所有资源

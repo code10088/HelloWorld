@@ -40,6 +40,7 @@ YooAsset
 	修改OperationSystem的计时方式
 	TaskCopyBuildinFiles添加写入BuildinFile.txt（2.2.x版本不需要）
 	YooAssetSettingData中修改GetYooResourcesFullPath路径
+	WechatFileSystem中修改GetCacheFileLoadPath
 WebGL
 	System.Net无法使用
 	socket库使用 https://github.com/sta/websocket-sharp 编译dll

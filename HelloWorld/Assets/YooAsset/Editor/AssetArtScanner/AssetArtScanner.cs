@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -47,11 +48,40 @@ namespace YooAsset.Editor
 
 
         /// <summary>
+        /// 检测关键字匹配
+        /// </summary>
+        public bool CheckKeyword(string keyword)
+        {
+            if (ScannerName.Contains(keyword) || ScannerDesc.Contains(keyword))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
         /// 是否在白名单里
         /// </summary>
         public bool CheckWhiteList(string guid)
         {
             return WhiteList.Contains(guid);
+        }
+
+        /// <summary>
+        /// 检测配置错误
+        /// </summary>
+        public void CheckConfigError()
+        {
+            if (string.IsNullOrEmpty(ScannerName))
+                throw new Exception($"Scanner name is null or empty !");
+
+            if (string.IsNullOrEmpty(ScannerSchema))
+                throw new Exception($"Scanner {ScannerName} schema is null !");
+
+            if (string.IsNullOrEmpty(SaveDirectory) == false)
+            {
+                if (Directory.Exists(SaveDirectory) == false)
+                    throw new Exception($"Scanner  {ScannerName} save directory is invalid : {SaveDirectory}");
+            }
         }
 
         /// <summary>
@@ -85,14 +115,11 @@ namespace YooAsset.Editor
         public ScanReport RunScanner()
         {
             if (Collectors.Count == 0)
-            {
-                Debug.LogWarning($"Scanner collector is empty : {ScannerName}");
-                return null;
-            }
+                Debug.LogWarning($"Scanner {ScannerName} collector is empty !");
 
             ScannerSchema schema = LoadSchema();
             if (schema == null)
-                return null;
+                throw new Exception($"Failed to load schema : {ScannerSchema}");
 
             var report = schema.RunScanner(this);
             report.FileSign = ScannerDefine.ReportFileSign;
@@ -100,14 +127,6 @@ namespace YooAsset.Editor
             report.SchemaType = schema.GetType().FullName;
             report.ScannerGUID = ScannerGUID;
             return report;
-        }
-
-        public bool CheckKeyword(string keyword)
-        {
-            if (ScannerName.Contains(keyword) || ScannerDesc.Contains(keyword))
-                return true;
-            else
-                return false;
         }
     }
 }

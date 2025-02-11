@@ -34,24 +34,26 @@ internal class RecordWechatCacheFilesOperation : AsyncOperationBase
             _steps = ESteps.WaitResponse;
 
             var fileSystemMgr = _fileSystem.GetFileSystemMgr();
-            var getSavedFileListOption = new GetSavedFileListOption();
-            getSavedFileListOption.success = (GetSavedFileListSuccessCallbackResult response) =>
+            var statOption = new WXStatOption();
+            statOption.path = _fileSystem.FileRoot;
+            statOption.recursive = true;
+            statOption.success = (WXStatResponse response) =>
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Succeed;
-                foreach (var fileInfo in response.fileList)
+                foreach (var fileStat in response.stats)
                 {
                     //TODO 需要确认存储文件为Bundle文件
-                    _fileSystem.RecordBundleFile(fileInfo.filePath);
+                    _fileSystem.RecordBundleFile(_fileSystem.FileRoot + fileStat.path);
                 }
             };
-            getSavedFileListOption.fail = (FileError fileError) =>
+            statOption.fail = (WXStatResponse response) =>
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Failed;
-                Error = fileError.errMsg;
+                Error = response.errMsg;
             };
-            fileSystemMgr.GetSavedFileList(getSavedFileListOption);
+            fileSystemMgr.Stat(statOption);
         }
     }
 }

@@ -61,10 +61,10 @@ namespace YooAsset.Editor
         {
             foreach (var scanner in Setting.Scanners)
             {
-                var scanResult = ScanInternal(scanner);
+                var scanResult = Setting.BeginScan(scanner.ScannerGUID);
                 if (scanResult.Succeed == false)
                 {
-                    Debug.LogError($"Scanner {scanner.ScannerName} failed ! {scanResult.ErrorInfo}");
+                    Debug.LogError($"{scanner.ScannerName} failed : {scanResult.ErrorInfo}");
                 }
             }
         }
@@ -82,10 +82,10 @@ namespace YooAsset.Editor
                         continue;
                 }
 
-                var scanResult = ScanInternal(scanner);
+                var scanResult = Setting.BeginScan(scanner.ScannerGUID);
                 if (scanResult.Succeed == false)
                 {
-                    Debug.LogError($"Scanner {scanner.ScannerName} failed ! {scanResult.ErrorInfo}");
+                    Debug.LogError($"{scanner.ScannerName} failed : {scanResult.ErrorInfo}");
                 }
             }
         }
@@ -95,28 +95,12 @@ namespace YooAsset.Editor
         /// </summary>
         public static ScannerResult Scan(string scannerGUID)
         {
-            AssetArtScanner scanner = GetScannerByGUID(scannerGUID);
-            var scanResult = ScanInternal(scanner);
+            var scanResult = Setting.BeginScan(scannerGUID);
             if (scanResult.Succeed == false)
             {
-                Debug.LogError($"Scanner {scanner.ScannerName} failed ! {scanResult.ErrorInfo}");
+                Debug.LogError(scanResult.ErrorInfo);
             }
             return scanResult;
-        }
-
-        /// <summary>
-        /// 获取指定的扫描器
-        /// </summary>
-        public static AssetArtScanner GetScannerByGUID(string scannerGUID)
-        {
-            foreach (var scanner in Setting.Scanners)
-            {
-                if (scanner.ScannerGUID == scannerGUID)
-                    return scanner;
-            }
-
-            Debug.LogWarning($"Not found scanner : {scannerGUID}");
-            return null;
         }
 
         // 扫描器编辑相关
@@ -171,32 +155,6 @@ namespace YooAsset.Editor
             if (scanner != null && collector != null)
             {
                 IsDirty = true;
-            }
-        }
-
-        private static ScannerResult ScanInternal(AssetArtScanner scanner)
-        {
-            if (scanner == null)
-                return new ScannerResult("Scanner is null !");
-
-            string saveDirectory = "Assets/";
-            if (string.IsNullOrEmpty(scanner.SaveDirectory) == false)
-            {
-                saveDirectory = scanner.SaveDirectory;
-                if (Directory.Exists(saveDirectory) == false)
-                    return new ScannerResult($"Scanner save directory is invalid : {saveDirectory}");
-            }
-
-            ScanReport report = scanner.RunScanner();
-            if (report != null)
-            {
-                string filePath = $"{saveDirectory}/{scanner.ScannerName}_{scanner.ScannerDesc}.json";
-                ScanReportConfig.ExportJsonConfig(filePath, report);
-                return new ScannerResult(filePath, report);
-            }
-            else
-            {
-                return new ScannerResult($"Scanner run failed : {scanner.ScannerName}");
             }
         }
     }

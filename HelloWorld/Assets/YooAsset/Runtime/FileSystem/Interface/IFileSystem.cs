@@ -20,7 +20,7 @@ namespace YooAsset
 
 
         /// <summary>
-        /// 初始化缓存系统
+        /// 初始化文件系统
         /// </summary>
         FSInitializeFileSystemOperation InitializeFileSystemAsync();
 
@@ -30,7 +30,7 @@ namespace YooAsset
         FSLoadPackageManifestOperation LoadPackageManifestAsync(string packageVersion, int timeout);
 
         /// <summary>
-        /// 查询最新的版本
+        /// 查询包裹版本
         /// </summary>
         FSRequestPackageVersionOperation RequestPackageVersionAsync(bool appendTimeTicks, int timeout);
 
@@ -40,7 +40,7 @@ namespace YooAsset
         FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam);
 
         /// <summary>
-        /// 下载远端文件
+        /// 下载Bundle文件
         /// </summary>
         FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadParam param);
 

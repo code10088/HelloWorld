@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEditor;
 
 namespace YooAsset.Editor
 {
@@ -92,6 +93,36 @@ namespace YooAsset.Editor
         {
             HeaderType = value;
             return this;
+        }
+
+        /// <summary>
+        /// 检测数值有效性
+        /// </summary>
+        public void CheckValueValid(string value)
+        {
+            if (HeaderType == EHeaderType.AssetPath)
+            {
+                string guid = AssetDatabase.AssetPathToGUID(value);
+                if (string.IsNullOrEmpty(guid))
+                    throw new Exception($"{HeaderTitle} value is invalid asset path : {value}");
+            }
+            else if (HeaderType == EHeaderType.DoubleValue)
+            {
+                if (double.TryParse(value, out double doubleValue) == false)
+                    throw new Exception($"{HeaderTitle} value is invalid double value : {value}");
+            }
+            else if (HeaderType == EHeaderType.LongValue)
+            {
+                if (long.TryParse(value, out long longValue) == false)
+                    throw new Exception($"{HeaderTitle} value is invalid long value : {value}");
+            }
+            else if (HeaderType == EHeaderType.StringValue)
+            {
+            }
+            else
+            {
+                throw new System.NotImplementedException(HeaderType.ToString());
+            }
         }
     }
 }

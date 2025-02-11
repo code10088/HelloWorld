@@ -98,9 +98,9 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// 开始收集工作
+        /// 获取收集的资源列表
         /// </summary>
-        public CollectResult BeginCollect(CollectCommand command)
+        public List<CollectAssetInfo> GetCollectAssets(CollectCommand command)
         {
             Dictionary<string, CollectAssetInfo> result = new Dictionary<string, CollectAssetInfo>(10000);
 
@@ -139,9 +139,7 @@ namespace YooAsset.Editor
             }
 
             // 返回结果
-            var collectAssets = result.Values.ToList();
-            var collectResult = new CollectResult(command, collectAssets);
-            return collectResult;
+            return result.Values.ToList();
         }
 
         /// <summary>

@@ -52,6 +52,12 @@ internal class WXFSDownloadFileOperation : DefaultDownloadFileOperation
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Succeed;
                 _fileSystem.TryRecordBundle(Bundle); //记录下载文件
+
+                //TODO 解决微信小游戏插件问题
+                // Issue : https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/issues/108#
+                DownloadProgress = 1f;
+                DownloadedBytes = Bundle.FileSize;
+                Progress = 1f;
             }
             else
             {
