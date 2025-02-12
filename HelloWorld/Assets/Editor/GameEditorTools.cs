@@ -3,6 +3,7 @@ using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Unity.Collections;
 
 public class GameEditorTools
 {
@@ -116,5 +117,36 @@ public class GameEditorTools
         symbols = symbols.Replace(str, string.Empty);
         PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, symbols);
         AssetDatabase.Refresh();
+    }
+
+    [MenuItem("Tools/Editor/内存泄漏检测/启用")]
+    static void LeakDetectionEnabled()
+    {
+        NativeLeakDetection.Mode = NativeLeakDetectionMode.Enabled;
+    }
+    [MenuItem("Tools/Editor/内存泄漏检测/启用", true)]
+    static bool ValidateLeakDetectionEnabled()
+    {
+        return NativeLeakDetection.Mode != NativeLeakDetectionMode.Enabled;
+    }
+    [MenuItem("Tools/Editor/内存泄漏检测/禁用")]
+    static void LeakDetectionDisable()
+    {
+        NativeLeakDetection.Mode = NativeLeakDetectionMode.Disabled;
+    }
+    [MenuItem("Tools/Editor/内存泄漏检测/禁用", true)]
+    static bool ValidateLeakDetectionDisable()
+    {
+        return NativeLeakDetection.Mode != NativeLeakDetectionMode.Disabled;
+    }
+    [MenuItem("Tools/Editor/内存泄漏检测/启用堆栈跟踪")]
+    static void LeakDetectionEnabledWithStackTrace()
+    {
+        NativeLeakDetection.Mode = NativeLeakDetectionMode.EnabledWithStackTrace;
+    }
+    [MenuItem("Tools/Editor/内存泄漏检测/启用堆栈跟踪", true)]
+    static bool ValidateLeakDetectionEnabledWithStackTrace()
+    {
+        return NativeLeakDetection.Mode != NativeLeakDetectionMode.EnabledWithStackTrace;
     }
 }
