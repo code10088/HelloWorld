@@ -175,7 +175,9 @@ namespace HotAssembly
         #region Function
         private void SDKInit()
         {
+#if UNITY_ANDROID
             SDK.Instance.InitSDK();
+#endif
         }
         private void TestCoroutine()
         {
@@ -212,7 +214,7 @@ namespace HotAssembly
         {
             DataManager.Instance.GuideData.StartGuide(1);
         }
-        #endregion
+#endregion
 
         private void OnOpenUISetting()
         {

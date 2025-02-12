@@ -9,6 +9,8 @@ using UnityEngine.Rendering;
 
 #if WEIXINMINIGAME
 using WeChatWASM;
+#elif DOUYINMINIGAME
+using TTSDK;
 #endif
 
 public class GameStart : MonoSingletion<GameStart>
@@ -34,6 +36,9 @@ public class GameStart : MonoSingletion<GameStart>
         var callback = new SetKeepScreenOnOption();
         callback.keepScreenOn = true;
         WX.SetKeepScreenOn(callback);
+#elif DOUYINMINIGAME
+        SDK.Instance.InitSDK();
+        TT.SetKeepScreenOn(true);
 #endif
         if (GameDebug.GDebug == false) GameObject.DestroyImmediate(GameObject.FindWithTag("Debug"));
         AssetManager.Instance.Init(HotUpdate);
