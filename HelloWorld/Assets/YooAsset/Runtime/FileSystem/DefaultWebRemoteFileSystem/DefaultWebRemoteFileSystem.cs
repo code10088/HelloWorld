@@ -47,6 +47,11 @@ namespace YooAsset
         /// 自定义参数：跨域下载服务接口
         /// </summary>
         public IRemoteServices RemoteServices { private set; get; } = null;
+
+        /// <summary>
+        ///  自定义参数：解密方法类
+        /// </summary>
+        public IWebDecryptionServices DecryptionServices { private set; get; }
         #endregion
 
 
@@ -107,6 +112,10 @@ namespace YooAsset
             else if (name == FileSystemParametersDefine.REMOTE_SERVICES)
             {
                 RemoteServices = (IRemoteServices)value;
+            }
+            else if (name == FileSystemParametersDefine.DECRYPTION_SERVICES)
+            {
+                DecryptionServices = (IWebDecryptionServices)value;
             }
             else
             {

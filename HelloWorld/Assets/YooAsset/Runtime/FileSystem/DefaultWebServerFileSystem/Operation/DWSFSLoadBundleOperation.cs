@@ -6,13 +6,13 @@ namespace YooAsset
         private enum ESteps
         {
             None,
-            DownloadFile,
+            DownloadAssetBundle,
             Done,
         }
 
         private readonly DefaultWebServerFileSystem _fileSystem;
         private readonly PackageBundle _bundle;
-        private DownloadHandlerAssetBundleOperation _downloadhanlderAssetBundleOp;
+        private DownloadAssetBundleOperation _downloadAssetBundleOp;
         private ESteps _steps = ESteps.None;
 
 
@@ -23,39 +23,48 @@ namespace YooAsset
         }
         internal override void InternalOnStart()
         {
-            _steps = ESteps.DownloadFile;
+            _steps = ESteps.DownloadAssetBundle;
         }
         internal override void InternalOnUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
 
-            if (_steps == ESteps.DownloadFile)
+            if (_steps == ESteps.DownloadAssetBundle)
             {
-                if (_downloadhanlderAssetBundleOp == null)
+                if (_downloadAssetBundleOp == null)
                 {
                     DownloadParam downloadParam = new DownloadParam(int.MaxValue, 60);
                     string fileLoadPath = _fileSystem.GetWebFileLoadPath(_bundle);
                     downloadParam.MainURL = DownloadSystemHelper.ConvertToWWWPath(fileLoadPath);
                     downloadParam.FallbackURL = downloadParam.MainURL;
-                    _downloadhanlderAssetBundleOp = new DownloadHandlerAssetBundleOperation(_fileSystem.DisableUnityWebCache, _bundle, downloadParam);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _downloadhanlderAssetBundleOp);
+
+                    if (_bundle.Encrypted)
+                    {
+                        _downloadAssetBundleOp = new DownloadWebEncryptAssetBundleOperation(_fileSystem.DecryptionServices, _bundle, downloadParam);
+                        OperationSystem.StartOperation(_fileSystem.PackageName, _downloadAssetBundleOp);
+                    }
+                    else
+                    {
+                        _downloadAssetBundleOp = new DownloadWebNormalAssetBundleOperation(_fileSystem.DisableUnityWebCache, _bundle, downloadParam);
+                        OperationSystem.StartOperation(_fileSystem.PackageName, _downloadAssetBundleOp);
+                    }
                 }
 
-                DownloadProgress = _downloadhanlderAssetBundleOp.DownloadProgress;
-                DownloadedBytes = _downloadhanlderAssetBundleOp.DownloadedBytes;
-                Progress = _downloadhanlderAssetBundleOp.Progress;
-                if (_downloadhanlderAssetBundleOp.IsDone == false)
+                DownloadProgress = _downloadAssetBundleOp.DownloadProgress;
+                DownloadedBytes = _downloadAssetBundleOp.DownloadedBytes;
+                Progress = _downloadAssetBundleOp.Progress;
+                if (_downloadAssetBundleOp.IsDone == false)
                     return;
 
-                if (_downloadhanlderAssetBundleOp.Status == EOperationStatus.Succeed)
+                if (_downloadAssetBundleOp.Status == EOperationStatus.Succeed)
                 {
-                    var assetBundle = _downloadhanlderAssetBundleOp.Result;
+                    var assetBundle = _downloadAssetBundleOp.Result;
                     if (assetBundle == null)
                     {
                         _steps = ESteps.Done;
                         Status = EOperationStatus.Failed;
-                        Error = $"{nameof(DownloadHandlerAssetBundleOperation)} loaded asset bundle is null !";
+                        Error = $"{nameof(DownloadAssetBundleOperation)} loaded asset bundle is null !";
                     }
                     else
                     {
@@ -68,7 +77,7 @@ namespace YooAsset
                 {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Failed;
-                    Error = _downloadhanlderAssetBundleOp.Error;
+                    Error = _downloadAssetBundleOp.Error;
                 }
             }
         }
@@ -84,10 +93,10 @@ namespace YooAsset
         }
         public override void AbortDownloadOperation()
         {
-            if (_steps == ESteps.DownloadFile)
+            if (_steps == ESteps.DownloadAssetBundle)
             {
-                if (_downloadhanlderAssetBundleOp != null)
-                    _downloadhanlderAssetBundleOp.SetAbort();
+                if (_downloadAssetBundleOp != null)
+                    _downloadAssetBundleOp.SetAbort();
             }
         }
     }

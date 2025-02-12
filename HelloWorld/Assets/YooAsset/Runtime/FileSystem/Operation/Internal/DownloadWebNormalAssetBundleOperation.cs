@@ -3,16 +3,13 @@ using UnityEngine.Networking;
 
 namespace YooAsset
 {
-    internal class DownloadHandlerAssetBundleOperation : DefaultDownloadFileOperation
+    internal class DownloadWebNormalAssetBundleOperation : DownloadAssetBundleOperation
     {
         private readonly bool _disableUnityWebCache;
         private DownloadHandlerAssetBundle _downloadhandler;
         private ESteps _steps = ESteps.None;
 
-        public AssetBundle Result { private set; get; }
-
-
-        internal DownloadHandlerAssetBundleOperation(bool disableUnityWebCache, PackageBundle bundle, DownloadParam param) : base(bundle, param)
+        internal DownloadWebNormalAssetBundleOperation(bool disableUnityWebCache, PackageBundle bundle, DownloadParam param) : base(bundle, param)
         {
             _disableUnityWebCache = disableUnityWebCache;
         }
@@ -55,12 +52,12 @@ namespace YooAsset
                 // 检查网络错误
                 if (CheckRequestResult())
                 {
-                    var assetBundle = _downloadhandler.assetBundle;
+                    AssetBundle assetBundle = _downloadhandler.assetBundle;
                     if (assetBundle == null)
                     {
                         _steps = ESteps.Done;
-                        Error = "Download handler asset bundle object is null !";
                         Status = EOperationStatus.Failed;
+                        Error = "Download handler asset bundle object is null !";
                     }
                     else
                     {
@@ -106,7 +103,7 @@ namespace YooAsset
 
         private void CreateWebRequest()
         {
-            _downloadhandler = CreateDownloadHandler();
+            _downloadhandler = CreateWebDownloadHandler();
             _webRequest = DownloadSystemHelper.NewUnityWebRequestGet(_requestURL);
             _webRequest.downloadHandler = _downloadhandler;
             _webRequest.disposeDownloadHandlerOnDispose = true;
@@ -121,7 +118,7 @@ namespace YooAsset
                 _webRequest = null;
             }
         }
-        private DownloadHandlerAssetBundle CreateDownloadHandler()
+        private DownloadHandlerAssetBundle CreateWebDownloadHandler()
         {
             if (_disableUnityWebCache)
             {

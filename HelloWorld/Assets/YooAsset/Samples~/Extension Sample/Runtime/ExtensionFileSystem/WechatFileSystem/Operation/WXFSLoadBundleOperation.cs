@@ -49,7 +49,22 @@ internal class WXFSLoadBundleOperation : FSLoadBundleOperation
 
             if (CheckRequestResult())
             {
-                var assetBundle = (_webRequest.downloadHandler as DownloadHandlerWXAssetBundle).assetBundle;
+                if (_bundle.Encrypted && _fileSystem.DecryptionServices == null)
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = $"The {nameof(IWebDecryptionServices)} is null !";
+                    YooLogger.Error(Error);
+                    return;
+                }
+
+                AssetBundle assetBundle;
+                var downloadHanlder = _webRequest.downloadHandler as DownloadHandlerWXAssetBundle;
+                if (_bundle.Encrypted)
+                    assetBundle = _fileSystem.LoadEncryptedAssetBundle(_bundle, downloadHanlder.data);
+                else
+                    assetBundle = downloadHanlder.assetBundle;
+
                 if (assetBundle == null)
                 {
                     _steps = ESteps.Done;
@@ -61,7 +76,6 @@ internal class WXFSLoadBundleOperation : FSLoadBundleOperation
                     _steps = ESteps.Done;
                     Result = new WXAssetBundleResult(_fileSystem, _bundle, assetBundle);
                     Status = EOperationStatus.Succeed;
-                    _fileSystem.TryRecordBundle(_bundle); //记录下载文件
 
                     //TODO 解决微信小游戏插件问题
                     // Issue : https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/issues/108#

@@ -42,7 +42,6 @@ internal class WXFSClearAllBundleFilesOperation : FSClearCacheFilesOperation
                     YooLogger.Log("微信缓存清理成功！");
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Succeed;
-                    _fileSystem.ClearAllRecords();
                 }
                 else
                 {

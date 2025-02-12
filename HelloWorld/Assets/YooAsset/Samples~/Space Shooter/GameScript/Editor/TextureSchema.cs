@@ -177,8 +177,7 @@ public class TextureSchema : ScannerSchema
         });
         container.Add(maxHeightField);
 
-        SchemaInspector inspector = new SchemaInspector();
-        inspector.Containner = container;
+        SchemaInspector inspector = new SchemaInspector(container);
         return inspector;
     }
 }

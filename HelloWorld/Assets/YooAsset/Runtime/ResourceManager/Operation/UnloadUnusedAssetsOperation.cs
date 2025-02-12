@@ -56,10 +56,6 @@ namespace YooAsset
                     _resManager.LoaderDic.Remove(bundleName);
                 }
 
-                // 注意：调用底层接口释放所有资源
-                if (removeList.Count > 0)
-                    Resources.UnloadUnusedAssets();
-
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Succeed;
             }

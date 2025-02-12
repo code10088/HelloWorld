@@ -4,6 +4,7 @@ using System.Text;
 using UnityEngine;
 using YooAsset;
 
+#region 文件流
 /// <summary>
 /// 资源文件解密流
 /// </summary>
@@ -26,6 +27,35 @@ public class BundleStream : FileStream
             array[i] ^= KEY;
         }
         return index;
+    }
+}
+
+/// <summary>
+/// 文件流加密方式
+/// </summary>
+public class FileStreamEncryption : IEncryptionServices
+{
+    public EncryptResult Encrypt(EncryptFileInfo fileInfo)
+    {
+        if (fileInfo.BundleName.Contains("_gameres_audio"))
+        {
+            var fileData = File.ReadAllBytes(fileInfo.FileLoadPath);
+            for (int i = 0; i < fileData.Length; i++)
+            {
+                fileData[i] ^= BundleStream.KEY;
+            }
+
+            EncryptResult result = new EncryptResult();
+            result.Encrypted = true;
+            result.EncryptedData = fileData;
+            return result;
+        }
+        else
+        {
+            EncryptResult result = new EncryptResult();
+            result.Encrypted = false;
+            return result;
+        }
     }
 }
 
@@ -81,6 +111,37 @@ public class FileStreamDecryption : IDecryptionServices
         return 1024;
     }
 }
+#endregion
+
+#region 文件偏移
+/// <summary>
+/// 文件偏移加密方式
+/// </summary>
+public class FileOffsetEncryption : IEncryptionServices
+{
+    public EncryptResult Encrypt(EncryptFileInfo fileInfo)
+    {
+        // 注意：只对音频资源包加密
+        if (fileInfo.BundleName.Contains("_gameres_audio"))
+        {
+            int offset = 32;
+            byte[] fileData = File.ReadAllBytes(fileInfo.FileLoadPath);
+            var encryptedData = new byte[fileData.Length + offset];
+            Buffer.BlockCopy(fileData, 0, encryptedData, offset, fileData.Length);
+
+            EncryptResult result = new EncryptResult();
+            result.Encrypted = true;
+            result.EncryptedData = encryptedData;
+            return result;
+        }
+        else
+        {
+            EncryptResult result = new EncryptResult();
+            result.Encrypted = false;
+            return result;
+        }
+    }
+}
 
 /// <summary>
 /// 资源文件偏移加载解密类
@@ -132,61 +193,4 @@ public class FileOffsetDecryption : IDecryptionServices
         return 32;
     }
 }
-
-/// <summary>
-/// 文件偏移加密方式
-/// </summary>
-public class FileOffsetEncryption : IEncryptionServices
-{
-    public EncryptResult Encrypt(EncryptFileInfo fileInfo)
-    {
-        // 注意：只对音频资源包加密
-        if (fileInfo.BundleName.Contains("_gameres_audio"))
-        {
-            int offset = 32;
-            byte[] fileData = File.ReadAllBytes(fileInfo.FileLoadPath);
-            var encryptedData = new byte[fileData.Length + offset];
-            Buffer.BlockCopy(fileData, 0, encryptedData, offset, fileData.Length);
-
-            EncryptResult result = new EncryptResult();
-            result.Encrypted = true;
-            result.EncryptedData = encryptedData;
-            return result;
-        }
-        else
-        {
-            EncryptResult result = new EncryptResult();
-            result.Encrypted = false;
-            return result;
-        }
-    }
-}
-
-/// <summary>
-/// 文件流加密方式
-/// </summary>
-public class FileStreamEncryption : IEncryptionServices
-{
-    public EncryptResult Encrypt(EncryptFileInfo fileInfo)
-    {
-        if (fileInfo.BundleName.Contains("_gameres_audio"))
-        {
-            var fileData = File.ReadAllBytes(fileInfo.FileLoadPath);
-            for (int i = 0; i < fileData.Length; i++)
-            {
-                fileData[i] ^= BundleStream.KEY;
-            }
-
-            EncryptResult result = new EncryptResult();
-            result.Encrypted = true;
-            result.EncryptedData = fileData;
-            return result;
-        }
-        else
-        {
-            EncryptResult result = new EncryptResult();
-            result.Encrypted = false;
-            return result;
-        }
-    }
-}
+#endregion

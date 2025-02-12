@@ -8,11 +8,20 @@ using System;
 
 public static class TiktokFileSystemCreater
 {
-    public static FileSystemParameters CreateByteGameFileSystemParameters(IRemoteServices remoteServices, string packageRoot)
+    public static FileSystemParameters CreateByteGameFileSystemParameters(string packageRoot, IRemoteServices remoteServices)
     {
         string fileSystemClass = $"{nameof(TiktokFileSystem)},YooAsset.RuntimeExtension";
         var fileSystemParams = new FileSystemParameters(fileSystemClass, packageRoot);
-        fileSystemParams.AddParameter("REMOTE_SERVICES", remoteServices);
+        fileSystemParams.AddParameter(FileSystemParametersDefine.REMOTE_SERVICES, remoteServices);
+        return fileSystemParams;
+    }
+
+    public static FileSystemParameters CreateByteGameFileSystemParameters(string packageRoot, IRemoteServices remoteServices, IWebDecryptionServices decryptionServices)
+    {
+        string fileSystemClass = $"{nameof(TiktokFileSystem)},YooAsset.RuntimeExtension";
+        var fileSystemParams = new FileSystemParameters(fileSystemClass, packageRoot);
+        fileSystemParams.AddParameter(FileSystemParametersDefine.REMOTE_SERVICES, remoteServices);
+        fileSystemParams.AddParameter(FileSystemParametersDefine.DECRYPTION_SERVICES, decryptionServices);
         return fileSystemParams;
     }
 }
@@ -53,8 +62,7 @@ internal class TiktokFileSystem : IFileSystem
         }
     }
 
-    private readonly HashSet<string> _recorders = new HashSet<string>();
-    private readonly Dictionary<string, string> _cacheFilePaths = new Dictionary<string, string>(10000);
+    private readonly Dictionary<string, string> _cacheFilePathMapping = new Dictionary<string, string>(10000);
     private TTFileSystemManager _fileSystemMgr;
     private string _ttCacheRoot = string.Empty;
 
@@ -81,7 +89,7 @@ internal class TiktokFileSystem : IFileSystem
     {
         get
         {
-            return _recorders.Count;
+            return 0;
         }
     }
 
@@ -90,6 +98,11 @@ internal class TiktokFileSystem : IFileSystem
     /// 自定义参数：远程服务接口
     /// </summary>
     public IRemoteServices RemoteServices { private set; get; } = null;
+
+    /// <summary>
+    ///  自定义参数：解密方法类
+    /// </summary>
+    public IWebDecryptionServices DecryptionServices { private set; get; }
     #endregion
 
 
@@ -147,9 +160,13 @@ internal class TiktokFileSystem : IFileSystem
 
     public virtual void SetParameter(string name, object value)
     {
-        if (name == "REMOTE_SERVICES")
+        if (name == FileSystemParametersDefine.REMOTE_SERVICES)
         {
             RemoteServices = (IRemoteServices)value;
+        }
+        else if (name == FileSystemParametersDefine.DECRYPTION_SERVICES)
+        {
+            DecryptionServices = (IWebDecryptionServices)value;
         }
         else
         {
@@ -185,8 +202,7 @@ internal class TiktokFileSystem : IFileSystem
     }
     public virtual bool Exists(PackageBundle bundle)
     {
-        string filePath = GetCacheFileLoadPath(bundle);
-        return _recorders.Contains(filePath);
+        return CheckCacheFileExist(bundle);
     }
     public virtual bool NeedDownload(PackageBundle bundle)
     {
@@ -210,19 +226,27 @@ internal class TiktokFileSystem : IFileSystem
     }
     public virtual byte[] ReadBundleFileData(PackageBundle bundle)
     {
-        string filePath = GetCacheFileLoadPath(bundle);
-        if (CheckCacheFileExist(filePath))
+        if (CheckCacheFileExist(bundle))
+        {
+            string filePath = GetCacheFileLoadPath(bundle);
             return _fileSystemMgr.ReadFileSync(filePath);
+        }
         else
+        {
             return Array.Empty<byte>();
+        }
     }
     public virtual string ReadBundleFileText(PackageBundle bundle)
     {
-        string filePath = GetCacheFileLoadPath(bundle);
-        if (CheckCacheFileExist(filePath))
+        if (CheckCacheFileExist(bundle))
+        {
+            string filePath = GetCacheFileLoadPath(bundle);
             return _fileSystemMgr.ReadFileSync(filePath, "utf8");
+        }
         else
+        {
             return string.Empty;
+        }
     }
 
     #region 内部方法
@@ -230,55 +254,32 @@ internal class TiktokFileSystem : IFileSystem
     {
         return _fileSystemMgr;
     }
-    public bool CheckCacheFileExist(string filePath)
+    public bool CheckCacheFileExist(PackageBundle bundle)
     {
-        return _fileSystemMgr.AccessSync(filePath);
+        string url = RemoteServices.GetRemoteMainURL(bundle.FileName);
+        return _fileSystemMgr.IsUrlCached(url);
     }
     private string GetCacheFileLoadPath(PackageBundle bundle)
     {
-        if (_cacheFilePaths.TryGetValue(bundle.BundleGUID, out string filePath) == false)
+        if (_cacheFilePathMapping.TryGetValue(bundle.BundleGUID, out string filePath) == false)
         {
             filePath = _fileSystemMgr.GetLocalCachedPathForUrl(bundle.FileName);
-            _cacheFilePaths.Add(bundle.BundleGUID, filePath);
+            _cacheFilePathMapping.Add(bundle.BundleGUID, filePath);
         }
         return filePath;
     }
-    #endregion
 
-    #region 本地记录
-    public List<string> GetAllRecords()
+    /// <summary>
+    /// 加载加密资源文件
+    /// </summary>
+    public AssetBundle LoadEncryptedAssetBundle(PackageBundle bundle, byte[] fileData)
     {
-        return _recorders.ToList();
-    }
-    public bool RecordBundleFile(string filePath)
-    {
-        if (_recorders.Contains(filePath))
-        {
-            YooLogger.Error($"{nameof(TiktokFileSystem)} has element : {filePath}");
-            return false;
-        }
-
-        _recorders.Add(filePath);
-        return true;
-    }
-    public void TryRecordBundle(PackageBundle bundle)
-    {
-        string filePath = GetCacheFileLoadPath(bundle);
-        if (_recorders.Contains(filePath) == false)
-        {
-            _recorders.Add(filePath);
-        }
-    }
-    public void ClearAllRecords()
-    {
-        _recorders.Clear();
-    }
-    public void ClearRecord(string filePath)
-    {
-        if (_recorders.Contains(filePath))
-        {
-            _recorders.Remove(filePath);
-        }
+        WebDecryptFileInfo fileInfo = new WebDecryptFileInfo();
+        fileInfo.BundleName = bundle.BundleName;
+        fileInfo.FileLoadCRC = bundle.UnityCRC;
+        fileInfo.FileData = fileData;
+        var decryptResult = DecryptionServices.LoadAssetBundle(fileInfo);
+        return decryptResult.Result;
     }
     #endregion
 }

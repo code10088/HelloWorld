@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using YooAsset;
 using TTSDK;
+using WeChatWASM;
 
 internal class TTFSLoadBundleOperation : FSLoadBundleOperation
 {
@@ -49,7 +50,22 @@ internal class TTFSLoadBundleOperation : FSLoadBundleOperation
 
             if (CheckRequestResult())
             {
-                var assetBundle = (_webRequest.downloadHandler as DownloadHandlerTTAssetBundle).assetBundle;
+                if (_bundle.Encrypted && _fileSystem.DecryptionServices == null)
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = $"The {nameof(IWebDecryptionServices)} is null !";
+                    YooLogger.Error(Error);
+                    return;
+                }
+
+                AssetBundle assetBundle;
+                var downloadHanlder = _webRequest.downloadHandler as DownloadHandlerTTAssetBundle;
+                if (_bundle.Encrypted)
+                    assetBundle = _fileSystem.LoadEncryptedAssetBundle(_bundle, downloadHanlder.data);
+                else
+                    assetBundle = downloadHanlder.assetBundle;
+
                 if (assetBundle == null)
                 {
                     _steps = ESteps.Done;

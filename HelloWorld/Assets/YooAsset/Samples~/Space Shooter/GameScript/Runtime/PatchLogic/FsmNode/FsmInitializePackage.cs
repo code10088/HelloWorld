@@ -74,10 +74,11 @@ internal class FsmInitializePackage : IStateNode
 #if UNITY_WEBGL && WEIXINMINIGAME && !UNITY_EDITOR
 			string defaultHostServer = GetHostServerURL();
             string fallbackHostServer = GetHostServerURL();
+            string packageRoot = $"{WeChatWASM.WX.env.USER_DATA_PATH}/__GAME_FILE_CACHE"; //注意：如果有子目录，请修改此处！
             IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-            createParameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(remoteServices);
+            createParameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(packageRoot, remoteServices);
 #else
-            createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
+            createParameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(new WebDecryption());
 #endif
             initializationOperation = package.InitializeAsync(createParameters);
         }
@@ -146,6 +147,26 @@ internal class FsmInitializePackage : IStateNode
         string IRemoteServices.GetRemoteFallbackURL(string fileName)
         {
             return $"{_fallbackHostServer}/{fileName}";
+        }
+    }
+
+    private class WebDecryption : IWebDecryptionServices
+    {
+        public const byte KEY = 64;
+
+        public WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
+        {
+            byte[] copyData = new byte[fileInfo.FileData.Length];
+            Buffer.BlockCopy(fileInfo.FileData, 0, copyData, 0, fileInfo.FileData.Length);
+
+            for (int i = 0; i < copyData.Length; i++)
+            {
+                copyData[i] ^= KEY;
+            }
+
+            WebDecryptResult decryptResult = new WebDecryptResult();
+            decryptResult.Result = AssetBundle.LoadFromMemory(copyData);
+            return decryptResult;
         }
     }
 }

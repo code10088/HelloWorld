@@ -56,6 +56,11 @@ namespace YooAsset
         /// 禁用Unity的网络缓存
         /// </summary>
         public bool DisableUnityWebCache { private set; get; } = false;
+
+        /// <summary>
+        ///  自定义参数：解密方法类
+        /// </summary>
+        public IWebDecryptionServices DecryptionServices { private set; get; }
         #endregion
 
 
@@ -112,6 +117,10 @@ namespace YooAsset
             if (name == FileSystemParametersDefine.DISABLE_UNITY_WEB_CACHE)
             {
                 DisableUnityWebCache = (bool)value;
+            }
+            else if (name == FileSystemParametersDefine.DECRYPTION_SERVICES)
+            {
+                DecryptionServices = (IWebDecryptionServices)value;
             }
             else
             {
