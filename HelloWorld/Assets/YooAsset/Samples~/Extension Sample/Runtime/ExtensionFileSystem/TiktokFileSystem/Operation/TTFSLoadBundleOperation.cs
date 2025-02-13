@@ -2,21 +2,19 @@
 using UnityEngine;
 using UnityEngine.Networking;
 using YooAsset;
-using TTSDK;
-using WeChatWASM;
 
 internal class TTFSLoadBundleOperation : FSLoadBundleOperation
 {
     private enum ESteps
     {
         None,
-        LoadBundleFile,
+        DownloadAssetBundle,
         Done,
     }
 
     private readonly TiktokFileSystem _fileSystem;
     private readonly PackageBundle _bundle;
-    private UnityWebRequest _webRequest;
+    private DownloadAssetBundleOperation _downloadAssetBundleOp;
     private ESteps _steps = ESteps.None;
 
     internal TTFSLoadBundleOperation(TiktokFileSystem fileSystem, PackageBundle bundle)
@@ -26,51 +24,47 @@ internal class TTFSLoadBundleOperation : FSLoadBundleOperation
     }
     internal override void InternalOnStart()
     {
-        _steps = ESteps.LoadBundleFile;
+        _steps = ESteps.DownloadAssetBundle;
     }
     internal override void InternalOnUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
 
-        if (_steps == ESteps.LoadBundleFile)
+        if (_steps == ESteps.DownloadAssetBundle)
         {
-            if (_webRequest == null)
+            if (_downloadAssetBundleOp == null)
             {
-                string mainURL = _fileSystem.RemoteServices.GetRemoteMainURL(_bundle.FileName);
-                _webRequest = TTAssetBundle.GetAssetBundle(mainURL);
-                _webRequest.SendWebRequest();
+                DownloadParam downloadParam = new DownloadParam(int.MaxValue, 60);
+                downloadParam.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(_bundle.FileName); ;
+                downloadParam.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(_bundle.FileName);
+
+                if (_bundle.Encrypted)
+                {
+                    _downloadAssetBundleOp = new DownloadWebEncryptAssetBundleOperation(_fileSystem.DecryptionServices, _bundle, downloadParam);
+                    OperationSystem.StartOperation(_fileSystem.PackageName, _downloadAssetBundleOp);
+                }
+                else
+                {
+                    _downloadAssetBundleOp = new DownloadTiktokAssetBundleOperation(_bundle, downloadParam);
+                    OperationSystem.StartOperation(_fileSystem.PackageName, _downloadAssetBundleOp);
+                }
             }
 
-            DownloadProgress = _webRequest.downloadProgress;
-            DownloadedBytes = (long)_webRequest.downloadedBytes;
+            DownloadProgress = _downloadAssetBundleOp.DownloadProgress;
+            DownloadedBytes = (long)_downloadAssetBundleOp.DownloadedBytes;
             Progress = DownloadProgress;
-            if (_webRequest.isDone == false)
+            if (_downloadAssetBundleOp.IsDone == false)
                 return;
 
-            if (CheckRequestResult())
+            if (_downloadAssetBundleOp.Status == EOperationStatus.Succeed)
             {
-                if (_bundle.Encrypted && _fileSystem.DecryptionServices == null)
-                {
-                    _steps = ESteps.Done;
-                    Status = EOperationStatus.Failed;
-                    Error = $"The {nameof(IWebDecryptionServices)} is null !";
-                    YooLogger.Error(Error);
-                    return;
-                }
-
-                AssetBundle assetBundle;
-                var downloadHanlder = _webRequest.downloadHandler as DownloadHandlerTTAssetBundle;
-                if (_bundle.Encrypted)
-                    assetBundle = _fileSystem.LoadEncryptedAssetBundle(_bundle, downloadHanlder.data);
-                else
-                    assetBundle = downloadHanlder.assetBundle;
-
+                var assetBundle = _downloadAssetBundleOp.Result;
                 if (assetBundle == null)
                 {
                     _steps = ESteps.Done;
-                    Error = $"{nameof(DownloadHandlerTTAssetBundle)} loaded asset bundle is null !";
                     Status = EOperationStatus.Failed;
+                    Error = $"{nameof(DownloadAssetBundleOperation)} loaded asset bundle is null !";
                 }
                 else
                 {
@@ -83,6 +77,7 @@ internal class TTFSLoadBundleOperation : FSLoadBundleOperation
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Failed;
+                Error = _downloadAssetBundleOp.Error;
             }
         }
     }
@@ -98,31 +93,11 @@ internal class TTFSLoadBundleOperation : FSLoadBundleOperation
     }
     public override void AbortDownloadOperation()
     {
-    }
-
-    private bool CheckRequestResult()
-    {
-#if UNITY_2020_3_OR_NEWER
-        if (_webRequest.result != UnityWebRequest.Result.Success)
+        if (_steps == ESteps.DownloadAssetBundle)
         {
-            Error = _webRequest.error;
-            return false;
+            if (_downloadAssetBundleOp != null)
+                _downloadAssetBundleOp.SetAbort();
         }
-        else
-        {
-            return true;
-        }
-#else
-        if (_webRequest.isNetworkError || _webRequest.isHttpError)
-        {
-            Error = _webRequest.error;
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-#endif
     }
 }
 #endif

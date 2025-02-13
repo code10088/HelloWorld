@@ -42,7 +42,9 @@ internal class WXFSDownloadFileOperation : DefaultDownloadFileOperation
             Progress = DownloadProgress;
             if (_webRequest.isDone == false)
             {
-                CheckRequestTimeout();
+                //TODO 由于微信小游戏插件的问题，暂时不能判定超时！
+                // Issue : https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/issues/108#
+                //CheckRequestTimeout();
                 return;
             }
 
