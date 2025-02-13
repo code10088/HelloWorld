@@ -15,11 +15,11 @@ MonoBehaviour:
   ProjectConf:
     projectName: "\u8272\u5F69\u8FDE\u8FDE"
     Appid: wxe75b79c84a17faed
-    CDN: https://assets-1321503079.cos.ap-beijing.myqcloud.com/WX
+    CDN: https://assets-1321503079.cos.ap-beijing.myqcloud.com/WebGL
     assetLoadType: 0
     compressDataPackage: 0
     VideoUrl: 
-    DST: D:/HelloWorld/Build/WX
+    DST: D:/HelloWorld/Build/WebGL
     StreamCDN: 
     bundleHashLength: 32
     bundlePathIdentifier: 1.2.0;

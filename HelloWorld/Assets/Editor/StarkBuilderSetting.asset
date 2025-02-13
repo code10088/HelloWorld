@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tag: 0
   wasmResourceUrl: http://
-  webGLOutputDir: D:/HelloWorld/Build/TT
+  webGLOutputDir: D:/HelloWorld/Build/WebGL
   useByteAudioAPI: 0
   wasmMemorySize: 256
   isWebGL2: 1
