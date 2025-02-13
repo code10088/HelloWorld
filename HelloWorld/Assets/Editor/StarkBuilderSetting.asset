@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tag: 0
   wasmResourceUrl: http://
-  webGLOutputDir: D:/DotRush/Build/TT
+  webGLOutputDir: D:/HelloWorld/Build/TT
   useByteAudioAPI: 0
   wasmMemorySize: 256
   isWebGL2: 1
