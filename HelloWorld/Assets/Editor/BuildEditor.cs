@@ -337,6 +337,11 @@ public class BuildEditor
     [MenuItem("Tools/WeChatBuild", false, (int)ToolsMenuSort.WeChatBuild)]
     public static void WeChatBuild()
     {
+        CheckAppVersion();
+        WXConvertCore.config.ProjectConf.bundlePathIdentifier = appversion;
+        EditorUtility.SetDirty(WXConvertCore.config);
+        AssetDatabase.SaveAssets();
+
         try
         {
             HideSubScripts(true);
