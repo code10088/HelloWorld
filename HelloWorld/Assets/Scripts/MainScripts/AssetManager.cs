@@ -35,11 +35,13 @@ public class AssetManager : Singletion<AssetManager>
         IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
         var parameters = new WebPlayModeParameters();
 #if WEIXINMINIGAME
-        var packageRoot = $"{WeChatWASM.WX.env.USER_DATA_PATH}/__GAME_FILE_CACHE/{Application.version}";
-        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(remoteServices, packageRoot);
+        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(Application.version, remoteServices);
+#elif DOUYINMINIGAME
+        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateByteGameFileSystemParameters(Application.version, remoteServices);
 #else
-        parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
-        parameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices);
+        WebDecryptionServices decryptionServices = new WebDecryptionServices();
+        parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(decryptionServices);
+        parameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, decryptionServices);
 #endif
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;

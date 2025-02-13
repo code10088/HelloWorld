@@ -1,0 +1,7 @@
+{
+  "//": "注释：app之间互跳,配置appid,最少一个，最多5个",
+  "ttNavigateToMiniGameAppIdList": [
+    "tta8e5de5837cfcdb1"
+  ],
+  "example": "xxxx"
+}

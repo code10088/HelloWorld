@@ -12,6 +12,8 @@ using YooAsset.Editor;
 using System.Text;
 using WeChatWASM;
 using YooAsset;
+using TTSDK.Tool;
+using TTSDK.Tool.API;
 
 public class BuildEditor
 {
@@ -188,7 +190,7 @@ public class BuildEditor
         buildParameters.FileNameStyle = EFileNameStyle.BundleName_HashName;
         buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;
         buildParameters.BuildinFileCopyParams = "Builtin";
-#if UNITY_WEBGL
+#if WEIXINMINIGAME || DOUYINMINIGAME
         buildParameters.EncryptionServices = null;
 #else
         buildParameters.EncryptionServices = new EncryptionServices();
@@ -287,7 +289,9 @@ public class BuildEditor
         IOSBuild();
 #elif WEIXINMINIGAME
         WeChatBuild();
-#endif 
+#elif DOUYINMINIGAME
+        TTBuild();
+#endif
     }
     private static void AndroidBuild()
     {
@@ -353,6 +357,25 @@ public class BuildEditor
                     }
                 }
             }
+        }
+        catch (Exception e)
+        {
+            HideSubScripts(false);
+            GameDebug.LogError(e.Message);
+            throw e;
+        }
+    }
+    [MenuItem("Tools/TTBuild", false, (int)ToolsMenuSort.TTBuild)]
+    public static async void TTBuild()
+    {
+        try
+        {
+            HideSubScripts(true);
+            await BuildManager.Build(Framework.Wasm);
+            HideSubScripts(false);
+            string fileName = Path.GetFileNameWithoutExtension(StarkBuilderSettings.Instance.webglPackagePath);
+            string fullName = Path.GetFileName(StarkBuilderSettings.Instance.webglPackagePath);
+            UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{fileName}", fullName);
         }
         catch (Exception e)
         {

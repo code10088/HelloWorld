@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1677285531, guid: dc81e191e74f50046ac01c24de9dfe8a, type: 3}
+  m_Name: StarkBuilderSetting
+  m_EditorClassIdentifier: 
+  tag: 0
+  wasmResourceUrl: http://
+  webGLOutputDir: D:/DotRush/Build/TT
+  useByteAudioAPI: 0
+  wasmMemorySize: 256
+  isWebGL2: 1
+  needCompress: 1
+  symbolMode: 1
+  profiling: 0
+  buildOptions: 0
+  optimizeWebGLMemoryInBackground: 1
+  assetBundleFSEnabled: 1
+  assetBundleBufferCapacity: 128
+  assetBundleBufferTTL: 5
+  urlCacheList: []
+  dontCacheFileNames: []
+  isDevBuild: 0
+  stripEngineCode: 0
+  apkFileNameBase: 
+  apkOutputDir: 
+  appHost: 2
+  compressMethod: 1
+  runtimeEnv: 0
+  framework: 1
+  architecture: 2
+  miniApkVersion: 0
+  scriptingBackend: 0
+  NativeWhiteListRegex:
+  - com.bytedance.starksdk
+  - _Backup~
+  _appId: ttf29a84276d9096da07
+  version: 
+  autoVersion: 0
+  _webglPackagePath: D:\DotRush\Build\WebGL\webgl_package-20250212_190815.zip
+  _orientation: 0
+  _menuButtonStyle: 0
+  _publishType: 2
+  publishDesc: 
+  idePath: "C:/Program Files/@bytedminiprogram-ide/\u6296\u97F3\u5F00\u53D1\u8005\u5DE5\u5177.exe"

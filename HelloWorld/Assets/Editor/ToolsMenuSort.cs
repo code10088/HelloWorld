@@ -7,4 +7,5 @@ public enum ToolsMenuSort
     YooAssetBuild,
     UploadBundles2CDN,
     WeChatBuild,
+    TTBuild,
 }

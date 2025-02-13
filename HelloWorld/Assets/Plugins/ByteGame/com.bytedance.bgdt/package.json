@@ -1,0 +1,14 @@
+{
+  "displayName": "ByteGame Develop Tools",
+  "name": "com.bytedance.bgdt",
+  "version": "3.0.271",
+  "description": "ByteGame Develop Tools",
+  "keywords": [],
+  "category": "Libraries",
+  "links": [
+    {
+      "label": "Document | 文档",
+      "url": "https://bytedance.feishu.cn/docs/doccn0wCFwoWGt3hIEVSntpymn5"
+    }
+  ]
+}
