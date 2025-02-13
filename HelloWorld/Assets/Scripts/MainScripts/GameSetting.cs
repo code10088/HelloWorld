@@ -26,16 +26,8 @@ public class GameSetting : Singletion<GameSetting>, SingletionInterface
     public void Init()
     {
 #if UNITY_WEBGL
-#if WEIXINMINIGAME
-        cdnPlatform = $"{cdn}/WX/";
-        cdnVersion = $"{cdn}/WX/{Application.version}/";
-#elif DOUYINMINIGAME
-        cdnPlatform = $"{cdn}/TT/";
-        cdnVersion = $"{cdn}/TT/{Application.version}/";
-#else
         cdnPlatform = $"{cdn}/WebGL/";
         cdnVersion = $"{cdn}/WebGL/{Application.version}/";
-#endif
 #elif UNITY_ANDROID
         cdnPlatform = $"{cdn}/Android/";
         cdnVersion = $"{cdn}/Android/{Application.version}/";
