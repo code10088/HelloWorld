@@ -214,7 +214,7 @@ namespace HotAssembly
         {
             DataManager.Instance.GuideData.StartGuide(1);
         }
-#endregion
+        #endregion
 
         private void OnOpenUISetting()
         {
