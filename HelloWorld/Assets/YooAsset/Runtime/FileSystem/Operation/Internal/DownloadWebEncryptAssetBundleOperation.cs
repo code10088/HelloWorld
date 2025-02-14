@@ -5,12 +5,14 @@ namespace YooAsset
 {
     internal class DownloadWebEncryptAssetBundleOperation : DownloadAssetBundleOperation
     {
+        private readonly bool _checkTimeout;
         private readonly IWebDecryptionServices _decryptionServices;
         private DownloadHandlerBuffer _downloadhandler;
         private ESteps _steps = ESteps.None;
 
-        internal DownloadWebEncryptAssetBundleOperation(IWebDecryptionServices decryptionServices, PackageBundle bundle, DownloadParam param) : base(bundle, param)
+        internal DownloadWebEncryptAssetBundleOperation(bool checkTimeout, IWebDecryptionServices decryptionServices, PackageBundle bundle, DownloadParam param) : base(bundle, param)
         {
+            _checkTimeout = checkTimeout;
             _decryptionServices = decryptionServices;
         }
         internal override void InternalOnStart()
@@ -45,7 +47,8 @@ namespace YooAsset
                 Progress = DownloadProgress;
                 if (_webRequest.isDone == false)
                 {
-                    CheckRequestTimeout();
+                    if (_checkTimeout)
+                        CheckRequestTimeout();
                     return;
                 }
 
@@ -61,7 +64,17 @@ namespace YooAsset
                         return;
                     }
 
-                    AssetBundle assetBundle = LoadEncryptedAssetBundle(_downloadhandler.data);
+                    var fileData = _downloadhandler.data;
+                    if (fileData == null || fileData.Length == 0)
+                    {
+                        _steps = ESteps.Done;
+                        Status = EOperationStatus.Failed;
+                        Error = $"The download handler data is null or empty !";
+                        YooLogger.Error(Error);
+                        return;
+                    }
+
+                    AssetBundle assetBundle = LoadEncryptedAssetBundle(fileData);
                     if (assetBundle == null)
                     {
                         _steps = ESteps.Done;

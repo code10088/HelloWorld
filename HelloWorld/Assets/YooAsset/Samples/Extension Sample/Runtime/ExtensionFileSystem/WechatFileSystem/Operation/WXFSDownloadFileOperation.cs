@@ -92,7 +92,7 @@ internal class WXFSDownloadFileOperation : DefaultDownloadFileOperation
 
     private void CreateWebRequest()
     {
-        _webRequest = WXAssetBundle.GetAssetBundle(_requestURL);
+        _webRequest = UnityWebRequest.Get(_requestURL);
         _webRequest.SetRequestHeader("wechatminigame-preload", "1");
         _webRequest.disposeDownloadHandlerOnDispose = true;
         _webRequest.SendWebRequest();

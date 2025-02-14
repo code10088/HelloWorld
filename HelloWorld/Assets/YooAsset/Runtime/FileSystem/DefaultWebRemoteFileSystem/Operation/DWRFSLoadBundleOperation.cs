@@ -40,7 +40,7 @@ namespace YooAsset
 
                     if (_bundle.Encrypted)
                     {
-                        _downloadAssetBundleOp = new DownloadWebEncryptAssetBundleOperation(_fileSystem.DecryptionServices, _bundle, downloadParam);
+                        _downloadAssetBundleOp = new DownloadWebEncryptAssetBundleOperation(true, _fileSystem.DecryptionServices, _bundle, downloadParam);
                         OperationSystem.StartOperation(_fileSystem.PackageName, _downloadAssetBundleOp);
                     }
                     else
@@ -59,7 +59,7 @@ namespace YooAsset
                 if (_downloadAssetBundleOp.Status == EOperationStatus.Succeed)
                 {
                     var assetBundle = _downloadAssetBundleOp.Result;
-                    if(assetBundle == null)
+                    if (assetBundle == null)
                     {
                         _steps = ESteps.Done;
                         Status = EOperationStatus.Failed;

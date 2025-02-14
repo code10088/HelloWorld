@@ -90,10 +90,16 @@ namespace YooAsset.Editor
 
         public TableView()
         {
-            _toolbar = new Toolbar();
-            this.Add(_toolbar);
+            this.style.flexShrink = 1f;
+            this.style.flexGrow = 1f;
 
+            // 定义标题栏
+            _toolbar = new Toolbar();
+    
+            // 定义列表视图
             _listView = new ListView();
+            _listView.style.flexShrink = 1f;
+            _listView.style.flexGrow = 1f;
             _listView.makeItem = MakeListViewElement;
             _listView.bindItem = BindListViewElement;
             _listView.selectionType = SelectionType.Multiple;
@@ -107,6 +113,7 @@ namespace YooAsset.Editor
             _listView.onSelectionChanged += OnSelectionChanged;
 #endif
 
+            this.Add(_toolbar);
             this.Add(_listView);
         }
 

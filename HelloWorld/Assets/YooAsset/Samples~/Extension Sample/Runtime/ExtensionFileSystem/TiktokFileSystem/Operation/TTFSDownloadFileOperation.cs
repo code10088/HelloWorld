@@ -7,7 +7,7 @@ internal class TTFSDownloadFileOperation : DefaultDownloadFileOperation
 {
     private TiktokFileSystem _fileSystem;
     private ESteps _steps = ESteps.None;
-    
+
     internal TTFSDownloadFileOperation(TiktokFileSystem fileSystem, PackageBundle bundle, DownloadParam param) : base(bundle, param)
     {
         _fileSystem = fileSystem;
@@ -84,7 +84,7 @@ internal class TTFSDownloadFileOperation : DefaultDownloadFileOperation
     private void CreateWebRequest()
     {
         //TODO : 抖音小游戏没有找到预下载方法
-        _webRequest = UnityWebRequestAssetBundle.GetAssetBundle(_requestURL);
+        _webRequest = UnityWebRequest.Get(_requestURL);
         _webRequest.disposeDownloadHandlerOnDispose = true;
         _webRequest.SendWebRequest();
     }
