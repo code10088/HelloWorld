@@ -12,15 +12,9 @@ namespace YooAsset.Editor
     /// </summary>
     public class PanelSplitView : TwoPaneSplitView
     {
-#if UNITY_6000_0_OR_NEWER
-        public new class UxmlFactory : UxmlElementAttribute
-        {
-        }
-#else
         public new class UxmlFactory : UxmlFactory<PanelSplitView, UxmlTraits>
         {
         }
-#endif
 
         /// <summary>
         /// 竖版分屏

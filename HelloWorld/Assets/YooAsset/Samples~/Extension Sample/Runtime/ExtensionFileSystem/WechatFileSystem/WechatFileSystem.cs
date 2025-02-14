@@ -8,14 +8,14 @@ using WeChatWASM;
 
 public static class WechatFileSystemCreater
 {
-    public static FileSystemParameters CreateWechatFileSystemParameters(string packageRoot, IRemoteServices remoteServices)
+    public static FileSystemParameters CreateFileSystemParameters(string packageRoot, IRemoteServices remoteServices)
     {
         string fileSystemClass = $"{nameof(WechatFileSystem)},YooAsset.RuntimeExtension";
         var fileSystemParams = new FileSystemParameters(fileSystemClass, packageRoot);
         fileSystemParams.AddParameter(FileSystemParametersDefine.REMOTE_SERVICES, remoteServices);
         return fileSystemParams;
     }
-    public static FileSystemParameters CreateWechatFileSystemParameters(string packageRoot, IRemoteServices remoteServices, IWebDecryptionServices decryptionServices)
+    public static FileSystemParameters CreateFileSystemParameters(string packageRoot, IRemoteServices remoteServices, IWebDecryptionServices decryptionServices)
     {
         string fileSystemClass = $"{nameof(WechatFileSystem)},YooAsset.RuntimeExtension";
         var fileSystemParams = new FileSystemParameters(fileSystemClass, packageRoot);

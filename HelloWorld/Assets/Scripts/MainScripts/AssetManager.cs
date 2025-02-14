@@ -36,9 +36,9 @@ public class AssetManager : Singletion<AssetManager>
         WebDecryptionServices decryptionServices = new WebDecryptionServices();
         var parameters = new WebPlayModeParameters();
 #if WEIXINMINIGAME
-        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(Application.version, remoteServices, decryptionServices);
+        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateFileSystemParameters(Application.version, remoteServices, decryptionServices);
 #elif DOUYINMINIGAME
-        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateByteGameFileSystemParameters(Application.version, remoteServices, decryptionServices);
+        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateFileSystemParameters(Application.version, remoteServices, decryptionServices);
 #else
         parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(decryptionServices);
         parameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, decryptionServices);

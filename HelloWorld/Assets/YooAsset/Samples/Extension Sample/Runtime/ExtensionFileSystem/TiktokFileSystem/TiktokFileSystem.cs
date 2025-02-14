@@ -8,7 +8,7 @@ using System;
 
 public static class TiktokFileSystemCreater
 {
-    public static FileSystemParameters CreateByteGameFileSystemParameters(string packageRoot, IRemoteServices remoteServices)
+    public static FileSystemParameters CreateFileSystemParameters(string packageRoot, IRemoteServices remoteServices)
     {
         string fileSystemClass = $"{nameof(TiktokFileSystem)},YooAsset.RuntimeExtension";
         var fileSystemParams = new FileSystemParameters(fileSystemClass, packageRoot);
@@ -16,7 +16,7 @@ public static class TiktokFileSystemCreater
         return fileSystemParams;
     }
 
-    public static FileSystemParameters CreateByteGameFileSystemParameters(string packageRoot, IRemoteServices remoteServices, IWebDecryptionServices decryptionServices)
+    public static FileSystemParameters CreateFileSystemParameters(string packageRoot, IRemoteServices remoteServices, IWebDecryptionServices decryptionServices)
     {
         string fileSystemClass = $"{nameof(TiktokFileSystem)},YooAsset.RuntimeExtension";
         var fileSystemParams = new FileSystemParameters(fileSystemClass, packageRoot);

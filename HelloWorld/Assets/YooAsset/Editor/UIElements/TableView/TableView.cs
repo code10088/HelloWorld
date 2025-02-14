@@ -15,15 +15,9 @@ namespace YooAsset.Editor
     /// </summary>
     public class TableView : VisualElement
     {
-#if UNITY_6000_0_OR_NEWER
-        public new class UxmlFactory : UxmlElementAttribute
-        {
-        }
-#else
         public new class UxmlFactory : UxmlFactory<TableView, UxmlTraits>
         {
         }
-#endif
 
         private readonly Toolbar _toolbar;
         private readonly ListView _listView;
