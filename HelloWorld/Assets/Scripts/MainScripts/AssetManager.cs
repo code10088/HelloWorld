@@ -33,13 +33,13 @@ public class AssetManager : Singletion<AssetManager>
         string defaultHostServer = GameSetting.Instance.CDNVersion;
         string fallbackHostServer = GameSetting.Instance.CDNVersion;
         IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
+        WebDecryptionServices decryptionServices = new WebDecryptionServices();
         var parameters = new WebPlayModeParameters();
 #if WEIXINMINIGAME
-        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(Application.version, remoteServices);
+        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateWechatFileSystemParameters(Application.version, remoteServices, decryptionServices);
 #elif DOUYINMINIGAME
-        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateByteGameFileSystemParameters(Application.version, remoteServices);
+        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateByteGameFileSystemParameters(Application.version, remoteServices, decryptionServices);
 #else
-        WebDecryptionServices decryptionServices = new WebDecryptionServices();
         parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(decryptionServices);
         parameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, decryptionServices);
 #endif

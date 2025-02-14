@@ -190,11 +190,7 @@ public class BuildEditor
         buildParameters.FileNameStyle = EFileNameStyle.BundleName_HashName;
         buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;
         buildParameters.BuildinFileCopyParams = "Builtin";
-#if WEIXINMINIGAME || DOUYINMINIGAME
-        buildParameters.EncryptionServices = null;
-#else
         buildParameters.EncryptionServices = new EncryptionServices();
-#endif
         buildParameters.CompressOption = ECompressOption.LZ4;
         buildParameters.DisableWriteTypeTree = false;
         buildParameters.IgnoreTypeTreeChanges = true;
