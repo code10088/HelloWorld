@@ -69,7 +69,7 @@ internal class TTFSLoadBundleOperation : FSLoadBundleOperation
                 else
                 {
                     _steps = ESteps.Done;
-                    Result = new AssetBundleResult(_fileSystem, _bundle, assetBundle, null);
+                    Result = new TTAssetBundleResult(_fileSystem, _bundle, assetBundle);
                     Status = EOperationStatus.Succeed;
                 }
             }

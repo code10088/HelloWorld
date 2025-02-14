@@ -2152,24 +2152,6 @@
             <param name="callback">字体资源回调，可为null，开发者需要做好兜底</param>
             <returns></returns>
         </member>
-        <member name="M:TTSDK.ITTAPI.RequestFeedSubscribe(TTSDK.UNBridgeLib.LitJson.JsonData,System.Action{TTSDK.UNBridgeLib.LitJson.JsonData},System.Action{System.Int32,System.String},System.Action)">
-            <summary>
-            向用户请求授权允许游戏在满足一定的条件后出现在Feed流中
-            </summary>
-            <param name="param">必须包含，type(strings)（订阅Feed流的类型），scene(int)订阅的场景ID（type='play'时必传））contentIDs(jsonArray) 自定义文案ID（type='play'时必传）），例如：{"type":"play","scene":111,"contentIDs":["xxxx"]}</param>
-            <param name="success">接口调用成功的回调函数， 包含以下内容，errMsg(回调信息)，success(用户的订阅结果（true为成功，false为订阅失败，具体原因看errMsg））</param>
-            <param name="failed">接口调用失败的回调函数</param>
-            <param name="complete">接口调用结束的回调函数（调用成功、失败都会执行）</param>
-        </member>
-        <member name="M:TTSDK.ITTAPI.CheckFeedSubscribeStatus(TTSDK.UNBridgeLib.LitJson.JsonData,System.Action{TTSDK.UNBridgeLib.LitJson.JsonData},System.Action{System.Int32,System.String},System.Action)">
-            <summary>
-            查询用户的授权情况。
-            </summary>
-            <param name="param">必须包含，type(strings)（订阅Feed流的类型），scene(int)订阅的场景ID（type='play'时必传）），例如：{"type":"play","scene":1111}</param>
-            <param name="success">接口调用成功的回调函数,包含以下内容，errMsg(回调信息)，success(用户的订阅结果（true为已经订阅，false为用户未订阅））</param>
-            <param name="failed">接口调用失败的回调函数</param>
-            <param name="complete">接口调用结束的回调函数（调用成功、失败都会执行）</param>
-        </member>
         <member name="M:TTSDK.ITTAPI.GetLiveManager">
             <summary>
             获取直播间管理器对象
@@ -5615,6 +5597,16 @@
             <param name="failed">接口调用失败的回调函数</param>
             <param name="complete">接口调用结束的回调函数（调用成功、失败都会执行）</param>
         </member>
+        <member name="M:TTSDK.TT.OnFeedStatusChange(TTSDK.OnFeedStatusChangeCallback)">
+            <summary>
+            监听直玩场景内外流的切换
+            </summary>
+        </member>
+        <member name="M:TTSDK.TT.OffFeedStatusChange(TTSDK.OnFeedStatusChangeCallback)">
+            <summary>
+            取消监听直玩场景内外流的切换
+            </summary>
+        </member>
         <member name="M:TTSDK.TT.GetLiveManager">
             <summary>
             获取直播间管理器对象
@@ -8697,6 +8689,16 @@
         <member name="M:TTSDK.RewardedVideoAdImpl.Show">
             <summary>
             加载广告，并在某些错误情况下进行有限次重试
+            </summary>
+        </member>
+        <member name="F:TTSDK.FeedStatusEnum.FeedEnter">
+            <summary>
+            从Feed流中进入游戏
+            </summary>
+        </member>
+        <member name="F:TTSDK.FeedStatusEnum.FeedExit">
+            <summary>
+            从游戏退回到Feed流
             </summary>
         </member>
         <member name="P:TTSDK.JFieldAttribute.Name">

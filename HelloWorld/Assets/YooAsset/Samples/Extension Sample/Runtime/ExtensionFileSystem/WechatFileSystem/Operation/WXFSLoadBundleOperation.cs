@@ -67,7 +67,7 @@ internal class WXFSLoadBundleOperation : FSLoadBundleOperation
                 else
                 {
                     _steps = ESteps.Done;
-                    Result = new AssetBundleResult(_fileSystem, _bundle, assetBundle, null);
+                    Result = new WXAssetBundleResult(_fileSystem, _bundle, assetBundle);
                     Status = EOperationStatus.Succeed;
                 }
             }
