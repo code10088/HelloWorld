@@ -255,7 +255,7 @@ namespace HotAssembly
             PlayerPrefs.SetInt(PlayerPrefsConst.DPQuality, quality);
             GameSetting.updateTimeSliceS = 1.0f / Application.targetFrameRate;
             GameSetting.updateTimeSliceMS = 1000 / Application.targetFrameRate;
-            YooAssets.SetOperationSystemMaxTimeSlice(GameSetting.updateTimeSliceS);
+            YooAssets.SetOperationSystemMaxTimeSlice(GameSetting.updateTimeSliceMS);
         }
         /// <summary>
         /// 分辨率 0,1,2

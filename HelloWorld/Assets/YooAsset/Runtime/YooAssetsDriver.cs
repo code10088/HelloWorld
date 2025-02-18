@@ -7,11 +7,11 @@ namespace YooAsset
     {
         private static int LastestUpdateFrame = 0;
 
-        void Update()
-        {
-            DebugCheckDuplicateDriver();
-            YooAssets.Update();
-        }
+        //void Update()
+        //{
+        //    DebugCheckDuplicateDriver();
+        //    YooAssets.Update();
+        //}
 
 #if UNITY_EDITOR
         void OnApplicationQuit()

@@ -55,7 +55,7 @@ namespace YooAsset
         /// <summary>
         /// 更新资源系统
         /// </summary>
-        internal static void Update()
+        public static void Update()
         {
             if (_isInitialize)
             {
@@ -211,19 +211,16 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 设置异步系统参数，每帧执行消耗的最大时间切片（单位：秒）
+        /// 设置异步系统参数，每帧执行消耗的最大时间切片（单位：毫秒）
         /// </summary>
-        public static void SetOperationSystemMaxTimeSlice(float seconds)
+        public static void SetOperationSystemMaxTimeSlice(long milliseconds)
         {
-            OperationSystem.MaxTimeSlice = seconds;
-        }
-
-        /// <summary>
-        /// 异步系统参数
-        /// </summary>
-        public static void SetOperationSystemFrameTime(float seconds)
-        {
-            OperationSystem.FrameTime = seconds;
+            if (milliseconds < 10)
+            {
+                milliseconds = 10;
+                YooLogger.Warning($"MaxTimeSlice minimum value is 10 milliseconds.");
+            }
+            OperationSystem.MaxTimeSlice = milliseconds;
         }
         #endregion
 
