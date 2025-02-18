@@ -268,19 +268,6 @@ internal class TiktokFileSystem : IFileSystem
         }
         return filePath;
     }
-
-    /// <summary>
-    /// 加载加密资源文件
-    /// </summary>
-    public AssetBundle LoadEncryptedAssetBundle(PackageBundle bundle, byte[] fileData)
-    {
-        WebDecryptFileInfo fileInfo = new WebDecryptFileInfo();
-        fileInfo.BundleName = bundle.BundleName;
-        fileInfo.FileLoadCRC = bundle.UnityCRC;
-        fileInfo.FileData = fileData;
-        var decryptResult = DecryptionServices.LoadAssetBundle(fileInfo);
-        return decryptResult.Result;
-    }
     #endregion
 }
 #endif

@@ -69,7 +69,6 @@ namespace YooAsset.Editor
                 _scannerListView = root.Q<ListView>("ScannerListView");
                 _scannerListView.makeItem = MakeScannerListViewItem;
                 _scannerListView.bindItem = BindScannerListViewItem;
-
 #if UNITY_2022_3_OR_NEWER
                 _scannerListView.selectionChanged += ScannerListView_onSelectionChange;
 #elif  UNITY_2020_1_OR_NEWER
@@ -277,12 +276,23 @@ namespace YooAsset.Editor
         {
             _scannerListView.Clear();
             _scannerListView.ClearSelection();
-            _scannerListView.itemsSource = FilterScanners();
-            _scannerListView.Rebuild();
 
-            if (_lastModifyScannerIndex >= 0 && _lastModifyScannerIndex < _scannerListView.itemsSource.Count)
+            var filterItems = FilterScanners();
+            if (AssetArtScannerSettingData.Setting.Scanners.Count == filterItems.Count)
             {
-                _scannerListView.selectedIndex = _lastModifyScannerIndex;
+#if UNITY_2020_3_OR_NEWER
+                _scannerListView.reorderable = true;
+#endif
+                _scannerListView.itemsSource = AssetArtScannerSettingData.Setting.Scanners;
+                _scannerListView.Rebuild();
+            }
+            else
+            {
+#if UNITY_2020_3_OR_NEWER
+                _scannerListView.reorderable = false;
+#endif
+                _scannerListView.itemsSource = filterItems;
+                _scannerListView.Rebuild();
             }
         }
         private List<AssetArtScanner> FilterScanners()
@@ -344,31 +354,7 @@ namespace YooAsset.Editor
 
             // 显示检视面板
             var scanSchema = selectScanner.LoadSchema();
-            if (scanSchema != null)
-            {
-                var inspector = scanSchema.CreateInspector();
-                if (inspector == null)
-                {
-                    UIElementsTools.SetElementVisible(_inspectorContainer, false);
-                }
-                else
-                {
-                    if (inspector.Containner is VisualElement container)
-                    {
-                        UIElementsTools.SetElementVisible(_inspectorContainer, true);
-                        _inspectorContainer.Clear();
-                        _inspectorContainer.Add(container);
-                        _inspectorContainer.style.width = inspector.Width;
-                        _inspectorContainer.style.minWidth = inspector.MinWidth;
-                        _inspectorContainer.style.maxWidth = inspector.MaxWidth;
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"{nameof(ScannerSchema)} inspector container is invalid !");
-                        UIElementsTools.SetElementVisible(_inspectorContainer, false);
-                    }
-                }
-            }
+            RefreshInspector(scanSchema);
 
             // 设置Schema对象
             if (scanSchema == null)
@@ -520,6 +506,38 @@ namespace YooAsset.Editor
             Undo.RecordObject(AssetArtScannerSettingData.Setting, "YooAsset.AssetArtScannerWindow RemoveCollector");
             AssetArtScannerSettingData.RemoveCollector(selectSacnner, selectCollector);
             FillCollectorViewData();
+        }
+
+        // 属性面板相关
+        private void RefreshInspector(ScannerSchema scanSchema)
+        {
+            if (scanSchema == null)
+            {
+                UIElementsTools.SetElementVisible(_inspectorContainer, false);
+                return;
+            }
+
+            var inspector = scanSchema.CreateInspector();
+            if (inspector == null)
+            {
+                UIElementsTools.SetElementVisible(_inspectorContainer, false);
+                return;
+            }
+
+            if (inspector.Containner is VisualElement container)
+            {
+                UIElementsTools.SetElementVisible(_inspectorContainer, true);
+                _inspectorContainer.Clear();
+                _inspectorContainer.Add(container);
+                _inspectorContainer.style.width = inspector.Width;
+                _inspectorContainer.style.minWidth = inspector.MinWidth;
+                _inspectorContainer.style.maxWidth = inspector.MaxWidth;
+            }
+            else
+            {
+                Debug.LogWarning($"{nameof(ScannerSchema)} inspector container is invalid !");
+                UIElementsTools.SetElementVisible(_inspectorContainer, false);
+            }
         }
     }
 }

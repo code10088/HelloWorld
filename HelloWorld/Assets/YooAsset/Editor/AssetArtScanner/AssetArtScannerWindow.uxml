@@ -9,7 +9,7 @@
         <ui:VisualElement name="ScannerListContainer" style="width: 250px; flex-grow: 0; background-color: rgb(67, 67, 67); border-left-width: 5px; border-right-width: 5px; border-top-width: 5px; border-bottom-width: 5px;">
             <ui:Label text="Scanner List" display-tooltip-when-elided="true" name="ScannerListTitle" style="background-color: rgb(89, 89, 89); -unity-text-align: upper-center; -unity-font-style: bold; border-left-width: 3px; border-right-width: 3px; border-top-width: 3px; border-bottom-width: 3px; font-size: 12px;" />
             <uie:ToolbarSearchField focusable="true" name="ScannerSearchField" style="width: 230px;" />
-            <ui:ListView focusable="true" name="ScannerListView" item-height="20" virtualization-method="DynamicHeight" style="flex-grow: 1;" />
+            <ui:ListView focusable="true" name="ScannerListView" item-height="20" virtualization-method="DynamicHeight" reorder-mode="Animated" reorderable="true" style="flex-grow: 1;" />
             <ui:VisualElement name="ScannerAddContainer" style="justify-content: center; flex-direction: row; flex-shrink: 0;">
                 <ui:Button text=" - " display-tooltip-when-elided="true" name="RemoveBtn" />
                 <ui:Button text=" + " display-tooltip-when-elided="true" name="AddBtn" />
