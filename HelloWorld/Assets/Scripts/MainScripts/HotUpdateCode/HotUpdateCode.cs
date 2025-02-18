@@ -47,7 +47,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     #region Version
     private void CheckVersion()
     {
-        Downloader.Instance.Download($"{GameSetting.Instance.CDNPlatform}VersionConfig.txt", string.Empty, CheckVersion);
+        Downloader.Instance.Download($"{GameSetting.CDNPlatform}/VersionConfig.txt", string.Empty, CheckVersion);
     }
     private void CheckVersion(string url, byte[] result)
     {
@@ -64,7 +64,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
             int index = config.AppVersions.FindIndex(a => a == Application.version);
             if (index < 0)
             {
-                Application.OpenURL($"{GameSetting.Instance.CDNPlatform}{GameSetting.AppName}");
+                Application.OpenURL($"{GameSetting.CDNPlatform}/{GameSetting.AppName}");
                 Application.Quit();
             }
             else

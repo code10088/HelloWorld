@@ -30,8 +30,8 @@ public class AssetManager : Singletion<AssetManager>
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
 #elif UNITY_WEBGL
-        string defaultHostServer = GameSetting.Instance.CDNVersion;
-        string fallbackHostServer = GameSetting.Instance.CDNVersion;
+        string defaultHostServer = GameSetting.CDNVersion;
+        string fallbackHostServer = GameSetting.CDNVersion;
         IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
         WebDecryptionServices decryptionServices = new WebDecryptionServices();
         var parameters = new WebPlayModeParameters();
@@ -46,8 +46,8 @@ public class AssetManager : Singletion<AssetManager>
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
 #else
-        string defaultHostServer = GameSetting.Instance.CDNVersion;
-        string fallbackHostServer = GameSetting.Instance.CDNVersion;
+        string defaultHostServer = GameSetting.CDNVersion;
+        string fallbackHostServer = GameSetting.CDNVersion;
         IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
         DecryptionServices decryptionServices = new DecryptionServices();
         var buildinFileSystem = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices);   

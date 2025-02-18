@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GameSetting : Singletion<GameSetting>, SingletionInterface
+public static class GameSetting
 {
     public static float updateTimeSliceS = 1.0f / 60;
     public static int updateTimeSliceMS = 1000 / 60;
@@ -16,25 +16,42 @@ public class GameSetting : Singletion<GameSetting>, SingletionInterface
     public static int timeoutS = 10;//Ãë
     public static string HotUpdateConfigPath = "Assets/ZRes/GameConfig/HotUpdateConfig.txt";
 
-    //cdn
-    private string cdn = "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
-    private string cdnPlatform;
-    private string cdnVersion;
-    public string CDNPlatform => cdnPlatform;
-    public string CDNVersion => cdnVersion;
-
-    public void Init()
+    private static string CDN
     {
-#if UNITY_WEBGL
-        cdnPlatform = $"{cdn}/WebGL/";
-        cdnVersion = $"{cdn}/WebGL/{Application.version}/";
-#elif UNITY_ANDROID
-        cdnPlatform = $"{cdn}/Android/";
-        cdnVersion = $"{cdn}/Android/{Application.version}/";
-#elif UNITY_IOS
-        cdnPlatform = $"{cdn}/iOS/";
-        cdnVersion = $"{cdn}/iOS/{Application.version}/";
+        get
+        {
+#if DEBUG
+            return "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
+#else
+            return "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
 #endif
+        }
+    }
+    public static string CDNPlatform
+    {
+        get
+        {
+#if UNITY_WEBGL
+            return $"{CDN}/WebGL";
+#elif UNITY_ANDROID
+            return $"{CDN}/Android";
+#elif UNITY_IOS
+            return $"{CDN}/iOS";
+#endif
+        }
+    }
+    public static string CDNVersion
+    {
+        get
+        {
+#if UNITY_WEBGL
+            return $"{CDNPlatform}/{Application.version}/";
+#elif UNITY_ANDROID
+            return $"{CDNPlatform}/{Application.version}/";
+#elif UNITY_IOS
+            return $"{CDNPlatform}/{Application.version}/";
+#endif
+        }
     }
 
     public static string AppName =>

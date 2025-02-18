@@ -334,6 +334,7 @@ public class BuildEditor
     public static void WeChatBuild()
     {
         CheckAppVersion();
+        WXConvertCore.config.ProjectConf.CDN = GameSetting.CDNPlatform;
         WXConvertCore.config.ProjectConf.bundlePathIdentifier = appversion;
         EditorUtility.SetDirty(WXConvertCore.config);
         AssetDatabase.SaveAssets();
