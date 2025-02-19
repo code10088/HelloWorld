@@ -16,6 +16,11 @@ namespace YooAsset
         /// <summary>
         /// 获取主资源包名称
         /// </summary>
+        string GetMainBundleName(int bundleID);
+
+        /// <summary>
+        /// 获取主资源包名称
+        /// </summary>
         string GetMainBundleName(AssetInfo assetInfo);
 
         /// <summary>

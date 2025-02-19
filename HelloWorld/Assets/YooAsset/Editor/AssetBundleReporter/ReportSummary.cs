@@ -67,6 +67,7 @@ namespace YooAsset.Editor
         public string IgnoreRuleName;
 
         // 构建参数
+        public bool LegacyDependency;
         public bool ClearBuildCacheFiles;
         public bool UseAssetDependencyDB;
         public bool EnableSharePackRule;

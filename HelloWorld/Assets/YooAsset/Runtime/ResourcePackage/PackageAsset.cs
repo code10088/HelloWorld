@@ -31,11 +31,18 @@ namespace YooAsset
         /// </summary>
         public int BundleID;
 
+        #region YOOASSET_LEGACY_DEPENDENCY
         /// <summary>
-        /// 所属资源包名称（仅编辑器有效）
+        /// 依赖的资源包列表
+        /// </summary>
+        public int[] DependBundleIDs;
+        #endregion
+
+        /// <summary>
+        /// 临时数据对象（仅编辑器有效）
         /// </summary>
         [NonSerialized]
-        public string BundleNameInEditor;
+        public object TempDataInEditor;
 
         /// <summary>
         /// 是否包含Tag

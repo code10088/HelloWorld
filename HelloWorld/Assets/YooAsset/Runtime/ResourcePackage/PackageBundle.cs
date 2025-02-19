@@ -47,6 +47,14 @@ namespace YooAsset
         /// </summary>
         public int[] DependIDs;
 
+        #region YOOASSET_LEGACY_DEPENDENCY
+        /// <summary>
+        /// 引用该资源包的资源包列表
+        /// 说明：谁引用了该资源包
+        /// </summary>
+        public int[] ReferenceBundleIDs;
+        #endregion
+
         /// <summary>
         /// 资源包GUID
         /// </summary>
@@ -100,6 +108,12 @@ namespace YooAsset
         /// </summary>
         [NonSerialized]
         public readonly List<PackageAsset> IncludeMainAssets = new List<PackageAsset>(10);
+
+        /// <summary>
+        /// 临时数据对象（仅编辑器有效）
+        /// </summary>
+        [NonSerialized]
+        public object TempDataInEditor;
 
 
         public PackageBundle()

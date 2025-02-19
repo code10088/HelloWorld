@@ -75,9 +75,10 @@ namespace YooAsset.Editor
             _items.Add(new ItemWrapper("Include Asset GUID", $"{buildReport.Summary.IncludeAssetGUID}"));
             _items.Add(new ItemWrapper("Auto Collect Shaders", $"{buildReport.Summary.AutoCollectShaders}"));
             _items.Add(new ItemWrapper("Ignore Rule Name", $"{buildReport.Summary.IgnoreRuleName}"));
-
+            
             _items.Add(new ItemWrapper(string.Empty, string.Empty));
             _items.Add(new ItemWrapper("Build Params", string.Empty));
+            _items.Add(new ItemWrapper("Legacy Dependency Mode", $"{buildReport.Summary.LegacyDependency}"));
             _items.Add(new ItemWrapper("Clear Build Cache Files", $"{buildReport.Summary.ClearBuildCacheFiles}"));
             _items.Add(new ItemWrapper("Use Asset Dependency DB", $"{buildReport.Summary.UseAssetDependencyDB}"));
             _items.Add(new ItemWrapper("Enable Share Pack Rule", $"{buildReport.Summary.EnableSharePackRule}"));

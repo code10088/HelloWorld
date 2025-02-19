@@ -52,6 +52,12 @@ namespace YooAsset.Editor
         public string PackageNote;
 
         /// <summary>
+        /// 旧版依赖模式
+        /// 说明：兼容YooAssets1.5.x版本
+        /// </summary>
+        public bool LegacyDependency = false;
+
+        /// <summary>
         /// 清空构建缓存文件
         /// </summary>
         public bool ClearBuildCacheFiles = false;

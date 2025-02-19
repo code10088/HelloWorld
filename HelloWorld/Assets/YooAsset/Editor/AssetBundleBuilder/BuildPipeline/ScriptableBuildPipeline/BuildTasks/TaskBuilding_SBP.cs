@@ -13,6 +13,8 @@ namespace YooAsset.Editor
         public class BuildResultContext : IContextObject
         {
             public IBundleBuildResults Results;
+            public string BuiltinShadersBundleName;
+            public string MonoScriptsBundleName;
         }
 
         void IBuildTask.Run(BuildContext context)
@@ -53,6 +55,8 @@ namespace YooAsset.Editor
             BuildLogger.Log("UnityEngine build success!");
             BuildResultContext buildResultContext = new BuildResultContext();
             buildResultContext.Results = buildResults;
+            buildResultContext.BuiltinShadersBundleName = builtinShadersBundleName;
+            buildResultContext.MonoScriptsBundleName = monoScriptsBundleName;
             context.SetContextObject(buildResultContext);
         }
     }

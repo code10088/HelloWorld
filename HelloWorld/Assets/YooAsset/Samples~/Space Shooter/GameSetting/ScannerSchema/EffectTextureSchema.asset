@@ -14,3 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxWidth: 1024
   MaxHeight: 1024
+  TestStringValues:
+  - test1
+  - test2
+  - test3

@@ -109,6 +109,7 @@ namespace YooAsset
         /// <summary>
         /// 创建默认的WebServer文件系统参数
         /// </summary>
+        /// <param name="decryptionServices">加密文件解密服务类</param>
         /// <param name="disableUnityWebCache">禁用Unity的网络缓存</param>
         public static FileSystemParameters CreateDefaultWebServerFileSystemParameters(IWebDecryptionServices decryptionServices = null, bool disableUnityWebCache = false)
         {
@@ -123,6 +124,7 @@ namespace YooAsset
         /// 创建默认的WebRemote文件系统参数
         /// </summary>
         /// <param name="remoteServices">远端资源地址查询服务类</param>
+        /// <param name="decryptionServices">加密文件解密服务类</param>
         /// <param name="disableUnityWebCache">禁用Unity的网络缓存</param>
         public static FileSystemParameters CreateDefaultWebRemoteFileSystemParameters(IRemoteServices remoteServices, IWebDecryptionServices decryptionServices = null, bool disableUnityWebCache = false)
         {

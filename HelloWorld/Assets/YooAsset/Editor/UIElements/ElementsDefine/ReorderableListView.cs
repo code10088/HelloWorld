@@ -1,4 +1,4 @@
-#if UNITY_2021_3_OR_NEWER
+ï»¿#if UNITY_2021_3_OR_NEWER
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,26 +15,27 @@ namespace YooAsset.Editor
         public new class UxmlFactory : UxmlFactory<ReorderableListView, UxmlTraits>
         {
         }
-
+        
         /// <summary>
-        /// ÖÆ×÷ÔªËØÎ¯ÍĞ
+        /// åˆ¶ä½œå…ƒç´ å§”æ‰˜
         /// </summary>
         /// <returns></returns>
         public delegate VisualElement MakeElementDelegate();
 
         /// <summary>
-        /// °ó¶¨ÔªËØÎ¯ÍĞ
+        /// ç»‘å®šå…ƒç´ å§”æ‰˜
         /// </summary>
         public delegate void BindElementDelegqate(VisualElement element, int index);
 
-        private readonly Foldout _foldout;
-        private readonly ListView _listView;
-        private readonly Button _addButton;
-        private readonly Button _removeButton;
+        private Foldout _foldout;
+        private ListView _listView;
+        private Label _headerLabel;
+        private Button _addButton;
+        private Button _removeButton;
         private string _headerName = nameof(ReorderableListView);
 
         /// <summary>
-        /// Ô´Êı¾İ
+        /// æºæ•°æ®
         /// </summary>
         public IList SourceData
         {
@@ -57,23 +58,23 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// ÔªËØ¹Ì¶¨¸ß¶È
+        /// å…ƒç´ å›ºå®šé«˜åº¦
         /// </summary>
-        public int ElementHeight
+        public float ElementHeight
         {
             set
             {
-                _listView.itemHeight = value;
+                _listView.fixedItemHeight = value;
                 _listView.Rebuild();
             }
             get
             {
-                return _listView.itemHeight;
+                return _listView.fixedItemHeight;
             }
         }
 
         /// <summary>
-        /// Ôö¼Ó°´Å¥ÏÔÒş
+        /// å¢åŠ æŒ‰é’®æ˜¾éš
         /// </summary>
         public bool DisplayAdd
         {
@@ -88,7 +89,7 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// ÒÆ³ı°´Å¥ÏÔÒş
+        /// ç§»é™¤æŒ‰é’®æ˜¾éš
         /// </summary>
         public bool DisplayRemove
         {
@@ -103,7 +104,7 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// ±êÌâÃû³Æ
+        /// æ ‡é¢˜åç§°
         /// </summary>
         public string HeaderName
         {
@@ -119,29 +120,43 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// ÖÆ×÷ÔªËØµÄ»Øµ÷
+        /// åˆ¶ä½œå…ƒç´ çš„å›è°ƒ
         /// </summary>
         public MakeElementDelegate MakeElementCallback;
 
         /// <summary>
-        /// °ó¶¨ÔªËØµÄ»Øµ÷
+        /// ç»‘å®šå…ƒç´ çš„å›è°ƒ
         /// </summary>
         public BindElementDelegqate BindElementCallback;
 
 
         public ReorderableListView()
         {
+            CreateView(true);
+        }
+        public ReorderableListView(bool foldout)
+        {
+            CreateView(foldout);
+        }
+        private void CreateView(bool foldout)
+        {
             this.style.flexGrow = 1;
             this.style.flexShrink = 1;
 
-            // ÕÛµşÀ¸
-            _foldout = new Foldout();
-            _foldout.style.flexGrow = 1f;
-            _foldout.style.flexShrink = 1f;
-            _foldout.text = $"{nameof(ReorderableListView)}";
-            this.Add(_foldout);
+            // æŠ˜å æ 
+            if (foldout)
+            {
+                _foldout = new Foldout();
+                _foldout.style.flexGrow = 1f;
+                _foldout.style.flexShrink = 1f;
+                _foldout.text = $"{nameof(ReorderableListView)}";
+            }
+            else
+            {
+                _headerLabel = new Label();
+            }
 
-            // ÁĞ±íÊÓÍ¼
+            // åˆ—è¡¨è§†å›¾
             _listView = new ListView();
             _listView.style.flexGrow = 1;
             _listView.style.flexShrink = 1;
@@ -156,25 +171,37 @@ namespace YooAsset.Editor
 #else
             _listView.onSelectionChanged += OnSelectionChanged;
 #endif
-            _foldout.Add(_listView);
 
-            // °´Å¥×é
-            var buttonGroup = new VisualElement();
-            buttonGroup.style.flexDirection = FlexDirection.RowReverse;
-            _foldout.Add(buttonGroup);
+            // æŒ‰é’®ç»„
+            var buttonContainer = new VisualElement();
+            buttonContainer.style.flexDirection = FlexDirection.RowReverse;
 
-            // ÒÆ³ı°´Å¥
+            // ç§»é™¤æŒ‰é’®
             _removeButton = new Button();
             _removeButton.text = " - ";
             _removeButton.clicked += OnClickRemoveButton;
             _removeButton.SetEnabled(false);
-            buttonGroup.Add(_removeButton);
+            buttonContainer.Add(_removeButton);
 
-            // Ôö¼Ó°´Å¥
+            // å¢åŠ æŒ‰é’®
             _addButton = new Button();
             _addButton.text = " + ";
             _addButton.clicked += OnClickAddButton;
-            buttonGroup.Add(_addButton);
+            buttonContainer.Add(_addButton);
+
+            // ç»„ç»‡é¡µé¢
+            if (foldout)
+            {
+                _foldout.Add(_listView);
+                _foldout.Add(buttonContainer);
+                this.Add(_foldout);
+            }
+            else
+            {
+                this.Add(_headerLabel);
+                this.Add(_listView);
+                this.Add(buttonContainer);
+            }
         }
         private void OnClickAddButton()
         {
@@ -214,7 +241,7 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// Éú³ÉÔªËØ
+        /// ç”Ÿæˆå…ƒç´ 
         /// </summary>
         private VisualElement MakeListViewElement()
         {
@@ -404,7 +431,7 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// °ó¶¨ÔªËØ
+        /// ç»‘å®šå…ƒç´ 
         /// </summary>
         private void BindListViewElement(VisualElement listViewElement, int index)
         {
@@ -569,7 +596,7 @@ namespace YooAsset.Editor
                 return;
             }
 
-            // ×¢Òâ£ºÊı¾İÁĞ±íÒÆ³ıÔªËØµÄÊ±ºòÓĞ¿ÉÄÜ»áÔ½½ç£¡
+            // æ³¨æ„ï¼šæ•°æ®åˆ—è¡¨ç§»é™¤å…ƒç´ çš„æ—¶å€™æœ‰å¯èƒ½ä¼šè¶Šç•Œï¼
             if (_listView.selectedIndex >= _listView.itemsSource.Count)
                 _listView.ClearSelection();
 
@@ -581,9 +608,19 @@ namespace YooAsset.Editor
         private void RefreshFoldoutName()
         {
             if (_listView.itemsSource == null)
-                _foldout.text = _headerName;
+            {
+                if (_foldout != null)
+                    _foldout.text = _headerName;
+                if (_headerLabel != null)
+                    _headerLabel.text = _headerName;
+            }
             else
-                _foldout.text = _headerName + $" ({_listView.itemsSource.Count}) ";
+            {
+                if (_foldout != null)
+                    _foldout.text = _headerName + $" ({_listView.itemsSource.Count}) ";
+                if (_headerLabel != null)
+                    _headerLabel.text = _headerName + $" ({_listView.itemsSource.Count}) ";
+            }
         }
     }
 }

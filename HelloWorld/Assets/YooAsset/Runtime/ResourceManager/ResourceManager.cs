@@ -298,6 +298,14 @@ namespace YooAsset
                 ProviderDic.Remove(provider.ProviderGUID);
             }
         }
+        internal bool CheckBundleDestroyed(int bundleID)
+        {
+            string bundleName = _bundleQuery.GetMainBundleName(bundleID);
+            var bundleFileLoader = TryGetBundleFileLoader(bundleName);
+            if (bundleFileLoader == null)
+                return true;
+            return bundleFileLoader.IsDestroyed;
+        }
         internal bool HasAnyLoader()
         {
             return LoaderDic.Count > 0;

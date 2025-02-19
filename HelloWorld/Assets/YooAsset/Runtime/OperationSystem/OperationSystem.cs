@@ -14,6 +14,11 @@ namespace YooAsset
         private static long _frameTime;
 
         /// <summary>
+        /// 快速启动模式
+        /// </summary>
+        public static bool QuickStartMode = false;
+
+        /// <summary>
         /// 异步操作的最小时间片段
         /// </summary>
         public static long MaxTimeSlice { set; get; } = long.MaxValue;
@@ -136,6 +141,11 @@ namespace YooAsset
             _newList.Add(operation);
             operation.SetPackageName(packageName);
             operation.SetStart();
+
+            if (QuickStartMode)
+            {
+                operation.InternalOnUpdate();
+            }
         }
     }
 }

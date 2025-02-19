@@ -35,6 +35,7 @@ namespace YooAsset
                 buffer.WriteUTF8(manifest.FileVersion);
 
                 // 写入文件头信息
+                buffer.WriteBool(manifest.LegacyDependency);
                 buffer.WriteBool(manifest.EnableAddressable);
                 buffer.WriteBool(manifest.LocationToLower);
                 buffer.WriteBool(manifest.IncludeAssetGUID);
@@ -55,6 +56,7 @@ namespace YooAsset
                     buffer.WriteUTF8(packageAsset.AssetGUID);
                     buffer.WriteUTF8Array(packageAsset.AssetTags);
                     buffer.WriteInt32(packageAsset.BundleID);
+                    buffer.WriteInt32Array(packageAsset.DependBundleIDs);
                 }
 
                 // 写入资源包列表
@@ -70,6 +72,7 @@ namespace YooAsset
                     buffer.WriteBool(packageBundle.Encrypted);
                     buffer.WriteUTF8Array(packageBundle.Tags);
                     buffer.WriteInt32Array(packageBundle.DependIDs);
+                    buffer.WriteInt32Array(packageBundle.ReferenceBundleIDs);
                 }
 
                 // 写入文件流
@@ -108,6 +111,7 @@ namespace YooAsset
             {
                 // 读取文件头信息
                 manifest.FileVersion = fileVersion;
+                manifest.LegacyDependency = buffer.ReadBool();
                 manifest.EnableAddressable = buffer.ReadBool();
                 manifest.LocationToLower = buffer.ReadBool();
                 manifest.IncludeAssetGUID = buffer.ReadBool();
@@ -133,6 +137,7 @@ namespace YooAsset
                     packageAsset.AssetGUID = buffer.ReadUTF8();
                     packageAsset.AssetTags = buffer.ReadUTF8Array();
                     packageAsset.BundleID = buffer.ReadInt32();
+                    packageAsset.DependBundleIDs = buffer.ReadInt32Array();
                     FillAssetCollection(manifest, packageAsset);
                 }
 
@@ -150,6 +155,7 @@ namespace YooAsset
                     packageBundle.Encrypted = buffer.ReadBool();
                     packageBundle.Tags = buffer.ReadUTF8Array();
                     packageBundle.DependIDs = buffer.ReadInt32Array();
+                    packageBundle.ReferenceBundleIDs = buffer.ReadInt32Array();
                     FillBundleCollection(manifest, packageBundle);
                 }
             }

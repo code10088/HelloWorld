@@ -2,6 +2,49 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.0-preview] - 2025-02-19
+
+### Improvements
+
+资源收集窗口列表元素支持手动上下拖拽排序！
+
+资源扫描窗口列表元素支持手动上下拖拽排序！
+
+### Added
+
+- 新增了UIElements扩展类ReorderableListView
+
+- 新增初始化方法
+
+  ```csharp
+  public class YooAssets
+  {
+      /// <summary>
+      /// 设置异步系统参数，快速启动模式的开关
+      /// 注意：该模式默认开启
+      /// </summary>
+      public static void SetOperationSystemQuickStartMode(bool state)
+  }
+  ```
+
+- 新增打包构建参数
+
+  ```csharp
+  public class BuildParameters
+  {
+      /// <summary>
+      /// 旧版依赖模式
+      /// 说明：兼容YooAssets1.5.x版本
+      /// </summary>
+      public bool LegacyDependency = false;    
+  }
+  ```
+
+### Fixed
+
+- (#472) 修复了Unity6平台，TableView视图无法显示问题。
+- 修复了微信小游戏和抖音小游戏未正确使用插件的卸载方法。
+
 ## [2.2.12] - 2025-02-14
 
 ### Improvements

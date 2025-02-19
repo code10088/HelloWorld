@@ -163,6 +163,12 @@ namespace YooAsset
             }
             return result.ToArray();
         }
+        string IBundleQuery.GetMainBundleName(int bundleID)
+        {
+            // 注意：如果清单里未找到资源包会抛出异常！
+            var packageBundle = ActiveManifest.GetMainPackageBundle(bundleID);
+            return packageBundle.BundleName;
+        }
         string IBundleQuery.GetMainBundleName(AssetInfo assetInfo)
         {
             if (assetInfo.IsInvalid)

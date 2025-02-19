@@ -42,6 +42,7 @@ namespace YooAsset.Editor
                 buildReport.Summary.AutoCollectShaders = buildMapContext.Command.AutoCollectShaders;
 
                 // 构建参数
+                buildReport.Summary.LegacyDependency = buildParameters.LegacyDependency;
                 buildReport.Summary.ClearBuildCacheFiles = buildParameters.ClearBuildCacheFiles;
                 buildReport.Summary.UseAssetDependencyDB = buildParameters.UseAssetDependencyDB;
                 buildReport.Summary.EnableSharePackRule = buildParameters.EnableSharePackRule;
