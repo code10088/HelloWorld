@@ -71,10 +71,10 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
     }
     private void Delete(int itemId)
     {
-        int index = wait.FindIndex(a => a.ItemID == itemId);
+        int index = use.FindIndex(a => a.ItemID == itemId);
         if (index >= 0)
         {
-            wait.RemoveAt(index);
+            use.RemoveAt(index);
             if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Delay();
             return;
         }
@@ -278,10 +278,10 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
     }
     private void Delete(int itemId)
     {
-        int index = wait.FindIndex(a => a.ItemID == itemId);
+        int index = use.FindIndex(a => a.ItemID == itemId);
         if (index >= 0)
         {
-            wait.RemoveAt(index);
+            use.RemoveAt(index);
             if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Delay();
             return;
         }
