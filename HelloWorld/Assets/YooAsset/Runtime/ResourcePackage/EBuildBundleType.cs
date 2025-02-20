@@ -1,7 +1,7 @@
 ﻿
 namespace YooAsset
 {
-    internal enum EBuildBundleType
+    public enum EBuildBundleType
     {
         /// <summary>
         /// 未知类型

@@ -26,7 +26,7 @@ MonoBehaviour:
     Groups:
     - GroupName: battle
       GroupDesc: "\u6218\u6597"
-      AssetTags: 
+      AssetTags: battle
       ActiveRuleName: EnableGroup
       Collectors:
       - CollectPath: Assets/Samples/Space Shooter/GameRes/Effect
@@ -92,7 +92,7 @@ MonoBehaviour:
         UserData: 
     - GroupName: scene
       GroupDesc: "\u573A\u666F"
-      AssetTags: 
+      AssetTags: scene
       ActiveRuleName: EnableGroup
       Collectors:
       - CollectPath: Assets/Samples/Space Shooter/GameRes/Scene
@@ -113,7 +113,7 @@ MonoBehaviour:
         UserData: 
     - GroupName: ugui
       GroupDesc: "\u9762\u677F"
-      AssetTags: 
+      AssetTags: ui
       ActiveRuleName: EnableGroup
       Collectors:
       - CollectPath: Assets/Samples/Space Shooter/GameRes/UIPanel

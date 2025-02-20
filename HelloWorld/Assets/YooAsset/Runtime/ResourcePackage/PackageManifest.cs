@@ -18,7 +18,7 @@ namespace YooAsset
         public string FileVersion;
 
         /// <summary>
-        /// 旧版依赖模式
+        /// 怀旧版依赖模式
         /// </summary>
         public bool LegacyDependency;
 
