@@ -97,7 +97,6 @@ public class SDK : MonoSingletion<SDK>
             video.onErrorAction = OnError;
             video.onLoadActon = OnLoad;
             video.onCloseAction = OnClose;
-            video.Load();
         }
         public override ShowAdResult Show(Action<bool> onClose = null)
         {
@@ -272,7 +271,6 @@ public class SDK : MonoSingletion<SDK>
             video.OnError += OnError;
             video.OnLoad += OnLoad;
             video.OnClose += OnClose;
-            video.Load();
         }
         public override ShowAdResult Show(Action<bool> onClose = null)
         {
@@ -394,7 +392,7 @@ public class SDK : MonoSingletion<SDK>
     {
         protected int id;
         protected string adUnitId;
-        protected bool load = false;
+        protected bool load = true;
         protected int retry = 0;
         protected Action<bool> onClose;
 
