@@ -89,7 +89,7 @@ namespace YooAsset.Editor
 
             // 定义标题栏
             _toolbar = new Toolbar();
-    
+
             // 定义列表视图
             _listView = new ListView();
             _listView.style.flexShrink = 1f;
@@ -191,6 +191,16 @@ namespace YooAsset.Editor
             _listView.ClearSelection();
             _listView.itemsSource = itemsSource.ToList();
             _listView.Rebuild();
+
+            // 动态设置元素数量
+            foreach (var column in _columns)
+            {
+                if (column.ColumnStyle.Counter)
+                {
+                    var toobarButton = GetHeaderElement(column.ElementName) as ToolbarButton;
+                    toobarButton.text = $"{column.HeaderTitle} ({itemsSource.Count()})";
+                }
+            }
         }
 
         /// <summary>

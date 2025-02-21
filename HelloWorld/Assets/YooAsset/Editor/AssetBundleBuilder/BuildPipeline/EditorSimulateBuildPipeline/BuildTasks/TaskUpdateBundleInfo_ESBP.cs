@@ -45,7 +45,7 @@ namespace YooAsset.Editor
         {
             long tempSize = 0;
 
-            var assetPaths = bundleInfo.GetAllMainAssetPaths();
+            var assetPaths = bundleInfo.GetAllPackAssetPaths();
             foreach (var assetPath in assetPaths)
             {
                 long size = FileUtility.GetFileSize(assetPath);

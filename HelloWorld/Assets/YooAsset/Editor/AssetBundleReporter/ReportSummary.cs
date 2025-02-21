@@ -71,11 +71,19 @@ namespace YooAsset.Editor
         public bool ClearBuildCacheFiles;
         public bool UseAssetDependencyDB;
         public bool EnableSharePackRule;
+        public bool SingleReferencedPackAlone;
         public string EncryptionClassName;
         public EFileNameStyle FileNameStyle;
+
+        // 引擎参数
         public ECompressOption CompressOption;
         public bool DisableWriteTypeTree;
         public bool IgnoreTypeTreeChanges;
+        public bool WriteLinkXML = true;
+        public string CacheServerHost;
+        public int CacheServerPort;
+        public string BuiltinShadersBundleName;
+        public string MonoScriptsBundleName;
 
         // 构建结果
         public int AssetFileTotalCount;

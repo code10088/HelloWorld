@@ -41,6 +41,11 @@ namespace YooAsset.Editor
         /// </summary>
         public bool Sortable = false;
 
+        /// <summary>
+        /// 统计数量
+        /// </summary>
+        public bool Counter = false;
+
         public ColumnStyle(Length width)
         {
             if (width.value > MaxValue)

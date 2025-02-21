@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace YooAsset.Editor
 {
     [Serializable]
-    public class AssetInfo
+    public class AssetInfo : IComparable<AssetInfo>
     {
         private string _fileExtension = null;
 
@@ -37,6 +37,7 @@ namespace YooAsset.Editor
             }
         }
 
+
         public AssetInfo(string assetPath)
         {
             AssetPath = assetPath;
@@ -59,6 +60,11 @@ namespace YooAsset.Editor
                 return true;
             else
                 return false;
+        }
+
+        public int CompareTo(AssetInfo other)
+        {
+            return this.AssetPath.CompareTo(other.AssetPath);
         }
     }
 }

@@ -320,15 +320,15 @@ namespace YooAsset.Editor
                     sourceDatas.Add(rowData);
                 }
             }
-            foreach (string assetPath in bundleInfo.AllBuiltinAssets)
+            foreach (var assetInfo in bundleInfo.BundleContents)
             {
-                if (mainAssetDic.Contains(assetPath) == false)
+                if (mainAssetDic.Contains(assetInfo.AssetPath) == false)
                 {
                     var rowData = new IncludeTableData();
                     rowData.AssetInfo = null;
-                    rowData.AddAssetPathCell("IncludeAssets", assetPath);
+                    rowData.AddAssetPathCell("IncludeAssets", assetInfo.AssetPath);
                     rowData.AddStringValueCell("AssetSource", "BuiltinAsset");
-                    rowData.AddStringValueCell("AssetGUID", "--");
+                    rowData.AddStringValueCell("AssetGUID", assetInfo.AssetGUID);
                     sourceDatas.Add(rowData);
                 }
             }

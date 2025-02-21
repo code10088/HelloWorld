@@ -18,11 +18,7 @@ namespace YooAsset.Editor
 
             // 概述信息
             {
-#if UNITY_2019_4_OR_NEWER
-                UnityEditor.PackageManager.PackageInfo packageInfo = UnityEditor.PackageManager.PackageInfo.FindForAssembly(typeof(BuildReport).Assembly);
-                if (packageInfo != null)
-                    buildReport.Summary.YooVersion = packageInfo.version;
-#endif
+                buildReport.Summary.YooVersion = EditorTools.GetPackageManagerYooVersion();
                 buildReport.Summary.UnityVersion = UnityEngine.Application.unityVersion;
                 buildReport.Summary.BuildDate = DateTime.Now.ToString();
                 buildReport.Summary.BuildSeconds = BuildRunner.TotalSeconds;
@@ -38,37 +34,35 @@ namespace YooAsset.Editor
                 buildReport.Summary.EnableAddressable = buildMapContext.Command.EnableAddressable;
                 buildReport.Summary.LocationToLower = buildMapContext.Command.LocationToLower;
                 buildReport.Summary.IncludeAssetGUID = buildMapContext.Command.IncludeAssetGUID;
-                buildReport.Summary.IgnoreRuleName = buildMapContext.Command.IgnoreRule.GetType().FullName;
                 buildReport.Summary.AutoCollectShaders = buildMapContext.Command.AutoCollectShaders;
+                buildReport.Summary.IgnoreRuleName = buildMapContext.Command.IgnoreRule.GetType().FullName;
 
                 // 构建参数
                 buildReport.Summary.LegacyDependency = buildParameters.LegacyDependency;
                 buildReport.Summary.ClearBuildCacheFiles = buildParameters.ClearBuildCacheFiles;
                 buildReport.Summary.UseAssetDependencyDB = buildParameters.UseAssetDependencyDB;
                 buildReport.Summary.EnableSharePackRule = buildParameters.EnableSharePackRule;
+                buildReport.Summary.SingleReferencedPackAlone = buildParameters.SingleReferencedPackAlone;
+                buildReport.Summary.FileNameStyle = buildParameters.FileNameStyle;
                 buildReport.Summary.EncryptionClassName = buildParameters.EncryptionServices == null ? "null" : buildParameters.EncryptionServices.GetType().FullName;
-                if (buildParameters.BuildPipeline == nameof(BuiltinBuildPipeline))
+                if (buildParameters is BuiltinBuildParameters)
                 {
                     var builtinBuildParameters = buildParameters as BuiltinBuildParameters;
-                    buildReport.Summary.FileNameStyle = buildParameters.FileNameStyle;
                     buildReport.Summary.CompressOption = builtinBuildParameters.CompressOption;
                     buildReport.Summary.DisableWriteTypeTree = builtinBuildParameters.DisableWriteTypeTree;
                     buildReport.Summary.IgnoreTypeTreeChanges = builtinBuildParameters.IgnoreTypeTreeChanges;
                 }
-                else if (buildParameters.BuildPipeline == nameof(ScriptableBuildPipeline))
+                else if (buildParameters is ScriptableBuildParameters)
                 {
                     var scriptableBuildParameters = buildParameters as ScriptableBuildParameters;
-                    buildReport.Summary.FileNameStyle = buildParameters.FileNameStyle;
                     buildReport.Summary.CompressOption = scriptableBuildParameters.CompressOption;
                     buildReport.Summary.DisableWriteTypeTree = scriptableBuildParameters.DisableWriteTypeTree;
                     buildReport.Summary.IgnoreTypeTreeChanges = scriptableBuildParameters.IgnoreTypeTreeChanges;
-                }
-                else
-                {
-                    buildReport.Summary.FileNameStyle = buildParameters.FileNameStyle;
-                    buildReport.Summary.CompressOption = ECompressOption.Uncompressed;
-                    buildReport.Summary.DisableWriteTypeTree = false;
-                    buildReport.Summary.IgnoreTypeTreeChanges = false;
+                    buildReport.Summary.WriteLinkXML = scriptableBuildParameters.WriteLinkXML;
+                    buildReport.Summary.CacheServerHost = scriptableBuildParameters.CacheServerHost;
+                    buildReport.Summary.CacheServerPort = scriptableBuildParameters.CacheServerPort;
+                    buildReport.Summary.BuiltinShadersBundleName = scriptableBuildParameters.BuiltinShadersBundleName;
+                    buildReport.Summary.MonoScriptsBundleName = scriptableBuildParameters.MonoScriptsBundleName;
                 }
 
                 // 构建结果
@@ -92,7 +86,8 @@ namespace YooAsset.Editor
                 reportAssetInfo.AssetGUID = AssetDatabase.AssetPathToGUID(packageAsset.AssetPath);
                 reportAssetInfo.MainBundleName = mainBundle.BundleName;
                 reportAssetInfo.MainBundleSize = mainBundle.FileSize;
-                reportAssetInfo.DependAssets = GetDependAssets(buildMapContext, mainBundle.BundleName, packageAsset.AssetPath);
+                reportAssetInfo.DependAssets = GetAssetDependAssets(buildMapContext, mainBundle.BundleName, packageAsset.AssetPath);
+                reportAssetInfo.DependBundles = GetAssetDependBundles(manifest, packageAsset);
                 buildReport.AssetInfos.Add(reportAssetInfo);
             }
 
@@ -108,8 +103,9 @@ namespace YooAsset.Editor
                 reportBundleInfo.FileSize = packageBundle.FileSize;
                 reportBundleInfo.Encrypted = packageBundle.Encrypted;
                 reportBundleInfo.Tags = packageBundle.Tags;
-                reportBundleInfo.DependBundles = GetDependBundles(manifest, packageBundle);
-                reportBundleInfo.AllBuiltinAssets = GetAllBuiltinAssets(buildMapContext, packageBundle.BundleName);
+                reportBundleInfo.DependBundles = GetBundleDependBundles(manifest, packageBundle);
+                reportBundleInfo.ReferenceBundles = GetBundleReferenceBundles(manifest, packageBundle);
+                reportBundleInfo.BundleContents = GetBundleContents(buildMapContext, packageBundle.BundleName);
                 buildReport.BundleInfos.Add(reportBundleInfo);
             }
 
@@ -124,9 +120,40 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// 获取资源对象依赖的所有资源包
+        /// 获取资源对象依赖的其它所有资源
         /// </summary>
-        private List<string> GetDependBundles(PackageManifest manifest, PackageBundle packageBundle)
+        private List<AssetInfo> GetAssetDependAssets(BuildMapContext buildMapContext, string bundleName, string assetPath)
+        {
+            List<AssetInfo> result = new List<AssetInfo>();
+            var bundleInfo = buildMapContext.GetBundleInfo(bundleName);
+            var assetInfo = bundleInfo.GetPackAssetInfo(assetPath);
+            foreach (var dependAssetInfo in assetInfo.AllDependAssetInfos)
+            {
+                result.Add(dependAssetInfo.AssetInfo);
+            }
+            result.Sort();
+            return result;
+        }
+
+        /// <summary>
+        /// 获取资源对象依赖的资源包集合
+        /// </summary>
+        private List<string> GetAssetDependBundles(PackageManifest manifest, PackageAsset packageAsset)
+        {
+            List<string> dependBundles = new List<string>(packageAsset.DependBundleIDs.Length);
+            foreach (int index in packageAsset.DependBundleIDs)
+            {
+                string dependBundleName = manifest.BundleList[index].BundleName;
+                dependBundles.Add(dependBundleName);
+            }
+            dependBundles.Sort();
+            return dependBundles;
+        }
+
+        /// <summary>
+        /// 获取资源包依赖的资源包集合
+        /// </summary>
+        private List<string> GetBundleDependBundles(PackageManifest manifest, PackageBundle packageBundle)
         {
             List<string> dependBundles = new List<string>(packageBundle.DependIDs.Length);
             foreach (int index in packageBundle.DependIDs)
@@ -139,42 +166,27 @@ namespace YooAsset.Editor
         }
 
         /// <summary>
-        /// 获取资源对象依赖的其它所有资源
+        /// 获取引用该资源包的资源包集合
         /// </summary>
-        private List<string> GetDependAssets(BuildMapContext buildMapContext, string bundleName, string assetPath)
+        private List<string> GetBundleReferenceBundles(PackageManifest manifest, PackageBundle packageBundle)
         {
-            List<string> result = new List<string>();
-            var bundleInfo = buildMapContext.GetBundleInfo(bundleName);
+            List<string> referenceBundles = new List<string>(packageBundle.ReferenceBundleIDs.Length);
+            foreach (int index in packageBundle.ReferenceBundleIDs)
             {
-                BuildAssetInfo findAssetInfo = null;
-                foreach (var buildAsset in bundleInfo.MainAssets)
-                {
-                    if (buildAsset.AssetInfo.AssetPath == assetPath)
-                    {
-                        findAssetInfo = buildAsset;
-                        break;
-                    }
-                }
-                if (findAssetInfo == null)
-                {
-                    throw new Exception($"Should never get here ! Not found asset {assetPath} in bunlde {bundleName}");
-                }
-                foreach (var dependAssetInfo in findAssetInfo.AllDependAssetInfos)
-                {
-                    result.Add(dependAssetInfo.AssetInfo.AssetPath);
-                }
+                string dependBundleName = manifest.BundleList[index].BundleName;
+                referenceBundles.Add(dependBundleName);
             }
-            result.Sort();
-            return result;
+            referenceBundles.Sort();
+            return referenceBundles;
         }
 
         /// <summary>
-        /// 获取该资源包内的所有资源
+        /// 获取资源包内部所有资产
         /// </summary>
-        private List<string> GetAllBuiltinAssets(BuildMapContext buildMapContext, string bundleName)
+        private List<AssetInfo> GetBundleContents(BuildMapContext buildMapContext, string bundleName)
         {
             var bundleInfo = buildMapContext.GetBundleInfo(bundleName);
-            List<string> result = bundleInfo.GetAllBuiltinAssetPaths();
+            List<AssetInfo> result = bundleInfo.GetBundleContents();
             result.Sort();
             return result;
         }
