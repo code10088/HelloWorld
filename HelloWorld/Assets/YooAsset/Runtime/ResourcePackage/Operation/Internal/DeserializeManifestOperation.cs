@@ -78,7 +78,6 @@ namespace YooAsset
                     // 读取文件头信息
                     Manifest = new PackageManifest();
                     Manifest.FileVersion = fileVersion;
-                    Manifest.LegacyDependency = _buffer.ReadBool();
                     Manifest.EnableAddressable = _buffer.ReadBool();
                     Manifest.LocationToLower = _buffer.ReadBool();
                     Manifest.IncludeAssetGUID = _buffer.ReadBool();
@@ -147,8 +146,7 @@ namespace YooAsset
                         packageBundle.FileSize = _buffer.ReadInt64();
                         packageBundle.Encrypted = _buffer.ReadBool();
                         packageBundle.Tags = _buffer.ReadUTF8Array();
-                        packageBundle.DependIDs = _buffer.ReadInt32Array();
-                        packageBundle.ReferenceBundleIDs = _buffer.ReadInt32Array();
+                        packageBundle.DependBundleIDs = _buffer.ReadInt32Array();
                         ManifestTools.FillBundleCollection(Manifest, packageBundle);
 
                         _packageBundleCount--;

@@ -182,7 +182,6 @@ public class BuildEditor
         buildParameters.PackageName = AssetManager.PackageName;
         buildParameters.PackageVersion = resversion;
         buildParameters.PackageNote = string.Empty;
-        buildParameters.LegacyDependency = false;
         buildParameters.ClearBuildCacheFiles = false;
         buildParameters.UseAssetDependencyDB = true;
         buildParameters.EnableSharePackRule = false;

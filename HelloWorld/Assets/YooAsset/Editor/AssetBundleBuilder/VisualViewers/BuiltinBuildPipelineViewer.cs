@@ -37,7 +37,6 @@ namespace YooAsset.Editor
             buildParameters.BuildTarget = BuildTarget;
             buildParameters.PackageName = PackageName;
             buildParameters.PackageVersion = GetPackageVersion();
-            buildParameters.LegacyDependency = false;
             buildParameters.EnableSharePackRule = true;
             buildParameters.VerifyBuildingResult = true;
             buildParameters.FileNameStyle = fileNameStyle;

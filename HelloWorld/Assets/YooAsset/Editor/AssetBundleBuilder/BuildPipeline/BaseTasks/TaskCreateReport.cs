@@ -38,7 +38,6 @@ namespace YooAsset.Editor
                 buildReport.Summary.IgnoreRuleName = buildMapContext.Command.IgnoreRule.GetType().FullName;
 
                 // 构建参数
-                buildReport.Summary.LegacyDependency = buildParameters.LegacyDependency;
                 buildReport.Summary.ClearBuildCacheFiles = buildParameters.ClearBuildCacheFiles;
                 buildReport.Summary.UseAssetDependencyDB = buildParameters.UseAssetDependencyDB;
                 buildReport.Summary.EnableSharePackRule = buildParameters.EnableSharePackRule;
@@ -155,8 +154,8 @@ namespace YooAsset.Editor
         /// </summary>
         private List<string> GetBundleDependBundles(PackageManifest manifest, PackageBundle packageBundle)
         {
-            List<string> dependBundles = new List<string>(packageBundle.DependIDs.Length);
-            foreach (int index in packageBundle.DependIDs)
+            List<string> dependBundles = new List<string>(packageBundle.DependBundleIDs.Length);
+            foreach (int index in packageBundle.DependBundleIDs)
             {
                 string dependBundleName = manifest.BundleList[index].BundleName;
                 dependBundles.Add(dependBundleName);
@@ -170,7 +169,7 @@ namespace YooAsset.Editor
         /// </summary>
         private List<string> GetBundleReferenceBundles(PackageManifest manifest, PackageBundle packageBundle)
         {
-            List<string> referenceBundles = new List<string>(packageBundle.ReferenceBundleIDs.Length);
+            List<string> referenceBundles = new List<string>(packageBundle.ReferenceBundleIDs.Count);
             foreach (int index in packageBundle.ReferenceBundleIDs)
             {
                 string dependBundleName = manifest.BundleList[index].BundleName;

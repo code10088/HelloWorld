@@ -31,12 +31,11 @@ namespace YooAsset
         /// </summary>
         public int BundleID;
 
-        #region YOOASSET_LEGACY_DEPENDENCY
         /// <summary>
-        /// 依赖的资源包列表
+        /// 依赖的资源包ID集合
+        /// 说明：框架层收集查询结果
         /// </summary>
         public int[] DependBundleIDs;
-        #endregion
 
         /// <summary>
         /// 临时数据对象（仅编辑器有效）

@@ -27,7 +27,7 @@ namespace YooAsset.Editor
         private List<ITableData> _sortingDatas;
 
         // 排序相关
-        private string _sortingHeaderElement = string.Empty;
+        private string _sortingHeader;
         private bool _descendingSort = true;
 
         /// <summary>
@@ -192,14 +192,36 @@ namespace YooAsset.Editor
             _listView.itemsSource = itemsSource.ToList();
             _listView.Rebuild();
 
-            // 动态设置元素数量
+            // 刷新标题栏
+            RefreshToobar();
+        }
+        private void RefreshToobar()
+        {
+            // 设置为原始标题
+            foreach (var column in _columns)
+            {
+                var toobarButton = _toolbar.Q<ToolbarButton>(column.ElementName);
+                toobarButton.text = column.HeaderTitle;
+            }
+
+            // 设置元素数量
             foreach (var column in _columns)
             {
                 if (column.ColumnStyle.Counter)
                 {
                     var toobarButton = GetHeaderElement(column.ElementName) as ToolbarButton;
-                    toobarButton.text = $"{column.HeaderTitle} ({itemsSource.Count()})";
+                    toobarButton.text = $"{toobarButton.text} ({itemsSource.Count()})";
                 }
+            }
+
+            // 设置升降符号
+            if (string.IsNullOrEmpty(_sortingHeader) == false)
+            {
+                var _toobarButton = _toolbar.Q<ToolbarButton>(_sortingHeader);
+                if (_descendingSort)
+                    _toobarButton.text = $"{_toobarButton.text} ↓";
+                else
+                    _toobarButton.text = $"{_toobarButton.text} ↑";
             }
         }
 
@@ -247,26 +269,15 @@ namespace YooAsset.Editor
             if (clickedColumn.ColumnStyle.Sortable == false)
                 return;
 
-            if (_sortingHeaderElement != clickedColumn.ElementName)
+            if (_sortingHeader != clickedColumn.ElementName)
             {
-                _sortingHeaderElement = clickedColumn.ElementName;
+                _sortingHeader = clickedColumn.ElementName;
                 _descendingSort = false;
             }
             else
             {
                 _descendingSort = !_descendingSort;
             }
-
-            // 升降符号
-            foreach (var column in _columns)
-            {
-                var button = _toolbar.Q<ToolbarButton>(column.ElementName);
-                button.text = column.HeaderTitle;
-            }
-            if (_descendingSort)
-                toolbarBtn.text = $"{clickedColumn.HeaderTitle} ↓";
-            else
-                toolbarBtn.text = $"{clickedColumn.HeaderTitle} ↑";
 
             // 升降排序
             if (_descendingSort)

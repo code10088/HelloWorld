@@ -72,6 +72,7 @@ namespace YooAsset.Editor
                 columnStyle.Stretchable = true;
                 columnStyle.Searchable = true;
                 columnStyle.Sortable = true;
+                columnStyle.Counter = true;
                 var column = new TableColumn("AssetPath", "Asset Path", columnStyle);
                 column.MakeCell = () =>
                 {

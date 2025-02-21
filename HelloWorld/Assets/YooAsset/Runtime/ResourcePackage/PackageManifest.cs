@@ -18,11 +18,6 @@ namespace YooAsset
         public string FileVersion;
 
         /// <summary>
-        /// 怀旧版依赖模式
-        /// </summary>
-        public bool LegacyDependency;
-
-        /// <summary>
         /// 启用可寻址资源定位
         /// </summary>
         public bool EnableAddressable;
@@ -191,34 +186,19 @@ namespace YooAsset
         /// </summary>
         public PackageBundle[] GetAllDependencies(string assetPath)
         {
-            // YOOASSET_LEGACY_DEPENDENCY
-            if (LegacyDependency)
+            if (TryGetPackageAsset(assetPath, out PackageAsset packageAsset))
             {
-                if (TryGetPackageAsset(assetPath, out PackageAsset packageAsset))
-                {
-                    List<PackageBundle> result = new List<PackageBundle>(packageAsset.DependBundleIDs.Length);
-                    foreach (var dependID in packageAsset.DependBundleIDs)
-                    {
-                        var dependBundle = GetMainPackageBundle(dependID);
-                        result.Add(dependBundle);
-                    }
-                    return result.ToArray();
-                }
-                else
-                {
-                    throw new Exception("Should never get here !");
-                }
-            }
-            else
-            {
-                var packageBundle = GetMainPackageBundle(assetPath);
-                List<PackageBundle> result = new List<PackageBundle>(packageBundle.DependIDs.Length);
-                foreach (var dependID in packageBundle.DependIDs)
+                List<PackageBundle> result = new List<PackageBundle>(packageAsset.DependBundleIDs.Length);
+                foreach (var dependID in packageAsset.DependBundleIDs)
                 {
                     var dependBundle = GetMainPackageBundle(dependID);
                     result.Add(dependBundle);
                 }
                 return result.ToArray();
+            }
+            else
+            {
+                throw new Exception("Should never get here !");
             }
         }
 

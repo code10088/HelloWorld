@@ -16,7 +16,7 @@ namespace YooAsset
         /// <summary>
         /// 快速启动模式
         /// </summary>
-        public static bool QuickStartMode = false;
+        public static bool QuickStartMode = true;
 
         /// <summary>
         /// 异步操作的最小时间片段

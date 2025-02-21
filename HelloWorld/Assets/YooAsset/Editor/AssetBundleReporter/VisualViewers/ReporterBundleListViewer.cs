@@ -72,6 +72,7 @@ namespace YooAsset.Editor
                 columnStyle.Stretchable = true;
                 columnStyle.Searchable = true;
                 columnStyle.Sortable = true;
+                columnStyle.Counter = true;
                 var column = new TableColumn("BundleName", "Bundle Name", columnStyle);
                 column.MakeCell = () =>
                 {
@@ -181,6 +182,7 @@ namespace YooAsset.Editor
                 columnStyle.Stretchable = true;
                 columnStyle.Searchable = true;
                 columnStyle.Sortable = true;
+                columnStyle.Counter = true;
                 var column = new TableColumn("IncludeAssets", "Include Assets", columnStyle);
                 column.MakeCell = () =>
                 {

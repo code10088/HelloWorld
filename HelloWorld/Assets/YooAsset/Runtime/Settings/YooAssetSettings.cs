@@ -29,7 +29,7 @@ namespace YooAsset
         /// <summary>
         /// 清单文件格式版本
         /// </summary>
-        public const string ManifestFileVersion = "2.3.0";
+        public const string ManifestFileVersion = "2.3.1";
 
 
         /// <summary>

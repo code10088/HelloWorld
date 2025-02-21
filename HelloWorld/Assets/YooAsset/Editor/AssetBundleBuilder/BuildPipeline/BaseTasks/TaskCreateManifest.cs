@@ -31,7 +31,6 @@ namespace YooAsset.Editor
             // 创建新补丁清单
             PackageManifest manifest = new PackageManifest();
             manifest.FileVersion = YooAssetSettings.ManifestFileVersion;
-            manifest.LegacyDependency = buildParameters.LegacyDependency;
             manifest.EnableAddressable = buildMapContext.Command.EnableAddressable;
             manifest.LocationToLower = buildMapContext.Command.LocationToLower;
             manifest.IncludeAssetGUID = buildMapContext.Command.IncludeAssetGUID;
@@ -55,13 +54,9 @@ namespace YooAsset.Editor
             if (processBundleTags)
                 ProcessBundleTags(manifest);
 
-            #region YOOASSET_LEGACY_DEPENDENCY
-            if (buildParameters.LegacyDependency)
-            {
-                if (processBundleDepends)
-                    ProcessLegacyDependency(context, manifest);
-            }
-            #endregion
+            // 4. 处理内置资源包
+            if (processBundleDepends)
+                ProcessBuiltinBundleDependency(context, manifest);
 
             // 创建补丁清单文本文件
             {
@@ -73,17 +68,13 @@ namespace YooAsset.Editor
 
             // 创建补丁清单二进制文件
             string packageHash;
+            string packagePath;
             {
                 string fileName = YooAssetSettingsData.GetManifestBinaryFileName(buildParameters.PackageName, buildParameters.PackageVersion);
-                string filePath = $"{packageOutputDirectory}/{fileName}";
-                ManifestTools.SerializeToBinary(filePath, manifest);
-                packageHash = HashUtility.FileCRC32(filePath);
-                BuildLogger.Log($"Create package manifest file: {filePath}");
-
-                ManifestContext manifestContext = new ManifestContext();
-                byte[] bytesData = FileUtility.ReadAllBytes(filePath);
-                manifestContext.Manifest = ManifestTools.DeserializeFromBinary(bytesData);
-                context.SetContextObject(manifestContext);
+                packagePath = $"{packageOutputDirectory}/{fileName}";
+                ManifestTools.SerializeToBinary(packagePath, manifest);
+                packageHash = HashUtility.FileCRC32(packagePath);
+                BuildLogger.Log($"Create package manifest file: {packagePath}");
             }
 
             // 创建补丁清单哈希文件
@@ -100,6 +91,14 @@ namespace YooAsset.Editor
                 string filePath = $"{packageOutputDirectory}/{fileName}";
                 FileUtility.WriteAllText(filePath, buildParameters.PackageVersion);
                 BuildLogger.Log($"Create package manifest version file: {filePath}");
+            }
+
+            // 填充上下文
+            {
+                ManifestContext manifestContext = new ManifestContext();
+                byte[] bytesData = FileUtility.ReadAllBytes(packagePath);
+                manifestContext.Manifest = ManifestTools.DeserializeFromBinary(bytesData);
+                context.SetContextObject(manifestContext);
             }
         }
 
@@ -192,18 +191,13 @@ namespace YooAsset.Editor
                 packageAsset.BundleID = GetCachedBundleIndexID(assetInfo.BundleName);
             }
 
-            #region YOOASSET_LEGACY_DEPENDENCY
-            if (manifest.LegacyDependency)
+            // 记录资源对象依赖的资源包ID集合
+            // 注意：依赖关系非引擎构建结果里查询！
+            foreach (var packageAsset in manifest.AssetList)
             {
-                // 记录资源对象依赖的资源包ID集合
-                // 注意：依赖关系非引擎构建结果里查询！
-                foreach (var packageAsset in manifest.AssetList)
-                {
-                    var mainAssetInfo = packageAsset.TempDataInEditor as BuildAssetInfo;
-                    packageAsset.DependBundleIDs = GetAssetDependBundleIDs(mainAssetInfo);
-                }
+                var mainAssetInfo = packageAsset.TempDataInEditor as BuildAssetInfo;
+                packageAsset.DependBundleIDs = GetAssetDependBundleIDs(mainAssetInfo);
             }
-            #endregion
         }
 
         /// <summary>
@@ -215,33 +209,19 @@ namespace YooAsset.Editor
             foreach (var packageBundle in manifest.BundleList)
             {
                 int mainBundleID = GetCachedBundleIndexID(packageBundle.BundleName);
-                string[] depends = GetBundleDepends(context, packageBundle.BundleName);
-                List<int> dependIDs = new List<int>(depends.Length);
-                foreach (var dependBundleName in depends)
+                string[] dependNames = GetBundleDepends(context, packageBundle.BundleName);
+                List<int> dependIDs = new List<int>(dependNames.Length);
+                foreach (var dependName in dependNames)
                 {
-                    int bundleID = GetCachedBundleIndexID(dependBundleName);
-                    if (bundleID != mainBundleID)
-                        dependIDs.Add(bundleID);
-                }
-                packageBundle.DependIDs = dependIDs.ToArray();
-            }
-
-            #region YOOASSET_LEGACY_DEPENDENCY
-            if (manifest.LegacyDependency)
-            {
-                foreach (var packageBundle in manifest.BundleList)
-                {
-                    var dependIDs = packageBundle.DependIDs;
-                    packageBundle.TempDataInEditor = new DependencyQuery(dependIDs);
+                    int dependBundleID = GetCachedBundleIndexID(dependName);
+                    if (dependBundleID != mainBundleID)
+                        dependIDs.Add(dependBundleID);
                 }
 
-                // 记录引用该资源包的资源包ID集合
-                foreach (var packageBundle in manifest.BundleList)
-                {
-                    packageBundle.ReferenceBundleIDs = GetBundleReferenceBundleIDs(manifest, packageBundle);
-                }
+                // 排序并填充数据
+                dependIDs.Sort();
+                packageBundle.DependBundleIDs = dependIDs.ToArray();
             }
-            #endregion
         }
 
         /// <summary>
@@ -254,41 +234,17 @@ namespace YooAsset.Editor
                 packageBundle.Tags = Array.Empty<string>();
             }
 
-            // YOOASSET_LEGACY_DEPENDENCY
-            if (manifest.LegacyDependency)
+            // 将主资源的标签信息传染给其依赖的资源包集合
+            foreach (var packageAsset in manifest.AssetList)
             {
-                // 将主资源的标签信息传染给其依赖的资源包集合
-                foreach (var packageAsset in manifest.AssetList)
+                var assetTags = packageAsset.AssetTags;
+                int bundleID = packageAsset.BundleID;
+                CacheBundleTags(bundleID, assetTags);
+                if (packageAsset.DependBundleIDs != null)
                 {
-                    var assetTags = packageAsset.AssetTags;
-                    int bundleID = packageAsset.BundleID;
-                    CacheBundleTags(bundleID, assetTags);
-
-                    if (packageAsset.DependBundleIDs != null)
+                    foreach (var dependBundleID in packageAsset.DependBundleIDs)
                     {
-                        foreach (var dependBundleID in packageAsset.DependBundleIDs)
-                        {
-                            CacheBundleTags(dependBundleID, assetTags);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                // 将主资源的标签信息传染给其依赖的资源包集合
-                foreach (var packageAsset in manifest.AssetList)
-                {
-                    var assetTags = packageAsset.AssetTags;
-                    int bundleID = packageAsset.BundleID;
-                    CacheBundleTags(bundleID, assetTags);
-
-                    var packageBundle = manifest.BundleList[bundleID];
-                    if (packageBundle.DependIDs != null)
-                    {
-                        foreach (var dependBundleID in packageBundle.DependIDs)
-                        {
-                            CacheBundleTags(dependBundleID, assetTags);
-                        }
+                        CacheBundleTags(dependBundleID, assetTags);
                     }
                 }
             }
@@ -342,26 +298,15 @@ namespace YooAsset.Editor
         }
 
         #region YOOASSET_LEGACY_DEPENDENCY
-        private class DependencyQuery
-        {
-            private readonly HashSet<int> _dependIDs;
-
-            public DependencyQuery(int[] dependIDs)
-            {
-                _dependIDs = new HashSet<int>(dependIDs);
-            }
-            public bool Contains(int bundleID)
-            {
-                return _dependIDs.Contains(bundleID);
-            }
-        }
-        private void ProcessLegacyDependency(BuildContext context, PackageManifest manifest)
+        private void ProcessBuiltinBundleDependency(BuildContext context, PackageManifest manifest)
         {
             // 注意：如果是可编程构建管线，需要补充内置资源包
             // 注意：该步骤依赖前面的操作！
             var buildResultContext = context.TryGetContextObject<TaskBuilding_SBP.BuildResultContext>();
             if (buildResultContext != null)
             {
+                // 注意：初始化资源清单建立引用关系
+                ManifestTools.InitManifest(manifest);
                 ProcessBuiltinBundleReference(context, manifest, buildResultContext.BuiltinShadersBundleName);
                 ProcessBuiltinBundleReference(context, manifest, buildResultContext.MonoScriptsBundleName);
             }
@@ -425,26 +370,11 @@ namespace YooAsset.Editor
                     }
                 }
             }
-            return result.ToArray();
-        }
-        private int[] GetBundleReferenceBundleIDs(PackageManifest manifest, PackageBundle queryBundle)
-        {
-            int queryBundleID = GetCachedBundleIndexID(queryBundle.BundleName);
-            List<int> result = new List<int>();
-            foreach (var packageBundle in manifest.BundleList)
-            {
-                if (packageBundle == queryBundle)
-                    continue;
 
-                var dependencyQuery = packageBundle.TempDataInEditor as DependencyQuery;
-                if (dependencyQuery.Contains(queryBundleID))
-                {
-                    int referenceBundleID = GetCachedBundleIndexID(packageBundle.BundleName);
-                    if (result.Contains(referenceBundleID) == false)
-                        result.Add(referenceBundleID);
-                }
-            }
-            return result.ToArray();
+            // 排序并返回数据
+            List<int> listResult = new List<int>(result);
+            listResult.Sort();
+            return listResult.ToArray();
         }
         #endregion
     }

@@ -35,7 +35,6 @@ namespace YooAsset
                 buffer.WriteUTF8(manifest.FileVersion);
 
                 // 写入文件头信息
-                buffer.WriteBool(manifest.LegacyDependency);
                 buffer.WriteBool(manifest.EnableAddressable);
                 buffer.WriteBool(manifest.LocationToLower);
                 buffer.WriteBool(manifest.IncludeAssetGUID);
@@ -71,8 +70,7 @@ namespace YooAsset
                     buffer.WriteInt64(packageBundle.FileSize);
                     buffer.WriteBool(packageBundle.Encrypted);
                     buffer.WriteUTF8Array(packageBundle.Tags);
-                    buffer.WriteInt32Array(packageBundle.DependIDs);
-                    buffer.WriteInt32Array(packageBundle.ReferenceBundleIDs);
+                    buffer.WriteInt32Array(packageBundle.DependBundleIDs);
                 }
 
                 // 写入文件流
@@ -111,7 +109,6 @@ namespace YooAsset
             {
                 // 读取文件头信息
                 manifest.FileVersion = fileVersion;
-                manifest.LegacyDependency = buffer.ReadBool();
                 manifest.EnableAddressable = buffer.ReadBool();
                 manifest.LocationToLower = buffer.ReadBool();
                 manifest.IncludeAssetGUID = buffer.ReadBool();
@@ -154,8 +151,7 @@ namespace YooAsset
                     packageBundle.FileSize = buffer.ReadInt64();
                     packageBundle.Encrypted = buffer.ReadBool();
                     packageBundle.Tags = buffer.ReadUTF8Array();
-                    packageBundle.DependIDs = buffer.ReadInt32Array();
-                    packageBundle.ReferenceBundleIDs = buffer.ReadInt32Array();
+                    packageBundle.DependBundleIDs = buffer.ReadInt32Array();
                     FillBundleCollection(manifest, packageBundle);
                 }
             }
@@ -181,6 +177,17 @@ namespace YooAsset
                 else
                 {
                     throw new Exception($"Invalid bundle id : {bundleID} Asset path : {packageAsset.AssetPath}");
+                }
+            }
+
+            // 填充资源包引用关系
+            for (int index = 0; index < manifest.BundleList.Count; index++)
+            {
+                var sourceBundle = manifest.BundleList[index];
+                foreach (int dependIndex in sourceBundle.DependBundleIDs)
+                {
+                    var dependBundle = manifest.BundleList[dependIndex];
+                    dependBundle.AddReferenceBundleID(index);
                 }
             }
         }

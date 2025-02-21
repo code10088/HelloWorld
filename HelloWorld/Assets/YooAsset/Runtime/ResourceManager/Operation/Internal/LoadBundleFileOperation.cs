@@ -156,10 +156,10 @@ namespace YooAsset
             if (RefCount > 0)
                 return false;
 
-            #region YOOASSET_LEGACY_DEPENDENCY
+            // YOOASSET_LEGACY_DEPENDENCY
             // 检查引用链上的资源包是否已经全部销毁
             // 注意：互相引用的资源包无法卸载！
-            if (LoadBundleInfo.Bundle.ReferenceBundleIDs.Length > 0)
+            if (LoadBundleInfo.Bundle.ReferenceBundleIDs.Count > 0)
             {
                 foreach (var bundleID in LoadBundleInfo.Bundle.ReferenceBundleIDs)
                 {
@@ -167,7 +167,6 @@ namespace YooAsset
                         return false;
                 }
             }
-            #endregion
 
             return true;
         }

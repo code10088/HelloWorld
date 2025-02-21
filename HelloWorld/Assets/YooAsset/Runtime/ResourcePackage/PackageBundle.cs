@@ -44,16 +44,9 @@ namespace YooAsset
 
         /// <summary>
         /// 依赖的资源包ID集合
+        /// 注意：引擎层构建查询结果
         /// </summary>
-        public int[] DependIDs;
-
-        #region YOOASSET_LEGACY_DEPENDENCY
-        /// <summary>
-        /// 引用该资源包的资源包列表
-        /// 说明：谁引用了该资源包
-        /// </summary>
-        public int[] ReferenceBundleIDs;
-        #endregion
+        public int[] DependBundleIDs;
 
         /// <summary>
         /// 资源包GUID
@@ -66,7 +59,6 @@ namespace YooAsset
         /// <summary>
         /// 资源包类型
         /// </summary>
-        private int _bundleType;
         public int BundleType
         {
             get
@@ -74,11 +66,11 @@ namespace YooAsset
                 return _bundleType;
             }
         }
+        private int _bundleType;
 
         /// <summary>
         /// 文件名称
-        /// </summary>
-        private string _fileName;
+        /// </summary>  
         public string FileName
         {
             get
@@ -88,11 +80,11 @@ namespace YooAsset
                 return _fileName;
             }
         }
+        private string _fileName;
 
         /// <summary>
         /// 文件后缀名
         /// </summary>
-        private string _fileExtension;
         public string FileExtension
         {
             get
@@ -102,6 +94,7 @@ namespace YooAsset
                 return _fileExtension;
             }
         }
+        private string _fileExtension;
 
         /// <summary>
         /// 包含的主资源集合
@@ -110,10 +103,12 @@ namespace YooAsset
         public readonly List<PackageAsset> IncludeMainAssets = new List<PackageAsset>(10);
 
         /// <summary>
-        /// 临时数据对象（仅编辑器有效）
+        /// 引用该资源包的资源包列表
+        /// 说明：谁引用了该资源包
         /// </summary>
         [NonSerialized]
-        public object TempDataInEditor;
+        public readonly List<int> ReferenceBundleIDs = new List<int>(10);
+        private readonly HashSet<int> _referenceBundleIDs = new HashSet<int>();
 
 
         public PackageBundle()
@@ -128,6 +123,19 @@ namespace YooAsset
             _bundleType = manifest.BuildBundleType;
             _fileExtension = ManifestTools.GetRemoteBundleFileExtension(BundleName);
             _fileName = ManifestTools.GetRemoteBundleFileName(manifest.OutputNameStyle, BundleName, _fileExtension, FileHash);
+        }
+
+        /// <summary>
+        /// 添加引用该资源包的资源包ID
+        /// 说明：谁引用了该资源包
+        /// </summary>
+        public void AddReferenceBundleID(int bundleID)
+        {
+            if (_referenceBundleIDs.Contains(bundleID) == false)
+            {
+                _referenceBundleIDs.Add(bundleID);
+                ReferenceBundleIDs.Add(bundleID);
+            }
         }
 
         /// <summary>

@@ -62,7 +62,6 @@ namespace YooAsset.Editor
             BindListViewItem(string.Empty, string.Empty);
 
             BindListViewHeader("Build Params");
-            BindListViewItem("Legacy Dependency Mode", $"{buildReport.Summary.LegacyDependency}");
             BindListViewItem("Clear Build Cache Files", $"{buildReport.Summary.ClearBuildCacheFiles}");
             BindListViewItem("Use Asset Dependency DB", $"{buildReport.Summary.UseAssetDependencyDB}");
             BindListViewItem("Enable Share Pack Rule", $"{buildReport.Summary.EnableSharePackRule}");
