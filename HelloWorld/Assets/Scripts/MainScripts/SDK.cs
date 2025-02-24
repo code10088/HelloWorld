@@ -116,6 +116,7 @@ public class SDK : MonoSingletion<SDK>
         private void OnError(WXADErrorResponse response)
         {
             GameDebug.LogError($"´íÎó£º{adUnitId} {response.errCode}");
+            OnClose(null);
             if (retry < 3)
             {
                 video.Load();
@@ -146,7 +147,8 @@ public class SDK : MonoSingletion<SDK>
         }
         private void OnClose(WXRewardedVideoAdOnCloseResponse response)
         {
-            onClose?.Invoke(response.isEnded);
+            onClose?.Invoke(response != null && response.isEnded);
+            onClose = null;
         }
         public override void Destroy()
         {
@@ -191,6 +193,7 @@ public class SDK : MonoSingletion<SDK>
         private void OnError(WXADErrorResponse response)
         {
             GameDebug.LogError($"´íÎó£º{adUnitId} {response.errCode}");
+            OnClose();
             Destroy();
         }
         private void OnLoad(WXADLoadResponse response)
@@ -208,6 +211,7 @@ public class SDK : MonoSingletion<SDK>
         private void OnClose()
         {
             onClose?.Invoke(true);
+            onClose = null;
         }
         public override void Destroy()
         {
@@ -290,6 +294,7 @@ public class SDK : MonoSingletion<SDK>
         private void OnError(int code, string message)
         {
             GameDebug.LogError($"´íÎó£º{adUnitId} {code} {message}");
+            OnClose(false, 0);
             if (retry < 3)
             {
                 video.Load();
@@ -308,6 +313,7 @@ public class SDK : MonoSingletion<SDK>
         private void OnClose(bool isEnded, int count)
         {
             onClose?.Invoke(isEnded);
+            onClose = null;
         }
         public override void Destroy()
         {
@@ -352,6 +358,7 @@ public class SDK : MonoSingletion<SDK>
         private void OnError(int code, string message)
         {
             GameDebug.LogError($"´íÎó£º{adUnitId} {code} {message}");
+            OnClose();
             Destroy();
         }
         private void OnLoad()
@@ -361,6 +368,7 @@ public class SDK : MonoSingletion<SDK>
         private void OnClose()
         {
             onClose?.Invoke(true);
+            onClose = null;
         }
         public override void Destroy()
         {
