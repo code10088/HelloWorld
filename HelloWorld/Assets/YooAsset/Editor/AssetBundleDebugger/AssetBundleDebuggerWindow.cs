@@ -272,7 +272,7 @@ namespace YooAsset.Editor
                     packageData.ProviderInfos.Sort();
                     foreach (var providerInfo in packageData.ProviderInfos)
                     {
-                        providerInfo.DependBundleInfos.Sort();
+                        providerInfo.DependBundles.Sort();
                     }
                 }
 

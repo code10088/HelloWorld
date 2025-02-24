@@ -13,6 +13,7 @@ namespace YooAsset.Editor
     {
         private class ProviderTableData : DefaultTableData
         {
+            public DebugPackageData PackageData;
             public DebugProviderInfo ProviderInfo;
         }
         private class DependTableData : DefaultTableData
@@ -205,7 +206,7 @@ namespace YooAsset.Editor
                 {
                     StyleColor textColor;
                     var providerTableData = data as ProviderTableData;
-                    if(providerTableData.ProviderInfo.Status == EOperationStatus.Failed.ToString())
+                    if (providerTableData.ProviderInfo.Status == EOperationStatus.Failed.ToString())
                         textColor = new StyleColor(Color.yellow);
                     else
                         textColor = new StyleColor(Color.white);
@@ -309,6 +310,7 @@ namespace YooAsset.Editor
                 foreach (var providerInfo in packageData.ProviderInfos)
                 {
                     var rowData = new ProviderTableData();
+                    rowData.PackageData = packageData;
                     rowData.ProviderInfo = providerInfo;
                     rowData.AddAssetPathCell("PackageName", packageData.PackageName);
                     rowData.AddStringValueCell("AssetPath", providerInfo.AssetPath);
@@ -368,12 +370,14 @@ namespace YooAsset.Editor
         private void OnProviderTableViewSelectionChanged(ITableData data)
         {
             var providerTableData = data as ProviderTableData;
+            DebugPackageData packageData = providerTableData.PackageData;
             DebugProviderInfo providerInfo = providerTableData.ProviderInfo;
 
             // 填充依赖数据
-            var sourceDatas = new List<ITableData>(providerInfo.DependBundleInfos.Count);
-            foreach (var dependBundleInfo in providerInfo.DependBundleInfos)
+            var sourceDatas = new List<ITableData>(providerInfo.DependBundles.Count);
+            foreach (var bundleName in providerInfo.DependBundles)
             {
+                var dependBundleInfo = packageData.GetBundleInfo(bundleName);
                 var rowData = new DependTableData();
                 rowData.BundleInfo = dependBundleInfo;
                 rowData.AddStringValueCell("DependBundles", dependBundleInfo.BundleName);

@@ -19,8 +19,7 @@ internal class SceneBattle : MonoBehaviour
         _windowHandle.InstantiateSync(CanvasDesktop.transform);
 
         // 加载背景音乐
-        var package = YooAssets.GetPackage("DefaultPackage");
-        _musicHandle = package.LoadAssetAsync<AudioClip>("music_background");
+        _musicHandle = YooAssets.LoadAssetAsync<AudioClip>("music_background");
         yield return _musicHandle;
 
         // 播放背景音乐
@@ -28,6 +27,11 @@ internal class SceneBattle : MonoBehaviour
         audioSource.loop = true;
         audioSource.clip = _musicHandle.AssetObject as AudioClip;
         audioSource.Play();
+
+        // 切换场景的时候释放资源
+        var package = YooAssets.GetPackage("DefaultPackage");
+        var operation = package.UnloadUnusedAssetsAsync();
+        yield return operation;
 
         _battleRoom = new BattleRoom();
         _battleRoom.IntRoom();

@@ -45,7 +45,7 @@ namespace YooAsset
         /// <summary>
         /// 依赖的资源包列表
         /// </summary>
-        public List<DebugBundleInfo> DependBundleInfos;
+        public List<string> DependBundles;
 
         public int CompareTo(DebugProviderInfo other)
         {

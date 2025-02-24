@@ -120,6 +120,7 @@ namespace YooAsset
         /// </summary>
         public void InitBundle(PackageManifest manifest)
         {
+            _mainfest = manifest;
             _bundleType = manifest.BuildBundleType;
             _fileExtension = ManifestTools.GetRemoteBundleFileExtension(BundleName);
             _fileName = ManifestTools.GetRemoteBundleFileName(manifest.OutputNameStyle, BundleName, _fileExtension, FileHash);
@@ -177,5 +178,23 @@ namespace YooAsset
 
             return false;
         }
+
+        #region 调试信息
+        private PackageManifest _mainfest;
+        private List<string> _debugReferenceBundles;
+        public List<string> GetDebugReferenceBundles()
+        {
+            if (_debugReferenceBundles == null)
+            {
+                _debugReferenceBundles = new List<string>(ReferenceBundleIDs.Count);
+                foreach (int bundleID in ReferenceBundleIDs)
+                {
+                    var packageBundle = _mainfest.BundleList[bundleID];
+                    _debugReferenceBundles.Add(packageBundle.BundleName);
+                }
+            }
+            return _debugReferenceBundles;
+        }
+        #endregion
     }
 }

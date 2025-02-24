@@ -17,5 +17,44 @@ namespace YooAsset
         /// 调试数据列表
         /// </summary>
         public List<DebugProviderInfo> ProviderInfos = new List<DebugProviderInfo>(1000);
+
+        /// <summary>
+        /// 调试数据列表
+        /// </summary>
+        public List<DebugBundleInfo> BundleInfos = new List<DebugBundleInfo>(1000);
+
+
+        [NonSerialized]
+        public Dictionary<string, DebugBundleInfo> BundleInfoDic = new Dictionary<string, DebugBundleInfo>();
+        private bool _isParse = false;
+
+        /// <summary>
+        /// 获取调试资源包信息类
+        /// </summary>
+        public DebugBundleInfo GetBundleInfo(string bundleName)
+        {
+            // 解析数据
+            if (_isParse == false)
+            {
+                _isParse = true;
+                foreach (var bundleInfo in BundleInfos)
+                {
+                    if (BundleInfoDic.ContainsKey(bundleInfo.BundleName) == false)
+                    {
+                        BundleInfoDic.Add(bundleInfo.BundleName, bundleInfo);
+                    }
+                }
+            }
+
+            if (BundleInfoDic.TryGetValue(bundleName, out DebugBundleInfo value))
+            {
+                return value;
+            }
+            else
+            {
+                UnityEngine.Debug.LogError($"Can not found {nameof(DebugBundleInfo)} : {bundleName}");
+                return null;
+            }
+        }
     }
 }

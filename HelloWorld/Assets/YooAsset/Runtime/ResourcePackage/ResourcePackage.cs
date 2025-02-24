@@ -339,10 +339,11 @@ namespace YooAsset
         /// 回收不再使用的资源
         /// 说明：卸载引用计数为零的资源
         /// </summary>
-        public UnloadUnusedAssetsOperation UnloadUnusedAssetsAsync()
+        /// <param name="loopCount">循环迭代次数</param>
+        public UnloadUnusedAssetsOperation UnloadUnusedAssetsAsync(int loopCount = 10)
         {
             DebugCheckInitialize();
-            var operation = new UnloadUnusedAssetsOperation(_resourceManager);
+            var operation = new UnloadUnusedAssetsOperation(_resourceManager, loopCount);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
@@ -1146,10 +1147,7 @@ namespace YooAsset
         #region 调试信息
         internal DebugPackageData GetDebugPackageData()
         {
-            DebugPackageData data = new DebugPackageData();
-            data.PackageName = PackageName;
-            data.ProviderInfos = _resourceManager.GetDebugReportInfos();
-            return data;
+            return _resourceManager.GetDebugPackageData();
         }
         #endregion
     }

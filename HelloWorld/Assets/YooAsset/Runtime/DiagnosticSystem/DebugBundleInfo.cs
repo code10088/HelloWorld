@@ -22,6 +22,11 @@ namespace YooAsset
         /// </summary>
         public EOperationStatus Status;
 
+        /// <summary>
+        /// 谁引用了该资源包
+        /// </summary>
+        public List<string> ReferenceBundles;
+
         public int CompareTo(DebugBundleInfo other)
         {
             return Compare(this, other);

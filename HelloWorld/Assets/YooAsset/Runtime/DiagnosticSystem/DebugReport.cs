@@ -22,7 +22,6 @@ namespace YooAsset
         /// </summary>
         public List<DebugPackageData> PackageDatas = new List<DebugPackageData>(10);
 
-
         /// <summary>
         /// 序列化
         /// </summary>

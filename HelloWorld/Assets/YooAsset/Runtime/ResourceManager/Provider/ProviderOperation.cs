@@ -286,7 +286,7 @@ namespace YooAsset
             return status;
         }
 
-        #region 调试信息相关
+        #region 调试信息
         /// <summary>
         /// 出生的场景
         /// </summary>
@@ -341,16 +341,15 @@ namespace YooAsset
         /// <summary>
         /// 获取资源包的调试信息列表
         /// </summary>
-        internal void GetBundleDebugInfos(List<DebugBundleInfo> output)
+        internal List<string> GetDebugDependBundles()
         {
+            List<string> result = new List<string>(_bundleLoaders.Count);
             foreach (var bundleLoader in _bundleLoaders)
             {
-                var bundleInfo = new DebugBundleInfo();
-                bundleInfo.BundleName = bundleLoader.LoadBundleInfo.Bundle.BundleName;
-                bundleInfo.RefCount = bundleLoader.RefCount;
-                bundleInfo.Status = bundleLoader.Status;
-                output.Add(bundleInfo);
+                var packageBundle = bundleLoader.LoadBundleInfo.Bundle;
+                result.Add(packageBundle.BundleName);
             }
+            return result;
         }
         #endregion
     }
