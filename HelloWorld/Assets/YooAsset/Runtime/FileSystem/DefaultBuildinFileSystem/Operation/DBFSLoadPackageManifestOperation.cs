@@ -23,11 +23,11 @@ namespace YooAsset
             _fileSystem = fileSystem;
             _packageVersion = packageVersion;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.RequestBuildinPackageHash;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -37,9 +37,11 @@ namespace YooAsset
                 if (_requestBuildinPackageHashOp == null)
                 {
                     _requestBuildinPackageHashOp = new RequestBuildinPackageHashOperation(_fileSystem, _packageVersion);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _requestBuildinPackageHashOp);
+                    _requestBuildinPackageHashOp.StartOperation();
+                    AddChildOperation(_requestBuildinPackageHashOp);
                 }
 
+                _requestBuildinPackageHashOp.UpdateOperation();
                 if (_requestBuildinPackageHashOp.IsDone == false)
                     return;
 
@@ -61,9 +63,11 @@ namespace YooAsset
                 {
                     string packageHash = _requestBuildinPackageHashOp.PackageHash;
                     _loadBuildinPackageManifestOp = new LoadBuildinPackageManifestOperation(_fileSystem, _packageVersion, packageHash);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _loadBuildinPackageManifestOp);
+                    _loadBuildinPackageManifestOp.StartOperation();
+                    AddChildOperation(_loadBuildinPackageManifestOp);
                 }
 
+                _loadBuildinPackageManifestOp.UpdateOperation();
                 if (_loadBuildinPackageManifestOp.IsDone == false)
                     return;
 

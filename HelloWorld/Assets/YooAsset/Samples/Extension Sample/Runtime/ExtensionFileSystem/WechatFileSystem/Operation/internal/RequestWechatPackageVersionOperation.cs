@@ -29,12 +29,12 @@ internal class RequestWechatPackageVersionOperation : AsyncOperationBase
         _appendTimeTicks = appendTimeTicks;
         _timeout = timeout;
     }
-    internal override void InternalOnStart()
+    internal override void InternalStart()
     {
         _requestCount = WebRequestCounter.GetRequestFailedCount(_fileSystem.PackageName, nameof(RequestWechatPackageVersionOperation));
         _steps = ESteps.RequestPackageVersion;
     }
-    internal override void InternalOnUpdate()
+    internal override void InternalUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
@@ -46,9 +46,11 @@ internal class RequestWechatPackageVersionOperation : AsyncOperationBase
                 string fileName = YooAssetSettingsData.GetPackageVersionFileName(_fileSystem.PackageName);
                 string url = GetRequestURL(fileName);
                 _webTextRequestOp = new UnityWebTextRequestOperation(url, _timeout);
-                OperationSystem.StartOperation(_fileSystem.PackageName, _webTextRequestOp);
+                _webTextRequestOp.StartOperation();
+                AddChildOperation(_webTextRequestOp);
             }
 
+            _webTextRequestOp.UpdateOperation();
             Progress = _webTextRequestOp.Progress;
             if (_webTextRequestOp.IsDone == false)
                 return;

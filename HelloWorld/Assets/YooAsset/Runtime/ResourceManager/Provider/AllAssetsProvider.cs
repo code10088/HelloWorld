@@ -13,11 +13,14 @@ namespace YooAsset
             if (_loadAllAssetsOp == null)
             {
                 _loadAllAssetsOp = BundleResultObject.LoadAllAssetsAsync(MainAssetInfo);
+                _loadAllAssetsOp.StartOperation();
+                AddChildOperation(_loadAllAssetsOp);
             }
 
             if (IsWaitForAsyncComplete)
                 _loadAllAssetsOp.WaitForAsyncComplete();
 
+            _loadAllAssetsOp.UpdateOperation();
             Progress = _loadAllAssetsOp.Progress;
             if (_loadAllAssetsOp.IsDone == false)
                 return;

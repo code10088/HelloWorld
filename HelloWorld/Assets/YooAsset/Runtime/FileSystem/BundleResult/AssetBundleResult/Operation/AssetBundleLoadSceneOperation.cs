@@ -25,11 +25,11 @@ namespace YooAsset
             _loadParams = loadParams;
             _suspendLoad = suspendLoad;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.LoadScene;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -107,7 +107,7 @@ namespace YooAsset
         internal override void InternalWaitForAsyncComplete()
         {
             //TODO 场景加载不支持异步转同步，为了支持同步加载方法需要实现该方法！
-            InternalOnUpdate();
+            InternalUpdate();
         }
         public override void UnSuspendLoad()
         {

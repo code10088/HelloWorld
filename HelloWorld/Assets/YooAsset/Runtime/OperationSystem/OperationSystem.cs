@@ -14,11 +14,6 @@ namespace YooAsset
         private static long _frameTime;
 
         /// <summary>
-        /// 快速启动模式
-        /// </summary>
-        public static bool QuickStartMode = true;
-
-        /// <summary>
         /// 异步操作的最小时间片段
         /// </summary>
         public static long MaxTimeSlice { set; get; } = long.MaxValue;
@@ -48,8 +43,6 @@ namespace YooAsset
         /// </summary>
         public static void Update()
         {
-            _frameTime = _watch.ElapsedMilliseconds;
-
             // 添加新增的异步操作
             if (_newList.Count > 0)
             {
@@ -72,6 +65,7 @@ namespace YooAsset
             }
 
             // 更新进行中的异步操作
+            _frameTime = _watch.ElapsedMilliseconds;
             for (int i = 0; i < _operations.Count; i++)
             {
                 if (IsBusy)
@@ -81,11 +75,7 @@ namespace YooAsset
                 if (operation.IsFinish)
                     continue;
 
-                if (operation.IsDone == false)
-                    operation.InternalOnUpdate();
-
-                if (operation.IsDone)
-                    operation.SetFinish();
+                operation.UpdateOperation();
             }
 
             // 移除已经完成的异步操作
@@ -119,7 +109,7 @@ namespace YooAsset
             {
                 if (operation.PackageName == packageName)
                 {
-                    operation.SetAbort();
+                    operation.AbortOperation();
                 }
             }
 
@@ -128,7 +118,7 @@ namespace YooAsset
             {
                 if (operation.PackageName == packageName)
                 {
-                    operation.SetAbort();
+                    operation.AbortOperation();
                 }
             }
         }
@@ -140,12 +130,7 @@ namespace YooAsset
         {
             _newList.Add(operation);
             operation.SetPackageName(packageName);
-            operation.SetStart();
-
-            if (QuickStartMode)
-            {
-                operation.InternalOnUpdate();
-            }
+            operation.StartOperation();
         }
     }
 }

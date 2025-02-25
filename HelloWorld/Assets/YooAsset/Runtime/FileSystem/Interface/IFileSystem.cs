@@ -56,14 +56,14 @@ namespace YooAsset
         void SetParameter(string name, object value);
 
         /// <summary>
-        /// 创建缓存系统
+        /// 创建文件系统
         /// </summary>
         void OnCreate(string packageName, string packageRoot);
 
         /// <summary>
-        /// 更新文件系统
+        /// 销毁文件系统
         /// </summary>
-        void OnUpdate();
+        void OnDestroy();
 
 
         /// <summary>

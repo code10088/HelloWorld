@@ -23,11 +23,11 @@ internal class WXFSRequestPackageVersionOperation : FSRequestPackageVersionOpera
         _appendTimeTicks = appendTimeTicks;
         _timeout = timeout;
     }
-    internal override void InternalOnStart()
+    internal override void InternalStart()
     {
         _steps = ESteps.RequestPackageVersion;
     }
-    internal override void InternalOnUpdate()
+    internal override void InternalUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
@@ -37,9 +37,11 @@ internal class WXFSRequestPackageVersionOperation : FSRequestPackageVersionOpera
             if (_requestWebPackageVersionOp == null)
             {
                 _requestWebPackageVersionOp = new RequestWechatPackageVersionOperation(_fileSystem, _appendTimeTicks, _timeout);
-                OperationSystem.StartOperation(_fileSystem.PackageName, _requestWebPackageVersionOp);
+                _requestWebPackageVersionOp.StartOperation();
+                AddChildOperation(_requestWebPackageVersionOp);
             }
 
+            _requestWebPackageVersionOp.UpdateOperation();
             Progress = _requestWebPackageVersionOp.Progress;
             if (_requestWebPackageVersionOp.IsDone == false)
                 return;

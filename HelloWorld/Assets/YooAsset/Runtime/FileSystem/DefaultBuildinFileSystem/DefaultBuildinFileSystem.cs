@@ -92,19 +92,16 @@ namespace YooAsset
         public virtual FSInitializeFileSystemOperation InitializeFileSystemAsync()
         {
             var operation = new DBFSInitializeOperation(this);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         public virtual FSLoadPackageManifestOperation LoadPackageManifestAsync(string packageVersion, int timeout)
         {
             var operation = new DBFSLoadPackageManifestOperation(this, packageVersion);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         public virtual FSRequestPackageVersionOperation RequestPackageVersionAsync(bool appendTimeTicks, int timeout)
         {
             var operation = new DBFSRequestPackageVersionOperation(this);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
@@ -127,20 +124,17 @@ namespace YooAsset
             if (bundle.BundleType == (int)EBuildBundleType.AssetBundle)
             {
                 var operation = new DBFSLoadAssetBundleOperation(this, bundle);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
             else if (bundle.BundleType == (int)EBuildBundleType.RawBundle)
             {
                 var operation = new DBFSLoadRawBundleOperation(this, bundle);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
             else
             {
                 string error = $"{nameof(DefaultBuildinFileSystem)} not support load bundle type : {bundle.BundleType}";
                 var operation = new FSLoadBundleCompleteOperation(error);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
         }
@@ -194,9 +188,8 @@ namespace YooAsset
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.DECRYPTION_SERVICES, DecryptionServices);
             _unpackFileSystem.OnCreate(packageName, null);
         }
-        public virtual void OnUpdate()
+        public virtual void OnDestroy()
         {
-            _unpackFileSystem.OnUpdate();
         }
 
         public virtual bool Belong(PackageBundle bundle)
@@ -346,10 +339,13 @@ namespace YooAsset
                 return false;
 
 #if UNITY_ANDROID
-            if (bundle.BundleType == (int)EBuildBundleType.RawBundle || bundle.Encrypted)
+            if (bundle.Encrypted)
                 return true;
-            else
-                return false;
+
+            if (bundle.BundleType == (int)EBuildBundleType.RawBundle)
+                return true;
+
+            return false;
 #else
             return false;
 #endif

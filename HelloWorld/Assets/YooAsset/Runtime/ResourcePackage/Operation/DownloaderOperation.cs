@@ -116,12 +116,12 @@ namespace YooAsset
             // 统计下载信息
             CalculatDownloaderInfo();
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             YooLogger.Log($"Begine to download {TotalDownloadCount} files and {TotalDownloadBytes} bytes");
             _steps = ESteps.Check;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;

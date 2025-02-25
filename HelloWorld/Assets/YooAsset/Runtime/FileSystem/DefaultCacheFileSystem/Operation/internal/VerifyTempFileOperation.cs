@@ -29,11 +29,11 @@ namespace YooAsset
         {
             _element = element;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.VerifyFile;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -72,7 +72,7 @@ namespace YooAsset
             while (true)
             {
                 //TODO 等待子线程验证文件完毕，该操作会挂起主线程
-                InternalOnUpdate();
+                InternalUpdate();
                 if (IsDone)
                     break;
             }

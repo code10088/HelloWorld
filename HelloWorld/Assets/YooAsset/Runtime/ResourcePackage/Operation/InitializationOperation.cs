@@ -31,11 +31,11 @@ namespace YooAsset
             _impl = impl;
             _parameters = parameters;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CreateFileSystem;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.CreateFileSystem)
             {
@@ -62,8 +62,13 @@ namespace YooAsset
             if (_steps == ESteps.InitFileSystem)
             {
                 if (_initFileSystemOp == null)
+                {
                     _initFileSystemOp = _impl.EditorFileSystem.InitializeFileSystemAsync();
+                    _initFileSystemOp.StartOperation();
+                    AddChildOperation(_initFileSystemOp);
+                }
 
+                _initFileSystemOp.UpdateOperation();
                 Progress = _initFileSystemOp.Progress;
                 if (_initFileSystemOp.IsDone == false)
                     return;
@@ -99,8 +104,6 @@ namespace YooAsset
         private readonly OfflinePlayModeImpl _impl;
         private readonly OfflinePlayModeParameters _parameters;
         private FSInitializeFileSystemOperation _initFileSystemOp;
-        private FSRequestPackageVersionOperation _requestPackageVersionOp;
-        private FSLoadPackageManifestOperation _loadPackageManifestOp;
         private ESteps _steps = ESteps.None;
 
         internal OfflinePlayModeInitializationOperation(OfflinePlayModeImpl impl, OfflinePlayModeParameters parameters)
@@ -108,11 +111,11 @@ namespace YooAsset
             _impl = impl;
             _parameters = parameters;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CreateFileSystem;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -142,8 +145,13 @@ namespace YooAsset
             if (_steps == ESteps.InitFileSystem)
             {
                 if (_initFileSystemOp == null)
+                {
                     _initFileSystemOp = _impl.BuildinFileSystem.InitializeFileSystemAsync();
+                    _initFileSystemOp.StartOperation();
+                    AddChildOperation(_initFileSystemOp);
+                }
 
+                _initFileSystemOp.UpdateOperation();
                 Progress = _initFileSystemOp.Progress;
                 if (_initFileSystemOp.IsDone == false)
                     return;
@@ -189,11 +197,11 @@ namespace YooAsset
             _impl = impl;
             _parameters = parameters;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CreateBuildinFileSystem;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -221,8 +229,13 @@ namespace YooAsset
             if (_steps == ESteps.InitBuildinFileSystem)
             {
                 if (_initBuildinFileSystemOp == null)
+                {
                     _initBuildinFileSystemOp = _impl.BuildinFileSystem.InitializeFileSystemAsync();
+                    _initBuildinFileSystemOp.StartOperation();
+                    AddChildOperation(_initBuildinFileSystemOp);
+                }
 
+                _initBuildinFileSystemOp.UpdateOperation();
                 Progress = _initBuildinFileSystemOp.Progress;
                 if (_initBuildinFileSystemOp.IsDone == false)
                     return;
@@ -264,8 +277,13 @@ namespace YooAsset
             if (_steps == ESteps.InitCacheFileSystem)
             {
                 if (_initCacheFileSystemOp == null)
+                {
                     _initCacheFileSystemOp = _impl.CacheFileSystem.InitializeFileSystemAsync();
+                    _initCacheFileSystemOp.StartOperation();
+                    AddChildOperation(_initCacheFileSystemOp);
+                }
 
+                _initCacheFileSystemOp.UpdateOperation();
                 Progress = _initCacheFileSystemOp.Progress;
                 if (_initCacheFileSystemOp.IsDone == false)
                     return;
@@ -312,11 +330,11 @@ namespace YooAsset
             _impl = impl;
             _parameters = parameters;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CreateWebServerFileSystem;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -344,8 +362,13 @@ namespace YooAsset
             if (_steps == ESteps.InitWebServerFileSystem)
             {
                 if (_initWebServerFileSystemOp == null)
+                {
                     _initWebServerFileSystemOp = _impl.WebServerFileSystem.InitializeFileSystemAsync();
+                    _initWebServerFileSystemOp.StartOperation();
+                    AddChildOperation(_initWebServerFileSystemOp);
+                }
 
+                _initWebServerFileSystemOp.UpdateOperation();
                 Progress = _initWebServerFileSystemOp.Progress;
                 if (_initWebServerFileSystemOp.IsDone == false)
                     return;
@@ -385,8 +408,13 @@ namespace YooAsset
             if (_steps == ESteps.InitWebRemoteFileSystem)
             {
                 if (_initWebRemoteFileSystemOp == null)
+                {
                     _initWebRemoteFileSystemOp = _impl.WebRemoteFileSystem.InitializeFileSystemAsync();
+                    _initWebRemoteFileSystemOp.StartOperation();
+                    AddChildOperation(_initWebRemoteFileSystemOp);
+                }
 
+                _initWebRemoteFileSystemOp.UpdateOperation();
                 Progress = _initWebRemoteFileSystemOp.Progress;
                 if (_initWebRemoteFileSystemOp.IsDone == false)
                     return;

@@ -1,6 +1,5 @@
 ﻿#if UNITY_WEBGL && DOUYINMINIGAME
 using UnityEngine;
-using UnityEngine.Networking;
 using TTSDK;
 
 namespace YooAsset
@@ -12,11 +11,11 @@ namespace YooAsset
         internal DownloadTiktokAssetBundleOperation(PackageBundle bundle, DownloadParam param) : base(bundle, param)
         {
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CreateRequest;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -101,12 +100,12 @@ namespace YooAsset
                 }
             }
         }
-        internal override void InternalOnAbort()
+        internal override void InternalAbort()
         {
             _steps = ESteps.Done;
             DisposeWebRequest();
         }
-
+        
         private void CreateWebRequest()
         {
             _webRequest = TTAssetBundle.GetAssetBundle(_requestURL);

@@ -113,19 +113,16 @@ internal class WechatFileSystem : IFileSystem
     public virtual FSInitializeFileSystemOperation InitializeFileSystemAsync()
     {
         var operation = new WXFSInitializeOperation(this);
-        OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
     public virtual FSLoadPackageManifestOperation LoadPackageManifestAsync(string packageVersion, int timeout)
     {
         var operation = new WXFSLoadPackageManifestOperation(this, packageVersion, timeout);
-        OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
     public virtual FSRequestPackageVersionOperation RequestPackageVersionAsync(bool appendTimeTicks, int timeout)
     {
         var operation = new WXFSRequestPackageVersionOperation(this, appendTimeTicks, timeout);
-        OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
     public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
@@ -133,20 +130,17 @@ internal class WechatFileSystem : IFileSystem
         if (clearMode == EFileClearMode.ClearAllBundleFiles.ToString())
         {
             var operation = new WXFSClearAllBundleFilesOperation(this);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         else if (clearMode == EFileClearMode.ClearUnusedBundleFiles.ToString())
         {
             var operation = new WXFSClearUnusedBundleFilesAsync(this, manifest);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         else
         {
             string error = $"Invalid clear mode : {clearMode}";
             var operation = new FSClearCacheFilesCompleteOperation(error);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
     }
@@ -155,7 +149,6 @@ internal class WechatFileSystem : IFileSystem
         param.MainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
         param.FallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
         var operation = new WXFSDownloadFileOperation(this, bundle, param);
-        OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
     public virtual FSLoadBundleOperation LoadBundleFile(PackageBundle bundle)
@@ -163,14 +156,12 @@ internal class WechatFileSystem : IFileSystem
         if (bundle.BundleType == (int)EBuildBundleType.AssetBundle)
         {
             var operation = new WXFSLoadBundleOperation(this, bundle);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         else
         {
             string error = $"{nameof(WechatFileSystem)} not support load bundle type : {bundle.BundleType}";
             var operation = new FSLoadBundleCompleteOperation(error);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
     }
@@ -214,7 +205,7 @@ internal class WechatFileSystem : IFileSystem
 
         _fileSystemMgr = WX.GetFileSystemManager();
     }
-    public virtual void OnUpdate()
+    public virtual void OnDestroy()
     {
     }
 

@@ -21,11 +21,11 @@ internal class TTFSRequestPackageVersionOperation : FSRequestPackageVersionOpera
         _fileSystem = fileSystem;
         _timeout = timeout;
     }
-    internal override void InternalOnStart()
+    internal override void InternalStart()
     {
         _steps = ESteps.RequestPackageVersion;
     }
-    internal override void InternalOnUpdate()
+    internal override void InternalUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
@@ -35,9 +35,11 @@ internal class TTFSRequestPackageVersionOperation : FSRequestPackageVersionOpera
             if (_requestPackageVersionOp == null)
             {
                 _requestPackageVersionOp = new RequestTiktokPackageVersionOperation(_fileSystem, _timeout);
-                OperationSystem.StartOperation(_fileSystem.PackageName, _requestPackageVersionOp);
+                _requestPackageVersionOp.StartOperation();
+                AddChildOperation(_requestPackageVersionOp);
             }
 
+            _requestPackageVersionOp.UpdateOperation();
             Progress = _requestPackageVersionOp.Progress;
             if (_requestPackageVersionOp.IsDone == false)
                 return;

@@ -1,6 +1,5 @@
 ﻿#if UNITY_WEBGL && WEIXINMINIGAME
 using UnityEngine;
-using UnityEngine.Networking;
 using WeChatWASM;
 
 namespace YooAsset
@@ -12,11 +11,11 @@ namespace YooAsset
         internal DownloadWechatAssetBundleOperation(PackageBundle bundle, DownloadParam param) : base(bundle, param)
         {
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CreateRequest;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -103,7 +102,7 @@ namespace YooAsset
                 }
             }
         }
-        internal override void InternalOnAbort()
+        internal override void InternalAbort()
         {
             _steps = ESteps.Done;
             DisposeWebRequest();

@@ -2,6 +2,20 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.1-preview] - 2025-02-25
+
+**资源加载依赖计算方式还原为了1.5x版本的模式，只加载资源对象实际依赖的资源包，不再以资源对象所在资源包的依赖关系为加载标准**。
+
+### Improvements
+
+- 优化OperationSystem的更新机制，异步加载的耗时降低了50%。
+- 优化了Debugger窗口的显示页面，BundleView页面增加资源包的引用列表。
+- 优化了Reporter窗口的显示页面。
+
+### Fixed
+
+- 修复了怀旧依赖模式下，TAG传染不正确的问题。
+
 ## [2.3.0-preview] - 2025-02-19
 
 ### Improvements

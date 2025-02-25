@@ -34,12 +34,12 @@ internal class LoadWechatPackageManifestOperation : AsyncOperationBase
         _packageHash = packageHash;
         _timeout = timeout;
     }
-    internal override void InternalOnStart()
+    internal override void InternalStart()
     {
         _requestCount = WebRequestCounter.GetRequestFailedCount(_fileSystem.PackageName, nameof(LoadWechatPackageManifestOperation));
         _steps = ESteps.RequestFileData;
     }
-    internal override void InternalOnUpdate()
+    internal override void InternalUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
@@ -51,9 +51,11 @@ internal class LoadWechatPackageManifestOperation : AsyncOperationBase
                 string fileName = YooAssetSettingsData.GetManifestBinaryFileName(_fileSystem.PackageName, _packageVersion);
                 string url = GetRequestURL(fileName);
                 _webDataRequestOp = new UnityWebDataRequestOperation(url, _timeout);
-                OperationSystem.StartOperation(_fileSystem.PackageName, _webDataRequestOp);
+                _webDataRequestOp.StartOperation();
+                AddChildOperation(_webDataRequestOp);
             }
 
+            _webDataRequestOp.UpdateOperation();
             Progress = _webDataRequestOp.Progress;
             if (_webDataRequestOp.IsDone == false)
                 return;
@@ -91,9 +93,11 @@ internal class LoadWechatPackageManifestOperation : AsyncOperationBase
             if (_deserializer == null)
             {
                 _deserializer = new DeserializeManifestOperation(_webDataRequestOp.Result);
-                OperationSystem.StartOperation(_fileSystem.PackageName, _deserializer);
+                _deserializer.StartOperation();
+                AddChildOperation(_deserializer);
             }
 
+            _deserializer.UpdateOperation();
             Progress = _deserializer.Progress;
             if (_deserializer.IsDone == false)
                 return;

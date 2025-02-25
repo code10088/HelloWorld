@@ -26,12 +26,12 @@ namespace YooAsset
             _packageVersion = packageVersion;
             _timeout = timeout;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _requestCount = WebRequestCounter.GetRequestFailedCount(_fileSystem.PackageName, nameof(DownloadPackageManifestOperation));
             _steps = ESteps.CheckExist;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -58,9 +58,11 @@ namespace YooAsset
                     string fileName = YooAssetSettingsData.GetManifestBinaryFileName(_fileSystem.PackageName, _packageVersion);
                     string webURL = GetDownloadRequestURL(fileName);
                     _webFileRequestOp = new UnityWebFileRequestOperation(webURL, savePath, _timeout);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _webFileRequestOp);
+                    _webFileRequestOp.StartOperation();
+                    AddChildOperation(_webFileRequestOp);
                 }
 
+                _webFileRequestOp.UpdateOperation();
                 if (_webFileRequestOp.IsDone == false)
                     return;
 

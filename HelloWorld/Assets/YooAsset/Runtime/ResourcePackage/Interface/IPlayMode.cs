@@ -9,9 +9,9 @@ namespace YooAsset
         PackageManifest ActiveManifest { set; get; }
 
         /// <summary>
-        /// 更新游戏模式
+        /// 销毁文件系统
         /// </summary>
-        void UpdatePlayMode();
+        void DestroyFileSystem();
 
         /// <summary>
         /// 向网络端请求最新的资源版本

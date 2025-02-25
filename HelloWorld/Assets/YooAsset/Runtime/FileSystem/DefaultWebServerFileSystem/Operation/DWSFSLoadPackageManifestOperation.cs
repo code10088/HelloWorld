@@ -25,11 +25,11 @@ namespace YooAsset
             _packageVersion = packageVersion;
             _timeout = timeout;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.RequestWebPackageHash;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -39,9 +39,11 @@ namespace YooAsset
                 if (_requestWebPackageHashOp == null)
                 {
                     _requestWebPackageHashOp = new RequestWebServerPackageHashOperation(_fileSystem, _packageVersion, _timeout);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _requestWebPackageHashOp);
+                    _requestWebPackageHashOp.StartOperation();
+                    AddChildOperation(_requestWebPackageHashOp);
                 }
 
+                _requestWebPackageHashOp.UpdateOperation();
                 if (_requestWebPackageHashOp.IsDone == false)
                     return;
 
@@ -63,9 +65,11 @@ namespace YooAsset
                 {
                     string packageHash = _requestWebPackageHashOp.PackageHash;
                     _loadWebPackageManifestOp = new LoadWebServerPackageManifestOperation(_fileSystem, _packageVersion, packageHash);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _loadWebPackageManifestOp);
+                    _loadWebPackageManifestOp.StartOperation();
+                    AddChildOperation(_loadWebPackageManifestOp);
                 }
 
+                _loadWebPackageManifestOp.UpdateOperation();
                 Progress = _loadWebPackageManifestOp.Progress;
                 if (_loadWebPackageManifestOp.IsDone == false)
                     return;

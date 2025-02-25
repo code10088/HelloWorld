@@ -60,11 +60,6 @@ namespace YooAsset
             if (_isInitialize)
             {
                 OperationSystem.Update();
-
-                for (int i = 0; i < _packages.Count; i++)
-                {
-                    _packages[i].UpdatePackage();
-                }
             }
         }
 
@@ -221,15 +216,6 @@ namespace YooAsset
                 YooLogger.Warning($"MaxTimeSlice minimum value is 10 milliseconds.");
             }
             OperationSystem.MaxTimeSlice = milliseconds;
-        }
-
-        /// <summary>
-        /// 设置异步系统参数，快速启动模式的开关
-        /// 注意：该模式默认开启
-        /// </summary>
-        public static void SetOperationSystemQuickStartMode(bool state)
-        {
-            OperationSystem.QuickStartMode = state;
         }
         #endregion
 

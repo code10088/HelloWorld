@@ -28,11 +28,11 @@ namespace YooAsset
             _packageVersion = packageVersion;
             _timeout = timeout;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.RequestPackageHash;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -44,9 +44,11 @@ namespace YooAsset
                     string filePath = _fileSystem.GetWebPackageHashFilePath(_packageVersion);
                     string url = DownloadSystemHelper.ConvertToWWWPath(filePath);
                     _webTextRequestOp = new UnityWebTextRequestOperation(url, _timeout);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _webTextRequestOp);
+                    _webTextRequestOp.StartOperation();
+                    AddChildOperation(_webTextRequestOp);
                 }
 
+                _webTextRequestOp.UpdateOperation();
                 Progress = _webTextRequestOp.Progress;
                 if (_webTextRequestOp.IsDone == false)
                     return;

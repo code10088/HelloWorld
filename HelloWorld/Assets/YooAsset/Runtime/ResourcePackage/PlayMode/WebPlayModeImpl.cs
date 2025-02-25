@@ -29,13 +29,13 @@ namespace YooAsset
         #region IPlayMode接口
         public PackageManifest ActiveManifest { set; get; }
 
-        void IPlayMode.UpdatePlayMode()
+        void IPlayMode.DestroyFileSystem()
         {
             if (WebServerFileSystem != null)
-                WebServerFileSystem.OnUpdate();
+                WebServerFileSystem.OnDestroy();
 
             if (WebRemoteFileSystem != null)
-                WebRemoteFileSystem.OnUpdate();
+                WebRemoteFileSystem.OnDestroy();
         }
 
         RequestPackageVersionOperation IPlayMode.RequestPackageVersionAsync(bool appendTimeTicks, int timeout)

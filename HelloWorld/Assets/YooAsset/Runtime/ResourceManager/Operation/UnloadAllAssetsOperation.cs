@@ -38,11 +38,11 @@ namespace YooAsset
             _resManager = resourceManager;
             _options = options;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CheckOptions;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -86,7 +86,7 @@ namespace YooAsset
                 // 注意：终止所有下载任务
                 foreach (var loader in _resManager.LoaderDic.Values)
                 {
-                    loader.AbortDownloadOperation();
+                    loader.AbortOperation();
                 }
                 _steps = ESteps.CheckLoading;
             }

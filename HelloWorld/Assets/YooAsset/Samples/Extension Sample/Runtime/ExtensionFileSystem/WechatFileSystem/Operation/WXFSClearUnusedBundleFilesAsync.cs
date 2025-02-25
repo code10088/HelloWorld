@@ -1,10 +1,8 @@
 ﻿#if UNITY_WEBGL && WEIXINMINIGAME
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 using YooAsset;
 using WeChatWASM;
-using static UnityEngine.Networking.UnityWebRequest;
 
 internal class WXFSClearUnusedBundleFilesAsync : FSClearCacheFilesOperation
 {
@@ -28,11 +26,11 @@ internal class WXFSClearUnusedBundleFilesAsync : FSClearCacheFilesOperation
         _fileSystem = fileSystem;
         _manifest = manifest;
     }
-    internal override void InternalOnStart()
+    internal override void InternalStart()
     {
         _steps = ESteps.GetUnusedCacheFiles;
     }
-    internal override void InternalOnUpdate()
+    internal override void InternalUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;

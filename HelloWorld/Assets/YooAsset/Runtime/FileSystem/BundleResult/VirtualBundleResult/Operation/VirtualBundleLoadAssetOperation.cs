@@ -21,7 +21,7 @@ namespace YooAsset
             _packageBundle = packageBundle;
             _assetInfo = assetInfo;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
 #if UNITY_EDITOR
             _steps = ESteps.CheckBundle;
@@ -31,7 +31,7 @@ namespace YooAsset
             Status = EOperationStatus.Failed;            
 #endif
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
 #if UNITY_EDITOR
             if (_steps == ESteps.None || _steps == ESteps.Done)

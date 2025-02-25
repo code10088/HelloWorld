@@ -25,7 +25,7 @@ namespace YooAsset
         private FSClearCacheFilesOperation _clearCacheFilesOpB;
         private FSClearCacheFilesOperation _clearCacheFilesOpC;
         private ESteps _steps = ESteps.None;
-        
+
         internal ClearCacheFilesImplOperation(IPlayMode impl, IFileSystem fileSystemA, IFileSystem fileSystemB, IFileSystem fileSystemC, string clearMode, object clearParam)
         {
             _impl = impl;
@@ -35,11 +35,11 @@ namespace YooAsset
             _clearMode = clearMode;
             _clearParam = clearParam;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.ClearFileSystemA;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -53,8 +53,13 @@ namespace YooAsset
                 }
 
                 if (_clearCacheFilesOpA == null)
+                {
                     _clearCacheFilesOpA = _fileSystemA.ClearCacheFilesAsync(_impl.ActiveManifest, _clearMode, _clearParam);
+                    _clearCacheFilesOpA.StartOperation();
+                    AddChildOperation(_clearCacheFilesOpA);
+                }
 
+                _clearCacheFilesOpA.UpdateOperation();
                 Progress = _clearCacheFilesOpA.Progress;
                 if (_clearCacheFilesOpA.IsDone == false)
                     return;
@@ -80,8 +85,13 @@ namespace YooAsset
                 }
 
                 if (_clearCacheFilesOpB == null)
+                {
                     _clearCacheFilesOpB = _fileSystemB.ClearCacheFilesAsync(_impl.ActiveManifest, _clearMode, _clearParam);
+                    _clearCacheFilesOpB.StartOperation();
+                    AddChildOperation(_clearCacheFilesOpB);
+                }
 
+                _clearCacheFilesOpB.UpdateOperation();
                 Progress = _clearCacheFilesOpB.Progress;
                 if (_clearCacheFilesOpB.IsDone == false)
                     return;
@@ -108,8 +118,13 @@ namespace YooAsset
                 }
 
                 if (_clearCacheFilesOpC == null)
+                {
                     _clearCacheFilesOpC = _fileSystemC.ClearCacheFilesAsync(_impl.ActiveManifest, _clearMode, _clearParam);
+                    _clearCacheFilesOpC.StartOperation();
+                    AddChildOperation(_clearCacheFilesOpC);
+                }
 
+                _clearCacheFilesOpC.UpdateOperation();
                 Progress = _clearCacheFilesOpC.Progress;
                 if (_clearCacheFilesOpC.IsDone == false)
                     return;

@@ -23,6 +23,8 @@ namespace YooAsset
             if (_loadSceneOp == null)
             {
                 _loadSceneOp = BundleResultObject.LoadSceneOperation(MainAssetInfo, _loadParams, _suspendLoad);
+                _loadSceneOp.StartOperation();
+                AddChildOperation(_loadSceneOp);
             }
 
             if (IsWaitForAsyncComplete)
@@ -32,6 +34,7 @@ namespace YooAsset
             if (_suspendLoad == false)
                 _loadSceneOp.UnSuspendLoad();
 
+            _loadSceneOp.UpdateOperation();
             Progress = _loadSceneOp.Progress;
             if (_loadSceneOp.IsDone == false)
                 return;

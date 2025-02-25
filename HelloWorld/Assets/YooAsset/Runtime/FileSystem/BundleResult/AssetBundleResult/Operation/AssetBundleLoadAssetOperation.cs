@@ -25,11 +25,11 @@ namespace YooAsset
             _assetBundle = assetBundle;
             _assetInfo = assetInfo;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CheckBundle;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;

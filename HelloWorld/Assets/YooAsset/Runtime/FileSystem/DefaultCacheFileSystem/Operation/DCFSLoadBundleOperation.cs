@@ -29,11 +29,11 @@ namespace YooAsset
             _fileSystem = fileSystem;
             _bundle = bundle;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CheckExist;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -54,6 +54,9 @@ namespace YooAsset
 
             if (_steps == ESteps.DownloadFile)
             {
+                // 注意：下载的异步任务由管理器驱动
+                // 注意：不加到子任务列表里，防止Abort的时候将下载器直接关闭！
+                // 注意：边玩边下下载器引用计数没有Release
                 if (_downloadFileOp == null)
                 {
                     DownloadParam downloadParam = new DownloadParam(int.MaxValue, 60);
@@ -219,14 +222,6 @@ namespace YooAsset
                 }
             }
         }
-        public override void AbortDownloadOperation()
-        {
-            if (_steps == ESteps.DownloadFile)
-            {
-                if (_downloadFileOp != null)
-                    _downloadFileOp.SetAbort();
-            }
-        }
     }
 
     internal class DCFSLoadRawBundleOperation : FSLoadBundleOperation
@@ -251,11 +246,11 @@ namespace YooAsset
             _fileSystem = fileSystem;
             _bundle = bundle;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CheckExist;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -276,6 +271,9 @@ namespace YooAsset
 
             if (_steps == ESteps.DownloadFile)
             {
+                // 注意：下载的异步任务由管理器驱动
+                // 注意：不加到子任务列表里，防止Abort的时候将下载器直接关闭！
+                // 注意：边玩边下下载器引用计数没有Release
                 if (_downloadFileOp == null)
                 {
                     DownloadParam downloadParam = new DownloadParam(int.MaxValue, 60);
@@ -333,14 +331,6 @@ namespace YooAsset
                     _steps = ESteps.Done;
                     break;
                 }
-            }
-        }
-        public override void AbortDownloadOperation()
-        {
-            if (_steps == ESteps.DownloadFile)
-            {
-                if (_downloadFileOp != null)
-                    _downloadFileOp.SetAbort();
             }
         }
     }

@@ -321,7 +321,6 @@ namespace YooAsset
 
             // 新增下载需求
             loaderOperation = new LoadBundleFileOperation(this, bundleInfo);
-            OperationSystem.StartOperation(PackageName, loaderOperation);
             LoaderDic.Add(bundleName, loaderOperation);
             return loaderOperation;
         }

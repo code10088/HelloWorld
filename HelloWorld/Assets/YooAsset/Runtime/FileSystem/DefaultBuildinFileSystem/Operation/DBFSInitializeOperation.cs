@@ -24,7 +24,7 @@ namespace YooAsset
         {
             _fileSystem = fileSystem;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
 #if UNITY_WEBGL
             _steps = ESteps.Done;
@@ -37,7 +37,7 @@ namespace YooAsset
                 _steps = ESteps.InitUnpackFileSystem;
 #endif
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -47,9 +47,11 @@ namespace YooAsset
                 if (_copyBuildinPackageManifestOp == null)
                 {
                     _copyBuildinPackageManifestOp = new CopyBuildinPackageManifestOperation(_fileSystem);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _copyBuildinPackageManifestOp);
+                    _copyBuildinPackageManifestOp.StartOperation();
+                    AddChildOperation(_copyBuildinPackageManifestOp);
                 }
 
+                _copyBuildinPackageManifestOp.UpdateOperation();
                 if (_copyBuildinPackageManifestOp.IsDone == false)
                     return;
 
@@ -68,8 +70,13 @@ namespace YooAsset
             if (_steps == ESteps.InitUnpackFileSystem)
             {
                 if (_initUnpackFIleSystemOp == null)
+                {
                     _initUnpackFIleSystemOp = _fileSystem.InitializeUpackFileSystem();
+                    _initUnpackFIleSystemOp.StartOperation();
+                    AddChildOperation(_initUnpackFIleSystemOp);
+                }
 
+                _initUnpackFIleSystemOp.UpdateOperation();
                 Progress = _initUnpackFIleSystemOp.Progress;
                 if (_initUnpackFIleSystemOp.IsDone == false)
                     return;
@@ -113,9 +120,11 @@ namespace YooAsset
 #endif
 
                     _loadCatalogFileOp = new LoadBuildinCatalogFileOperation(_fileSystem);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _loadCatalogFileOp);
+                    _loadCatalogFileOp.StartOperation();
+                    AddChildOperation(_loadCatalogFileOp);
                 }
 
+                _loadCatalogFileOp.UpdateOperation();
                 if (_loadCatalogFileOp.IsDone == false)
                     return;
 

@@ -3,15 +3,15 @@ namespace YooAsset
 {
     public abstract class GameAsyncOperation : AsyncOperationBase
     {
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             OnStart();
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             OnUpdate();
         }
-        internal override void InternalOnAbort()
+        internal override void InternalAbort()
         {
             OnAbort();
         }
@@ -53,7 +53,7 @@ namespace YooAsset
         /// </summary>
         protected void Abort()
         {
-            SetAbort();
+            AbortOperation();
         }
     }
 }

@@ -3,12 +3,12 @@ namespace YooAsset
 {
     internal class RawBundleLoadSceneOperation : FSLoadSceneOperation
     {
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             Error = $"{nameof(RawBundleLoadSceneOperation)} not support load scene !";
             Status = EOperationStatus.Failed;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
         }
         public override void UnSuspendLoad()

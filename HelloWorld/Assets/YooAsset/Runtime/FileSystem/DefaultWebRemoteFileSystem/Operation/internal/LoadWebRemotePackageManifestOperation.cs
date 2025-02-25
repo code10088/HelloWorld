@@ -32,12 +32,12 @@ namespace YooAsset
             _packageVersion = packageVersion;
             _packageHash = packageHash;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _requestCount = WebRequestCounter.GetRequestFailedCount(_fileSystem.PackageName, nameof(LoadWebRemotePackageManifestOperation));
             _steps = ESteps.RequestFileData;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -49,9 +49,11 @@ namespace YooAsset
                     string fileName = YooAssetSettingsData.GetManifestBinaryFileName(_fileSystem.PackageName, _packageVersion);
                     string url = GetWebRequestURL(fileName);
                     _webDataRequestOp = new UnityWebDataRequestOperation(url);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _webDataRequestOp);
+                    _webDataRequestOp.StartOperation();
+                    AddChildOperation(_webDataRequestOp);
                 }
 
+                _webDataRequestOp.UpdateOperation();
                 if (_webDataRequestOp.IsDone == false)
                     return;
 
@@ -88,9 +90,11 @@ namespace YooAsset
                 if (_deserializer == null)
                 {
                     _deserializer = new DeserializeManifestOperation(_webDataRequestOp.Result);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _deserializer);
+                    _deserializer.StartOperation();
+                    AddChildOperation(_deserializer);
                 }
 
+                _deserializer.UpdateOperation();
                 Progress = _deserializer.Progress;
                 if (_deserializer.IsDone == false)
                     return;

@@ -51,15 +51,6 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 更新资源包裹
-        /// </summary>
-        internal void UpdatePackage()
-        {
-            if (_playModeImpl != null)
-                _playModeImpl.UpdatePlayMode();
-        }
-
-        /// <summary>
         /// 销毁资源包裹
         /// </summary>
         internal void DestroyPackage()
@@ -76,6 +67,10 @@ namespace YooAsset
                     _resourceManager.Destroy();
                     _resourceManager = null;
                 }
+
+                // 销毁文件系统
+                if (_playModeImpl != null)
+                    _playModeImpl.DestroyFileSystem();
 
                 _bundleQuery = null;
                 _playModeImpl = null;

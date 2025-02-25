@@ -19,11 +19,11 @@ namespace YooAsset
         {
             _fileSystem = fileSystem;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.RequestPackageVersion;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -33,9 +33,11 @@ namespace YooAsset
                 if (_requestBuildinPackageVersionOp == null)
                 {
                     _requestBuildinPackageVersionOp = new RequestBuildinPackageVersionOperation(_fileSystem);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _requestBuildinPackageVersionOp);
+                    _requestBuildinPackageVersionOp.StartOperation();
+                    AddChildOperation(_requestBuildinPackageVersionOp);
                 }
 
+                _requestBuildinPackageVersionOp.UpdateOperation();
                 if (_requestBuildinPackageVersionOp.IsDone == false)
                     return;
 

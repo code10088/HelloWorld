@@ -9,6 +9,7 @@ namespace YooAsset
             CheckAppFootPrint,
             SearchCacheFiles,
             VerifyCacheFiles,
+            CreateDownloadCenter,
             Done,
         }
 
@@ -22,7 +23,7 @@ namespace YooAsset
         {
             _fileSystem = fileSystem;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
 #if UNITY_WEBGL
             _steps = ESteps.Done;
@@ -32,7 +33,7 @@ namespace YooAsset
             _steps = ESteps.CheckAppFootPrint;
 #endif
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -58,9 +59,11 @@ namespace YooAsset
                 if (_searchCacheFilesOp == null)
                 {
                     _searchCacheFilesOp = new SearchCacheFilesOperation(_fileSystem);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _searchCacheFilesOp);
+                    _searchCacheFilesOp.StartOperation();
+                    AddChildOperation(_searchCacheFilesOp);
                 }
 
+                _searchCacheFilesOp.UpdateOperation();
                 Progress = _searchCacheFilesOp.Progress;
                 if (_searchCacheFilesOp.IsDone == false)
                     return;
@@ -73,17 +76,18 @@ namespace YooAsset
                 if (_verifyCacheFilesOp == null)
                 {
                     _verifyCacheFilesOp = new VerifyCacheFilesOperation(_fileSystem, _searchCacheFilesOp.Result);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _verifyCacheFilesOp);
+                    _verifyCacheFilesOp.StartOperation();
+                    AddChildOperation(_verifyCacheFilesOp);
                 }
 
+                _verifyCacheFilesOp.UpdateOperation();
                 Progress = _verifyCacheFilesOp.Progress;
                 if (_verifyCacheFilesOp.IsDone == false)
                     return;
 
                 if (_verifyCacheFilesOp.Status == EOperationStatus.Succeed)
                 {
-                    _steps = ESteps.Done;
-                    Status = EOperationStatus.Succeed;
+                    _steps = ESteps.CreateDownloadCenter;
                     YooLogger.Log($"Package '{_fileSystem.PackageName}' cached files count : {_fileSystem.FileCount}");
                 }
                 else
@@ -92,6 +96,18 @@ namespace YooAsset
                     Status = EOperationStatus.Failed;
                     Error = _verifyCacheFilesOp.Error;
                 }
+            }
+
+            if (_steps == ESteps.CreateDownloadCenter)
+            {
+                if (_fileSystem.DownloadCenter == null)
+                {
+                    _fileSystem.DownloadCenter = new DownloadCenterOperation(_fileSystem);
+                    OperationSystem.StartOperation(_fileSystem.PackageName, _fileSystem.DownloadCenter);
+                }
+
+                _steps = ESteps.Done;
+                Status = EOperationStatus.Succeed;
             }
         }
     }

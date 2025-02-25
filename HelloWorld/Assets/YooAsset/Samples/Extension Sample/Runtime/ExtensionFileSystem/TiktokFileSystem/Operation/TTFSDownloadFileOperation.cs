@@ -12,11 +12,11 @@ internal class TTFSDownloadFileOperation : DefaultDownloadFileOperation
     {
         _fileSystem = fileSystem;
     }
-    internal override void InternalOnStart()
+    internal override void InternalStart()
     {
         _steps = ESteps.CreateRequest;
     }
-    internal override void InternalOnUpdate()
+    internal override void InternalUpdate()
     {
         // 创建下载器
         if (_steps == ESteps.CreateRequest)

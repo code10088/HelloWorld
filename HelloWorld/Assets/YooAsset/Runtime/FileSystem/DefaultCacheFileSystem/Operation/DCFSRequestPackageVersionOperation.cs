@@ -23,11 +23,11 @@ namespace YooAsset
             _appendTimeTicks = appendTimeTicks;
             _timeout = timeout;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.GetPackageVersion;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -37,9 +37,11 @@ namespace YooAsset
                 if (_requestRemotePackageVersionOp == null)
                 {
                     _requestRemotePackageVersionOp = new RequestRemotePackageVersionOperation(_fileSystem, _appendTimeTicks, _timeout);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _requestRemotePackageVersionOp);
+                    _requestRemotePackageVersionOp.StartOperation();
+                    AddChildOperation(_requestRemotePackageVersionOp);
                 }
 
+                _requestRemotePackageVersionOp.UpdateOperation();
                 Progress = _requestRemotePackageVersionOp.Progress;
                 if (_requestRemotePackageVersionOp.IsDone == false)
                     return;

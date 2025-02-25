@@ -28,10 +28,10 @@ namespace YooAsset
         #region IPlayMode接口
         public PackageManifest ActiveManifest { set; get; }
 
-        void IPlayMode.UpdatePlayMode()
+        void IPlayMode.DestroyFileSystem()
         {
             if (BuildinFileSystem != null)
-                BuildinFileSystem.OnUpdate();
+                BuildinFileSystem.OnDestroy();
         }
 
         RequestPackageVersionOperation IPlayMode.RequestPackageVersionAsync(bool appendTimeTicks, int timeout)

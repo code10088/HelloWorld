@@ -37,12 +37,12 @@ namespace YooAsset
             _waitingList = elements;
             _fileVerifyLevel = fileSystem.FileVerifyLevel;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.InitVerify;
             _verifyStartTime = UnityEngine.Time.realtimeSinceStartup;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;

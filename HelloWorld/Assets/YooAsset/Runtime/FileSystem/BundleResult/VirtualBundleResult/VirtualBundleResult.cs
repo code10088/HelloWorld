@@ -32,25 +32,21 @@ namespace YooAsset
         public override FSLoadAssetOperation LoadAssetAsync(AssetInfo assetInfo)
         {
             var operation = new VirtualBundleLoadAssetOperation(_packageBundle, assetInfo);
-            OperationSystem.StartOperation(_fileSystem.PackageName, operation);
             return operation;
         }
         public override FSLoadAllAssetsOperation LoadAllAssetsAsync(AssetInfo assetInfo)
         {
             var operation = new VirtualBundleLoadAllAssetsOperation(_packageBundle, assetInfo);
-            OperationSystem.StartOperation(_fileSystem.PackageName, operation);
             return operation;
         }
         public override FSLoadSubAssetsOperation LoadSubAssetsAsync(AssetInfo assetInfo)
         {
             var operation = new VirtualBundleLoadSubAssetsOperation(_packageBundle, assetInfo);
-            OperationSystem.StartOperation(_fileSystem.PackageName, operation);
             return operation;
         }
         public override FSLoadSceneOperation LoadSceneOperation(AssetInfo assetInfo, LoadSceneParameters loadParams, bool suspendLoad)
         {
             var operation = new VirtualBundleLoadSceneOperation(assetInfo, loadParams, suspendLoad);
-            OperationSystem.StartOperation(_fileSystem.PackageName, operation);
             return operation;
         }
     }

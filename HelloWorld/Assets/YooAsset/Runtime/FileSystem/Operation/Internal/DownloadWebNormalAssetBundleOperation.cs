@@ -13,11 +13,11 @@ namespace YooAsset
         {
             _disableUnityWebCache = disableUnityWebCache;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CreateRequest;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -95,7 +95,7 @@ namespace YooAsset
                 }
             }
         }
-        internal override void InternalOnAbort()
+        internal override void InternalAbort()
         {
             _steps = ESteps.Done;
             DisposeWebRequest();

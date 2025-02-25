@@ -3,33 +3,33 @@ using System.Collections.Generic;
 
 namespace YooAsset
 {
-    internal class DefaultCacheDownloadCenter
+    internal class DownloadCenterOperation : AsyncOperationBase
     {
         private readonly DefaultCacheFileSystem _fileSystem;
         protected readonly Dictionary<string, DefaultDownloadFileOperation> _downloaders = new Dictionary<string, DefaultDownloadFileOperation>(1000);
         protected readonly List<string> _removeDownloadList = new List<string>(1000);
 
-        public DefaultCacheDownloadCenter(DefaultCacheFileSystem fileSystem)
+        public DownloadCenterOperation(DefaultCacheFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
         }
-
-        /// <summary>
-        /// 更新下载中心
-        /// </summary>
-        public void Update()
+        internal override void InternalStart()
+        {
+        }
+        internal override void InternalUpdate()
         {
             // 获取可移除的下载器集合
             _removeDownloadList.Clear();
             foreach (var valuePair in _downloaders)
             {
                 var downloader = valuePair.Value;
+                downloader.UpdateOperation();
 
                 // 注意：主动终止引用计数为零的下载任务
                 if (downloader.RefCount <= 0)
                 {
                     _removeDownloadList.Add(valuePair.Key);
-                    downloader.SetAbort();
+                    downloader.AbortOperation();
                     continue;
                 }
 
@@ -61,7 +61,7 @@ namespace YooAsset
                         var operation = operationPair.Value;
                         if (operation.Status == EOperationStatus.None)
                         {
-                            OperationSystem.StartOperation(_fileSystem.PackageName, operation);
+                            operation.StartOperation();
                             startCount--;
                             if (startCount <= 0)
                                 break;
@@ -79,7 +79,6 @@ namespace YooAsset
             // 查询旧的下载器
             if (_downloaders.TryGetValue(bundle.BundleGUID, out var oldDownloader))
             {
-                oldDownloader.Reference();
                 return oldDownloader;
             }
 
@@ -101,13 +100,13 @@ namespace YooAsset
             if (bundle.FileSize >= _fileSystem.ResumeDownloadMinimumSize)
             {
                 newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, param);
-                newDownloader.Reference();
+                AddChildOperation(newDownloader);
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }
             else
             {
                 newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, param);
-                newDownloader.Reference();
+                AddChildOperation(newDownloader);
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }
             return newDownloader;

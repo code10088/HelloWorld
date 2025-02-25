@@ -29,12 +29,12 @@ namespace YooAsset
             _packageVersion = packageVersion;
             _timeout = timeout;
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _requestCount = WebRequestCounter.GetRequestFailedCount(_fileSystem.PackageName, nameof(RequestWebRemotePackageHashOperation));
             _steps = ESteps.RequestPackageHash;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -46,9 +46,11 @@ namespace YooAsset
                     string fileName = YooAssetSettingsData.GetPackageHashFileName(_fileSystem.PackageName, _packageVersion);
                     string url = GetWebRequestURL(fileName);
                     _webTextRequestOp = new UnityWebTextRequestOperation(url, _timeout);
-                    OperationSystem.StartOperation(_fileSystem.PackageName, _webTextRequestOp);
+                    _webTextRequestOp.StartOperation();
+                    AddChildOperation(_webTextRequestOp);
                 }
 
+                _webTextRequestOp.UpdateOperation();
                 Progress = _webTextRequestOp.Progress;
                 if (_webTextRequestOp.IsDone == false)
                     return;

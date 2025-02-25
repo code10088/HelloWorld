@@ -112,25 +112,21 @@ internal class TiktokFileSystem : IFileSystem
     public virtual FSInitializeFileSystemOperation InitializeFileSystemAsync()
     {
         var operation = new TTFSInitializeOperation(this);
-        OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
     public virtual FSLoadPackageManifestOperation LoadPackageManifestAsync(string packageVersion, int timeout)
     {
         var operation = new TTFSLoadPackageManifestOperation(this, packageVersion, timeout);
-        OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
     public virtual FSRequestPackageVersionOperation RequestPackageVersionAsync(bool appendTimeTicks, int timeout)
     {
         var operation = new TTFSRequestPackageVersionOperation(this, timeout);
-        OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
     public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
     {
         var operation = new FSClearCacheFilesCompleteOperation();
-        OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
     public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadParam param)
@@ -138,7 +134,6 @@ internal class TiktokFileSystem : IFileSystem
         param.MainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
         param.FallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
         var operation = new TTFSDownloadFileOperation(this, bundle, param);
-        OperationSystem.StartOperation(PackageName, operation);
         return operation;
     }
     public virtual FSLoadBundleOperation LoadBundleFile(PackageBundle bundle)
@@ -146,14 +141,12 @@ internal class TiktokFileSystem : IFileSystem
         if (bundle.BundleType == (int)EBuildBundleType.AssetBundle)
         {
             var operation = new TTFSLoadBundleOperation(this, bundle);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         else
         {
             string error = $"{nameof(TiktokFileSystem)} not support load bundle type : {bundle.BundleType}";
             var operation = new FSLoadBundleCompleteOperation(error);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
     }
@@ -192,7 +185,7 @@ internal class TiktokFileSystem : IFileSystem
 
         _fileSystemMgr = TT.GetFileSystemManager();
     }
-    public virtual void OnUpdate()
+    public virtual void OnDestroy()
     {
     }
 

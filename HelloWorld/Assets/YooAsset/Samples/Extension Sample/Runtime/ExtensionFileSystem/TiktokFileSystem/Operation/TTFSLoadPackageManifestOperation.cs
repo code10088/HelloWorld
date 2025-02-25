@@ -25,11 +25,11 @@ internal class TTFSLoadPackageManifestOperation : FSLoadPackageManifestOperation
         _packageVersion = packageVersion;
         _timeout = timeout;
     }
-    internal override void InternalOnStart()
+    internal override void InternalStart()
     {
         _steps = ESteps.RequestPackageHash;
     }
-    internal override void InternalOnUpdate()
+    internal override void InternalUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
@@ -39,9 +39,11 @@ internal class TTFSLoadPackageManifestOperation : FSLoadPackageManifestOperation
             if (_requestPackageHashOp == null)
             {
                 _requestPackageHashOp = new RequestTiktokPackageHashOperation(_fileSystem, _packageVersion, _timeout);
-                OperationSystem.StartOperation(_fileSystem.PackageName, _requestPackageHashOp);
+                _requestPackageHashOp.StartOperation();
+                AddChildOperation(_requestPackageHashOp);
             }
 
+            _requestPackageHashOp.UpdateOperation();
             if (_requestPackageHashOp.IsDone == false)
                 return;
 
@@ -63,9 +65,11 @@ internal class TTFSLoadPackageManifestOperation : FSLoadPackageManifestOperation
             {
                 string packageHash = _requestPackageHashOp.PackageHash;
                 _loadPackageManifestOp = new LoadTiktokPackageManifestOperation(_fileSystem, _packageVersion, packageHash, _timeout);
-                OperationSystem.StartOperation(_fileSystem.PackageName, _loadPackageManifestOp);
+                _loadPackageManifestOp.StartOperation();
+                AddChildOperation(_loadPackageManifestOp);
             }
 
+            _loadPackageManifestOp.UpdateOperation();
             Progress = _loadPackageManifestOp.Progress;
             if (_loadPackageManifestOp.IsDone == false)
                 return;

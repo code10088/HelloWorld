@@ -16,11 +16,11 @@ namespace YooAsset
         internal UnityWebDataRequestOperation(string url, int timeout = 60) : base(url, timeout)
         {
         }
-        internal override void InternalOnStart()
+        internal override void InternalStart()
         {
             _steps = ESteps.CreateRequest;
         }
-        internal override void InternalOnUpdate()
+        internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
@@ -59,7 +59,7 @@ namespace YooAsset
                 DisposeRequest();
             }
         }
-        internal override void InternalOnAbort()
+        internal override void InternalAbort()
         {
             _steps = ESteps.Done;
             DisposeRequest();

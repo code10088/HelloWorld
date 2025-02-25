@@ -15,12 +15,17 @@ namespace YooAsset
         protected readonly Dictionary<string, string> _bundleDataFilePathMapping = new Dictionary<string, string>(10000);
         protected readonly Dictionary<string, string> _bundleInfoFilePathMapping = new Dictionary<string, string>(10000);
         protected readonly Dictionary<string, string> _tempFilePathMapping = new Dictionary<string, string>(10000);
-        protected DefaultCacheDownloadCenter _downloadCenter;
 
         protected string _packageRoot;
         protected string _tempFilesRoot;
         protected string _cacheBundleFilesRoot;
         protected string _cacheManifestFilesRoot;
+
+        /// <summary>
+        /// 下载中心
+        /// 说明：当异步操作任务终止的时候，所有下载子任务都会一同被终止！
+        /// </summary>
+        public DownloadCenterOperation DownloadCenter { set; get; }
 
         /// <summary>
         /// 包裹名称
@@ -98,19 +103,16 @@ namespace YooAsset
         public virtual FSInitializeFileSystemOperation InitializeFileSystemAsync()
         {
             var operation = new DCFSInitializeOperation(this);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         public virtual FSLoadPackageManifestOperation LoadPackageManifestAsync(string packageVersion, int timeout)
         {
             var operation = new DCFSLoadPackageManifestOperation(this, packageVersion, timeout);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         public virtual FSRequestPackageVersionOperation RequestPackageVersionAsync(bool appendTimeTicks, int timeout)
         {
             var operation = new DCFSRequestPackageVersionOperation(this, appendTimeTicks, timeout);
-            OperationSystem.StartOperation(PackageName, operation);
             return operation;
         }
         public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
@@ -118,64 +120,57 @@ namespace YooAsset
             if (clearMode == EFileClearMode.ClearAllBundleFiles.ToString())
             {
                 var operation = new ClearAllCacheBundleFilesOperation(this);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
             else if (clearMode == EFileClearMode.ClearUnusedBundleFiles.ToString())
             {
                 var operation = new ClearUnusedCacheBundleFilesOperation(this, manifest);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
             else if (clearMode == EFileClearMode.ClearBundleFilesByTags.ToString())
             {
                 var operation = new ClearCacheBundleFilesByTagsOperaiton(this, manifest, clearParam);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
             else if (clearMode == EFileClearMode.ClearAllManifestFiles.ToString())
             {
                 var operation = new ClearAllCacheManifestFilesOperation(this);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
             else if (clearMode == EFileClearMode.ClearUnusedManifestFiles.ToString())
             {
                 var operation = new ClearUnusedCacheManifestFilesOperation(this, manifest);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
             else
             {
                 string error = $"Invalid clear mode : {clearMode}";
                 var operation = new FSClearCacheFilesCompleteOperation(error);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
         }
         public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadParam param)
         {
-            return _downloadCenter.DownloadFileAsync(bundle, param);
+            var downloader = DownloadCenter.DownloadFileAsync(bundle, param);
+            downloader.Reference(); //增加下载器的引用计数
+            return downloader;
         }
         public virtual FSLoadBundleOperation LoadBundleFile(PackageBundle bundle)
         {
             if (bundle.BundleType == (int)EBuildBundleType.AssetBundle)
             {
                 var operation = new DCFSLoadAssetBundleOperation(this, bundle);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
             else if (bundle.BundleType == (int)EBuildBundleType.RawBundle)
             {
                 var operation = new DCFSLoadRawBundleOperation(this, bundle);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
             else
             {
                 string error = $"{nameof(DefaultCacheFileSystem)} not support load bundle type : {bundle.BundleType}";
                 var operation = new FSLoadBundleCompleteOperation(error);
-                OperationSystem.StartOperation(PackageName, operation);
                 return operation;
             }
         }
@@ -231,11 +226,14 @@ namespace YooAsset
             _cacheBundleFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.BundleFilesFolderName);
             _tempFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.TempFilesFolderName);
             _cacheManifestFilesRoot = PathUtility.Combine(_packageRoot, DefaultCacheFileSystemDefine.ManifestFilesFolderName);
-            _downloadCenter = new DefaultCacheDownloadCenter(this);
         }
-        public virtual void OnUpdate()
+        public virtual void OnDestroy()
         {
-            _downloadCenter.Update();
+            if (DownloadCenter != null)
+            {
+                DownloadCenter.AbortOperation();
+                DownloadCenter = null;
+            }
         }
 
         public virtual bool Belong(PackageBundle bundle)
