@@ -103,7 +103,7 @@ public class SDK : MonoSingletion<SDK>
             if (load)
             {
                 this.onClose = onClose;
-                video.Show();
+                video.Show(null, OnError);
                 load = false;
                 retry = 0;
                 return ShowAdResult.Success;
@@ -113,13 +113,13 @@ public class SDK : MonoSingletion<SDK>
                 return ShowAdResult.Loading;
             }
         }
-        private void OnError(WXADErrorResponse response)
+        private void OnError(WXBaseResponse response)
         {
-            GameDebug.LogError($"´íÎó£º{adUnitId} {response.errCode}");
+            GameDebug.LogError($"´íÎó£º{adUnitId} {response.errMsg}");
             OnClose(null);
             if (retry < 3)
             {
-                video.Load();
+                video.Load(null, OnError);
                 retry++;
             }
             else
@@ -134,15 +134,9 @@ public class SDK : MonoSingletion<SDK>
                 load = true;
                 retry = 0;
             }
-            else if (retry < 3)
-            {
-                video.Load();
-                retry++;
-            }
             else
             {
-                GameDebug.LogError($"´íÎó£º{adUnitId} {response.errMsg}");
-                Destroy();
+                OnError(response);
             }
         }
         private void OnClose(WXRewardedVideoAdOnCloseResponse response)
@@ -178,7 +172,7 @@ public class SDK : MonoSingletion<SDK>
             if (load)
             {
                 this.onClose = onClose;
-                custom.Show();
+                custom.Show(null, OnError);
                 return ShowAdResult.Success;
             }
             else
@@ -190,9 +184,9 @@ public class SDK : MonoSingletion<SDK>
         {
             custom.Hide();
         }
-        private void OnError(WXADErrorResponse response)
+        private void OnError(WXBaseResponse response)
         {
-            GameDebug.LogError($"´íÎó£º{adUnitId} {response.errCode}");
+            GameDebug.LogError($"´íÎó£º{adUnitId} {response.errMsg}");
             OnClose();
             Destroy();
         }
@@ -204,8 +198,7 @@ public class SDK : MonoSingletion<SDK>
             }
             else
             {
-                GameDebug.LogError($"´íÎó£º{adUnitId} {response.errMsg}");
-                Destroy();
+                OnError(response);
             }
         }
         private void OnClose()
