@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -186,12 +185,6 @@ namespace YooAsset
         }
         internal override void InternalWaitForAsyncComplete()
         {
-            //TODO 防止下载器挂起陷入无限死循环！
-            if (_steps == ESteps.None)
-            {
-                InternalStart();
-            }
-
             while (true)
             {
                 //TODO 如果是导入或解压本地文件，执行等待完毕

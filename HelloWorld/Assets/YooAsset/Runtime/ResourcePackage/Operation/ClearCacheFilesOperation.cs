@@ -1,144 +1,102 @@
-﻿
+﻿using System.Collections.Generic;
+using System.Linq;
+
 namespace YooAsset
 {
-    public abstract class ClearCacheFilesOperation : AsyncOperationBase
-    {
-    }
-    internal sealed class ClearCacheFilesImplOperation : ClearCacheFilesOperation
+    public sealed class ClearCacheFilesOperation : AsyncOperationBase
     {
         private enum ESteps
         {
             None,
-            ClearFileSystemA,
-            ClearFileSystemB,
-            ClearFileSystemC,
+            Prepare,
+            ClearCacheFiles,
+            CheckClearResult,
             Done,
         }
 
-        private readonly IPlayMode _impl;
-        private readonly IFileSystem _fileSystemA;
-        private readonly IFileSystem _fileSystemB;
-        private readonly IFileSystem _fileSystemC;
+        private readonly PlayModeImpl _impl;
         private readonly string _clearMode;
         private readonly object _clearParam;
-        private FSClearCacheFilesOperation _clearCacheFilesOpA;
-        private FSClearCacheFilesOperation _clearCacheFilesOpB;
-        private FSClearCacheFilesOperation _clearCacheFilesOpC;
+        private List<IFileSystem> _cloneList;
+        private FSClearCacheFilesOperation _clearCacheFilesOp;
         private ESteps _steps = ESteps.None;
 
-        internal ClearCacheFilesImplOperation(IPlayMode impl, IFileSystem fileSystemA, IFileSystem fileSystemB, IFileSystem fileSystemC, string clearMode, object clearParam)
+        internal ClearCacheFilesOperation(PlayModeImpl impl, string clearMode, object clearParam)
         {
             _impl = impl;
-            _fileSystemA = fileSystemA;
-            _fileSystemB = fileSystemB;
-            _fileSystemC = fileSystemC;
             _clearMode = clearMode;
             _clearParam = clearParam;
         }
         internal override void InternalStart()
         {
-            _steps = ESteps.ClearFileSystemA;
+            _steps = ESteps.Prepare;
         }
         internal override void InternalUpdate()
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
 
-            if (_steps == ESteps.ClearFileSystemA)
+            if (_steps == ESteps.Prepare)
             {
-                if (_fileSystemA == null)
-                {
-                    _steps = ESteps.ClearFileSystemB;
-                    return;
-                }
-
-                if (_clearCacheFilesOpA == null)
-                {
-                    _clearCacheFilesOpA = _fileSystemA.ClearCacheFilesAsync(_impl.ActiveManifest, _clearMode, _clearParam);
-                    _clearCacheFilesOpA.StartOperation();
-                    AddChildOperation(_clearCacheFilesOpA);
-                }
-
-                _clearCacheFilesOpA.UpdateOperation();
-                Progress = _clearCacheFilesOpA.Progress;
-                if (_clearCacheFilesOpA.IsDone == false)
-                    return;
-
-                if (_clearCacheFilesOpA.Status == EOperationStatus.Succeed)
-                {
-                    _steps = ESteps.ClearFileSystemB;
-                }
-                else
+                var fileSytems = _impl.FileSystems;
+                if (fileSytems == null || fileSytems.Count == 0)
                 {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Failed;
-                    Error = _clearCacheFilesOpA.Error;
+                    Error = "The file system is empty !";
+                    return;
                 }
+
+                foreach (var fileSystem in fileSytems)
+                {
+                    if (fileSystem == null)
+                    {
+                        _steps = ESteps.Done;
+                        Status = EOperationStatus.Failed;
+                        Error = "An empty object exists in the list!";
+                        return;
+                    }
+                }
+
+                _cloneList = fileSytems.ToList();
+                _steps = ESteps.ClearCacheFiles;
             }
 
-            if (_steps == ESteps.ClearFileSystemB)
+            if (_steps == ESteps.ClearCacheFiles)
             {
-                if (_fileSystemB == null)
-                {
-                    _steps = ESteps.ClearFileSystemC;
-                    return;
-                }
-
-                if (_clearCacheFilesOpB == null)
-                {
-                    _clearCacheFilesOpB = _fileSystemB.ClearCacheFilesAsync(_impl.ActiveManifest, _clearMode, _clearParam);
-                    _clearCacheFilesOpB.StartOperation();
-                    AddChildOperation(_clearCacheFilesOpB);
-                }
-
-                _clearCacheFilesOpB.UpdateOperation();
-                Progress = _clearCacheFilesOpB.Progress;
-                if (_clearCacheFilesOpB.IsDone == false)
-                    return;
-
-                if (_clearCacheFilesOpB.Status == EOperationStatus.Succeed)
-                {
-                    _steps = ESteps.ClearFileSystemC;
-                }
-                else
-                {
-                    _steps = ESteps.Done;
-                    Status = EOperationStatus.Failed;
-                    Error = _clearCacheFilesOpB.Error;
-                }
-            }
-
-            if (_steps == ESteps.ClearFileSystemC)
-            {
-                if (_fileSystemC == null)
-                {
-                    _steps = ESteps.Done;
-                    Status = EOperationStatus.Succeed;
-                    return;
-                }
-
-                if (_clearCacheFilesOpC == null)
-                {
-                    _clearCacheFilesOpC = _fileSystemC.ClearCacheFilesAsync(_impl.ActiveManifest, _clearMode, _clearParam);
-                    _clearCacheFilesOpC.StartOperation();
-                    AddChildOperation(_clearCacheFilesOpC);
-                }
-
-                _clearCacheFilesOpC.UpdateOperation();
-                Progress = _clearCacheFilesOpC.Progress;
-                if (_clearCacheFilesOpC.IsDone == false)
-                    return;
-
-                if (_clearCacheFilesOpC.Status == EOperationStatus.Succeed)
+                if (_cloneList.Count == 0)
                 {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Succeed;
                 }
                 else
                 {
+                    var fileSystem = _cloneList[0];
+                    _cloneList.RemoveAt(0);
+
+                    _clearCacheFilesOp = fileSystem.ClearCacheFilesAsync(_impl.ActiveManifest, _clearMode, _clearParam);
+                    _clearCacheFilesOp.StartOperation();
+                    AddChildOperation(_clearCacheFilesOp);
+                    _steps = ESteps.CheckClearResult;
+                }
+            }
+
+            if (_steps == ESteps.CheckClearResult)
+            {
+                _clearCacheFilesOp.UpdateOperation();
+                Progress = _clearCacheFilesOp.Progress;
+                if (_clearCacheFilesOp.IsDone == false)
+                    return;
+
+                if (_clearCacheFilesOp.Status == EOperationStatus.Succeed)
+                {
+                    _steps = ESteps.ClearCacheFiles;
+                }
+                else
+                {
                     _steps = ESteps.Done;
                     Status = EOperationStatus.Failed;
-                    Error = _clearCacheFilesOpC.Error;
+                    Error = _clearCacheFilesOp.Error;
                 }
             }
         }

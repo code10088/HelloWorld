@@ -38,6 +38,11 @@ namespace YooAsset.Editor
             /// 资源包视图
             /// </summary>
             BundleView,
+
+            /// <summary>
+            /// 异步操作视图
+            /// </summary>
+            OperationView,
         }
 
 
@@ -48,6 +53,7 @@ namespace YooAsset.Editor
         private SliderInt _frameSlider;
         private DebuggerAssetListViewer _assetListViewer;
         private DebuggerBundleListViewer _bundleListViewer;
+        private DebuggerOperationListViewer _operationListViewer;
 
         private EViewMode _viewMode;
         private string _searchKeyWord;
@@ -85,6 +91,7 @@ namespace YooAsset.Editor
                 _viewModeMenu = root.Q<ToolbarMenu>("ViewModeMenu");
                 _viewModeMenu.menu.AppendAction(EViewMode.AssetView.ToString(), OnViewModeMenuChange, OnViewModeMenuStatusUpdate, EViewMode.AssetView);
                 _viewModeMenu.menu.AppendAction(EViewMode.BundleView.ToString(), OnViewModeMenuChange, OnViewModeMenuStatusUpdate, EViewMode.BundleView);
+                _viewModeMenu.menu.AppendAction(EViewMode.OperationView.ToString(), OnViewModeMenuChange, OnViewModeMenuStatusUpdate, EViewMode.OperationView);
                 _viewModeMenu.text = EViewMode.AssetView.ToString();
 
                 // 搜索栏
@@ -120,6 +127,10 @@ namespace YooAsset.Editor
                 // 加载视图
                 _bundleListViewer = new DebuggerBundleListViewer();
                 _bundleListViewer.InitViewer();
+
+                // 加载视图
+                _operationListViewer = new DebuggerOperationListViewer();
+                _operationListViewer.InitViewer();
 
                 // 显示视图
                 _viewMode = EViewMode.AssetView;
@@ -207,6 +218,7 @@ namespace YooAsset.Editor
                 _currentPlayerSession.ClearDebugReport();
                 _assetListViewer.ClearView();
                 _bundleListViewer.ClearView();
+                _operationListViewer.ClearView();
             }
         }
 
@@ -242,6 +254,7 @@ namespace YooAsset.Editor
                 _frameSlider.label = $"Frame: {debugReport.FrameCount}";
                 _assetListViewer.FillViewData(debugReport);
                 _bundleListViewer.FillViewData(debugReport);
+                _operationListViewer.FillViewData(debugReport);
             }
         }
 
@@ -288,6 +301,7 @@ namespace YooAsset.Editor
             {
                 _assetListViewer.RebuildView(_searchKeyWord);
                 _bundleListViewer.RebuildView(_searchKeyWord);
+                _operationListViewer.RebuildView(_searchKeyWord);
             }
         }
         private void OnViewModeMenuChange(DropdownMenuAction action)
@@ -303,11 +317,19 @@ namespace YooAsset.Editor
                 {
                     _assetListViewer.AttachParent(root);
                     _bundleListViewer.DetachParent();
+                    _operationListViewer.DetachParent();
                 }
                 else if (viewMode == EViewMode.BundleView)
                 {
                     _assetListViewer.DetachParent();
                     _bundleListViewer.AttachParent(root);
+                    _operationListViewer.DetachParent();
+                }
+                else if (viewMode == EViewMode.OperationView)
+                {
+                    _assetListViewer.DetachParent();
+                    _bundleListViewer.DetachParent();
+                    _operationListViewer.AttachParent(root);
                 }
                 else
                 {

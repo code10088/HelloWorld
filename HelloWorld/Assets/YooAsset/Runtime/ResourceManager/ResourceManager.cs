@@ -34,7 +34,7 @@ namespace YooAsset
         /// <summary>
         /// 初始化
         /// </summary>
-        public void Initialize(InitializeParameters initializeParameters, IBundleQuery bundleServices)
+        public void Initialize(IBundleQuery bundleServices)
         {
             _bundleQuery = bundleServices;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
@@ -119,7 +119,7 @@ namespace YooAsset
             ProviderOperation provider;
             {
                 provider = new SceneProvider(this, providerGUID, assetInfo, loadSceneParams, suspendLoad);
-                provider.InitSpawnDebugInfo();
+                provider.InitProviderDebugInfo();
                 ProviderDic.Add(providerGUID, provider);
                 OperationSystem.StartOperation(PackageName, provider);
             }
@@ -158,7 +158,7 @@ namespace YooAsset
             if (provider == null)
             {
                 provider = new AssetProvider(this, providerGUID, assetInfo);
-                provider.InitSpawnDebugInfo();
+                provider.InitProviderDebugInfo();
                 ProviderDic.Add(providerGUID, provider);
                 OperationSystem.StartOperation(PackageName, provider);
             }
@@ -194,7 +194,7 @@ namespace YooAsset
             if (provider == null)
             {
                 provider = new SubAssetsProvider(this, providerGUID, assetInfo);
-                provider.InitSpawnDebugInfo();
+                provider.InitProviderDebugInfo();
                 ProviderDic.Add(providerGUID, provider);
                 OperationSystem.StartOperation(PackageName, provider);
             }
@@ -230,7 +230,7 @@ namespace YooAsset
             if (provider == null)
             {
                 provider = new AllAssetsProvider(this, providerGUID, assetInfo);
-                provider.InitSpawnDebugInfo();
+                provider.InitProviderDebugInfo();
                 ProviderDic.Add(providerGUID, provider);
                 OperationSystem.StartOperation(PackageName, provider);
             }
@@ -266,7 +266,7 @@ namespace YooAsset
             if (provider == null)
             {
                 provider = new RawFileProvider(this, providerGUID, assetInfo);
-                provider.InitSpawnDebugInfo();
+                provider.InitProviderDebugInfo();
                 ProviderDic.Add(providerGUID, provider);
                 OperationSystem.StartOperation(PackageName, provider);
             }
@@ -359,14 +359,6 @@ namespace YooAsset
         }
 
         #region 调试信息
-        internal DebugPackageData GetDebugPackageData()
-        {
-            DebugPackageData data = new DebugPackageData();
-            data.PackageName = PackageName;
-            data.ProviderInfos = GetDebugProviderInfos();
-            data.BundleInfos = GetDebugBundleInfos();
-            return data;
-        }
         internal List<DebugProviderInfo> GetDebugProviderInfos()
         {
             List<DebugProviderInfo> result = new List<DebugProviderInfo>(ProviderDic.Count);
@@ -375,8 +367,8 @@ namespace YooAsset
                 DebugProviderInfo providerInfo = new DebugProviderInfo();
                 providerInfo.AssetPath = provider.MainAssetInfo.AssetPath;
                 providerInfo.SpawnScene = provider.SpawnScene;
-                providerInfo.SpawnTime = provider.SpawnTime;
-                providerInfo.LoadingTime = provider.LoadingTime;
+                providerInfo.BeginTime = provider.BeginTime;
+                providerInfo.LoadingTime = provider.ProcessTime;
                 providerInfo.RefCount = provider.RefCount;
                 providerInfo.Status = provider.Status.ToString();
                 providerInfo.DependBundles = provider.GetDebugDependBundles();

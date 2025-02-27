@@ -99,7 +99,6 @@ namespace YooAsset
         }
         internal override void InternalStart()
         {
-            DebugBeginRecording();
             _steps = ESteps.StartBundleLoader;
         }
         internal override void InternalUpdate()
@@ -267,8 +266,6 @@ namespace YooAsset
         /// </summary>
         protected void InvokeCompletion(string error, EOperationStatus status)
         {
-            DebugEndRecording();
-
             _steps = ESteps.Done;
             Error = error;
             Status = status;
@@ -311,50 +308,10 @@ namespace YooAsset
         /// </summary>
         public string SpawnScene = string.Empty;
 
-        /// <summary>
-        /// 出生的时间
-        /// </summary>
-        public string SpawnTime = string.Empty;
-
-        /// <summary>
-        /// 加载耗时（单位：毫秒）
-        /// </summary>
-        public long LoadingTime { protected set; get; }
-
-        // 加载耗时统计
-        private Stopwatch _watch = null;
-
         [Conditional("DEBUG")]
-        public void InitSpawnDebugInfo()
+        public void InitProviderDebugInfo()
         {
-            SpawnScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name; ;
-            SpawnTime = SpawnTimeToString(UnityEngine.Time.realtimeSinceStartup);
-        }
-        private string SpawnTimeToString(float spawnTime)
-        {
-            float h = UnityEngine.Mathf.FloorToInt(spawnTime / 3600f);
-            float m = UnityEngine.Mathf.FloorToInt(spawnTime / 60f - h * 60f);
-            float s = UnityEngine.Mathf.FloorToInt(spawnTime - m * 60f - h * 3600f);
-            return h.ToString("00") + ":" + m.ToString("00") + ":" + s.ToString("00");
-        }
-
-        [Conditional("DEBUG")]
-        private void DebugBeginRecording()
-        {
-            if (_watch == null)
-            {
-                _watch = Stopwatch.StartNew();
-            }
-        }
-
-        [Conditional("DEBUG")]
-        private void DebugEndRecording()
-        {
-            if (_watch != null)
-            {
-                LoadingTime = _watch.ElapsedMilliseconds;
-                _watch = null;
-            }
+            SpawnScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         }
 
         /// <summary>

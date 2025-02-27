@@ -23,9 +23,9 @@ namespace YooAsset
         public string SpawnScene;
 
         /// <summary>
-        /// 资源出生的时间
+        /// 资源加载开始时间
         /// </summary>
-        public string SpawnTime;
+        public string BeginTime;
 
         /// <summary>
         /// 加载耗时（单位：毫秒）

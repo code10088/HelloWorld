@@ -27,10 +27,5 @@ namespace YooAsset
         /// 获取依赖的资源包名称集合
         /// </summary>
         string[] GetDependBundleNames(AssetInfo assetInfo);
-
-        /// <summary>
-        /// 清单是否有效
-        /// </summary>
-        bool ManifestValid();
     }
 }

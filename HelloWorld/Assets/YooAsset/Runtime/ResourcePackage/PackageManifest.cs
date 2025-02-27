@@ -149,22 +149,6 @@ namespace YooAsset
 
         /// <summary>
         /// 获取主资源包
-        /// 注意：传入的资源路径一定合法有效！
-        /// </summary>
-        public PackageBundle GetMainPackageBundle(string assetPath)
-        {
-            if (AssetDic.TryGetValue(assetPath, out PackageAsset packageAsset))
-            {
-                return GetMainPackageBundle(packageAsset.BundleID);
-            }
-            else
-            {
-                throw new Exception("Should never get here !");
-            }
-        }
-
-        /// <summary>
-        /// 获取主资源包
         /// 注意：传入的资源包ID一定合法有效！
         /// </summary>
         public PackageBundle GetMainPackageBundle(int bundleID)
@@ -181,25 +165,27 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 获取资源依赖列表
-        /// 注意：传入的资源路径一定合法有效！
+        /// 获取主资源包
+        /// 注意：传入的资源对象一定合法有效！
         /// </summary>
-        public PackageBundle[] GetAllDependencies(string assetPath)
+        public PackageBundle GetMainPackageBundle(PackageAsset packageAsset)
         {
-            if (TryGetPackageAsset(assetPath, out PackageAsset packageAsset))
+            return GetMainPackageBundle(packageAsset.BundleID);
+        }
+
+        /// <summary>
+        /// 获取资源依赖列表
+        /// 注意：传入的资源对象一定合法有效！
+        /// </summary>
+        public PackageBundle[] GetAllDependencies(PackageAsset packageAsset)
+        {
+            List<PackageBundle> result = new List<PackageBundle>(packageAsset.DependBundleIDs.Length);
+            foreach (var dependID in packageAsset.DependBundleIDs)
             {
-                List<PackageBundle> result = new List<PackageBundle>(packageAsset.DependBundleIDs.Length);
-                foreach (var dependID in packageAsset.DependBundleIDs)
-                {
-                    var dependBundle = GetMainPackageBundle(dependID);
-                    result.Add(dependBundle);
-                }
-                return result.ToArray();
+                var dependBundle = GetMainPackageBundle(dependID);
+                result.Add(dependBundle);
             }
-            else
-            {
-                throw new Exception("Should never get here !");
-            }
+            return result.ToArray();
         }
 
         /// <summary>

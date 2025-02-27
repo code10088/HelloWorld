@@ -88,7 +88,7 @@ internal class WXFSLoadBundleOperation : FSLoadBundleOperation
         {
             _steps = ESteps.Done;
             Status = EOperationStatus.Failed;
-            Error = "Wechat platform not support sync load method !";
+            Error = "WebGL platform not support sync load method !";
             UnityEngine.Debug.LogError(Error);
         }
     }

@@ -100,6 +100,7 @@ namespace YooAsset
 
             if (_steps == ESteps.CreateDownloadCenter)
             {
+                // 注意：下载中心作为独立任务运行！
                 if (_fileSystem.DownloadCenter == null)
                 {
                     _fileSystem.DownloadCenter = new DownloadCenterOperation(_fileSystem);

@@ -18,9 +18,8 @@ namespace YooAsset
             YooLogger.Log("Begin to create catalog file !");
 
             string savePath = YooAssetSettingsData.GetYooResourcesFullPath();
-            DirectoryInfo saveDirectory = new DirectoryInfo(savePath);
-            if (saveDirectory.Exists)
-                saveDirectory.Delete(true);
+            if (UnityEditor.AssetDatabase.DeleteAsset(savePath))
+                UnityEditor.AssetDatabase.Refresh();
 
             string rootPath = YooAssetSettingsData.GetYooDefaultBuildinRoot();
             DirectoryInfo rootDirectory = new DirectoryInfo(rootPath);

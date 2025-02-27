@@ -1,9 +1,6 @@
 ﻿
 namespace YooAsset
 {
-    /// <summary>
-    /// 查询远端包裹的最新版本
-    /// </summary>
     public abstract class RequestPackageVersionOperation : AsyncOperationBase
     {
         /// <summary>
@@ -20,15 +17,15 @@ namespace YooAsset
             Done,
         }
 
-        private readonly IFileSystem _fileSystem;
+        private readonly PlayModeImpl _impl;
         private readonly bool _appendTimeTicks;
         private readonly int _timeout;
         private FSRequestPackageVersionOperation _requestPackageVersionOp;
         private ESteps _steps = ESteps.None;
 
-        internal RequestPackageVersionImplOperation(IFileSystem fileSystem, bool appendTimeTicks, int timeout)
+        internal RequestPackageVersionImplOperation(PlayModeImpl impl, bool appendTimeTicks, int timeout)
         {
-            _fileSystem = fileSystem;
+            _impl = impl;
             _appendTimeTicks = appendTimeTicks;
             _timeout = timeout;
         }
@@ -45,7 +42,8 @@ namespace YooAsset
             {
                 if (_requestPackageVersionOp == null)
                 {
-                    _requestPackageVersionOp = _fileSystem.RequestPackageVersionAsync(_appendTimeTicks, _timeout);
+                    var mainFileSystem = _impl.GetMainFileSystem();
+                    _requestPackageVersionOp = mainFileSystem.RequestPackageVersionAsync(_appendTimeTicks, _timeout);
                     _requestPackageVersionOp.StartOperation();
                     AddChildOperation(_requestPackageVersionOp);
                 }

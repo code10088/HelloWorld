@@ -13,15 +13,9 @@ namespace YooAsset
         /// </summary>
         public string PackageName;
 
-        /// <summary>
-        /// 调试数据列表
-        /// </summary>
         public List<DebugProviderInfo> ProviderInfos = new List<DebugProviderInfo>(1000);
-
-        /// <summary>
-        /// 调试数据列表
-        /// </summary>
         public List<DebugBundleInfo> BundleInfos = new List<DebugBundleInfo>(1000);
+        public List<DebugOperationInfo> OperationInfos = new List<DebugOperationInfo>(1000);
 
 
         [NonSerialized]

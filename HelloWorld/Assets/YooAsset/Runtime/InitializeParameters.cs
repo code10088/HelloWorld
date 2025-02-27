@@ -1,4 +1,5 @@
-﻿
+﻿using System.Collections.Generic;
+
 namespace YooAsset
 {
     /// <summary>
@@ -25,6 +26,11 @@ namespace YooAsset
         /// WebGL运行模式
         /// </summary>
         WebPlayMode,
+
+        /// <summary>
+        /// 自定义运行模式
+        /// </summary>
+        CustomPlayMode,
     }
 
     /// <summary>
@@ -66,5 +72,17 @@ namespace YooAsset
     {
         public FileSystemParameters WebServerFileSystemParameters;
         public FileSystemParameters WebRemoteFileSystemParameters;
+    }
+
+    /// <summary>
+    /// 自定义运行模式的初始化参数
+    /// </summary>
+    public class CustomPlayModeParameters : InitializeParameters
+    {
+        /// <summary>
+        /// 文件系统初始化参数列表
+        /// 注意：列表最后一个元素作为主文件系统！
+        /// </summary>
+        public List<FileSystemParameters> FileSystemParameterList;
     }
 }

@@ -21,6 +21,13 @@ namespace YooAsset
         /// </summary>
         public string Error { private set; get; }
 
+        /// <summary>
+        /// 资源对象
+        /// </summary>
+        internal PackageAsset Asset
+        {
+            get { return _packageAsset; }
+        }
 
         /// <summary>
         /// 唯一标识符

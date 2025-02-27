@@ -132,5 +132,27 @@ namespace YooAsset
             operation.SetPackageName(packageName);
             operation.StartOperation();
         }
+
+        #region 调试信息
+        internal static List<DebugOperationInfo> GetDebugOperationInfos(string packageName)
+        {
+            List<DebugOperationInfo> result = new List<DebugOperationInfo>(_operations.Count);
+            foreach (var operation in _operations)
+            {
+                if (operation.PackageName == packageName)
+                {
+                    var operationInfo = new DebugOperationInfo();
+                    operationInfo.OperationName = operation.GetType().FullName;
+                    operationInfo.Priority = operation.Priority;
+                    operationInfo.Progress = operation.Progress;
+                    operationInfo.BeginTime = operation.BeginTime;
+                    operationInfo.ProcessTime = operation.ProcessTime;
+                    operationInfo.Status = operation.Status.ToString();
+                    result.Add(operationInfo);
+                }
+            }
+            return result;
+        }
+        #endregion
     }
 }

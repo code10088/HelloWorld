@@ -2,6 +2,41 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.2-preview] - 2025-02-27
+
+### Fixed
+
+- (2.3.1) 修复小游戏平台下载器不生效的问题。
+- (#480) 修复了Unity工程打包导出时的报错。
+
+### Added
+
+- 下载器新增参数：recursiveDownload
+
+  ```csharp
+  /// <summary>
+  /// 创建资源下载器，用于下载指定的资源依赖的资源包文件
+  /// </summary>
+  /// <param name="recursiveDownload">下载资源对象所属资源包内所有资源对象依赖的资源包
+  public ResourceDownloaderOperation CreateBundleDownloader()
+  ```
+
+- 新增CustomPlayMode模式
+
+  ```csharp
+  /// <summary>
+  /// 自定义运行模式的初始化参数
+  /// </summary>
+  public class CustomPlayModeParameters : InitializeParameters
+  {
+      /// <summary>
+      /// 文件系统初始化参数列表
+      /// 注意：列表最后一个元素作为主文件系统！
+      /// </summary>
+      public List<FileSystemParameters> FileSystemParameterList;
+  }
+  ```
+
 ## [2.3.1-preview] - 2025-02-25
 
 **资源加载依赖计算方式还原为了1.5x版本的模式，只加载资源对象实际依赖的资源包，不再以资源对象所在资源包的依赖关系为加载标准**。

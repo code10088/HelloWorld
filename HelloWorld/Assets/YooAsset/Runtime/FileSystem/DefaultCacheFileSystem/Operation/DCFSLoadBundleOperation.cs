@@ -54,18 +54,19 @@ namespace YooAsset
 
             if (_steps == ESteps.DownloadFile)
             {
-                // 注意：下载的异步任务由管理器驱动
-                // 注意：不加到子任务列表里，防止Abort的时候将下载器直接关闭！
                 // 注意：边玩边下下载器引用计数没有Release
                 if (_downloadFileOp == null)
                 {
                     DownloadParam downloadParam = new DownloadParam(int.MaxValue, 60);
                     _downloadFileOp = _fileSystem.DownloadFileAsync(_bundle, downloadParam);
+                    _downloadFileOp.StartOperation();
+                    AddChildOperation(_downloadFileOp);
                 }
 
                 if (IsWaitForAsyncComplete)
                     _downloadFileOp.WaitForAsyncComplete();
 
+                _downloadFileOp.UpdateOperation();
                 DownloadProgress = _downloadFileOp.DownloadProgress;
                 DownloadedBytes = _downloadFileOp.DownloadedBytes;
                 if (_downloadFileOp.IsDone == false)
@@ -271,18 +272,19 @@ namespace YooAsset
 
             if (_steps == ESteps.DownloadFile)
             {
-                // 注意：下载的异步任务由管理器驱动
-                // 注意：不加到子任务列表里，防止Abort的时候将下载器直接关闭！
                 // 注意：边玩边下下载器引用计数没有Release
                 if (_downloadFileOp == null)
                 {
                     DownloadParam downloadParam = new DownloadParam(int.MaxValue, 60);
                     _downloadFileOp = _fileSystem.DownloadFileAsync(_bundle, downloadParam);
+                    _downloadFileOp.StartOperation();
+                    AddChildOperation(_downloadFileOp);
                 }
 
                 if (IsWaitForAsyncComplete)
                     _downloadFileOp.WaitForAsyncComplete();
 
+                _downloadFileOp.UpdateOperation();
                 DownloadProgress = _downloadFileOp.DownloadProgress;
                 DownloadedBytes = _downloadFileOp.DownloadedBytes;
                 if (_downloadFileOp.IsDone == false)

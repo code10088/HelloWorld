@@ -126,13 +126,13 @@ namespace YooAsset.Editor
                 _providerTableView.AddColumn(column);
             }
 
-            // SpawnTime
+            // BeginTime
             {
                 var columnStyle = new ColumnStyle(100);
                 columnStyle.Stretchable = false;
                 columnStyle.Searchable = false;
                 columnStyle.Sortable = true;
-                var column = new TableColumn("SpawnTime", "Spawn Time", columnStyle);
+                var column = new TableColumn("BeginTime", "Begin Time", columnStyle);
                 column.MakeCell = () =>
                 {
                     var label = new Label();
@@ -315,7 +315,7 @@ namespace YooAsset.Editor
                     rowData.AddAssetPathCell("PackageName", packageData.PackageName);
                     rowData.AddStringValueCell("AssetPath", providerInfo.AssetPath);
                     rowData.AddStringValueCell("SpawnScene", providerInfo.SpawnScene);
-                    rowData.AddStringValueCell("SpawnTime", providerInfo.SpawnTime);
+                    rowData.AddStringValueCell("BeginTime", providerInfo.BeginTime);
                     rowData.AddLongValueCell("LoadingTime", providerInfo.LoadingTime);
                     rowData.AddLongValueCell("RefCount", providerInfo.RefCount);
                     rowData.AddStringValueCell("Status", providerInfo.Status.ToString());

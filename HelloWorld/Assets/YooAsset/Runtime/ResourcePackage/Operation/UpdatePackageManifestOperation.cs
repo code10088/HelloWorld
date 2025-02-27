@@ -1,13 +1,7 @@
 ﻿
 namespace YooAsset
 {
-    /// <summary>
-    /// 向远端请求并更新清单
-    /// </summary>
-    public abstract class UpdatePackageManifestOperation : AsyncOperationBase
-    {
-    }
-    internal sealed class UpdatePackageManifestImplOperation : UpdatePackageManifestOperation
+    public sealed class UpdatePackageManifestOperation : AsyncOperationBase
     {
         private enum ESteps
         {
@@ -17,19 +11,16 @@ namespace YooAsset
             LoadPackageManifest,
             Done,
         }
-
-        private readonly IPlayMode _impl;
-        private readonly IFileSystem _fileSystem;
+        
+        private readonly PlayModeImpl _impl;
         private readonly string _packageVersion;
         private readonly int _timeout;
         private FSLoadPackageManifestOperation _loadPackageManifestOp;
         private ESteps _steps = ESteps.None;
 
-
-        internal UpdatePackageManifestImplOperation(IPlayMode impl, IFileSystem fileSystem, string packageVersion, int timeout)
+        internal UpdatePackageManifestOperation(PlayModeImpl impl, string packageVersion, int timeout)
         {
             _impl = impl;
-            _fileSystem = fileSystem;
             _packageVersion = packageVersion;
             _timeout = timeout;
         }
@@ -74,7 +65,8 @@ namespace YooAsset
             {
                 if (_loadPackageManifestOp == null)
                 {
-                    _loadPackageManifestOp = _fileSystem.LoadPackageManifestAsync(_packageVersion, _timeout);
+                    var mainFileSystem = _impl.GetMainFileSystem();
+                    _loadPackageManifestOp = mainFileSystem.LoadPackageManifestAsync(_packageVersion, _timeout);
                     _loadPackageManifestOp.StartOperation();
                     AddChildOperation(_loadPackageManifestOp);
                 }

@@ -100,7 +100,7 @@ namespace YooAsset
         /// 当开始下载某个文件
         /// </summary>
         public DownloadFileBegin DownloadFileBeginCallback { set; get; }
-        
+
 
         internal DownloaderOperation(string packageName, List<BundleInfo> downloadList, int downloadingMaxNumber, int failedTryAgain, int timeout)
         {
@@ -147,6 +147,7 @@ namespace YooAsset
                 long downloadBytes = _cachedDownloadBytes;
                 foreach (var downloader in _downloaders)
                 {
+                    downloader.UpdateOperation();
                     downloadBytes += downloader.DownloadedBytes;
                     if (downloader.IsDone == false)
                         continue;
@@ -203,6 +204,9 @@ namespace YooAsset
                         int index = _bundleInfoList.Count - 1;
                         var bundleInfo = _bundleInfoList[index];
                         var downloader = bundleInfo.CreateDownloader(_failedTryAgain, _timeout);
+                        downloader.StartOperation();
+                        this.AddChildOperation(downloader);
+
                         _downloaders.Add(downloader);
                         _bundleInfoList.RemoveAt(index);
 

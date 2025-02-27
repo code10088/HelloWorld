@@ -153,7 +153,10 @@ namespace YooAsset
         {
             var downloader = DownloadCenter.DownloadFileAsync(bundle, param);
             downloader.Reference(); //增加下载器的引用计数
-            return downloader;
+
+            // 注意：将下载器进行包裹，可以避免父类任务终止的时候，连带子任务里的下载器也一起被终止！
+            var wrapper = new DownloadFileWrapper(downloader);
+            return wrapper;
         }
         public virtual FSLoadBundleOperation LoadBundleFile(PackageBundle bundle)
         {

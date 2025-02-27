@@ -34,11 +34,19 @@ namespace YooAsset
             DownloadedBytes = 0;
             DownloadProgress = 0;
         }
-        public void Release()
+
+        /// <summary>
+        /// 减少引用计数
+        /// </summary>
+        public virtual void Release()
         {
             RefCount--;
         }
-        public void Reference()
+
+        /// <summary>
+        /// 增加引用计数
+        /// </summary>
+        public virtual void Reference()
         {
             RefCount++;
         }
