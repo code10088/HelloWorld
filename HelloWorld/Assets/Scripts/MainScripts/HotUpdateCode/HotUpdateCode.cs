@@ -88,6 +88,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     }
     private void ClearPackageUnusedCacheFiles()
     {
+        AssetManager.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
         var operation = AssetManager.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
         operation.Completed += ClearPackageUnusedCacheFiles;
     }
