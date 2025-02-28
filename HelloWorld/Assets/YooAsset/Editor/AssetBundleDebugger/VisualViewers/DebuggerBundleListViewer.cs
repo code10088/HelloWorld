@@ -32,7 +32,6 @@ namespace YooAsset.Editor
         private TableView _usingTableView;
         private TableView _referenceTableView;
 
-        private DebugReport _debugReport;
         private List<ITableData> _sourceDatas;
 
         /// <summary>
@@ -61,14 +60,13 @@ namespace YooAsset.Editor
             _referenceTableView = _root.Q<TableView>("ReferenceTableView");
             CreateReferenceTableViewColumns();
 
-#if UNITY_2020_3_OR_NEWER
+            // 面板分屏
             var topGroup = _root.Q<VisualElement>("TopGroup");
             var bottomGroup = _root.Q<VisualElement>("BottomGroup");
             topGroup.style.minHeight = 100;
             bottomGroup.style.minHeight = 100f;
-            PanelSplitView.SplitVerticalPanel(_root, topGroup, bottomGroup);
-            PanelSplitView.SplitVerticalPanel(bottomGroup, _usingTableView, _referenceTableView);
-#endif
+            UIElementsTools.SplitVerticalPanel(_root, topGroup, bottomGroup);
+            UIElementsTools.SplitVerticalPanel(bottomGroup, _usingTableView, _referenceTableView);
         }
         private void CreateBundleTableViewColumns()
         {
@@ -99,6 +97,7 @@ namespace YooAsset.Editor
                 columnStyle.Stretchable = true;
                 columnStyle.Searchable = true;
                 columnStyle.Sortable = true;
+                columnStyle.Counter = true;
                 var column = new TableColumn("BundleName", "Bundle Name", columnStyle);
                 column.MakeCell = () =>
                 {
@@ -172,6 +171,7 @@ namespace YooAsset.Editor
                 columnStyle.Stretchable = true;
                 columnStyle.Searchable = true;
                 columnStyle.Sortable = true;
+                columnStyle.Counter = true;
                 var column = new TableColumn("UsingAssets", "Using Assets", columnStyle);
                 column.MakeCell = () =>
                 {
@@ -287,6 +287,7 @@ namespace YooAsset.Editor
                 columnStyle.Stretchable = true;
                 columnStyle.Searchable = true;
                 columnStyle.Sortable = true;
+                columnStyle.Counter = true;
                 var column = new TableColumn("ReferenceBundle", "Reference Bundle", columnStyle);
                 column.MakeCell = () =>
                 {
@@ -358,8 +359,6 @@ namespace YooAsset.Editor
         /// </summary>
         public void FillViewData(DebugReport debugReport)
         {
-            _debugReport = debugReport;
-
             // 清空旧数据
             _bundleTableView.ClearAll(false, true);
             _usingTableView.ClearAll(false, true);
@@ -392,7 +391,6 @@ namespace YooAsset.Editor
         /// </summary>
         public void ClearView()
         {
-            _debugReport = null;
             _bundleTableView.ClearAll(false, true);
             _bundleTableView.RebuildView();
             _usingTableView.ClearAll(false, true);

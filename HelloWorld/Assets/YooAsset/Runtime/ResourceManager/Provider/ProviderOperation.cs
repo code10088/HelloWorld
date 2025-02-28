@@ -173,6 +173,10 @@ namespace YooAsset
                 }
             }
         }
+        internal override string InternalGetDesc()
+        {
+            return $"AssetPath : {MainAssetInfo.AssetPath}";
+        }
         protected abstract void ProcessBundleResult();
 
         /// <summary>

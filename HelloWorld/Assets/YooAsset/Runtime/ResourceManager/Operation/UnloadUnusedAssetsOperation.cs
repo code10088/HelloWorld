@@ -53,6 +53,10 @@ namespace YooAsset
                 }
             }
         }
+        internal override string InternalGetDesc()
+        {
+            return $"LoopCount : {_loopCount}";
+        }
 
         /// <summary>
         /// 说明：资源包之间会有深层的依赖链表，需要多次迭代才可以在单帧内卸载！

@@ -100,5 +100,9 @@ namespace YooAsset
                 }
             }
         }
+        internal override string InternalGetDesc()
+        {
+            return $"ClearMode : {_clearMode}";
+        }
     }
 }

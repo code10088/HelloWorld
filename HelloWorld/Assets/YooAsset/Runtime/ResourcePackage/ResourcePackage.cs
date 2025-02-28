@@ -97,7 +97,7 @@ namespace YooAsset
 
             // 创建资源管理器 
             _resourceManager = new ResourceManager(PackageName);
-            var playModeImpl = new PlayModeImpl(PackageName);
+            var playModeImpl = new PlayModeImpl(PackageName, _playMode);
             _bundleQuery = playModeImpl;
             _playModeImpl = playModeImpl;
             _resourceManager.Initialize(_bundleQuery);

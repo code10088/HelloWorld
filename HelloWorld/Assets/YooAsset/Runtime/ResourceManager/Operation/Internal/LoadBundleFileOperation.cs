@@ -116,6 +116,10 @@ namespace YooAsset
                 }
             }
         }
+        internal override string InternalGetDesc()
+        {
+            return $"BundleName : {LoadBundleInfo.Bundle.BundleName}";
+        }
 
         /// <summary>
         /// 引用（引用计数递加）

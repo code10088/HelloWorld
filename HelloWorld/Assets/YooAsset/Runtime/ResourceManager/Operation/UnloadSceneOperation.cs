@@ -110,5 +110,9 @@ namespace YooAsset
                 Status = EOperationStatus.Succeed;
             }
         }
+        internal override string InternalGetDesc()
+        {
+            return $"SceneName : {_provider.SceneName}";
+        }
     }
 }

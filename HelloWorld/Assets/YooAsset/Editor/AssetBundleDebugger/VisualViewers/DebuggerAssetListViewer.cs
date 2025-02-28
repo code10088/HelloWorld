@@ -27,7 +27,6 @@ namespace YooAsset.Editor
         private TableView _providerTableView;
         private TableView _dependTableView;
 
-        private DebugReport _debugReport;
         private List<ITableData> _sourceDatas;
 
 
@@ -53,13 +52,12 @@ namespace YooAsset.Editor
             _dependTableView = _root.Q<TableView>("BottomTableView");
             CreateDependTableViewColumns();
 
-#if UNITY_2020_3_OR_NEWER
+            // 面板分屏
             var topGroup = _root.Q<VisualElement>("TopGroup");
             var bottomGroup = _root.Q<VisualElement>("BottomGroup");
             topGroup.style.minHeight = 100;
             bottomGroup.style.minHeight = 100f;
-            PanelSplitView.SplitVerticalPanel(_root, topGroup, bottomGroup);
-#endif
+            UIElementsTools.SplitVerticalPanel(_root, topGroup, bottomGroup);
         }
         private void CreateAssetTableViewColumns()
         {
@@ -90,6 +88,7 @@ namespace YooAsset.Editor
                 columnStyle.Stretchable = true;
                 columnStyle.Searchable = true;
                 columnStyle.Sortable = true;
+                columnStyle.Counter = true;
                 var column = new TableColumn("AssetPath", "Asset Path", columnStyle);
                 column.MakeCell = () =>
                 {
@@ -226,6 +225,7 @@ namespace YooAsset.Editor
                 columnStyle.Stretchable = true;
                 columnStyle.Searchable = true;
                 columnStyle.Sortable = true;
+                columnStyle.Counter = true;
                 var column = new TableColumn("DependBundles", "Depend Bundles", columnStyle);
                 column.MakeCell = () =>
                 {
@@ -297,8 +297,6 @@ namespace YooAsset.Editor
         /// </summary>
         public void FillViewData(DebugReport debugReport)
         {
-            _debugReport = debugReport;
-
             // 清空旧数据
             _providerTableView.ClearAll(false, true);
             _dependTableView.ClearAll(false, true);
@@ -333,7 +331,6 @@ namespace YooAsset.Editor
         /// </summary>
         public void ClearView()
         {
-            _debugReport = null;
             _providerTableView.ClearAll(false, true);
             _dependTableView.ClearAll(false, true);
             RebuildView(null);

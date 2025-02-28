@@ -121,5 +121,9 @@ namespace YooAsset
                 }
             }
         }
+        internal override string InternalGetDesc()
+        {
+            return $"PlayMode : {_impl.PlayMode}";
+        }
     }
 }

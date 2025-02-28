@@ -7,12 +7,13 @@ namespace YooAsset
     internal class PlayModeImpl : IPlayMode, IBundleQuery
     {
         public readonly string PackageName;
+        public readonly EPlayMode PlayMode;
         public readonly List<IFileSystem> FileSystems = new List<IFileSystem>(10);
 
-
-        public PlayModeImpl(string packageName)
+        public PlayModeImpl(string packageName, EPlayMode playMode)
         {
             PackageName = packageName;
+            PlayMode = playMode;
         }
 
         /// <summary>

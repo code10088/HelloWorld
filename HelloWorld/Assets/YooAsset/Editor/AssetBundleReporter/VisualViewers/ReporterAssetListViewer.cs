@@ -56,13 +56,12 @@ namespace YooAsset.Editor
             _dependTableView.ClickTableDataEvent = OnClickBundleTableView;
             CreateDependTableViewColumns();
 
-#if UNITY_2020_3_OR_NEWER
+            // 面板分屏
             var topGroup = _root.Q<VisualElement>("TopGroup");
             var bottomGroup = _root.Q<VisualElement>("BottomGroup");
             topGroup.style.minHeight = 100;
             bottomGroup.style.minHeight = 100f;
-            PanelSplitView.SplitVerticalPanel(_root, topGroup, bottomGroup);
-#endif
+            UIElementsTools.SplitVerticalPanel(_root, topGroup, bottomGroup);
         }
         private void CreateAssetTableViewColumns()
         {

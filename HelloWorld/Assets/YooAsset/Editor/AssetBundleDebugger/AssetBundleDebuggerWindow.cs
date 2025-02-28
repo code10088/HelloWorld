@@ -48,7 +48,7 @@ namespace YooAsset.Editor
 
         private readonly Dictionary<int, RemotePlayerSession> _playerSessions = new Dictionary<int, RemotePlayerSession>();
 
-        private Label _playerName;
+        private ToolbarButton _playerName;
         private ToolbarMenu _viewModeMenu;
         private SliderInt _frameSlider;
         private DebuggerAssetListViewer _assetListViewer;
@@ -84,7 +84,7 @@ namespace YooAsset.Editor
                 exportBtn.clicked += ExportBtn_clicked;
 
                 // 用户列表菜单
-                _playerName = root.Q<Label>("PlayerName");
+                _playerName = root.Q<ToolbarButton>("PlayerName");
                 _playerName.text = "Editor player";
 
                 // 视口模式菜单
@@ -118,6 +118,9 @@ namespace YooAsset.Editor
 
                     var frameClear = root.Q<ToolbarButton>("FrameClear");
                     frameClear.clicked += OnFrameClear_clicked;
+
+                    var recorderToggle = root.Q<ToggleRecord>("FrameRecord");
+                    recorderToggle.RegisterValueChangedCallback(OnRecordToggleValueChange);
                 }
 
                 // 加载视图
@@ -140,8 +143,9 @@ namespace YooAsset.Editor
                 EditorConnection.instance.Initialize();
                 EditorConnection.instance.RegisterConnection(OnHandleConnectionEvent);
                 EditorConnection.instance.RegisterDisconnection(OnHandleDisconnectionEvent);
-                EditorConnection.instance.Register(RemoteDebuggerDefine.kMsgSendPlayerToEditor, OnHandlePlayerMessage);
-                RemoteDebuggerInRuntime.EditorHandleDebugReportCallback = OnHandleDebugReport;
+                EditorConnection.instance.Register(RemoteDebuggerDefine.kMsgPlayerSendToEditor, OnHandlePlayerMessage);
+                RemoteEditorConnection.Instance.Initialize();
+                RemoteEditorConnection.Instance.Register(RemoteDebuggerDefine.kMsgPlayerSendToEditor, OnHandlePlayerMessage);
             }
             catch (Exception e)
             {
@@ -153,7 +157,8 @@ namespace YooAsset.Editor
             // 远程调试
             EditorConnection.instance.UnregisterConnection(OnHandleConnectionEvent);
             EditorConnection.instance.UnregisterDisconnection(OnHandleDisconnectionEvent);
-            EditorConnection.instance.Unregister(RemoteDebuggerDefine.kMsgSendPlayerToEditor, OnHandlePlayerMessage);
+            EditorConnection.instance.Unregister(RemoteDebuggerDefine.kMsgPlayerSendToEditor, OnHandlePlayerMessage);
+            RemoteEditorConnection.Instance.Unregister(RemoteDebuggerDefine.kMsgPlayerSendToEditor);
             _playerSessions.Clear();
         }
 
@@ -170,10 +175,7 @@ namespace YooAsset.Editor
         private void OnHandlePlayerMessage(MessageEventArgs args)
         {
             var debugReport = DebugReport.Deserialize(args.data);
-            OnHandleDebugReport(args.playerId, debugReport);
-        }
-        private void OnHandleDebugReport(int playerId, DebugReport debugReport)
-        {
+            int playerId = args.playerId;
             Debug.Log($"Handle player {playerId} debug report !");
             _currentPlayerSession = GetOrCreatePlayerSession(playerId);
             _currentPlayerSession.AddDebugReport(debugReport);
@@ -221,6 +223,16 @@ namespace YooAsset.Editor
                 _operationListViewer.ClearView();
             }
         }
+        private void OnRecordToggleValueChange(ChangeEvent<bool> evt)
+        {
+            // 发送采集数据的命令
+            RemoteCommand command = new RemoteCommand();
+            command.CommandType = (int)ERemoteCommand.SampleAuto;
+            command.CommandParam = evt.newValue ? "open" : "close";
+            byte[] data = RemoteCommand.Serialize(command);
+            EditorConnection.instance.Send(RemoteDebuggerDefine.kMsgEditorSendToPlayer, data);
+            RemoteEditorConnection.Instance.Send(RemoteDebuggerDefine.kMsgEditorSendToPlayer, data);
+        }
 
         private RemotePlayerSession GetOrCreatePlayerSession(int playerId)
         {
@@ -265,8 +277,8 @@ namespace YooAsset.Editor
             command.CommandType = (int)ERemoteCommand.SampleOnce;
             command.CommandParam = string.Empty;
             byte[] data = RemoteCommand.Serialize(command);
-            EditorConnection.instance.Send(RemoteDebuggerDefine.kMsgSendEditorToPlayer, data);
-            RemoteDebuggerInRuntime.EditorRequestDebugReport();
+            EditorConnection.instance.Send(RemoteDebuggerDefine.kMsgEditorSendToPlayer, data);
+            RemoteEditorConnection.Instance.Send(RemoteDebuggerDefine.kMsgEditorSendToPlayer, data);
         }
         private void ExportBtn_clicked()
         {

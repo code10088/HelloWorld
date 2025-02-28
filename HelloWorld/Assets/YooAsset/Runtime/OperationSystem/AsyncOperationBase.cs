@@ -8,10 +8,14 @@ namespace YooAsset
 {
     public abstract class AsyncOperationBase : IEnumerator, IComparable<AsyncOperationBase>
     {
-        private readonly List<AsyncOperationBase> _childs = new List<AsyncOperationBase>(10);
         private Action<AsyncOperationBase> _callback;
         private string _packageName = null;
         private int _whileFrame = 1000;
+
+        /// <summary>
+        /// 所有子任务
+        /// </summary>
+        internal readonly List<AsyncOperationBase> Childs = new List<AsyncOperationBase>(10);
 
         /// <summary>
         /// 等待异步执行完成
@@ -109,6 +113,10 @@ namespace YooAsset
         {
             throw new System.NotImplementedException(this.GetType().Name);
         }
+        internal virtual string InternalGetDesc()
+        {
+            return string.Empty;
+        }
 
         /// <summary>
         /// 设置包裹名称
@@ -124,11 +132,19 @@ namespace YooAsset
         internal void AddChildOperation(AsyncOperationBase child)
         {
 #if UNITY_EDITOR
-            if (_childs.Contains(child))
+            if (Childs.Contains(child))
                 throw new Exception($"The child node {child.GetType().Name} already exists !");
 #endif
 
-            _childs.Add(child);
+            Childs.Add(child);
+        }
+
+        /// <summary>
+        /// 获取异步操作说明
+        /// </summary>
+        internal string GetOperationDesc()
+        {
+            return InternalGetDesc();
         }
 
         /// <summary>
@@ -185,7 +201,7 @@ namespace YooAsset
         /// </summary>
         internal void AbortOperation()
         {
-            foreach (var child in _childs)
+            foreach (var child in Childs)
             {
                 child.AbortOperation();
             }

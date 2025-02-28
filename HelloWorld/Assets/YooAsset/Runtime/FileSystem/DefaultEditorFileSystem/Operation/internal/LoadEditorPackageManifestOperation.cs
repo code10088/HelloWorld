@@ -100,5 +100,9 @@ namespace YooAsset
                 }
             }
         }
+        internal override string InternalGetDesc()
+        {
+            return $"PackageVersion : {_packageVersion} PackageHash : {_packageHash}";
+        }
     }
 }

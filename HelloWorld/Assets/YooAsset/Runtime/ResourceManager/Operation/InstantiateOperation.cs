@@ -151,6 +151,11 @@ namespace YooAsset
                 }
             }
         }
+        internal override string InternalGetDesc()
+        {
+            var assetInfo = _handle.GetAssetInfo();
+            return $"AssetPath : {assetInfo.AssetPath}";
+        }
 
         /// <summary>
         /// 取消实例化对象操作

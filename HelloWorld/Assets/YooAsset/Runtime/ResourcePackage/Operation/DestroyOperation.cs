@@ -98,5 +98,9 @@ namespace YooAsset
                 Status = EOperationStatus.Succeed;
             }
         }
+        internal override string InternalGetDesc()
+        {
+            return $"PackageVersion : {_resourcePackage.GetPackageVersion()}";
+        }
     }
 }

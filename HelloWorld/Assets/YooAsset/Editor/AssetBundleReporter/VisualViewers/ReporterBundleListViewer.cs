@@ -61,7 +61,7 @@ namespace YooAsset.Editor
             var bottomGroup = _root.Q<VisualElement>("BottomGroup");
             topGroup.style.minHeight = 100;
             bottomGroup.style.minHeight = 100f;
-            PanelSplitView.SplitVerticalPanel(_root, topGroup, bottomGroup);
+            UIElementsTools.SplitVerticalPanel(_root, topGroup, bottomGroup);
 #endif
         }
         private void CreateBundleTableViewColumns()

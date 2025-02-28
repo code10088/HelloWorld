@@ -11,7 +11,7 @@ namespace YooAsset
             LoadPackageManifest,
             Done,
         }
-        
+
         private readonly PlayModeImpl _impl;
         private readonly string _packageVersion;
         private readonly int _timeout;
@@ -88,6 +88,10 @@ namespace YooAsset
                     Error = _loadPackageManifestOp.Error;
                 }
             }
+        }
+        internal override string InternalGetDesc()
+        {
+            return $"PackageVersion : {_packageVersion}";
         }
     }
 }

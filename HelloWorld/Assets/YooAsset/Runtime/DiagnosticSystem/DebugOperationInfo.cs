@@ -13,6 +13,11 @@ namespace YooAsset
         public string OperationName;
 
         /// <summary>
+        /// 任务说明
+        /// </summary>
+        public string OperationDesc;
+
+        /// <summary>
         /// 优先级
         /// </summary>
         public uint Priority;
@@ -36,6 +41,12 @@ namespace YooAsset
         /// 任务状态
         /// </summary>
         public string Status;
+
+        /// <summary>
+        /// 子任务列表
+        /// TODO : Serialization depth limit 10 exceeded
+        /// </summary>
+        public List<DebugOperationInfo> Childs;
 
         public int CompareTo(DebugOperationInfo other)
         {

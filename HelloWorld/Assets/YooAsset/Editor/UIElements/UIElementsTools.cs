@@ -32,6 +32,34 @@ namespace YooAsset.Editor
                 label.style.minWidth = minWidth;
             }
         }
+
+        /// <summary>
+        /// 设置按钮图标
+        /// </summary>
+        public static void SetToolbarButtonIcon(ToolbarButton element, string iconName)
+        {
+            var image = EditorGUIUtility.IconContent(iconName).image as Texture2D;
+            element.style.backgroundImage = image;
+            element.text = string.Empty;
+        }
+
+        /// <summary>
+        /// 竖版分屏
+        /// </summary>
+        public static void SplitVerticalPanel(VisualElement root, VisualElement panelA, VisualElement panelB)
+        {
+#if UNITY_2020_3_OR_NEWER
+            root.Remove(panelA);
+            root.Remove(panelB);
+
+            var spliteView = new TwoPaneSplitView();
+            spliteView.fixedPaneInitialDimension = 300;
+            spliteView.orientation = TwoPaneSplitViewOrientation.Vertical;
+            spliteView.contentContainer.Add(panelA);
+            spliteView.contentContainer.Add(panelB);
+            root.Add(spliteView);
+#endif
+        }
     }
 }
 #endif
