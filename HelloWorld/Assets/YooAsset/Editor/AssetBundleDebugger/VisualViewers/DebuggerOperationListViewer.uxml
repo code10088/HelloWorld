@@ -4,6 +4,6 @@
     </ui:VisualElement>
     <ui:VisualElement name="BottomGroup" style="flex-grow: 1;">
         <uie:Toolbar name="BottomToolbar" />
-        <ui:TreeView name="BottomTreeView" />
+        <YooAsset.Editor.TreeViewer name="BottomTreeView" />
     </ui:VisualElement>
 </ui:UXML>

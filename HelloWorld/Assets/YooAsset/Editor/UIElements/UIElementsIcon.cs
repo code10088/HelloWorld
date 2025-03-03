@@ -10,6 +10,9 @@ namespace YooAsset.Editor
         public const string RecordOn = "d_Record On@2x";
         public const string RecordOff = "d_Record Off@2x";
 
+        public const string FoldoutOn = "d_IN_foldout_on@2x";
+        public const string FoldoutOff = "d_IN_foldout@2x";
+
         public const string VisibilityToggleOff = "animationvisibilitytoggleoff@2x";
         public const string VisibilityToggleOn = "animationvisibilitytoggleon@2x";
     }

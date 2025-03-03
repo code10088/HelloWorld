@@ -22,11 +22,8 @@ namespace YooAsset.Editor
 
         private TableView _operationTableView;
         private Toolbar _bottomToolbar;
-#if UNITY_2022_3_OR_NEWER
-        private TreeView _childTreeView;
-#endif
+        private TreeViewer _childTreeView;
 
-        private int _treeItemID = 0;
         private List<ITableData> _sourceDatas;
 
 
@@ -53,11 +50,9 @@ namespace YooAsset.Editor
             CreateBottomToolbarHeaders();
 
             // 子列表
-#if UNITY_2022_3_OR_NEWER
-            _childTreeView = _root.Q<TreeView>("BottomTreeView");
+            _childTreeView = _root.Q<TreeViewer>("BottomTreeView");
             _childTreeView.makeItem = MakeTreeViewItem;
             _childTreeView.bindItem = BindTreeViewItem;
-#endif
 
             // 面板分屏
             var topGroup = _root.Q<VisualElement>("TopGroup");
@@ -307,11 +302,8 @@ namespace YooAsset.Editor
         {
             // 清空旧数据
             _operationTableView.ClearAll(false, true);
-
-#if UNITY_2022_3_OR_NEWER
-            _childTreeView.SetRootItems(new List<TreeViewItemData<DebugOperationInfo>>());
-            _childTreeView.Rebuild();
-#endif
+            _childTreeView.ClearAll();
+            _childTreeView.RebuildView();
 
             // 填充数据源
             _sourceDatas = new List<ITableData>(1000);
@@ -345,10 +337,7 @@ namespace YooAsset.Editor
         public void ClearView()
         {
             _operationTableView.ClearAll(false, true);
-#if UNITY_2022_3_OR_NEWER
-            _childTreeView.SetRootItems(new List<TreeViewItemData<DebugOperationInfo>>());
-            _childTreeView.Rebuild();
-#endif
+            _childTreeView.ClearAll();
             RebuildView(null);
         }
 
@@ -362,6 +351,7 @@ namespace YooAsset.Editor
 
             // 重建视图
             _operationTableView.RebuildView();
+            _childTreeView.RebuildView();
         }
 
         /// <summary>
@@ -380,23 +370,20 @@ namespace YooAsset.Editor
             _root.RemoveFromHierarchy();
         }
 
-#if UNITY_2022_3_OR_NEWER
         private void OnOperationTableViewSelectionChanged(ITableData data)
         {
             var operationTableData = data as OperationTableData;
             DebugPackageData packageData = operationTableData.PackageData;
             DebugOperationInfo operationInfo = operationTableData.OperationInfo;
 
-            _treeItemID = 0;
-            var rootItems = CreateTreeData(operationInfo);
-            _childTreeView.SetRootItems(rootItems);
-            _childTreeView.Rebuild();
+            TreeNode rootNode = new TreeNode(operationInfo);
+            FillTreeData(operationInfo, rootNode);
+            _childTreeView.ClearAll();
+            _childTreeView.SetRootItem(rootNode);
+            _childTreeView.RebuildView();
         }
-        private VisualElement MakeTreeViewItem()
+        private void MakeTreeViewItem(VisualElement container)
         {
-            VisualElement treeViewElement = new VisualElement();
-            treeViewElement.style.flexDirection = FlexDirection.Row;
-
             // OperationName
             {
                 Label label = new Label();
@@ -404,7 +391,7 @@ namespace YooAsset.Editor
                 label.style.flexGrow = 0f;
                 label.style.width = 300;
                 label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                treeViewElement.Add(label);
+                container.Add(label);
             }
 
             // Progress
@@ -414,7 +401,7 @@ namespace YooAsset.Editor
                 label.style.flexGrow = 0f;
                 label.style.width = 100;
                 label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                treeViewElement.Add(label);
+                container.Add(label);
             }
 
             // BeginTime
@@ -424,7 +411,7 @@ namespace YooAsset.Editor
                 label.style.flexGrow = 0f;
                 label.style.width = 100;
                 label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                treeViewElement.Add(label);
+                container.Add(label);
             }
 
             // ProcessTime
@@ -434,7 +421,7 @@ namespace YooAsset.Editor
                 label.style.flexGrow = 0f;
                 label.style.width = 100;
                 label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                treeViewElement.Add(label);
+                container.Add(label);
             }
 
             // Status
@@ -444,7 +431,7 @@ namespace YooAsset.Editor
                 label.style.flexGrow = 0f;
                 label.style.width = 100;
                 label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                treeViewElement.Add(label);
+                container.Add(label);
             }
 
             // Desc
@@ -454,36 +441,34 @@ namespace YooAsset.Editor
                 label.style.flexGrow = 1f;
                 label.style.width = 500;
                 label.style.unityTextAlign = TextAnchor.MiddleLeft;
-                treeViewElement.Add(label);
+                container.Add(label);
             }
-
-            return treeViewElement;
         }
-        private void BindTreeViewItem(VisualElement element, int index)
+        private void BindTreeViewItem(VisualElement container, object userData)
         {
-            var operationInfo = _childTreeView.GetItemDataForIndex<DebugOperationInfo>(index);
+            var operationInfo = userData as DebugOperationInfo;
 
             // OperationName
             {
-                var label = element.Q<Label>("OperationName");
+                var label = container.Q<Label>("OperationName");
                 label.text = operationInfo.OperationName;
             }
 
             // Progress
             {
-                var label = element.Q<Label>("Progress");
+                var label = container.Q<Label>("Progress");
                 label.text = operationInfo.Progress.ToString();
             }
 
             // BeginTime
             {
-                var label = element.Q<Label>("BeginTime");
+                var label = container.Q<Label>("BeginTime");
                 label.text = operationInfo.BeginTime;
             }
 
             // ProcessTime
             {
-                var label = element.Q<Label>("ProcessTime");
+                var label = container.Q<Label>("ProcessTime");
                 label.text = operationInfo.ProcessTime.ToString();
             }
 
@@ -495,33 +480,26 @@ namespace YooAsset.Editor
                 else
                     textColor = new StyleColor(Color.white);
 
-                var label = element.Q<Label>("Status");
+                var label = container.Q<Label>("Status");
                 label.text = operationInfo.Status;
                 label.style.color = textColor;
             }
 
             // Desc
             {
-                var label = element.Q<Label>("Desc");
+                var label = container.Q<Label>("Desc");
                 label.text = operationInfo.OperationDesc;
             }
         }
-        private List<TreeViewItemData<DebugOperationInfo>> CreateTreeData(DebugOperationInfo parentOperation)
+        private void FillTreeData(DebugOperationInfo parentOperation, TreeNode rootNode)
         {
-            var rootItemList = new List<TreeViewItemData<DebugOperationInfo>>();
             foreach (var childOperation in parentOperation.Childs)
             {
-                var childItemList = CreateTreeData(childOperation);
-                var treeItem = new TreeViewItemData<DebugOperationInfo>(_treeItemID++, childOperation, childItemList);
-                rootItemList.Add(treeItem);
+                var childNode = new TreeNode(childOperation);
+                rootNode.AddChild(childNode);
+                FillTreeData(childOperation, childNode);
             }
-            return rootItemList;
         }
-#else
-        private void OnOperationTableViewSelectionChanged(ITableData data)
-        {
-        }
-#endif
     }
 }
 #endif
