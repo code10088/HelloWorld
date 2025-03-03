@@ -11,7 +11,6 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     {
         CheckVersion = 10,
         CheckPackageManifest = 20,
-        ClearPackageUnusedCacheFiles = 25,
         DownloadingHotUpdateConfig = 30,
         LoadHotUpdateConfig = 35,
         DownloadingHotUpdateRes = 100,
@@ -89,13 +88,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     private void ClearPackageUnusedCacheFiles()
     {
         AssetManager.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
-        var operation = AssetManager.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
-        operation.Completed += ClearPackageUnusedCacheFiles;
-    }
-    private void ClearPackageUnusedCacheFiles(AsyncOperationBase o)
-    {
-        UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.ClearPackageUnusedCacheFiles / (float)HotUpdateCodeStep.Max);
-
+        AssetManager.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
         CheckDownloadHotUpdateConfig();
     }
     #endregion
