@@ -3,6 +3,89 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+public class GameObjectPoolSimple
+{
+    private Dictionary<int, GameObjectPoolSimple<GameObjectPoolItem>> pool = new();
+    public void Enqueue(GameObject obj, int itemId)
+    {
+        if (obj == null) return;
+        var id = obj.GetInstanceID();
+        if (pool.TryGetValue(id, out var temp)) temp.Enqueue(itemId);
+    }
+    public GameObjectPoolItem Dequeue(GameObject obj, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
+    {
+        if (obj == null) return null;
+        var id = obj.GetInstanceID();
+        GameObjectPoolSimple<GameObjectPoolItem> temp = null;
+        if (!pool.TryGetValue(id, out temp))
+        {
+            temp = new GameObjectPoolSimple<GameObjectPoolItem>();
+            temp.Init(obj);
+            pool.Add(id, temp);
+        }
+        return temp.Dequeue(parent, action, param);
+    }
+    public void Release()
+    {
+        foreach (var item in pool) item.Value.Release();
+        pool.Clear();
+    }
+}
+public class GameObjectPoolSimple<T> where T : GameObjectPoolItem, new()
+{
+    private GameObject obj;
+    private List<T> use = new();
+    private List<T> cache = new();
+    private int cacheCount = 10;
+
+    public List<T> Use => use;
+
+    public void Init(GameObject obj)
+    {
+        this.obj = obj;
+    }
+    public void Enqueue(int itemId)
+    {
+        T temp = use.Find(a => a.ItemID == itemId);
+        if (temp == null) return;
+        use.Remove(temp);
+        if (cache.Count >= cacheCount) temp.Release();
+        else { temp.Delay(); cache.Add(temp); }
+    }
+    public T Dequeue(Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
+    {
+        T temp = null;
+        if (cache.Count > 0) temp = cache[0];
+        if (temp != null) cache.RemoveAt(0);
+        else temp = new T();
+        temp.Init(parent, Delete, action, param);
+        use.Add(temp);
+        temp.InstantiateAsync(obj);
+        return temp;
+    }
+    public void Release()
+    {
+        for (int i = use.Count - 1; i >= 0; i--) use[i].Release();
+        for (int i = cache.Count - 1; i >= 0; i--) cache[i].Release();
+        use.Clear();
+        cache.Clear();
+    }
+    private void Delete(int itemId)
+    {
+        int index = use.FindIndex(a => a.ItemID == itemId);
+        if (index >= 0)
+        {
+            use.RemoveAt(index);
+            return;
+        }
+        index = cache.FindIndex(a => a.ItemID == itemId);
+        if (index >= 0)
+        {
+            cache.RemoveAt(index);
+            return;
+        }
+    }
+}
 public class GameObjectPool
 {
     private Dictionary<string, GameObjectPool<GameObjectPoolItem>> pool = new();
@@ -37,7 +120,6 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
     private int cacheCount = 10;
 
     public List<T> Use => use;
-    public int CacheCount => cacheCount;
 
     public void Enqueue(int itemId)
     {
@@ -189,7 +271,6 @@ public class GameObjectPoolItem
     [Obsolete("请使用GameObjectPool")]
     public virtual void Release()
     {
-        itemId = -1;
         parent = null;
         asset = null;
         aio = null;
@@ -200,6 +281,7 @@ public class GameObjectPoolItem
         timerId = -1;
         release?.Invoke(itemId);
         release = null;
+        itemId = -1;
     }
     private void Recycle()
     {
@@ -244,7 +326,6 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
     private int cacheCount = 10;
 
     public List<T> Use => use;
-    public int CacheCount => cacheCount;
 
     public void Enqueue(int itemId)
     {
@@ -353,13 +434,13 @@ public class AssetPoolItem
     [Obsolete("请使用AssetPool")]
     public virtual void Release()
     {
-        itemId = -1;
         asset = null;
         state = LoadState.None;
         TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
         release?.Invoke(itemId);
         release = null;
+        itemId = -1;
     }
     private void Recycle()
     {
