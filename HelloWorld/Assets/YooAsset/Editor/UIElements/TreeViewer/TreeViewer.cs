@@ -52,7 +52,7 @@ namespace YooAsset.Editor
         {
             _rootList.Add(rootNode);
         }
-        
+
         /// <summary>
         /// 设置根节点数据
         /// </summary>
@@ -102,11 +102,6 @@ namespace YooAsset.Editor
             var container = new VisualElement();
             container.style.flexDirection = FlexDirection.Row;
 
-            // 缩进元素
-            var label = new Label();
-            label.name = "space";
-            container.Add(label);
-
             // 折叠按钮
             var toggle = new ToggleFoldout();
             toggle.text = string.Empty;
@@ -134,14 +129,11 @@ namespace YooAsset.Editor
         {
             var treeNode = _flattenList[index];
 
-            // 设置元素缩进
-            var space = item.Q<Label>("space");
-            space.text = new string(' ', treeNode.GetDepth() * 4);
-
             // 设置折叠状态
             var toggle = item.Q<ToggleFoldout>("foldout");
             toggle.SetValueWithoutNotify(treeNode.IsExpanded);
             toggle.userData = treeNode;
+            toggle.style.marginLeft = treeNode.GetDepth() * 15;
 
             // 隐藏折叠按钮
             if (treeNode.Children.Count == 0)

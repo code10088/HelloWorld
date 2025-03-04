@@ -23,12 +23,10 @@ namespace YooAsset
 
         public void Initialize()
         {
-            Debug.LogWarning("X=Initialize");
             _messageCallbacks.Clear();
         }
         public void Register(Guid messageID, UnityAction<MessageEventArgs> callback)
         {
-            Debug.LogWarning("X=Register");
             if (messageID == Guid.Empty)
                 throw new ArgumentException("messageID is empty !");
 
@@ -37,7 +35,6 @@ namespace YooAsset
         }
         public void Unregister(Guid messageID)
         {
-            Debug.LogWarning("X=Unregister");
             if (_messageCallbacks.ContainsKey(messageID))
                 _messageCallbacks.Remove(messageID);
         }
