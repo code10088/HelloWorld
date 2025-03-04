@@ -5,7 +5,7 @@ namespace HotAssembly
     public class TestScene : SceneBase
     {
         private TestSceneComponent component = new TestSceneComponent();
-        private GameObjectPool<GameObjectPoolItem> pool = new GameObjectPool<GameObjectPoolItem>();
+        private AssetObjectPool<ObjectPoolItem> pool = new AssetObjectPool<ObjectPoolItem>();
 
         private int testEffectId = -1;
 

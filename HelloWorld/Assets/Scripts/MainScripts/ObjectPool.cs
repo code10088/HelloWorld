@@ -3,23 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class GameObjectPoolSimple
+public class GameObjectPool
 {
-    private Dictionary<int, GameObjectPoolSimple<GameObjectPoolItem>> pool = new();
+    private Dictionary<int, GameObjectPool<ObjectPoolItem>> pool = new();
     public void Enqueue(GameObject obj, int itemId)
     {
         if (obj == null) return;
         var id = obj.GetInstanceID();
         if (pool.TryGetValue(id, out var temp)) temp.Enqueue(itemId);
     }
-    public GameObjectPoolItem Dequeue(GameObject obj, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
+    public ObjectPoolItem Dequeue(GameObject obj, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
     {
         if (obj == null) return null;
         var id = obj.GetInstanceID();
-        GameObjectPoolSimple<GameObjectPoolItem> temp = null;
+        GameObjectPool<ObjectPoolItem> temp = null;
         if (!pool.TryGetValue(id, out temp))
         {
-            temp = new GameObjectPoolSimple<GameObjectPoolItem>();
+            temp = new GameObjectPool<ObjectPoolItem>();
             temp.Init(obj);
             pool.Add(id, temp);
         }
@@ -31,7 +31,7 @@ public class GameObjectPoolSimple
         pool.Clear();
     }
 }
-public class GameObjectPoolSimple<T> where T : GameObjectPoolItem, new()
+public class GameObjectPool<T> where T : ObjectPoolItem, new()
 {
     private GameObject obj;
     private List<T> use = new();
@@ -86,21 +86,21 @@ public class GameObjectPoolSimple<T> where T : GameObjectPoolItem, new()
         }
     }
 }
-public class GameObjectPool
+public class AssetObjectPool
 {
-    private Dictionary<string, GameObjectPool<GameObjectPoolItem>> pool = new();
+    private Dictionary<string, AssetObjectPool<ObjectPoolItem>> pool = new();
     public void Enqueue(string path, int itemId)
     {
         if (string.IsNullOrEmpty(path)) return;
         if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
     }
-    public GameObjectPoolItem Dequeue(string path, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
+    public ObjectPoolItem Dequeue(string path, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
     {
         if (string.IsNullOrEmpty(path)) return null;
-        GameObjectPool<GameObjectPoolItem> temp = null;
+        AssetObjectPool<ObjectPoolItem> temp = null;
         if (!pool.TryGetValue(path, out temp))
         {
-            temp = new GameObjectPool<GameObjectPoolItem>();
+            temp = new AssetObjectPool<ObjectPoolItem>();
             temp.Init(path);
             pool.Add(path, temp);
         }
@@ -112,7 +112,7 @@ public class GameObjectPool
         pool.Clear();
     }
 }
-public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new()
+public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
 {
     private List<T> use = new();
     private List<T> wait = new();
@@ -174,7 +174,7 @@ public class GameObjectPool<T> : LoadAssetItem where T : GameObjectPoolItem, new
         wait.Clear();
     }
 }
-public class GameObjectPoolItem
+public class ObjectPoolItem
 {
     private static int uniqueId = 0;
     private int itemId = -1;

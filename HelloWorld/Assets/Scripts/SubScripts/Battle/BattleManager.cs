@@ -8,7 +8,7 @@ namespace HotAssembly
         private int updateId = -1;
         private int sceneId = -1;
         public BattleScene BattleScene;
-        public GameObjectPool Pool = new GameObjectPool();
+        public AssetObjectPool Pool = new AssetObjectPool();
 
         public Vector2 InputWorldPos => BattleScene.ScreenToWorldPoint(Input.mousePosition);
 

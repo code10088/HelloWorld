@@ -16,7 +16,7 @@ namespace HotAssembly
         protected UIParticle[] layerRecord3;
         private List<int> loadId1 = new List<int>();
         private AssetPool loader1 = new AssetPool();
-        private GameObjectPool loader2 = new GameObjectPool();
+        private AssetObjectPool loader2 = new AssetObjectPool();
         public void InitUI(GameObject UIObj, UIType from, UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EffectManager : Singletion<EffectManager>
 {
-    private static Dictionary<string, GameObjectPool<GameObjectPoolItem>> effectDic = new();
+    private static Dictionary<string, AssetObjectPool<ObjectPoolItem>> effectDic = new();
     private List<EffectItem> list = new();
     private Queue<EffectItem> cache = new();
 
@@ -48,10 +48,10 @@ public class EffectManager : Singletion<EffectManager>
         {
             base.Init(finish);
             this.path = path;
-            GameObjectPool<GameObjectPoolItem> pool;
+            AssetObjectPool<ObjectPoolItem> pool;
             if (!effectDic.TryGetValue(path, out pool))
             {
-                pool = new GameObjectPool<GameObjectPoolItem>();
+                pool = new AssetObjectPool<ObjectPoolItem>();
                 pool.Init(path);
                 effectDic.Add(path, pool);
             }
@@ -65,7 +65,7 @@ public class EffectManager : Singletion<EffectManager>
         public override void Reset()
         {
             base.Reset();
-            if (effectDic.TryGetValue(path, out GameObjectPool<GameObjectPoolItem> pool)) pool.Enqueue(poolItemId);
+            if (effectDic.TryGetValue(path, out AssetObjectPool<ObjectPoolItem> pool)) pool.Enqueue(poolItemId);
             TimeManager.Instance.StopTimer(timerId);
             timerId = -1;
         }
