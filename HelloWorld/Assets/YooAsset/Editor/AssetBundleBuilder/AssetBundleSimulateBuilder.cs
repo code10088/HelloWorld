@@ -26,6 +26,7 @@ namespace YooAsset.Editor
                 buildParameters.FileNameStyle = EFileNameStyle.HashName;
                 buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.None;
                 buildParameters.BuildinFileCopyParams = string.Empty;
+                buildParameters.UseAssetDependencyDB = true;
 
                 var pipeline = new EditorSimulateBuildPipeline();
                 BuildResult buildResult = pipeline.Run(buildParameters, false);
