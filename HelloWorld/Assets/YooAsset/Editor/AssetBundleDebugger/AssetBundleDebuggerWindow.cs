@@ -59,6 +59,10 @@ namespace YooAsset.Editor
         private string _searchKeyWord;
         private DebugReport _currentReport;
         private RemotePlayerSession _currentPlayerSession;
+
+        private double _lastRepaintTime = 0;
+        private int _nextRepaintIndex = -1;
+        private int _lastRepaintIndex = 0;
         private int _rangeIndex = 0;
 
 
@@ -161,6 +165,20 @@ namespace YooAsset.Editor
             RemoteEditorConnection.Instance.Unregister(RemoteDebuggerDefine.kMsgPlayerSendToEditor);
             _playerSessions.Clear();
         }
+        public void Update()
+        {
+            // 每间隔0.5秒绘制一次页面
+            if (EditorApplication.timeSinceStartup - _lastRepaintTime > 0.5f)
+            {
+                _lastRepaintTime = EditorApplication.timeSinceStartup;
+                if (_nextRepaintIndex >= 0)
+                {
+                    RepaintFrame(_nextRepaintIndex);
+                    _lastRepaintIndex = _nextRepaintIndex;
+                    _nextRepaintIndex = -1;
+                }
+            }
+        }
 
         private void OnHandleConnectionEvent(int playerId)
         {
@@ -176,19 +194,20 @@ namespace YooAsset.Editor
         {
             var debugReport = DebugReport.Deserialize(args.data);
             int playerId = args.playerId;
-            Debug.Log($"Handle player {playerId} debug report !");
+
+            //Debug.Log($"Handle player {playerId} debug report !");
             _currentPlayerSession = GetOrCreatePlayerSession(playerId);
             _currentPlayerSession.AddDebugReport(debugReport);
             _frameSlider.highValue = _currentPlayerSession.MaxRangeValue;
             _frameSlider.value = _currentPlayerSession.MaxRangeValue;
-            UpdateFrameView(_currentPlayerSession);
+            UpdateRepaintIndex(_currentPlayerSession.MaxRangeValue);
         }
         private void OnFrameSliderChange(int sliderValue)
         {
             if (_currentPlayerSession != null)
             {
                 _rangeIndex = _currentPlayerSession.ClampRangeIndex(sliderValue); ;
-                UpdateFrameView(_currentPlayerSession, _rangeIndex);
+                UpdateRepaintIndex(_rangeIndex);
             }
         }
         private void OnFrameLast_clicked()
@@ -197,7 +216,7 @@ namespace YooAsset.Editor
             {
                 _rangeIndex = _currentPlayerSession.ClampRangeIndex(_rangeIndex - 1);
                 _frameSlider.value = _rangeIndex;
-                UpdateFrameView(_currentPlayerSession, _rangeIndex);
+                UpdateRepaintIndex(_rangeIndex);
             }
         }
         private void OnFrameNext_clicked()
@@ -206,7 +225,7 @@ namespace YooAsset.Editor
             {
                 _rangeIndex = _currentPlayerSession.ClampRangeIndex(_rangeIndex + 1);
                 _frameSlider.value = _rangeIndex;
-                UpdateFrameView(_currentPlayerSession, _rangeIndex);
+                UpdateRepaintIndex(_rangeIndex);
             }
         }
         private void OnFrameClear_clicked()
@@ -232,42 +251,6 @@ namespace YooAsset.Editor
             byte[] data = RemoteCommand.Serialize(command);
             EditorConnection.instance.Send(RemoteDebuggerDefine.kMsgEditorSendToPlayer, data);
             RemoteEditorConnection.Instance.Send(RemoteDebuggerDefine.kMsgEditorSendToPlayer, data);
-        }
-
-        private RemotePlayerSession GetOrCreatePlayerSession(int playerId)
-        {
-            if (_playerSessions.TryGetValue(playerId, out RemotePlayerSession session))
-            {
-                return session;
-            }
-            else
-            {
-                RemotePlayerSession newSession = new RemotePlayerSession(playerId);
-                _playerSessions.Add(playerId, newSession);
-                return newSession;
-            }
-        }
-        private void UpdateFrameView(RemotePlayerSession playerSession)
-        {
-            if (playerSession != null)
-            {
-                UpdateFrameView(playerSession, playerSession.MaxRangeValue);
-            }
-        }
-        private void UpdateFrameView(RemotePlayerSession playerSession, int rangeIndex)
-        {
-            if (playerSession == null)
-                return;
-
-            var debugReport = playerSession.GetDebugReport(rangeIndex);
-            if (debugReport != null)
-            {
-                _currentReport = debugReport;
-                _frameSlider.label = $"Frame: {debugReport.FrameCount}";
-                _assetListViewer.FillViewData(debugReport);
-                _bundleListViewer.FillViewData(debugReport);
-                _operationListViewer.FillViewData(debugReport);
-            }
         }
 
         private void SampleBtn_onClick()
@@ -347,6 +330,9 @@ namespace YooAsset.Editor
                 {
                     throw new NotImplementedException(viewMode.ToString());
                 }
+
+                // 重新绘制该帧数据
+                RepaintFrame(_lastRepaintIndex);
             }
         }
         private DropdownMenuAction.Status OnViewModeMenuStatusUpdate(DropdownMenuAction action)
@@ -356,6 +342,56 @@ namespace YooAsset.Editor
                 return DropdownMenuAction.Status.Checked;
             else
                 return DropdownMenuAction.Status.Normal;
+        }
+
+        private RemotePlayerSession GetOrCreatePlayerSession(int playerId)
+        {
+            if (_playerSessions.TryGetValue(playerId, out RemotePlayerSession session))
+            {
+                return session;
+            }
+            else
+            {
+                RemotePlayerSession newSession = new RemotePlayerSession(playerId);
+                _playerSessions.Add(playerId, newSession);
+                return newSession;
+            }
+        }
+        private void UpdateRepaintIndex(int rangeIndex)
+        {
+            _nextRepaintIndex = rangeIndex;
+        }
+        private void RepaintFrame(int repaintIndex)
+        {
+            var debugReport = _currentPlayerSession.GetDebugReport(repaintIndex);
+            if (debugReport != null)
+            {
+                _currentReport = debugReport;
+                _frameSlider.label = $"Frame: {debugReport.FrameCount}";
+
+                if (_viewMode == EViewMode.AssetView)
+                {
+                    _assetListViewer.FillViewData(debugReport);
+                    _bundleListViewer.ClearView();
+                    _operationListViewer.ClearView();
+                }
+                else if (_viewMode == EViewMode.BundleView)
+                {
+                    _assetListViewer.ClearView();
+                    _bundleListViewer.FillViewData(debugReport);
+                    _operationListViewer.ClearView();
+                }
+                else if (_viewMode == EViewMode.OperationView)
+                {
+                    _assetListViewer.ClearView();
+                    _bundleListViewer.ClearView();
+                    _operationListViewer.FillViewData(debugReport);
+                }
+                else
+                {
+                    throw new System.NotImplementedException(_viewMode.ToString());
+                }
+            }
         }
     }
 }

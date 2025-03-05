@@ -47,7 +47,7 @@ namespace YooAsset
             else
             {
                 UnityEngine.Debug.LogError($"Can not found {nameof(DebugBundleInfo)} : {bundleName}");
-                return null;
+                return default;
             }
         }
     }

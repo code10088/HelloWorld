@@ -337,8 +337,10 @@ namespace YooAsset.Editor
         public void ClearView()
         {
             _operationTableView.ClearAll(false, true);
+            _operationTableView.RebuildView();
+
             _childTreeView.ClearAll();
-            RebuildView(null);
+            _childTreeView.RebuildView();
         }
 
         /// <summary>
@@ -347,7 +349,8 @@ namespace YooAsset.Editor
         public void RebuildView(string searchKeyWord)
         {
             // 搜索匹配
-            DefaultSearchSystem.Search(_sourceDatas, searchKeyWord);
+            if(_sourceDatas != null)
+                DefaultSearchSystem.Search(_sourceDatas, searchKeyWord);
 
             // 重建视图
             _operationTableView.RebuildView();
@@ -446,7 +449,7 @@ namespace YooAsset.Editor
         }
         private void BindTreeViewItem(VisualElement container, object userData)
         {
-            var operationInfo = userData as DebugOperationInfo;
+            var operationInfo = (DebugOperationInfo)userData;
 
             // OperationName
             {

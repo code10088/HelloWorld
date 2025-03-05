@@ -151,7 +151,7 @@ namespace YooAsset.Editor
                 {
                     StyleColor textColor;
                     var bundleTableData = data as BundleTableData;
-                    if (bundleTableData.BundleInfo.Status == EOperationStatus.Failed)
+                    if (bundleTableData.BundleInfo.Status == EOperationStatus.Failed.ToString())
                         textColor = new StyleColor(Color.yellow);
                     else
                         textColor = new StyleColor(Color.white);
@@ -341,7 +341,7 @@ namespace YooAsset.Editor
                 {
                     StyleColor textColor;
                     var feferenceTableData = data as ReferenceTableData;
-                    if (feferenceTableData.BundleInfo.Status == EOperationStatus.Failed)
+                    if (feferenceTableData.BundleInfo.Status == EOperationStatus.Failed.ToString())
                         textColor = new StyleColor(Color.yellow);
                     else
                         textColor = new StyleColor(Color.white);
@@ -393,8 +393,10 @@ namespace YooAsset.Editor
         {
             _bundleTableView.ClearAll(false, true);
             _bundleTableView.RebuildView();
+
             _usingTableView.ClearAll(false, true);
             _usingTableView.RebuildView();
+
             _referenceTableView.ClearAll(false, true);
             _referenceTableView.RebuildView();
         }
@@ -405,10 +407,13 @@ namespace YooAsset.Editor
         public void RebuildView(string searchKeyWord)
         {
             // 搜索匹配
-            DefaultSearchSystem.Search(_sourceDatas, searchKeyWord);
+            if(_sourceDatas != null)
+                DefaultSearchSystem.Search(_sourceDatas, searchKeyWord);
 
             // 重建视图
             _bundleTableView.RebuildView();
+            _usingTableView.RebuildView();
+            _referenceTableView.RebuildView();
         }
 
         /// <summary>

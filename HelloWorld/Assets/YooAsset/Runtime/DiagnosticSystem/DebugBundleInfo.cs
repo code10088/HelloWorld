@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace YooAsset
 {
     [Serializable]
-    internal class DebugBundleInfo : IComparer<DebugBundleInfo>, IComparable<DebugBundleInfo>
+    internal struct DebugBundleInfo : IComparer<DebugBundleInfo>, IComparable<DebugBundleInfo>
     {
         /// <summary>
         /// 资源包名称
@@ -20,7 +20,7 @@ namespace YooAsset
         /// <summary>
         /// 加载状态
         /// </summary>
-        public EOperationStatus Status;
+        public string Status;
 
         /// <summary>
         /// 谁引用了该资源包

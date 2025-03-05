@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace YooAsset
 {
     [Serializable]
-    internal class DebugOperationInfo : IComparer<DebugOperationInfo>, IComparable<DebugOperationInfo>
+    internal struct DebugOperationInfo : IComparer<DebugOperationInfo>, IComparable<DebugOperationInfo>
     {
         /// <summary>
         /// 任务名称

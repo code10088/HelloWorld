@@ -35,6 +35,11 @@ namespace YooAsset
             DownloadProgress = 0;
         }
 
+        internal override string InternalGetDesc()
+        {
+            return $"RefCount : {RefCount}";
+        }
+
         /// <summary>
         /// 减少引用计数
         /// </summary>
