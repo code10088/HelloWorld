@@ -44,6 +44,16 @@ namespace YooAsset.Editor
         public bool Sortable = false;
 
         /// <summary>
+        /// 统计数量
+        /// </summary>
+        public bool Counter = false;
+
+        /// <summary>
+        /// 展示单位
+        /// </summary>
+        public string Units = string.Empty;
+
+        /// <summary>
         /// 数值类型
         /// </summary>
         public EHeaderType HeaderType = EHeaderType.StringValue;
@@ -87,6 +97,16 @@ namespace YooAsset.Editor
         public ReportHeader SetSortable()
         {
             Sortable = true;
+            return this;
+        }
+        public ReportHeader SetCounter()
+        {
+            Counter = true;
+            return this;
+        }
+        public ReportHeader SetUnits(string units)
+        {
+            Units = units;
             return this;
         }
         public ReportHeader SetHeaderType(EHeaderType value)

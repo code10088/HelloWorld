@@ -24,8 +24,8 @@ namespace YooAsset.Editor
         private VisualTreeAsset _visualAsset;
         private TemplateContainer _root;
 
-        private TableView _providerTableView;
-        private TableView _dependTableView;
+        private TableViewer _providerTableView;
+        private TableViewer _dependTableView;
 
         private List<ITableData> _sourceDatas;
 
@@ -44,12 +44,12 @@ namespace YooAsset.Editor
             _root.style.flexGrow = 1f;
 
             // 资源列表
-            _providerTableView = _root.Q<TableView>("TopTableView");
+            _providerTableView = _root.Q<TableViewer>("TopTableView");
             _providerTableView.SelectionChangedEvent = OnProviderTableViewSelectionChanged;
             CreateAssetTableViewColumns();
 
             // 依赖列表
-            _dependTableView = _root.Q<TableView>("BottomTableView");
+            _dependTableView = _root.Q<TableViewer>("BottomTableView");
             CreateDependTableViewColumns();
 
             // 面板分屏
@@ -148,10 +148,11 @@ namespace YooAsset.Editor
 
             // LoadingTime
             {
-                var columnStyle = new ColumnStyle(100);
+                var columnStyle = new ColumnStyle(130);
                 columnStyle.Stretchable = false;
                 columnStyle.Searchable = false;
                 columnStyle.Sortable = true;
+                columnStyle.Units = "ms";
                 var column = new TableColumn("LoadingTime", "Loading Time", columnStyle);
                 column.MakeCell = () =>
                 {

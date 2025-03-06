@@ -13,6 +13,11 @@ namespace YooAsset
     internal class DebugReport
     {
         /// <summary>
+        /// 调试器版本
+        /// </summary>
+        public string DebuggerVersion = RemoteDebuggerDefine.DebuggerVersion;
+
+        /// <summary>
         /// 游戏帧
         /// </summary>
         public int FrameCount;

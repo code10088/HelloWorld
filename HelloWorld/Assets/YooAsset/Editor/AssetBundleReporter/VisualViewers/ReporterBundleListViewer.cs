@@ -24,8 +24,8 @@ namespace YooAsset.Editor
         private VisualTreeAsset _visualAsset;
         private TemplateContainer _root;
 
-        private TableView _bundleTableView;
-        private TableView _includeTableView;
+        private TableViewer _bundleTableView;
+        private TableViewer _includeTableView;
 
         private BuildReport _buildReport;
         private string _reportFilePath;
@@ -46,13 +46,13 @@ namespace YooAsset.Editor
             _root.style.flexGrow = 1f;
 
             // 资源包列表
-            _bundleTableView = _root.Q<TableView>("TopTableView");
+            _bundleTableView = _root.Q<TableViewer>("TopTableView");
             _bundleTableView.ClickTableDataEvent = OnClickBundleTableView;
             _bundleTableView.SelectionChangedEvent = OnBundleTableViewSelectionChanged;
             CreateBundleTableViewColumns();
 
             // 包含列表
-            _includeTableView = _root.Q<TableView>("BottomTableView");
+            _includeTableView = _root.Q<TableViewer>("BottomTableView");
             _includeTableView.ClickTableDataEvent = OnClickIncludeTableView;
             CreateIncludeTableViewColumns();
 

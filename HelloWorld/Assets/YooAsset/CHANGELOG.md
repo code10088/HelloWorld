@@ -2,6 +2,18 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.3-preview] - 2025-03-06
+
+### Improvements
+
+- 新增了异步操作任务调试器，AssetBundleDebugger窗口-->OperationView视图模式
+- 编辑器下模拟构建默认启用依赖关系数据库，可以大幅增加编辑器下开始游戏时间。
+- 单元测试用例增加加密解密测试用例。
+
+### Fixed
+
+- (#492) 修复了发布的MAC平台应用，在启动的时候提示权限无法获取的问题。
+
 ## [2.3.2-preview] - 2025-02-27
 
 ### Fixed

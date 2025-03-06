@@ -14,6 +14,11 @@ namespace YooAsset
         public string BuildPipelineName;
 
         /// <summary>
+        /// 用户数据
+        /// </summary>
+        public object BuildUserData;
+
+        /// <summary>
         /// 构建类所属程序集名称
         /// </summary>
         public string InvokeAssmeblyName;

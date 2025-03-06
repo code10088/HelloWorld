@@ -24,8 +24,8 @@ namespace YooAsset.Editor
         private VisualTreeAsset _visualAsset;
         private TemplateContainer _root;
 
-        private TableView _assetTableView;
-        private TableView _dependTableView;
+        private TableViewer _assetTableView;
+        private TableViewer _dependTableView;
 
         private BuildReport _buildReport;
         private string _reportFilePath;
@@ -46,13 +46,13 @@ namespace YooAsset.Editor
             _root.style.flexGrow = 1f;
 
             // 资源列表
-            _assetTableView = _root.Q<TableView>("TopTableView");
+            _assetTableView = _root.Q<TableViewer>("TopTableView");
             _assetTableView.SelectionChangedEvent = OnAssetTableViewSelectionChanged;
             _assetTableView.ClickTableDataEvent = OnClickAssetTableView;
             CreateAssetTableViewColumns();
 
             // 依赖列表
-            _dependTableView = _root.Q<TableView>("BottomTableView");
+            _dependTableView = _root.Q<TableViewer>("BottomTableView");
             _dependTableView.ClickTableDataEvent = OnClickBundleTableView;
             CreateDependTableViewColumns();
 

@@ -44,10 +44,10 @@ public class TextureSchema : ScannerSchema
         string name = "扫描所有纹理资产";
         string desc = GetUserGuide();
         var report = new ScanReport(name, desc);
-        report.AddHeader("资源路径", 600, 500, 1000).SetStretchable().SetSearchable().SetSortable().SetHeaderType(EHeaderType.AssetPath);
+        report.AddHeader("资源路径", 600, 500, 1000).SetStretchable().SetSearchable().SetSortable().SetCounter().SetHeaderType(EHeaderType.AssetPath);
         report.AddHeader("图片宽度", 100).SetSortable().SetHeaderType(EHeaderType.LongValue);
         report.AddHeader("图片高度", 100).SetSortable().SetHeaderType(EHeaderType.LongValue);
-        report.AddHeader("内存大小", 100).SetSortable().SetHeaderType(EHeaderType.LongValue);
+        report.AddHeader("内存大小", 120).SetSortable().SetUnits("bytes").SetHeaderType(EHeaderType.LongValue);
         report.AddHeader("苹果格式", 100);
         report.AddHeader("安卓格式", 100);
         report.AddHeader("错误信息", 500).SetStretchable();

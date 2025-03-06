@@ -97,7 +97,7 @@ namespace YooAsset.Editor
         private Button _passesVisibleBtn;
         private Label _titleLabel;
         private Label _descLabel;
-        private TableView _elementTableView;
+        private TableViewer _elementTableView;
 
         private ScanReportCombiner _reportCombiner;
         private string _lastestOpenFolder;
@@ -152,7 +152,7 @@ namespace YooAsset.Editor
                 _descLabel = root.Q<Label>("ReportDesc");
 
                 // 列表相关
-                _elementTableView = root.Q<TableView>("TopTableView");
+                _elementTableView = root.Q<TableViewer>("TopTableView");
                 _elementTableView.ClickTableDataEvent = OnClickTableViewItem;
 
                 _lastestOpenFolder = EditorTools.GetProjectPath();
@@ -441,6 +441,8 @@ namespace YooAsset.Editor
                 columnStyle.Stretchable = header.Stretchable;
                 columnStyle.Searchable = header.Searchable;
                 columnStyle.Sortable = header.Sortable;
+                columnStyle.Counter = header.Counter;
+                columnStyle.Units = header.Units;
                 var column = new TableColumn(header.HeaderTitle, header.HeaderTitle, columnStyle);
                 column.MakeCell = () =>
                 {

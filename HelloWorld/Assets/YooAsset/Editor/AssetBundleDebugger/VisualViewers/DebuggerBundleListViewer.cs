@@ -28,9 +28,9 @@ namespace YooAsset.Editor
         private VisualTreeAsset _visualAsset;
         private TemplateContainer _root;
 
-        private TableView _bundleTableView;
-        private TableView _usingTableView;
-        private TableView _referenceTableView;
+        private TableViewer _bundleTableView;
+        private TableViewer _usingTableView;
+        private TableViewer _referenceTableView;
 
         private List<ITableData> _sourceDatas;
 
@@ -48,16 +48,16 @@ namespace YooAsset.Editor
             _root.style.flexGrow = 1f;
 
             // 资源包列表
-            _bundleTableView = _root.Q<TableView>("BundleTableView");
+            _bundleTableView = _root.Q<TableViewer>("BundleTableView");
             _bundleTableView.SelectionChangedEvent = OnBundleTableViewSelectionChanged;
             CreateBundleTableViewColumns();
 
             // 使用列表
-            _usingTableView = _root.Q<TableView>("UsingTableView");
+            _usingTableView = _root.Q<TableViewer>("UsingTableView");
             CreateUsingTableViewColumns();
 
             // 引用列表
-            _referenceTableView = _root.Q<TableView>("ReferenceTableView");
+            _referenceTableView = _root.Q<TableViewer>("ReferenceTableView");
             CreateReferenceTableViewColumns();
 
             // 面板分屏
