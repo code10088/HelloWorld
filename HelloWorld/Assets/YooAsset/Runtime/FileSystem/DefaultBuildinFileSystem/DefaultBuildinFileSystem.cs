@@ -147,15 +147,15 @@ namespace YooAsset
             }
             else if (name == FileSystemParametersDefine.APPEND_FILE_EXTENSION)
             {
-                AppendFileExtension = (bool)value;
+                AppendFileExtension = Convert.ToBoolean(value);
             }
             else if (name == FileSystemParametersDefine.DISABLE_CATALOG_FILE)
             {
-                DisableCatalogFile = (bool)value;
+                DisableCatalogFile = Convert.ToBoolean(value);
             }
             else if (name == FileSystemParametersDefine.COPY_BUILDIN_PACKAGE_MANIFEST)
             {
-                CopyBuildinPackageManifest = (bool)value;
+                CopyBuildinPackageManifest = Convert.ToBoolean(value);
             }
             else if (name == FileSystemParametersDefine.COPY_BUILDIN_PACKAGE_MANIFEST_DEST_ROOT)
             {

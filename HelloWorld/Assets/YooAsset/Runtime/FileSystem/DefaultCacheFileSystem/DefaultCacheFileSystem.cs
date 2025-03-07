@@ -190,19 +190,19 @@ namespace YooAsset
             }
             else if (name == FileSystemParametersDefine.APPEND_FILE_EXTENSION)
             {
-                AppendFileExtension = (bool)value;
+                AppendFileExtension = Convert.ToBoolean(value);
             }
             else if (name == FileSystemParametersDefine.DOWNLOAD_MAX_CONCURRENCY)
             {
-                DownloadMaxConcurrency = (int)value;
+                DownloadMaxConcurrency = Convert.ToInt32(value);
             }
             else if (name == FileSystemParametersDefine.DOWNLOAD_MAX_REQUEST_PER_FRAME)
             {
-                DownloadMaxRequestPerFrame = (int)value;
+                DownloadMaxRequestPerFrame = Convert.ToInt32(value);
             }
             else if (name == FileSystemParametersDefine.RESUME_DOWNLOAD_MINMUM_SIZE)
             {
-                ResumeDownloadMinimumSize = (long)value;
+                ResumeDownloadMinimumSize = Convert.ToInt64(value);
             }
             else if (name == FileSystemParametersDefine.RESUME_DOWNLOAD_RESPONSE_CODES)
             {

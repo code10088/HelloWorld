@@ -94,11 +94,11 @@ namespace YooAsset
         {
             if (name == FileSystemParametersDefine.ASYNC_SIMULATE_MIN_FRAME)
             {
-                _asyncSimulateMinFrame = (int)value;
+                _asyncSimulateMinFrame = Convert.ToInt32(value);
             }
             else if (name == FileSystemParametersDefine.ASYNC_SIMULATE_MAX_FRAME)
             {
-                _asyncSimulateMaxFrame = (int)value;
+                _asyncSimulateMaxFrame = Convert.ToInt32(value);
             }
             else
             {

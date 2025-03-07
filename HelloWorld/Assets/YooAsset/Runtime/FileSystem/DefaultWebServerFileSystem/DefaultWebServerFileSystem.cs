@@ -110,7 +110,7 @@ namespace YooAsset
         {
             if (name == FileSystemParametersDefine.DISABLE_UNITY_WEB_CACHE)
             {
-                DisableUnityWebCache = (bool)value;
+                DisableUnityWebCache = Convert.ToBoolean(value);
             }
             else if (name == FileSystemParametersDefine.DECRYPTION_SERVICES)
             {
