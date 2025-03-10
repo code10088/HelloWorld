@@ -1,4 +1,5 @@
 ﻿using UnityEngine.Networking;
+using UnityEngine;
 
 namespace YooAsset
 {
@@ -9,6 +10,14 @@ namespace YooAsset
 
     internal class DownloadSystemHelper
     {
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void OnRuntimeInitialize()
+        {
+            UnityWebRequestCreater = null;
+        }
+#endif
+
         public static UnityWebRequestDelegate UnityWebRequestCreater = null;
         public static UnityWebRequest NewUnityWebRequestGet(string requestURL)
         {

@@ -5,6 +5,14 @@ namespace YooAsset
 {
     public static class YooAssetSettingsData
     {
+#if UNITY_EDITOR
+        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void OnRuntimeInitialize()
+        {
+            _setting = null;
+        }
+#endif
+
         private static YooAssetSettings _setting = null;
         internal static YooAssetSettings Setting
         {

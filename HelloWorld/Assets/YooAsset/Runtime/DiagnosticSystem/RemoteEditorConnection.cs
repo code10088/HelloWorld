@@ -8,6 +8,14 @@ namespace YooAsset
 {
     internal class RemoteEditorConnection
     {
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void OnRuntimeInitialize()
+        {
+            _instance = null;
+        }
+#endif
+
         private static RemoteEditorConnection _instance;
         public static RemoteEditorConnection Instance
         {

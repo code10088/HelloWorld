@@ -8,6 +8,14 @@ namespace YooAsset
 {
     internal class RemotePlayerConnection
     {
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void OnRuntimeInitialize()
+        {
+            _instance = null;
+        }
+#endif
+
         private static RemotePlayerConnection _instance;
         public static RemotePlayerConnection Instance
         {

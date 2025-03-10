@@ -6,6 +6,14 @@ namespace YooAsset
 {
     internal class WebRequestCounter
     {
+#if UNITY_EDITOR
+        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void OnRuntimeInitialize()
+        {
+            _requestFailedRecorder.Clear();
+        }
+#endif
+
         /// <summary>
         /// 记录网络请求失败事件的次数
         /// </summary>

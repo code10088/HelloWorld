@@ -176,6 +176,12 @@ namespace YooAsset
 
             if (_steps == ESteps.LoadBuildinRawBundle)
             {
+#if UNITY_ANDROID
+                //TODO : 安卓平台内置文件属于APK压缩包内的文件。
+                _steps = ESteps.Done;
+                Result = new RawBundleResult(_fileSystem, _bundle);
+                Status = EOperationStatus.Succeed;
+#else
                 string filePath = _fileSystem.GetBuildinFileLoadPath(_bundle);
                 if (File.Exists(filePath))
                 {
@@ -190,6 +196,7 @@ namespace YooAsset
                     Error = $"Can not found buildin raw bundle file : {filePath}";
                     YooLogger.Error(Error);
                 }
+#endif
             }
         }
         internal override void InternalWaitForAsyncComplete()

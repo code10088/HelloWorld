@@ -2,12 +2,23 @@ using System;
 using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace YooAsset
 {
     public static partial class YooAssets
     {
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void OnRuntimeInitialize()
+        {
+            _isInitialize = false;
+            _packages.Clear();
+            _defaultPackage = null;
+        }
+#endif
+
         private static bool _isInitialize = false;
         private static GameObject _driver = null;
         private static readonly List<ResourcePackage> _packages = new List<ResourcePackage>();
@@ -77,9 +88,9 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 创建资源包
+        /// 创建资源包裹
         /// </summary>
-        /// <param name="packageName">资源包名称</param>
+        /// <param name="packageName">包裹名称</param>
         public static ResourcePackage CreatePackage(string packageName)
         {
             CheckException(packageName);
@@ -93,9 +104,9 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 获取资源包
+        /// 获取资源包裹
         /// </summary>
-        /// <param name="packageName">资源包名称</param>
+        /// <param name="packageName">包裹名称</param>
         public static ResourcePackage GetPackage(string packageName)
         {
             CheckException(packageName);
@@ -106,9 +117,9 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 尝试获取资源包
+        /// 尝试获取资源包裹
         /// </summary>
-        /// <param name="packageName">资源包名称</param>
+        /// <param name="packageName">包裹名称</param>
         public static ResourcePackage TryGetPackage(string packageName)
         {
             CheckException(packageName);
@@ -116,9 +127,17 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 移除资源包
+        /// 获取所有资源包裹
         /// </summary>
-        /// <param name="packageName">资源包名称</param>
+        public static List<ResourcePackage> GetAllPackages()
+        {
+            return _packages.ToList();
+        }
+
+        /// <summary>
+        /// 移除资源包裹
+        /// </summary>
+        /// <param name="packageName">包裹名称</param>
         public static bool RemovePackage(string packageName)
         {
             CheckException(packageName);
@@ -130,9 +149,9 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 移除资源包
+        /// 移除资源包裹
         /// </summary>
-        /// <param name="package">资源包实例对象</param>
+        /// <param name="package">包裹实例对象</param>
         public static bool RemovePackage(ResourcePackage package)
         {
             CheckException(package);
@@ -149,9 +168,9 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 检测资源包是否存在
+        /// 检测资源包裹是否存在
         /// </summary>
-        /// <param name="packageName">资源包名称</param>
+        /// <param name="packageName">包裹名称</param>
         public static bool ContainsPackage(string packageName)
         {
             CheckException(packageName);

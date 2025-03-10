@@ -239,6 +239,11 @@ namespace YooAsset
             if (Exists(bundle) == false)
                 return null;
 
+#if UNITY_ANDROID
+            //TODO : 安卓平台内置文件属于APK压缩包内的文件。
+            YooLogger.Error($"Android platform not support read buildin bundle file data !");
+            return null;
+#else
             if (bundle.Encrypted)
             {
                 if (DecryptionServices == null)
@@ -261,6 +266,7 @@ namespace YooAsset
                 string filePath = GetBuildinFileLoadPath(bundle);
                 return FileUtility.ReadAllBytes(filePath);
             }
+#endif
         }
         public virtual string ReadBundleFileText(PackageBundle bundle)
         {
@@ -270,6 +276,11 @@ namespace YooAsset
             if (Exists(bundle) == false)
                 return null;
 
+#if UNITY_ANDROID
+            //TODO : 安卓平台内置文件属于APK压缩包内的文件。
+            YooLogger.Error($"Android platform not support read buildin bundle file text !");
+            return null;
+#else
             if (bundle.Encrypted)
             {
                 if (DecryptionServices == null)
@@ -292,6 +303,7 @@ namespace YooAsset
                 string filePath = GetBuildinFileLoadPath(bundle);
                 return FileUtility.ReadAllText(filePath);
             }
+#endif
         }
 
         #region 内部方法

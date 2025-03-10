@@ -6,6 +6,14 @@ namespace YooAsset
 {
     internal class OperationSystem
     {
+#if UNITY_EDITOR
+        [UnityEngine.RuntimeInitializeOnLoadMethod(UnityEngine.RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void OnRuntimeInitialize()
+        {
+            DestroyAll();
+        }
+#endif
+
         private static readonly List<AsyncOperationBase> _operations = new List<AsyncOperationBase>(1000);
         private static readonly List<AsyncOperationBase> _newList = new List<AsyncOperationBase>(1000);
 

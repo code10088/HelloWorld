@@ -7,6 +7,15 @@ namespace YooAsset
 {
     internal class RemoteDebuggerInRuntime : MonoBehaviour
     {
+#if UNITY_EDITOR
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void OnRuntimeInitialize()
+        {
+            _sampleOnce = false;
+            _autoSample = false;
+        }
+#endif
+
         private static bool _sampleOnce = false;
         private static bool _autoSample = false;
 

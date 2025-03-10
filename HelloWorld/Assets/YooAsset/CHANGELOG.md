@@ -2,12 +2,41 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.4-preview] - 2025-03-08
+
+### Improvements
+
+- YooAsset支持了版本宏定义。
+
+  ```csharp
+  YOO_ASSET_2
+  YOO_ASSET_2_3
+  YOO_ASSET_2_3_OR_NEWER
+  ```
+
+### Fixed
+
+- (#389) 修复了禁用域重载(Reload Domain)的情况下，再次启动游戏报错的问题。
+- (#496) 修复了文件系统参数RESUME_DOWNLOAD_MINMUM_SIZE传入int值会导致异常的错误。
+- (#498) 修复了v2.3版本尝试加载安卓包内的原生资源包失败的问题。
+
+### Added
+
+- 新增了YooAssets.GetAllPackages()方法
+
+  ```csharp
+  /// <summary>
+  /// 获取所有资源包裹
+  /// </summary>
+  public static List<ResourcePackage> GetAllPackages()
+  ```
+
 ## [2.3.3-preview] - 2025-03-06
 
 ### Improvements
 
 - 新增了异步操作任务调试器，AssetBundleDebugger窗口-->OperationView视图模式
-- 编辑器下模拟构建默认启用依赖关系数据库，可以大幅增加编辑器下开始游戏时间。
+- 编辑器下模拟构建默认启用依赖关系数据库，可以大幅降低编辑器下启动游戏的时间。
 - 单元测试用例增加加密解密测试用例。
 
 ### Fixed

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System;
+using System.Linq;
 
 namespace YooAsset
 {
@@ -69,8 +69,8 @@ namespace YooAsset
 
         private ESteps _steps = ESteps.None;
         private readonly LoadBundleFileOperation _mainBundleLoader;
-        private readonly List<LoadBundleFileOperation> _bundleLoaders = new List<LoadBundleFileOperation>();
-        private readonly List<HandleBase> _handles = new List<HandleBase>();
+        private readonly List<LoadBundleFileOperation> _bundleLoaders = new List<LoadBundleFileOperation>(10);
+        private readonly HashSet<HandleBase> _handles = new HashSet<HandleBase>();
 
 
         public ProviderOperation(ResourceManager manager, string providerGUID, AssetInfo assetInfo)
@@ -220,20 +220,7 @@ namespace YooAsset
             // 引用计数增加
             RefCount++;
 
-            HandleBase handle;
-            if (typeof(T) == typeof(AssetHandle))
-                handle = new AssetHandle(this);
-            else if (typeof(T) == typeof(SceneHandle))
-                handle = new SceneHandle(this);
-            else if (typeof(T) == typeof(SubAssetsHandle))
-                handle = new SubAssetsHandle(this);
-            else if (typeof(T) == typeof(AllAssetsHandle))
-                handle = new AllAssetsHandle(this);
-            else if (typeof(T) == typeof(RawFileHandle))
-                handle = new RawFileHandle(this);
-            else
-                throw new System.NotImplementedException();
-
+            HandleBase handle = HandleFactory.CreateHandle(this, typeof(T));
             _handles.Add(handle);
             return handle as T;
         }
@@ -258,9 +245,9 @@ namespace YooAsset
         /// </summary>
         public void ReleaseAllHandles()
         {
-            for (int i = _handles.Count - 1; i >= 0; i--)
+            List<HandleBase> tempers = _handles.ToList();
+            foreach (var handle in tempers)
             {
-                var handle = _handles[i];
                 handle.Release();
             }
         }
@@ -276,7 +263,7 @@ namespace YooAsset
 
             // 注意：创建临时列表是为了防止外部逻辑在回调函数内创建或者释放资源句柄。
             // 注意：回调方法如果发生异常，会阻断列表里的后续回调方法！
-            List<HandleBase> tempers = new List<HandleBase>(_handles);
+            List<HandleBase> tempers = _handles.ToList();
             foreach (var hande in tempers)
             {
                 if (hande.IsValid)
