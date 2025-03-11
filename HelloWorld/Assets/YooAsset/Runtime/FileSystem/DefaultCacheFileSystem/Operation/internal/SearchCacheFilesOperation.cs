@@ -85,15 +85,22 @@ namespace YooAsset
 
                     // 创建验证元素类
                     string fileRootPath = chidDirectory.FullName;
-                    string dataFilePath = $"{fileRootPath}/{ DefaultCacheFileSystemDefine.BundleDataFileName}";
-                    string infoFilePath = $"{fileRootPath}/{ DefaultCacheFileSystemDefine.BundleInfoFileName}";
+                    string dataFilePath = $"{fileRootPath}/{DefaultCacheFileSystemDefine.BundleDataFileName}";
+                    string infoFilePath = $"{fileRootPath}/{DefaultCacheFileSystemDefine.BundleInfoFileName}";
 
                     // 存储的数据文件追加文件格式
                     if (_fileSystem.AppendFileExtension)
                     {
                         string dataFileExtension = FindDataFileExtension(chidDirectory);
-                        if (string.IsNullOrEmpty(dataFileExtension) == false)
+                        if (string.IsNullOrEmpty(dataFileExtension))
+                        {
+                            //注意：覆盖安装的情况下，缓存文件可能会没有后缀格式，需要删除重新下载！
+                            dataFilePath = string.Empty;
+                        }
+                        else
+                        {
                             dataFilePath += dataFileExtension;
+                        }
                     }
 
                     var element = new VerifyFileElement(_fileSystem.PackageName, bundleGUID, fileRootPath, dataFilePath, infoFilePath);
