@@ -11,7 +11,7 @@ namespace YooAsset
         private readonly IFileSystem _fileSystem;
         private readonly PackageBundle _packageBundle;
         private readonly AssetBundle _assetBundle;
-        
+
         public WXAssetBundleResult(IFileSystem fileSystem, PackageBundle packageBundle, AssetBundle assetBundle)
         {
             _fileSystem = fileSystem;
@@ -23,7 +23,10 @@ namespace YooAsset
         {
             if (_assetBundle != null)
             {
-                _assetBundle.WXUnload(true);
+                if (_packageBundle.Encrypted)
+                    _assetBundle.Unload(true);
+                else
+                    _assetBundle.WXUnload(true);
             }
         }
         public override string GetBundleFilePath()

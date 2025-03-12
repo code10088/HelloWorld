@@ -23,7 +23,10 @@ namespace YooAsset
         {
             if (_assetBundle != null)
             {
-                _assetBundle.TTUnload(true);
+                if (_packageBundle.Encrypted)
+                    _assetBundle.Unload(true);
+                else
+                    _assetBundle.TTUnload(true);
             }
         }
         public override string GetBundleFilePath()
