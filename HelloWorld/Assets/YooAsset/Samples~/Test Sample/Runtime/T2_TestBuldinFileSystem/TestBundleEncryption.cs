@@ -3,9 +3,6 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.U2D;
-using UnityEngine.TestTools;
 using NUnit.Framework;
 using YooAsset;
 
@@ -231,6 +228,7 @@ public class WebFileStreamDecryption : IWebDecryptionServices
 {
     public WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
     {
+        /*
         byte[] copyData = new byte[fileInfo.FileData.Length];
         Buffer.BlockCopy(fileInfo.FileData, 0, copyData, 0, fileInfo.FileData.Length);
 
@@ -241,6 +239,16 @@ public class WebFileStreamDecryption : IWebDecryptionServices
 
         WebDecryptResult decryptResult = new WebDecryptResult();
         decryptResult.Result = AssetBundle.LoadFromMemory(copyData);
+        return decryptResult;
+        */
+
+        for (int i = 0; i < fileInfo.FileData.Length; i++)
+        {
+            fileInfo.FileData[i] ^= BundleStream.KEY;
+        }
+
+        WebDecryptResult decryptResult = new WebDecryptResult();
+        decryptResult.Result = AssetBundle.LoadFromMemory(fileInfo.FileData);
         return decryptResult;
     }
 }
