@@ -92,12 +92,7 @@ namespace YooAsset
                     if (_fileSystem.AppendFileExtension)
                     {
                         string dataFileExtension = FindDataFileExtension(chidDirectory);
-                        if (string.IsNullOrEmpty(dataFileExtension))
-                        {
-                            //注意：覆盖安装的情况下，缓存文件可能会没有后缀格式，需要删除重新下载！
-                            dataFilePath = string.Empty;
-                        }
-                        else
+                        if (string.IsNullOrEmpty(dataFileExtension) == false)
                         {
                             dataFilePath += dataFileExtension;
                         }

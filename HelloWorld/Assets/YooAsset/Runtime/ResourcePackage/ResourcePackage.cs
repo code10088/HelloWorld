@@ -263,7 +263,7 @@ namespace YooAsset
         /// <param name="clearParam">执行参数</param>
         public ClearCacheFilesOperation ClearCacheFilesAsync(EFileClearMode clearMode, object clearParam = null)
         {
-            DebugCheckInitialize();
+            DebugCheckInitialize(false);
             var operation = _playModeImpl.ClearCacheFilesAsync(clearMode.ToString(), clearParam);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
@@ -276,7 +276,7 @@ namespace YooAsset
         /// <param name="clearParam">执行参数</param>
         public ClearCacheFilesOperation ClearCacheFilesAsync(string clearMode, object clearParam = null)
         {
-            DebugCheckInitialize();
+            DebugCheckInitialize(false);
             var operation = _playModeImpl.ClearCacheFilesAsync(clearMode, clearParam);
             OperationSystem.StartOperation(PackageName, operation);
             return operation;
