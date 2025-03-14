@@ -17,7 +17,7 @@ internal class WXFSClearUnusedBundleFilesAsync : FSClearCacheFilesOperation
 
     private readonly WechatFileSystem _fileSystem;
     private readonly PackageManifest _manifest;
-    private List<string> _unusedCacheFiles;
+    private List<string> _unusedCacheFiles = new List<string>(1000);
     private int _unusedFileTotalCount = 0;
     private ESteps _steps = ESteps.None;
 

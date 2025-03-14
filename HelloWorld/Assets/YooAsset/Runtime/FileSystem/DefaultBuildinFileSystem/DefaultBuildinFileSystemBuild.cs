@@ -84,6 +84,7 @@ namespace YooAsset
 
             // 创建内置清单实例
             var buildinFileCatalog = new DefaultBuildinFileCatalog();
+            buildinFileCatalog.FileVersion = CatalogDefine.FileVersion;
             buildinFileCatalog.PackageName = packageName;
             buildinFileCatalog.PackageVersion = packageVersion;
 
@@ -97,7 +98,8 @@ namespace YooAsset
                 $"{packageName}_{packageVersion}.hash",
                 $"{packageName}_{packageVersion}.json",
                 $"{packageName}_{packageVersion}.report",
-                DefaultBuildinFileSystemDefine.BuildinCatalogFileName
+                DefaultBuildinFileSystemDefine.BuildinCatalogJsonFileName,
+                DefaultBuildinFileSystemDefine.BuildinCatalogBinaryFileName
             };
 
             // 记录所有内置资源文件
@@ -114,7 +116,9 @@ namespace YooAsset
                 string fileName = fileInfo.Name;
                 if (fileMapping.TryGetValue(fileName, out string bundleGUID))
                 {
-                    var wrapper = new DefaultBuildinFileCatalog.FileWrapper(bundleGUID, fileName);
+                    var wrapper = new DefaultBuildinFileCatalog.FileWrapper();
+                    wrapper.BundleGUID = bundleGUID;
+                    wrapper.FileName = fileName;
                     buildinFileCatalog.Wrappers.Add(wrapper);
                 }
                 else
@@ -123,16 +127,20 @@ namespace YooAsset
                 }
             }
 
-            // 创建输出目录
-            string saveFilePath = $"{pacakgeDirectory}/{DefaultBuildinFileSystemDefine.BuildinCatalogFileName}";
-            if (File.Exists(saveFilePath))
-                File.Delete(saveFilePath);
-            
             // 创建输出文件
-            File.WriteAllText(saveFilePath, JsonUtility.ToJson(buildinFileCatalog, false));
-            UnityEditor.AssetDatabase.Refresh();
+            string jsonFilePath = $"{pacakgeDirectory}/{DefaultBuildinFileSystemDefine.BuildinCatalogJsonFileName}";
+            if (File.Exists(jsonFilePath))
+                File.Delete(jsonFilePath);
+            CatalogTools.SerializeToJson(jsonFilePath, buildinFileCatalog);
 
-            Debug.Log($"Succeed to save buildin file catalog : {saveFilePath}");
+            // 创建输出文件
+            string binaryFilePath = $"{pacakgeDirectory}/{DefaultBuildinFileSystemDefine.BuildinCatalogBinaryFileName}";
+            if (File.Exists(binaryFilePath))
+                File.Delete(binaryFilePath);
+            CatalogTools.SerializeToBinary(binaryFilePath, buildinFileCatalog);
+
+            UnityEditor.AssetDatabase.Refresh();
+            Debug.Log($"Succeed to save buildin file catalog : {binaryFilePath}");
             return true;
         }
     }
