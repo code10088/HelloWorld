@@ -95,7 +95,7 @@ URP
 	Unity.Profiling.ProfilerMarker.Begin对urp性能严重影响，务必添加宏UNITY_EDITOR判断
 	
 SuperScrollView调整
-	LoopListViewItem2中添加UIChildItem
+	LoopListViewItem2中添加LoopItemData
 	修改mDistanceForRecycle0、mDistanceForNew0、mDistanceForRecycle1、mDistanceForNew1默认值
 
 Occlusion Culling
