@@ -82,6 +82,7 @@ GPUInstancing限制
 	
 protobuf-net
 	github下载最新版，使用vs2022编译(如果编译失败尝试更新vs)
+	修改global.json为当前使用的.net sdk版本
 	
 newtonjson
 	release13.0.3 bin/.net45/dll
