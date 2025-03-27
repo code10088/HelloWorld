@@ -12,7 +12,6 @@ Shader "URP/Template"
 
         Blend SrcAlpha OneMinusSrcAlpha
         Cull Back
-        ZWrite Off
 
         LOD 100
 

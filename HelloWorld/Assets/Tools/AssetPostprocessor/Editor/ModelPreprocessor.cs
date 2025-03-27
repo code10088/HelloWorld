@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Reflection;
 using UnityEditor;
+using UnityEditor.AssetImporters;
+using UnityEngine;
 
 namespace AssetPreprocessor.Scripts.Editor
 {
@@ -54,7 +56,19 @@ namespace AssetPreprocessor.Scripts.Editor
             modelImporter.optimizeBones = config.StripBones;
             modelImporter.importConstraints = config.ImportConstraints;
             modelImporter.importAnimation = config.ImportAnimation;
+            modelImporter.importAnimatedCustomProperties = config.ImportAnimatedCustomProperties;
+            modelImporter.resampleCurves = config.ResampleCurves;
+            modelImporter.animationCompression = config.AnimationCompression;
+            modelImporter.animationRotationError = config.AnimationRotationError;
+            modelImporter.animationPositionError = config.AnimationPositionError;
+            modelImporter.animationScaleError = config.AnimationScaleError;
+            modelImporter.removeConstantScaleCurves = config.RemoveConstantScaleCurves;
             modelImporter.materialImportMode = config.MaterialCreationMode;
+            modelImporter.materialLocation = config.MaterialLocation;
+        }
+        private void OnPreprocessMaterialDescription(MaterialDescription description, Material material, AnimationClip[] materialAnimation)
+        {
+            material.shader = Shader.Find("URP/Template");
         }
     }
 }

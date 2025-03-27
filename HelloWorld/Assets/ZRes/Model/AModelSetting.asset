@@ -45,6 +45,14 @@ MonoBehaviour:
   AvatarDefinition: 0
   SkinWeights: 0
   StripBones: 1
-  ImportConstraints: 0
-  ImportAnimation: 0
-  MaterialCreationMode: 0
+  ImportConstraints: 1
+  ImportAnimation: 1
+  ImportAnimatedCustomProperties: 0
+  ResampleCurves: 0
+  AnimationCompression: 3
+  AnimationRotationError: 0.5
+  AnimationPositionError: 0.5
+  AnimationScaleError: 0.5
+  RemoveConstantScaleCurves: 0
+  MaterialCreationMode: 2
+  MaterialLocation: 1

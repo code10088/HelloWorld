@@ -49,10 +49,13 @@ SkinnedMeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 3
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: aee3f2277702fb840815349005761918, type: 2}
+  - {fileID: 2100000, guid: d1840d2c4239b9f4b8167b647026e1a2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -77,7 +80,7 @@ SkinnedMeshRenderer:
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
   m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 8995372745873563548, guid: 26400d1abaa1da044a3c8068f74b0406, type: 3}
+  m_Mesh: {fileID: 8995372745873563548, guid: 8525387e2426b5b499dc603d317b81f6, type: 3}
   m_Bones:
   - {fileID: 1064574218023094313}
   - {fileID: 4737017497546132171}
@@ -1093,7 +1096,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &5563884592706228206
 Animator:
-  serializedVersion: 5
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1101,12 +1104,13 @@ Animator:
   m_GameObject: {fileID: 6336409484814724291}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 91df32e8c997ef2499217d7de2f57b17, type: 2}
+  m_Controller: {fileID: 9100000, guid: 9751f83d992a1c641880a658ee097fd5, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1

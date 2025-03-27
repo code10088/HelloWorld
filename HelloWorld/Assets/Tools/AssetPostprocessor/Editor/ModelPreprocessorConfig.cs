@@ -35,8 +35,16 @@ namespace AssetPreprocessor.Scripts.Editor
         public ModelImporterAvatarSetup AvatarDefinition = ModelImporterAvatarSetup.NoAvatar;
         public ModelImporterSkinWeights SkinWeights = ModelImporterSkinWeights.Standard;
         public bool StripBones = true;
-        public bool ImportConstraints = false;
-        public bool ImportAnimation = false;
-        public ModelImporterMaterialImportMode MaterialCreationMode = ModelImporterMaterialImportMode.None;
+        public bool ImportConstraints = true;
+        public bool ImportAnimation = true;
+        public bool ImportAnimatedCustomProperties = false;
+        public bool ResampleCurves = false;
+        public ModelImporterAnimationCompression AnimationCompression = ModelImporterAnimationCompression.Optimal;
+        public float AnimationRotationError = 0.5f;
+        public float AnimationPositionError = 0.5f;
+        public float AnimationScaleError = 0.5f;
+        public bool RemoveConstantScaleCurves = false;
+        public ModelImporterMaterialImportMode MaterialCreationMode = ModelImporterMaterialImportMode.ImportViaMaterialDescription;
+        public ModelImporterMaterialLocation MaterialLocation = ModelImporterMaterialLocation.InPrefab;
     }
 }
