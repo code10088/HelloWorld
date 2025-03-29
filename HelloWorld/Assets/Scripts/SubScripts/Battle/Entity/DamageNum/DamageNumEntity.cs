@@ -36,7 +36,7 @@ namespace HotAssembly
         {
             tmp = obj.Obj.transform.GetChild(0).GetComponent<TextMeshPro>();
             tp = obj.Obj.GetComponent<TweenPlayer>();
-            tp.onForwardArrived += Disable;
+            tp.OnForwardArrived = Disable;
             Enable();
         }
         private void Enable()

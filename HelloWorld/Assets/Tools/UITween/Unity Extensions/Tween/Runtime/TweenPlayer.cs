@@ -60,8 +60,8 @@ namespace UnityExtensions.Tween
         /// </summary>
         public bool sampleOnAwake = true;
 
-        [SerializeField] UnityEvent _onForwardArrived = default;
-        [SerializeField] UnityEvent _onBackArrived = default;
+        public Action OnForwardArrived = null;
+        public Action OnBackArrived = null;
 
         [SerializeField, SerializeReference] List<TweenAnimation> _animations = default;
 
@@ -80,24 +80,6 @@ namespace UnityExtensions.Tween
         {
             get => _duration;
             set => _duration = value > _minDuration ? value : _minDuration;
-        }
-
-        /// <summary>
-        /// Add or remove callbacks when it's over.
-        /// </summary>
-        public event UnityAction onForwardArrived
-        {
-            add => (_onForwardArrived ?? (_onForwardArrived = new UnityEvent())).AddListener(value);
-            remove => _onForwardArrived?.RemoveListener(value);
-        }
-
-        /// <summary>
-        /// Add or remove callbacks when it gets to the starting point.
-        /// </summary>
-        public event UnityAction onBackArrived
-        {
-            add => (_onBackArrived ?? (_onBackArrived = new UnityEvent())).AddListener(value);
-            remove => _onBackArrived?.RemoveListener(value);
         }
 
         /// <summary>
@@ -283,7 +265,7 @@ namespace UnityExtensions.Tween
                         if ((arrivedAction & ArrivedAction.StopOnForwardArrived) != 0)
                             enabled = false;
 
-                        _onForwardArrived?.Invoke();
+                        OnForwardArrived?.Invoke();
                     }
 
                     // wrap
@@ -329,7 +311,7 @@ namespace UnityExtensions.Tween
                         if ((arrivedAction & ArrivedAction.StopOnBackArrived) != 0)
                             enabled = false;
 
-                        _onBackArrived?.Invoke();
+                        OnBackArrived?.Invoke();
                     }
 
                     // wrap

@@ -45,9 +45,9 @@ namespace HotAssembly
             updateId = Updater.Instance.StartUpdate(UpdateTrigger);
             GameDebug.Log("UITest OnEnable");
         }
-        protected override void PlayInitAni()
+        protected override void PlayEnableAni()
         {
-            base.PlayInitAni();
+            base.PlayEnableAni();
             GameDebug.Log("UITest OnPlayUIAnimation");
         }
         protected override void RefreshUILayer()

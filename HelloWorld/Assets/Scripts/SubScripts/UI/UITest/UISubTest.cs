@@ -16,9 +16,9 @@ namespace HotAssembly
             base.OnEnable(param);
             GameDebug.Log("UISubTest OnEnable");
         }
-        protected override void PlayInitAni()
+        protected override void PlayEnableAni()
         {
-            base.PlayInitAni();
+            base.PlayEnableAni();
             GameDebug.Log("UISubTest OnPlayUIAnimation");
         }
         public override void OnDisable()

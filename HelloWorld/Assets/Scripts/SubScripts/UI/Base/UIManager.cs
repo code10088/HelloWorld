@@ -253,16 +253,14 @@ namespace HotAssembly
                 }
                 else if (baseUI == null)
                 {
-                    baseObj.SetActive(true);
                     Type t = System.Type.GetType("HotAssembly." + config.Name);
                     baseUI = Activator.CreateInstance(t) as UIBase;
-                    baseUI.InitUI(baseObj, from, config, param);
+                    baseUI.Init(baseObj, from, config, param);
                     Instance.curUI.Add(this);
                     OpenActionInvoke(true);
                 }
                 else
                 {
-                    baseObj.SetActive(true);
                     baseUI.OnEnable(param);
                     Instance.curUI.Add(this);
                     OpenActionInvoke(true);
@@ -274,7 +272,6 @@ namespace HotAssembly
             }
             public void Release(bool immediate = false)
             {
-                baseObj?.SetActive(false);
                 baseUI?.OnDisable();
                 if (immediate) _Release();
                 else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);

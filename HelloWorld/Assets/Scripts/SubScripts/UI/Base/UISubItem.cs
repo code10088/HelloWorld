@@ -50,7 +50,6 @@ namespace HotAssembly
                 case LoadState.Instantiating:
                     break;
                 case LoadState.InstantiateFinish:
-                    UIObj.SetActive(true);
                     OnEnable(param);
                     open?.Invoke(true);
                     break;
@@ -97,8 +96,8 @@ namespace HotAssembly
                 rt.anchorMin = Vector2.zero;
                 rt.anchorMax = Vector2.one;
                 rt.sizeDelta = Vector2.zero;
-                UIObj.SetActive(false);
                 Init();
+                SetFalse();
                 open?.Invoke(false);
             }
             else
@@ -121,7 +120,6 @@ namespace HotAssembly
         }
         private void Release(bool immediate = false)
         {
-            UIObj?.SetActive(false);
             if (state.HasFlag(LoadState.InstantiateFinish)) OnDisable();
             if (immediate) _Release();
             else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);

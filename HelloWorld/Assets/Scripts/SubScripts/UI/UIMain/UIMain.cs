@@ -15,9 +15,9 @@ namespace HotAssembly
         {
             base.OnEnable(param);
         }
-        protected override void PlayInitAni()
+        protected override void PlayEnableAni()
         {
-            base.PlayInitAni();
+            base.PlayEnableAni();
         }
         protected override void RefreshUILayer()
         {

@@ -347,8 +347,8 @@ namespace UnityExtensions.Tween
                 _arrivedActionProp = serializedObject.FindProperty(nameof(arrivedAction));
                 _syncOnAwakeProp = serializedObject.FindProperty(nameof(sampleOnAwake));
 
-                _onForwardArrivedProp = serializedObject.FindProperty(nameof(_onForwardArrived));
-                _onBackArrivedProp = serializedObject.FindProperty(nameof(_onBackArrived));
+                _onForwardArrivedProp = serializedObject.FindProperty(nameof(OnForwardArrived));
+                _onBackArrivedProp = serializedObject.FindProperty(nameof(OnBackArrived));
 
                 _animationsProp = serializedObject.FindProperty(nameof(_animations));
             }

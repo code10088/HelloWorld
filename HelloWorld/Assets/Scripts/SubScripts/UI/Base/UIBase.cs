@@ -17,7 +17,7 @@ namespace HotAssembly
         private List<int> loadId1 = new List<int>();
         private AssetPool loader1 = new AssetPool();
         private AssetObjectPool loader2 = new AssetObjectPool();
-        public void InitUI(GameObject UIObj, UIType from, UIConfig config, params object[] param)
+        public void Init(GameObject UIObj, UIType from, UIConfig config, params object[] param)
         {
             this.UIObj = UIObj;
             this.from = from;
@@ -35,7 +35,7 @@ namespace HotAssembly
         public virtual void OnEnable(params object[] param)
         {
             RefreshUILayer();
-            PlayInitAni();
+            PlayEnableAni();
         }
         protected virtual void RefreshUILayer()
         {
@@ -56,14 +56,36 @@ namespace HotAssembly
                 }
             }
         }
-        protected virtual void PlayInitAni()
+        protected virtual void PlayEnableAni()
         {
+            SetTrue();
             TweenPlayer tp = UIObj.GetComponent<TweenPlayer>();
             if (tp) tp.SetForwardDirectionAndEnabled();
         }
         public virtual void OnDisable()
         {
-
+            PlayDisableAni();
+        }
+        protected virtual void PlayDisableAni()
+        {
+            TweenPlayer tp = UIObj.GetComponent<TweenPlayer>();
+            if (tp)
+            {
+                tp.SetBackDirectionAndEnabled();
+                tp.OnBackArrived = SetFalse;
+            }
+            else
+            {
+                SetFalse();
+            }
+        }
+        protected void SetTrue()
+        {
+            UIObj.SetActive(true);
+        }
+        protected void SetFalse()
+        {
+            UIObj.SetActive(false);
         }
         public virtual void OnDestroy()
         {
