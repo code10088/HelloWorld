@@ -11,16 +11,12 @@ namespace AssetPreprocessor.Scripts.Editor
             var audioImporter = assetImporter as AudioImporter;
 
             var assetPath = audioImporter.assetPath;
-            var configs = AssetDatabase.FindAssets("t:ScriptableObject")
-                .ToList()
+            var configs = AssetDatabase.FindAssets("t:AudioPreprocessorConfig")
                 .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
                 .Select(path => AssetDatabase.LoadAssetAtPath<AudioPreprocessorConfig>(path))
-                .Where(obj => obj)
-                .Where(t => t is AudioPreprocessorConfig)
                 .Where(c => c.Check(assetImporter))
                 .ToList();
             if (configs.Count == 0) return;
-            configs.Sort((c1, c2) => c1.ConfigSortOrder.CompareTo(c2.ConfigSortOrder));
 
             AudioPreprocessorConfig config = configs[0];
             audioImporter.forceToMono = config.ForceToMono;

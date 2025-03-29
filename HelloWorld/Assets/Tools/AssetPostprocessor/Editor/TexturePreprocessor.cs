@@ -10,16 +10,12 @@ namespace AssetPreprocessor.Scripts.Editor
         {
             var textureImporter = assetImporter as TextureImporter;
 
-            var configs = AssetDatabase.FindAssets("t:ScriptableObject")
-                .ToList()
+            var configs = AssetDatabase.FindAssets("t:TexturePreprocessorConfig")
                 .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
                 .Select(path => AssetDatabase.LoadAssetAtPath<TexturePreprocessorConfig>(path))
-                .Where(obj => obj)
-                .Where(t => t is TexturePreprocessorConfig)
                 .Where(c => c.Check(assetImporter))
                 .ToList();
             if (configs.Count == 0) return;
-            configs.Sort((c1, c2) => c1.ConfigSortOrder.CompareTo(c2.ConfigSortOrder));
 
             TexturePreprocessorConfig config = configs[0];
             TextureImporterSettings dest = new TextureImporterSettings();

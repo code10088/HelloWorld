@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca970977ce5de496dbfe52ee14ca3917, type: 3}
   m_Name: AModelSetting
   m_EditorClassIdentifier: 
-  IsEnabled: 1
-  ConfigSortOrder: 10
   MatchList:
   - ZRes/Model
   IgnoreList: []

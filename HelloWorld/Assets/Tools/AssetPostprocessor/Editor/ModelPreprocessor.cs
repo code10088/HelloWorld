@@ -12,16 +12,12 @@ namespace AssetPreprocessor.Scripts.Editor
         {
             var modelImporter = assetImporter as ModelImporter;
 
-            var configs = AssetDatabase.FindAssets("t:ScriptableObject")
-                .ToList()
+            var configs = AssetDatabase.FindAssets("t:ModelPreprocessorConfig")
                 .Select(guid => AssetDatabase.GUIDToAssetPath(guid))
                 .Select(path => AssetDatabase.LoadAssetAtPath<ModelPreprocessorConfig>(path))
-                .Where(obj => obj)
-                .Where(t => t is ModelPreprocessorConfig)
                 .Where(c => c.Check(assetImporter))
                 .ToList();
             if (configs.Count == 0) return;
-            configs.Sort((c1, c2) => c1.ConfigSortOrder.CompareTo(c2.ConfigSortOrder));
 
             ModelPreprocessorConfig config = configs[0];
             modelImporter.globalScale = config.ScaleFactor;
