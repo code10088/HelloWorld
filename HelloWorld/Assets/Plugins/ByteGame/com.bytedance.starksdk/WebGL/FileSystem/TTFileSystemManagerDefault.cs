@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+
 namespace TTSDK
 {
     public class TTFileSystemManagerDefault : TTFileSystemManager
@@ -474,6 +477,96 @@ namespace TTSDK
         public override bool IsUrlCached(string url)
         {
             return false;
+        }
+
+        public override string AppendFileSync(string filePath, string data, string encoding = "utf8")
+        {
+            try
+            {
+                File.AppendAllText(filePath, data);
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+            return "";
+        }
+
+        public override string AppendFileSync(string filePath, byte[] data)
+        {
+            try
+            {
+                using FileStream fs = new FileStream(filePath, FileMode.Append, FileAccess.Write);
+                fs.Write(data, 0, data.Length);
+            }   
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+            return "";
+
+        }
+
+        public override void AppendFile(AppendFileParam param)
+        {
+            var errMsg = AppendFileSync(param.FilePath, param.Data);
+            CallbackBaseResponse(errMsg, param.success, param.fail);
+        }
+
+        public override void AppendFile(AppendFileStringParam param)
+        {
+            var errMsg = AppendFileSync(param.FilePath, param.Data, param.Encoding);
+            CallbackBaseResponse(errMsg, param.success, param.fail);
+        }
+
+        public override void ReadDir(ReadDirParam param)
+        {
+            var fileList = ReadDirSync(param.DirPath);
+            param.success?.Invoke(new TTReadDirResponse{files = fileList});
+        }
+
+        public override string[] ReadDirSync(string dirPath)
+        {
+            try
+            {
+                if (Directory.Exists(dirPath))
+                {
+                    return Directory.GetFiles(dirPath);
+                }
+                else
+                {
+                    return new string[] { "Directory not exist" };
+                }
+            }
+            catch (Exception e)
+            {
+                return new string[] { e.Message };
+            }
+        }
+
+        public override void Truncate(TruncateParam param)
+        {
+            var errMsg = TruncateSync(param.FilePath, param.Length);
+            CallbackBaseResponse(errMsg, param.success, param.fail);
+        }
+
+        public override string TruncateSync(string filePath, int length)
+        {
+            try
+            {
+                using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Write))
+                {
+                    fs.SetLength(length);
+                }
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+
+            return "";
         }
 
         private static void CallbackReadFileResponse(string errMsg,

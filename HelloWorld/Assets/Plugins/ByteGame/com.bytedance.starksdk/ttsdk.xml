@@ -2163,6 +2163,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:TTSDK.ITTAPI.SetPreferredDevicePixelRatio(System.Single)">
+            <summary>
+            设置期望的设备像素比
+            影响实际的渲染分辨率，可以通过降低该值来减轻渲染压力。
+            </summary>
+        </member>
         <member name="T:TTSDK.TTInvite.OnInviteStateChanged">
             <summary>
             抖音好友邀请状态变化
@@ -2858,6 +2864,12 @@
             orderAmount     int     非必填（道具直购场景必填）道具价格，人民币，单位分
             goodName        string  非必填（道具直购场景必填）道具名称
             </summary>
+        </member>
+        <member name="M:TTSDK.TTLiveManagerImpl.OnXScreenChangeListener(TTSDK.OnXScreenSizeChangeResult)">
+            <summary>
+            端上回调的X分屏变化事件
+            </summary>
+            <param name="result"></param>
         </member>
         <member name="T:TTSDK.TTShareImpl">
             分享模块
@@ -3815,59 +3827,6 @@
             当前是否处于弱网状态
             </summary>
         </member>
-        <member name="T:TTSDK.TTAdManagerImpl">
-            <summary>
-            广告管理模块，请求，播放激励视屏广告
-            其他类型广告待实现
-            </summary>
-        </member>
-        <member name="F:TTSDK.TTAdManagerImpl.s_AdIdNativeRewardDic">
-            <summary>
-            激励视频广告的暂存，for native 方式
-            </summary>
-        </member>
-        <member name="M:TTSDK.TTAdManagerImpl.SetVideoAdCallBack(TTSDK.TTVideoAdCallback)">
-            <summary>
-            设置激励视频广告的回调。获取完整的回调信息，一般处理都可以通过ShowVideoAd完成，评估必要性
-            </summary>
-            <param name="callback">已播放时长.</param>
-        </member>
-        <member name="F:TTSDK.TTAdManagerImpl.m_VideoAdState">
-            <summary>
-            video ad state.  
-            Usually only state of `VideoAdState.Loaded` means it is properly loaded.  
-            </summary>
-        </member>
-        <member name="F:TTSDK.TTAdManagerImpl.m_VideoAdErrorCanBeAutoRetry">
-            <summary>
-            根据广告错误判断是否需要retry
-            </summary>
-        </member>
-        <member name="F:TTSDK.TTAdManagerImpl.m_IsReady">
-            <summary>
-            广告是否加载完成
-            </summary>
-        </member>
-        <member name="M:TTSDK.TTAdManagerImpl.InitVideoAd(System.String,TTSDK.UNBridgeLib.LitJson.JsonData)">
-            <summary>
-            初始化
-            </summary>
-        </member>
-        <member name="M:TTSDK.TTAdManagerImpl.StartLoadVideoAd">
-            <summary>
-            请求加载激励视频广告
-            </summary>
-        </member>
-        <member name="M:TTSDK.TTAdManagerImpl.LoadVideoAdAsync">
-            <summary>
-            加载广告，并在某些错误情况下进行有限次重试
-            </summary>
-        </member>
-        <member name="M:TTSDK.TTAdManagerImpl.LoadAndShowEcVideo">
-            <summary>
-            异步请求并显示广告
-            </summary>
-        </member>
         <member name="T:TTSDK.ShareMockMoudle">
             <summary>
             分享模块的mock层
@@ -4520,21 +4479,6 @@
             单条tag最大长度
             </summary>
         </member>
-        <member name="T:TTSDK.TTBannerAdMock">
-            <summary>
-            Banner广告的Mock模块
-            </summary>
-        </member>
-        <member name="T:TTSDK.TTInterstitialAdMock">
-            <summary>
-            插屏广告的Mock模块
-            </summary>
-        </member>
-        <member name="T:TTSDK.AdMockMoudle">
-            <summary>
-            广告模块的mock层
-            </summary>
-        </member>
         <member name="T:TTSDK.TTRPC">
             <summary>
             网络调用的封装
@@ -5033,6 +4977,11 @@
             <param name="videoId"> 抖音视频videoId，复制抖音视频链接到浏览器即可得到 </param>
             <param name="jumpCallback"> 跳转结果，参数为是否成功，true表示成功，false表示失败 </param>
         </member>
+        <member name="M:TTSDK.TT.NavigateToMiniProgram(TTSDK.NavigateToMiniProgramParam)">
+            <summary>
+            跳转到另一个小程序/小游戏。需要找相应运营同学配置
+            </summary>
+        </member>
         <member name="M:TTSDK.TT.RequestSubscribeMessage(System.Collections.Generic.List{System.String},System.Action{System.Collections.Generic.Dictionary{System.String,System.String}},System.Action,System.Action{System.Int32,System.String})">
             <summary>
             请求订阅消息
@@ -5400,6 +5349,12 @@
             </summary>
             <param name="callback"></param>
         </member>
+        <member name="M:TTSDK.TT.SetPreferredFramesPerSecond(System.Int32)">
+            <summary>
+            修改渲染帧率。修改后，requestAnimationFrame 的回调频率会发生改变。
+            </summary>
+            <param name="fps">默认渲染帧率为 60 帧每秒，有效范围 1-60</param>
+        </member>
         <member name="M:TTSDK.TT.SetKeepScreenOn(System.Boolean,System.Action,System.Action{System.String})">
             <summary>
             设置是否保持屏幕常亮状态
@@ -5537,6 +5492,12 @@
         <member name="M:TTSDK.TT.CreateUDPSocket">
             <summary>
             创建一个 UDP Socket 实例。
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TTSDK.TT.SetPreferredDevicePixelRatio(System.Single)">
+            <summary>
+            设置期望的 DevicePixelRaio
             </summary>
             <returns></returns>
         </member>
@@ -6560,6 +6521,46 @@
             <param name="minor"></param>
             <returns></returns>
         </member>
+        <member name="F:TTSDK.EnvVersionEnum.Current">
+            <summary>
+            线上版
+            </summary>
+        </member>
+        <member name="F:TTSDK.EnvVersionEnum.Latest">
+            <summary>
+            测试版
+            </summary>
+        </member>
+        <member name="F:TTSDK.NavigateToMiniProgramParam.AppId">
+            <summary>
+            要跳转的小游戏/小程序 id
+            </summary>
+        </member>
+        <member name="F:TTSDK.NavigateToMiniProgramParam.Path">
+            <summary>
+            要跳转的小程序页面路径（不传则默认打开首页），允许携带 query 参数，格式详见示例；注：页面路径可通过，“开发者后台-运营能力-小游戏站-运营管理”生成对应的首页链接
+            </summary>
+        </member>
+        <member name="F:TTSDK.NavigateToMiniProgramParam.ExtraData">
+            <summary>
+            需要传递给目标小程序、小游戏的数据，目标小程序可在 App.onLaunch，App.onShow，tt.getLaunchOptionsSync 中获取到这份数据。如果跳转的是小游戏，可以在 tt.onShow，tt.getLaunchOptionsSync 中可以获取到这份数据数据
+            </summary>
+        </member>
+        <member name="F:TTSDK.NavigateToMiniProgramParam.Success">
+            <summary>
+            接口调用成功的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.NavigateToMiniProgramParam.Fail">
+            <summary>
+            接口调用失败的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.NavigateToMiniProgramParam.Complete">
+            <summary>
+            接口调用结束的回调函数（调用成功、失败都会执行）
+            </summary>
+        </member>
         <member name="T:TTSDK.IJsonObject">
              <summary>
              代码生成器自动实现，无须手动实现，在所需实现的 class 上加上注解 [JObject]，并且改为 partial class <br/>
@@ -6600,6 +6601,91 @@
             抛出字段检查异常，在 JObject.ToJData 阶段使用，可用于参数检查功能
             </summary>
         </member>
+        <member name="F:TTSDK.TTLiveStatus.OpenId">
+            <summary>
+            主播 openid
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTLiveStatus.IsOnLive">
+            <summary>
+            是否正在直播
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTLiveStatus.NickName">
+            <summary>
+            昵称
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTLiveStatus.AppId">
+            <summary>
+            对应小玩法ID
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTLiveStatus.AvatarUrl">
+            <summary>
+            主播头像 
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTLiveStatus.RoomId">
+            <summary>
+            直播间Id
+            </summary>
+        </member>
+        <member name="F:TTSDK.GetLiveStatusParam.OpenIdList">
+            <summary>
+            主播 openid 列表
+            </summary>
+        </member>
+        <member name="F:TTSDK.GetLiveStatusParam.Success">
+            <summary>
+            获取信息成功的回调
+            </summary>
+        </member>
+        <member name="F:TTSDK.GetLiveStatusParam.Fail">
+            <summary>
+            获取信息失败的回调
+            </summary>
+        </member>
+        <member name="F:TTSDK.GetLiveStatusParam.Complete">
+            <summary>
+            接口调用结束的回调函数（调用成功、失败都会执行）
+            </summary>
+        </member>
+        <member name="F:TTSDK.XScreenType.EnlargeBegin">
+            <summary>
+            开始展开
+            </summary>
+        </member>
+        <member name="F:TTSDK.XScreenType.EnlargeEnd">
+            <summary>
+            展开结束
+            </summary>
+        </member>
+        <member name="F:TTSDK.XScreenType.ReduceBegin">
+            <summary>
+            开始收回
+            </summary>
+        </member>
+        <member name="F:TTSDK.XScreenType.ReduceEnd">
+            <summary>
+            收回结束
+            </summary>
+        </member>
+        <member name="F:TTSDK.XScreenStatus.Begin">
+            <summary>
+            操作开始
+            </summary>
+        </member>
+        <member name="F:TTSDK.XScreenStatus.End">
+            <summary>
+            操作结束
+            </summary>
+        </member>
+        <member name="P:TTSDK.OnXScreenSizeChangeResult.Type">
+            <summary>
+            X分屏类型
+            </summary>
+        </member>
         <member name="M:TTSDK.TTLiveManager.CheckRoomIsValid(TTSDK.UNBridgeLib.LitJson.JsonData,System.Action{TTSDK.UNBridgeLib.LitJson.JsonData},System.Action{System.Int32,System.String},System.Action)">
             <summary>
             检查直播间/小游戏挂载状态是否有效
@@ -6617,6 +6703,24 @@
             <param name="successCallback">成功回调</param>
             <param name="failedCallback">失败回调</param>
             <param name="completeCallback">完成回调</param>
+        </member>
+        <member name="M:TTSDK.TTLiveManager.GetLiveStatus(TTSDK.GetLiveStatusParam)">
+            <summary>
+            查询小游戏关联的小玩法的主播开播信息
+            </summary>
+            <param name="param"> 入参以及回调 </param>
+        </member>
+        <member name="M:TTSDK.TTLiveManager.OnXScreenSizeChange(TTSDK.OnXScreenSizeChangeCallback)">
+            <summary>
+            监听X分屏变化事件
+            </summary>
+            <param name="callback">必传，要添加的callback对象</param>
+        </member>
+        <member name="M:TTSDK.TTLiveManager.OffXScreenSizeChange(TTSDK.OnXScreenSizeChangeCallback)">
+            <summary>
+            删除监听X分屏变化事件，不传callback时，删除所有监听事件
+            </summary>
+            <param name="callback">可选，要删除的callback对象</param>
         </member>
         <member name="T:TTSDK.AndroidStarkCallBridge">
             <summary>
@@ -8668,27 +8772,6 @@
         <member name="M:TTSDK.TTPlayerPrefs.Save">
             <summary>
               <para>Writes all modified preferences to disk.</para>
-            </summary>
-        </member>
-        <member name="F:TTSDK.RewardedVideoAdImpl._videoAdState">
-            <summary>
-            video ad state.  
-            Usually only state of `VideoAdState.Loaded` means it is properly loaded.  
-            </summary>
-        </member>
-        <member name="F:TTSDK.RewardedVideoAdImpl._videoAdErrorCanBeAutoRetry">
-            <summary>
-            根据广告错误判断是否需要retry
-            </summary>
-        </member>
-        <member name="F:TTSDK.RewardedVideoAdImpl._isReady">
-            <summary>
-            广告是否加载完成
-            </summary>
-        </member>
-        <member name="M:TTSDK.RewardedVideoAdImpl.Show">
-            <summary>
-            加载广告，并在某些错误情况下进行有限次重试
             </summary>
         </member>
         <member name="F:TTSDK.FeedStatusEnum.FeedEnter">

@@ -246,6 +246,87 @@ namespace TTSDK
         }
 #endif
 
+        #if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern string StarkAppendStringFileSync(string filePath, string data, string encoding);
+#else
+        private static string StarkAppendStringFileSync(string filePath, string data, string encoding)
+        {
+            return TTFileSystemManagerDefault.Instance.AppendFileSync(filePath, data, encoding);
+        }
+#endif
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern string StarkAppendBinFileSync(string filePath, byte[] data, int dataLength);
+#else
+        private static string StarkAppendBinFileSync(string filePath, byte[] data, int dataLength)
+        {
+            return TTFileSystemManagerDefault.Instance.AppendFileSync(filePath, data);
+        }
+#endif
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void StarkAppendStringFile(string filePath, string data, string encoding, string s, string f);
+#else
+        private static void StarkAppendStringFile(string filePath, string data, string encoding, string s, string f)
+        {
+            TTFileSystemManagerDefault.Instance.AppendFileSync(filePath, data, encoding);
+        }
+#endif
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void StarkAppendBinFile(string filePath, byte[] data, int dataLength, string s, string f);
+#else
+        private static void StarkAppendBinFile(string filePath, byte[] data, int dataLength, string s, string f)
+        {
+            TTFileSystemManagerDefault.Instance.AppendFileSync(filePath, data);
+        }
+#endif
+        
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void StarkTruncate(string filePath, int length, string s, string f);
+#else
+        private static void StarkTruncate(string filePath, int length, string s, string f)
+        {
+            TTFileSystemManagerDefault.Instance.TruncateSync(filePath, length);
+        }
+#endif
+        
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern string StarkTruncateSync(string filePath, int length);
+#else
+        private static string StarkTruncateSync(string filePath, int length)
+        {
+            return TTFileSystemManagerDefault.Instance.TruncateSync(filePath, length);
+        }
+#endif
+        
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern void StarkReadDir(string filePath, string callbackId);
+#else
+        private static void StarkReadDir(string filePath, string callbackId)
+        {
+            TTFileSystemManagerDefault.Instance.ReadDirSync(filePath);
+        }
+#endif
+        
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [DllImport("__Internal")]
+        private static extern string StarkReadDirSync(string filePath);
+#else
+        private static string StarkReadDirSync(string filePath)
+        {
+            return TTFileSystemManagerDefault.Instance.ReadDirSync(filePath)[0];
+        }
+#endif
+       
+        
         public static readonly TTFileSystemManagerWebGL Instance = new TTFileSystemManagerWebGL();
 
         private static Dictionary<string, ReadFileParam> s_readFileParams = new Dictionary<string, ReadFileParam>();
@@ -253,6 +334,7 @@ namespace TTSDK
 
         private static Dictionary<string, GetSavedFileListParam> s_getSavedFileListParams =
             new Dictionary<string, GetSavedFileListParam>();
+        private static Dictionary<string, ReadDirParam> s_readDirParams = new Dictionary<string, ReadDirParam>();
 
         private static bool _initialized;
 
@@ -413,6 +495,47 @@ namespace TTSDK
                     conf.fail?.Invoke(res);
                 }
             }
+            
+            public void HandleReadDirCallback(string msg)
+            {
+                Debug.Log($"HandleReadDirCallback - {msg}");
+                TTReadDirResponse res;
+                try
+                {
+                    res = JsonMapper.ToObject<TTReadDirResponse>(msg);
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogError($"failed to parse json data: {msg}, {exception}");
+                    return;
+                }
+                if (res == null)
+                {
+                    Debug.LogError("empty response");
+                    return;
+                }
+                var conf = s_readDirParams[res.callbackId];
+                if (conf == null)
+                {
+                    Debug.LogWarning($"HandleReadDirCallback - no callback for callbackId: {res.callbackId}");
+                    return;     
+                }
+                s_statParams.Remove(res.callbackId);
+                if (res.errCode == 0)
+                {
+                    if (res.files == null)
+                    {
+                        res.files = Array.Empty<string>();
+                    }
+                    conf.success?.Invoke(res);
+                }
+                else
+                {
+                    res.files = Array.Empty<string>();
+                    conf.fail?.Invoke(res);
+                }
+            }
+
         }
 
         private string FixFilePath(string filePath)
@@ -728,7 +851,7 @@ namespace TTSDK
             s_getSavedFileListParams.Add(key, param);
             StarkGetSavedFileList(key);
         }
-
+        
         /// <summary>
         /// 根据url链接获取本地缓存文件路径
         /// </summary>
@@ -749,5 +872,89 @@ namespace TTSDK
             var path = GetLocalCachedPathForUrl(url);
             return !string.IsNullOrEmpty(path) && AccessSync(path);
         }
+        
+        public override string AppendFileSync(string filePath, string data, string encoding = "utf8")
+        {
+            Debug.Log($"AppendFileSync filePath:{filePath},data:{data},encoding:{encoding}");
+            if (string.IsNullOrEmpty(encoding))
+            {
+                encoding = "utf8";
+            }
+
+            return StarkAppendStringFileSync(FixFilePath(filePath), data, encoding);
+        }
+
+        public override string AppendFileSync(string filePath, byte[] data)
+        {
+            Debug.Log($"AppendFileSync filePath:{filePath},data:{data}");
+            return StarkAppendBinFileSync(FixFilePath(filePath), data, data.Length);
+        }
+
+        public override void AppendFile(AppendFileStringParam param)
+        {
+            var pair = TTCallbackHandler.AddPair(param.success, param.fail);
+            StarkAppendStringFile(
+                FixFilePath(param.FilePath),
+                param.Data,
+                param.Encoding,
+                pair.success,
+                pair.fail);
+        }
+
+        public override void AppendFile(AppendFileParam param)
+        {
+            var pair = TTCallbackHandler.AddPair(param.success, param.fail);
+            StarkAppendBinFile(
+                FixFilePath(param.FilePath),
+                param.Data,
+                param.Data.Length,
+                pair.success,
+                pair.fail);
+        }
+        
+        
+        public override void ReadDir(ReadDirParam param)
+        {
+            var key = TTCallbackHandler.MakeKey();
+            s_readDirParams.Add(key, param);
+            StarkReadDir(
+                FixFilePath(param.DirPath),
+                key);
+        }
+
+        public override string[] ReadDirSync(string dirPath)
+        {
+            var msg = StarkReadDirSync(FixFilePath(dirPath));
+            Debug.Log($"ReadDirSync callback -->{msg}");
+            string[] res;
+            try
+            {
+                res =  JsonMapper.ToObject<string[]>(msg);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"ReadDirSync ->{msg},{e}");
+                res = Array.Empty<string>();
+            }
+            return res;
+        }
+
+        public override void Truncate(TruncateParam param)
+        {
+            var pair = TTCallbackHandler.AddPair(param.success, param.fail);
+            StarkTruncate(
+                FixFilePath(param.FilePath),
+                param.Length,
+                pair.success,
+                pair.fail);
+        }   
+
+        public override string TruncateSync(string filePath, int length)
+        {
+            return StarkTruncateSync(
+                FixFilePath(filePath),
+                length);
+        }
+
     }
 }

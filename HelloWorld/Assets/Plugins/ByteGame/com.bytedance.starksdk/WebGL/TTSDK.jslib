@@ -246,6 +246,99 @@ mergeInto(LibraryManager.library, {
 		window.StarkSDK && window.StarkSDK.GetSavedFileList(
 			_StarkPointerStringify(callbackId));
 	},
+	StarkAppendBinFile: function(filePath, data, dataLength, s, f) {
+        window.StarkSDK && window.StarkSDK.AppendFile(
+            _StarkPointerStringify(filePath),
+            HEAPU8.slice(data, dataLength + data),
+            "binary",
+            _StarkPointerStringify(s),
+            _StarkPointerStringify(f)
+        )
+    },
+    StarkAppendBinFileSync: function(filePath, data, dataLength) {
+        if (!window.StarkSDK) return;
+        var returnStr = window.StarkSDK.AppendFileSync(
+            _StarkPointerStringify(filePath),
+            HEAPU8.slice(data, dataLength + data),
+            "binary"
+        )
+        if (!returnStr) {
+            return;
+        }
+        var bufferSize = lengthBytesUTF8(returnStr) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(returnStr, buffer, bufferSize);
+        return buffer;
+    },
+    StarkAppendStringFile: function(filePath, data, encoding, s, f) {
+        window.StarkSDK && window.StarkSDK.AppendFile(
+            _StarkPointerStringify(filePath),
+            _StarkPointerStringify(data),
+            _StarkPointerStringify(encoding),
+            _StarkPointerStringify(s),
+            _StarkPointerStringify(f));
+    },
+    StarkAppendStringFileSync: function(filePath, data, encoding) {
+        if (!window.StarkSDK) return;
+        var returnStr = window.StarkSDK.AppendFileSync(
+            _StarkPointerStringify(filePath),
+            _StarkPointerStringify(data),
+            _StarkPointerStringify(encoding));
+        if (!returnStr) {
+            return;
+        }
+        var bufferSize = lengthBytesUTF8(returnStr) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(returnStr, buffer, bufferSize);
+        return buffer;      
+    },
+    StarkRemoveSavedFile: function(filePath, s, f) {
+        if (!window.StarkSDK) return;   
+        window.StarkSDK && window.StarkSDK.RemoveSavedFile(
+            _StarkPointerStringify(filePath),
+            _StarkPointerStringify(s),
+            _StarkPointerStringify(f));
+    },
+    StarkReadDir: function(filePath, s, f) {
+        if (!window.StarkSDK) return;
+        window.StarkSDK && window.StarkSDK.ReadDir(
+            _StarkPointerStringify(filePath),
+            _StarkPointerStringify(s),
+            _StarkPointerStringify(f));
+    },
+    StarkReadDirSync: function(filePath) {
+        if (!window.StarkSDK) return;
+        var returnStr = window.StarkSDK.ReadDirSync(
+            _StarkPointerStringify(filePath));
+        if (!returnStr) {
+            return;
+        }
+        var bufferSize = lengthBytesUTF8(returnStr) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(returnStr, buffer, bufferSize);
+        return buffer;
+    },
+    StarkTruncate: function(filePath, length, s, f) {
+        if (!window.StarkSDK) return;
+        window.StarkSDK && window.StarkSDK.Truncate(
+            _StarkPointerStringify(filePath),
+            length,
+            _StarkPointerStringify(s),
+            _StarkPointerStringify(f));
+    },
+    StarkTruncateSync: function(filePath, length) {
+        if (!window.StarkSDK) return;
+        var returnStr = window.StarkSDK.TruncateSync(
+            _StarkPointerStringify(filePath),
+            length);
+        if (!returnStr) {
+            return;
+        }
+        var bufferSize = lengthBytesUTF8(returnStr) + 1;
+        var buffer = _malloc(bufferSize);
+        stringToUTF8(returnStr, buffer, bufferSize);
+        return buffer;
+    },
 	StarkGetCachedPathForUrl: function (url) {
 		if (!window.StarkSDK) return;
 		var returnStr = window.StarkSDK.getCachedPathForUrl(_StarkPointerStringify(url));
@@ -398,5 +491,8 @@ mergeInto(LibraryManager.library, {
 	TT_ExitPointerLock: function () {
 		if (!window.StarkSDK || !window.StarkSDK.ExitPointerLock) return;
 		window.StarkSDK.ExitPointerLock();
+	},
+	TT_SetPreferredDevicePixelRatioPercent: function(dprPct) {
+		Module.devicePixelRatio = dprPct * 0.01;
 	}
 });

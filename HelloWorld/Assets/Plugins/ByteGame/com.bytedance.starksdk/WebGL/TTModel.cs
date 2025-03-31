@@ -141,6 +141,11 @@
         public TTFileInfo[] fileList;
     }
 
+    public class RemoveSavedFileParam : TTBaseActionParam<TTBaseResponse>
+    {
+        public string FilePath;
+    }
+    
     public class TTStatResponse : TTBaseResponse
     {
         public TTStatInfo stat;
@@ -202,4 +207,60 @@
         /// </summary>
         public long lastModifiedTime;
     }
+    
+    
+    public class AppendFileParam : TTBaseActionParam<TTBaseResponse>
+    {
+        /// <summary>
+        /// 要追加写入的文件路径
+        /// </summary>
+        public string FilePath;
+
+        /// <summary>
+        /// 要追加写入的二进制数据
+        /// </summary>
+        public byte[] Data;
+    }
+
+    public class AppendFileStringParam : TTBaseActionParam<TTBaseResponse>
+    {
+        /// <summary>
+        /// 要追加写入的文件路径
+        /// </summary>
+        public string FilePath;
+        /// <summary>
+        /// 要追加写入的数据
+        /// </summary>
+        public string Data;
+        /// <summary>
+        /// 指定写入文件的字符编码
+        /// </summary>
+        public string Encoding = "utf8";
+    }
+    
+    public class TTReadDirResponse : TTBaseResponse
+    {
+        public string[] files;
+    }
+    
+    public class ReadDirParam : TTBaseActionParam<TTReadDirResponse>
+    {
+        /// <summary>
+        /// 要读取的目录路径
+        /// </summary>
+        public string DirPath;
+    }
+    
+    public class TruncateParam: TTBaseActionParam<TTBaseResponse>
+    {
+        /// <summary>
+        /// 要截断的文件路径
+        /// </summary>
+        public string FilePath;
+        /// <summary>
+        /// 截断的长度
+        /// </summary>
+        public int Length;
+    }
+
 }

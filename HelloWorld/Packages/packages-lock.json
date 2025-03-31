@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "756b906a215feb6eed414fb56c0f5758220096ae"
+      "hash": "9429a4d24d2a26f78e46ac15194ba1e6ee9ec0fd"
     },
     "com.code-philosophy.luban": {
       "version": "https://github.com/focus-creative-games/luban_unity.git",
@@ -19,14 +19,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "aea4aa7c8dc0991f4776e8b915709e335bbea41f"
+      "hash": "85b92ca2cc4d4f3217e50630518e4461a05e8214"
     },
     "com.qq.weixin.minigame": {
       "version": "https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "a5a5f32fbd7812f8acc76942cb027282fa42ab0f"
+      "hash": "2c858e5dd907faa51fe24dda37ef8a313fd70797"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -87,7 +87,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.22",
+      "version": "2.0.23",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -103,7 +103,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.memoryprofiler": {
-      "version": "1.1.5",
+      "version": "1.1.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -252,7 +252,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "657868960eb569a5943117f1458bf2aee813d8c8"
+      "hash": "519a5e6bc46d1309d04788224f9ca2f81bfe3254"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
