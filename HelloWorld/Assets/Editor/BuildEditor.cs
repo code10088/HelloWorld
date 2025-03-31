@@ -47,7 +47,7 @@ public class BuildEditor
                 string path = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.BuildPlayerPath);
                 string str = File.ReadAllText($"{path}/VersionConfig.txt", Encoding.UTF8);
                 var config = JsonConvert.DeserializeObject<VersionConfig>(str);
-                int index = config.AppVersions.FindIndex(a => a == appversion);
+                int index = Array.FindIndex(config.AppVersions, a => a == appversion);
                 index = Math.Max(index, 0);
                 latestAppVersion = index == 0;
                 appversion = config.AppVersions[index];

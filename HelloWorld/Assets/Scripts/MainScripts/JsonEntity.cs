@@ -2,8 +2,8 @@ using System.Collections.Generic;
 
 public class VersionConfig
 {
-    public List<string> AppVersions { get; set; }
-    public List<string> ResVersions { get; set; }
+    public string[] AppVersions { get; set; }
+    public string[] ResVersions { get; set; }
 }
 public class HotUpdateConfig
 {

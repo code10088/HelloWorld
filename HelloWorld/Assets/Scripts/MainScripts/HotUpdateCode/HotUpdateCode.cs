@@ -60,7 +60,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         {
             string version = Encoding.UTF8.GetString(result);
             var config = JsonConvert.DeserializeObject<VersionConfig>(version);
-            int index = config.AppVersions.FindIndex(a => a == Application.version);
+            int index = Array.FindIndex(config.AppVersions, a => a == Application.version);
             if (index < 0)
             {
                 Application.OpenURL($"{GameSetting.CDNPlatform}/{GameSetting.AppName}");
