@@ -14,7 +14,7 @@ public class HotUpdateResData : DataBase
 #if (UNITY_EDITOR || UNITY_WEBGL) && !HotUpdateDebug
         UpdateFinish();
 #else
-            CheckDownloadHotUpdateRes();
+        CheckDownloadHotUpdateRes();
 #endif
     }
     private void CheckDownloadHotUpdateRes()

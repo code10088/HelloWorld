@@ -66,16 +66,16 @@ public class DPUtil
 #if UNITY_EDITOR
         tempLv = DPLevel.High;
 #else
-            if (SystemInfo.graphicsDeviceVendorID == 32902)
-            {
-                tempLv = DPLevel.Low;
-            }
-            else if (SystemInfo.processorCount <= 4)
-            {
-                tempLv = DPLevel.Low;
-            }
-            else
-            {
+        if (SystemInfo.graphicsDeviceVendorID == 32902)
+        {
+            tempLv = DPLevel.Low;
+        }
+        else if (SystemInfo.processorCount <= 4)
+        {
+            tempLv = DPLevel.Low;
+        }
+        else
+        {
 #if UNITY_IPHONE
             int systemMemorySize = SystemInfo.systemMemorySize;
             if (systemMemorySize >= 4000)
@@ -94,7 +94,7 @@ public class DPUtil
             else
                 tempLv = DPLevel.Low;
 #endif
-            }
+        }
 #endif
         return tempLv;
     }
@@ -109,16 +109,16 @@ public class DPUtil
 #if UNITY_EDITOR
         tempLv = DPLevel.High;
 #else
-            var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
-            var graphicsDevice = SystemInfo.graphicsDeviceName.ToLower();
-            for (int i = 0; i < deviceInfo.Count; i++)
+        var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
+        var graphicsDevice = SystemInfo.graphicsDeviceName.ToLower();
+        for (int i = 0; i < deviceInfo.Count; i++)
+        {
+            if (graphicsDevice.Contains(deviceInfo[i].Name))
             {
-                if (graphicsDevice.Contains(deviceInfo[i].Name))
-                {
-                    tempLv = (DPLevel)deviceInfo[i].Lv;
-                    break;
-                }
+                tempLv = (DPLevel)deviceInfo[i].Lv;
+                break;
             }
+        }
 #endif
         return tempLv;
     }
@@ -133,16 +133,16 @@ public class DPUtil
 #if UNITY_EDITOR
         tempLv = DPLevel.High;
 #else
-            var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
-            var deviceModel = SystemInfo.deviceModel.ToLower();
-            for (int i = 0; i < deviceInfo.Count; i++)
+        var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
+        var deviceModel = SystemInfo.deviceModel.ToLower();
+        for (int i = 0; i < deviceInfo.Count; i++)
+        {
+            if (deviceModel.Contains(deviceInfo[i].Name))
             {
-                if (deviceModel.Contains(deviceInfo[i].Name))
-                {
-                    tempLv = (DPLevel)deviceInfo[i].Lv;
-                    break;
-                }
+                tempLv = (DPLevel)deviceInfo[i].Lv;
+                break;
             }
+        }
 #endif
         return tempLv;
     }

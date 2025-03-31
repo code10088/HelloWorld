@@ -174,7 +174,7 @@ public class UITest : UIBase
     private void SDKInit()
     {
 #if UNITY_ANDROID
-            SDK.Instance.InitSDK();
+        SDK.Instance.InitSDK();
 #endif
     }
     private void TestCoroutine()
