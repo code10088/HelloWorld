@@ -1,10 +1,4 @@
 
-HybridCLR
-	macos系统下编译libil2cpp.a时，执行bash ./build_libil2cpp.sh报错，直接拖到cmd运行不报错(3.2版本后已经全部自动化不需要libil2cpp.a)
-	自己编译dll，添加热更新dlls列表，只是为了生成补充元数据文件AOTGenericReferences，原则上不需要添加热更新dlls编译
-	实测在热更工程中写Mono脚本，挂载到预制体上，通过bundle加载会丢失，可能与xasset打包有关，所以Mono脚本要写在主工程中，交互使用Action/Func委托
-	实测Assembly.Load添加pdb文件报错，可能与外部编译热更工程有关，使用unity assemblydefinition可能会解决，但是assemblydefinition引用会出问题，除非所有代码都用assemblydefinition才能解决引用问题
-
 代码裁剪问题
 	Could not produce class with ID
 	http://docs.unity3d.com/Manual/ClassIDReference.html 找到ID对应的class，加到link.xml中
@@ -15,23 +9,7 @@ Luban
 	仿照.bat添加.sh
 	修改Tools/Luban/Templates/cs_bin模板(使用对比工具、查看log)
 	对比projects/Csharp_Unity_bin/Packages包中的luban对应条目
-	
-XAsset
-	经测试并非官网所说的根据文件做的依赖
-		prefab1依赖mat1、prefab2依赖mat2，prefab1 prefab2打包到一起，mat1 mat2单独打包
-		如果按照文件做依赖加载prefab1，只需要加载两个ab包，但是测试加载了三个（卸载没有问题正常卸载了三个）
-		
-	每次更新完成单独提交一次修改以便查看
-	更新时需要对比示例更新流程和当前更新流程，看是否有遗漏
-	免费版需要在GetDownloadSizeRequest中添加局部按需更新功能（最新版已经包含该功能）
-	免费版需要打开单个资源卸载References.Enabled=true
-	免费版回收系统重复回收问题（如果load unload load unload同一个资源情况下，会出现同一个assetrequest被回收两次的情况）
-		Recycler.RecycleAsync 添加判断 if(!Recyclables.Contains(recyclable))（最新版已经包含该功能）
-		LoadRequest.LoadAsync 添加取消 Recycler.CancelRecycle(this)
-	Assets中LoadPlayerAssets自动赋值UpdateInfoURL和DownloadURL（最新版已经包含该功能）
-	Scheduler._realtimeSinceStartup在AsyncManager中修改，以便控制xasset分片（AsyncManager.Update优先级高于xasset）
-	DownloadRequestBase Reset 添加 progress=0（被重复利用时progress=1导致进度条异常）
-	
+
 YooAsset
 	使用对比工具
 	TaskPrepare_SBP检测输出目录是否存在，存在的情况下也可以打包，避免频繁修改VersionConfig文件
@@ -118,11 +96,3 @@ RVO
 		Simulator中SetNumWorkers进行workers_初始化
 		KdTree中buildAgentTree修改
 		初始位置必须添加随机，保证两个Agent不同，否则会出现NaN报错
-		
-新工程
-	添加新的cdn
-	修改cdn地址：buildeditor、gamesetting
-	修改打包路径：build/unitybuild.bat
-	修改打包机参数
-	修改Preferences/Customer
-	修改minigameconfig.asset导出路径
