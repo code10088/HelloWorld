@@ -32,7 +32,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8651744152131430542}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -110,15 +109,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 00000000
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -162,7 +163,6 @@ GameObject:
   - component: {fileID: 8456132880688836655}
   - component: {fileID: 2291949672352292986}
   - component: {fileID: 7013088764165475755}
-  - component: {fileID: 9103672161309490519}
   - component: {fileID: 1008856141902637505}
   m_Layer: 5
   m_Name: Item
@@ -185,7 +185,6 @@ RectTransform:
   m_Children:
   - {fileID: 4395988597178923879}
   m_Father: {fileID: 4032161765252897351}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -264,12 +263,6 @@ MonoBehaviour:
   wrapMode: 0
   arrivedAction: 3
   sampleOnAwake: 1
-  _onForwardArrived:
-    m_PersistentCalls:
-      m_Calls: []
-  _onBackArrived:
-    m_PersistentCalls:
-      m_Calls: []
   _animations:
   - rid: 6603607759915581441
   - rid: 6603607759915581442
@@ -277,7 +270,7 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 6603607759915581441
-      type: {class: TweenTransformEulerAngles, ns: UnityExtensions.Tween, asm: Assembly-CSharp}
+      type: {class: TweenTransformEulerAngles, ns: UnityExtensions.Tween, asm: Assembly-CSharp-firstpass}
       data:
         enabled: 1
         _minNormalizedTime: 0
@@ -304,7 +297,7 @@ MonoBehaviour:
           z: 0
         space: 1
     - rid: 6603607759915581442
-      type: {class: TweenTransformPosition, ns: UnityExtensions.Tween, asm: Assembly-CSharp}
+      type: {class: TweenTransformPosition, ns: UnityExtensions.Tween, asm: Assembly-CSharp-firstpass}
       data:
         enabled: 1
         _minNormalizedTime: 0
@@ -379,7 +372,6 @@ RectTransform:
   m_Children:
   - {fileID: 8651744152131430542}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -403,7 +395,9 @@ Canvas:
   m_OverrideSorting: 1
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
