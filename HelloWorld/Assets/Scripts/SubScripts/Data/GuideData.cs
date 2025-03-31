@@ -10,11 +10,6 @@ public class GuideData : DataBase
 
     public Guide GuideCfg => guideCfg;
 
-    public void Init()
-    {
-        UIGuideCollect.Add = AddGuideT;
-        UIGuideCollect.Remove = RemoveGuideT;
-    }
     public void AddGuideT(int key, Transform t)
     {
         guideT[key] = t;

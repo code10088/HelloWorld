@@ -42,7 +42,6 @@ public class GameStart : Singletion<GameStart>
     }
     private void EnterMainScene()
     {
-        DataManager.Instance.GuideData.Init();
         UIManager.Instance.OpenUI(UIType.UITest, CloseSceneLoading);
     }
     private void CloseSceneLoading(bool open)
