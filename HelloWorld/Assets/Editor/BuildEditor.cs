@@ -31,27 +31,9 @@ public class BuildEditor
     public static void BuildBundles()
     {
         CheckArgs();
-        Generate();
         HybridCLRGenerate();
         YooAssetBuild();
         UploadBundles2CDN();
-    }
-
-    private static void HideSubScripts(bool b)
-    {
-        string source = Application.dataPath + "/Scripts/SubScripts";
-        string dest = Application.dataPath + "/Scripts/.SubScripts";
-        if (b)
-        {
-            if (Directory.Exists(dest)) Directory.Delete(dest, true);
-            if (Directory.Exists(source)) Directory.Move(source, dest);
-        }
-        else
-        {
-            if (Directory.Exists(source)) Directory.Delete(source, true);
-            if (Directory.Exists(dest)) Directory.Move(dest, source);
-        }
-        AssetDatabase.Refresh();
     }
 
     private static void CheckArgs()
@@ -88,82 +70,29 @@ public class BuildEditor
         }
     }
 
-    [MenuItem("Tools/HotAssemblyCompile", false, (int)ToolsMenuSort.HotAssemblyCompile)]
-    public static void Generate()
-    {
-        //新建代码工程名
-        string newProjectName = "HotAssembly";
-        //新建代码工程目录
-        string newProjectPath = Environment.CurrentDirectory + "/" + newProjectName;
-
-        string allStr = File.ReadAllText(newProjectPath + "/" + newProjectName + ".txt");
-        string assemblyStr = File.ReadAllText(Environment.CurrentDirectory + "/Assembly-CSharp.csproj");
-        int start = assemblyStr.IndexOf("<DefineConstants>") + 17;
-        int end = assemblyStr.IndexOf("</DefineConstants>");
-        string defineConstants = assemblyStr.Substring(start, end - start);
-        allStr = allStr.Replace("DebugDefineConstants", defineConstants);
-        string strEditorInstallPath = AppDomain.CurrentDomain.BaseDirectory.Replace("/", "\\");
-        allStr = allStr.Replace("EditorInstallPath", strEditorInstallPath);
-
-        List<FileInfo> fileList = new List<FileInfo>();
-        FileUtils.GetAllFilePath(Application.dataPath + "/Scripts/SubScripts", fileList, ".cs");
-        string dataPath = (Application.dataPath + "/").Replace("/", "\\");
-        string str = "    <Compile Include=\"..\\Assets\\{0}\">\n       <Link>{1}</Link>\n    </Compile>\n";
-        string replaceStr = "";
-        for (int i = 0; i < fileList.Count; i++)
-        {
-            if (fileList[i].FullName.Contains("\\Editor\\")) continue;
-            string tempStr = fileList[i].FullName.Replace(dataPath, "");
-            tempStr = string.Format(str, tempStr, fileList[i].Name);
-            replaceStr += tempStr;
-        }
-        allStr = allStr.Replace("    LinkScripts", replaceStr);
-        File.WriteAllText(newProjectPath + "/" + newProjectName + ".csproj", allStr);
-
-        //生成dll
-        string strMSBuildPath = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.MSBuildPath);
-        if (string.IsNullOrEmpty(strMSBuildPath) || !File.Exists(strMSBuildPath))
-        {
-            GameDebug.LogError("需要配置MSBuild路径：Preference->Customer->MSBuild路径");
-            throw new Exception();
-        }
-        try
-        {
-            string strParam = newProjectPath + "/" + newProjectName + ".sln /t:Rebuild /p:Configuration=Debug";
-            System.Diagnostics.Process msbuild = System.Diagnostics.Process.Start(strMSBuildPath, strParam);
-            msbuild.WaitForExit();
-            msbuild.Close();
-            File.Copy($"{Environment.CurrentDirectory}\\HotAssembly\\obj\\Debug\\HotAssembly.dll", $"{Application.dataPath}\\ZRes\\Assembly\\HotAssembly.bytes", true);
-            AssetDatabase.Refresh();
-        }
-        catch (Exception e)
-        {
-            GameDebug.LogError(e.Message);
-            throw e;
-        }
-    }
-
     [MenuItem("Tools/HybridCLRGenerate", false, (int)ToolsMenuSort.HybridCLRGenerate)]
     public static void HybridCLRGenerate()
     {
         try
         {
-            HideSubScripts(true);
             PrebuildCommand.GenerateAll();
-            HideSubScripts(false);
             TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(GameSetting.HotUpdateConfigPath);
             var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
+            var hotUpdateDir = HybridCLR.Editor.SettingsUtil.GetHotUpdateDllsOutputDirByTarget(EditorUserBuildSettings.activeBuildTarget);
+            var path = config.HotAssembly[0];
+            var name = Path.GetFileNameWithoutExtension(path);
+            File.Copy($"{hotUpdateDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
             string stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
-            for (int i = 0; i < config.Metadata.Count; i++)
+            for (int i = 1; i < config.HotAssembly.Length; i++)
             {
-                var path = config.Metadata[i];
-                var name = Path.GetFileNameWithoutExtension(path);
+                path = config.HotAssembly[i];
+                name = Path.GetFileNameWithoutExtension(path);
                 File.Copy($"{stripDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
             }
+            AssetDatabase.Refresh();
         }
         catch (Exception e)
         {
-            HideSubScripts(false);
             GameDebug.LogError(e.Message);
             throw e;
         }
@@ -298,14 +227,11 @@ public class BuildEditor
 
         try
         {
-            HideSubScripts(true);
             BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
-            HideSubScripts(false);
             if (latestAppVersion) UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{GameSetting.AppName}", buildPlayerPath);
         }
         catch (Exception e)
         {
-            HideSubScripts(false);
             GameDebug.LogError(e.Message);
             throw e;
         }
@@ -319,13 +245,10 @@ public class BuildEditor
 
         try
         {
-            HideSubScripts(true);
             BuildPipeline.BuildPlayer(EditorBuildSettings.scenes, buildPlayerPath, EditorUserBuildSettings.activeBuildTarget, options);
-            HideSubScripts(false);
         }
         catch (Exception e)
         {
-            HideSubScripts(false);
             GameDebug.LogError(e.Message);
             throw e;
         }
@@ -341,10 +264,8 @@ public class BuildEditor
 
         try
         {
-            HideSubScripts(true);
             WXConvertCore.WXExportError result;
             result = WXConvertCore.DoExport();
-            HideSubScripts(false);
             if (result == WXConvertCore.WXExportError.SUCCEED)
             {
                 string packageOutputDir = $"{WXConvertCore.config.ProjectConf.DST}/webgl";
@@ -362,7 +283,6 @@ public class BuildEditor
         }
         catch (Exception e)
         {
-            HideSubScripts(false);
             GameDebug.LogError(e.Message);
             throw e;
         }
@@ -372,16 +292,13 @@ public class BuildEditor
     {
         try
         {
-            HideSubScripts(true);
             await BuildManager.Build(Framework.Wasm);
-            HideSubScripts(false);
             string fileName = Path.GetFileNameWithoutExtension(StarkBuilderSettings.Instance.webglPackagePath);
             string fullName = Path.GetFileName(StarkBuilderSettings.Instance.webglPackagePath);
             UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{fileName}", fullName);
         }
         catch (Exception e)
         {
-            HideSubScripts(false);
             GameDebug.LogError(e.Message);
             throw e;
         }

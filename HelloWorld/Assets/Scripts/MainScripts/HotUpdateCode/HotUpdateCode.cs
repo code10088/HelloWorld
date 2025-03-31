@@ -135,13 +135,9 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         TextAsset ta = asset as TextAsset;
         var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
         AssetManager.Instance.Unload(ref id);
-        int count1 = config.Metadata.Count;
-        int count2 = count1 + config.HotUpdateRes.Count;
-        string[] paths = new string[count2];
-        for (int i = 0; i < count2; i++)
-        {
-            paths[i] = i < count1 ? config.Metadata[i] : config.HotUpdateRes[i - count1];
-        }
+        string[] paths = new string[config.HotAssembly.Length + config.HotUpdateRes.Length];
+        Array.Copy(config.HotAssembly, 0, paths, 0, config.HotAssembly.Length);
+        Array.Copy(config.HotUpdateRes, 0, paths, config.HotAssembly.Length, config.HotUpdateRes.Length);
         downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeoutS);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {

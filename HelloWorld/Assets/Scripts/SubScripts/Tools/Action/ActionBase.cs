@@ -1,15 +1,12 @@
 using cfg;
 
-namespace HotAssembly
+public abstract class ActionBase
 {
-	public abstract class ActionBase
-	{
-		protected ActionConfig config;
+	protected ActionConfig config;
 
-		public ActionBase(ActionConfig _config)
-		{
-			config = _config;
-		}
-		public abstract void Excute(params object[] param);
+	public ActionBase(ActionConfig _config)
+	{
+		config = _config;
 	}
+	public abstract void Excute(params object[] param);
 }

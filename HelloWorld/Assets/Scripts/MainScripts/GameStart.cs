@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using HybridCLR;
 using UnityEngine.SceneManagement;
 using UnityEngine.Rendering;
+using System.Linq;
 
 #if WEIXINMINIGAME
 using WeChatWASM;
@@ -15,7 +16,7 @@ using TTSDK;
 
 public class GameStart : MonoSingletion<GameStart>
 {
-    private int loadId;
+    private int loadId = -1;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
     private static void _()
@@ -49,7 +50,6 @@ public class GameStart : MonoSingletion<GameStart>
     }
     private void LoadHotUpdateConfig()
     {
-        loadId = -1;
         AssetManager.Instance.Load<TextAsset>(ref loadId, GameSetting.HotUpdateConfigPath, LoadMetadataRes);
     }
     private void LoadMetadataRes(int id, Object asset)
@@ -57,12 +57,11 @@ public class GameStart : MonoSingletion<GameStart>
         TextAsset ta = asset as TextAsset;
         var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
         AssetManager.Instance.Unload(ref loadId);
-        string[] path = config.Metadata.ToArray();
-        AssetManager.Instance.Load(ref loadId, path, LoadMetadataForAOTAssembly);
+        AssetManager.Instance.Load(ref loadId, config.HotAssembly, LoadMetadataForAOTAssembly);
     }
     private void LoadMetadataForAOTAssembly(string[] path, Object[] assets)
     {
-        for (int i = 0; i < assets.Length; i++)
+        for (int i = 1; i < assets.Length; i++)
         {
             if (assets[i] != null)
             {
@@ -70,31 +69,26 @@ public class GameStart : MonoSingletion<GameStart>
                 RuntimeApi.LoadMetadataForAOTAssembly(ta.bytes, HomologousImageMode.SuperSet);
             }
         }
+        StartHotAssembly(assets[0] as TextAsset);
         AssetManager.Instance.Unload(ref loadId);
-        StartHotAssembly();
     }
-    private void StartHotAssembly()
+    private void StartHotAssembly(TextAsset asset)
     {
 #if UNITY_EDITOR && !HotUpdateDebug
-        Type t = Type.GetType("HotAssembly.GameStart");
+        var hotAssembly = AppDomain.CurrentDomain.GetAssemblies().First(a => a.FullName.Contains("HotAssembly"));
+        Type t = hotAssembly.GetType("GameStart");
         PropertyInfo p = t.BaseType.GetProperty("Instance");
         object o = p.GetMethod.Invoke(null, null);
         MethodInfo m = t.GetMethod("Init");
         m.Invoke(o, null);
 #else
-        AssetManager.Instance.Load<TextAsset>(ref loadId, "Assets/ZRes/Assembly/HotAssembly.bytes", StartHotAssembly);
-#endif
-    }
-    private void StartHotAssembly(int id, Object asset)
-    {
-        TextAsset ta = asset as TextAsset;
-        var hotAssembly = Assembly.Load(ta.bytes);
-        AssetManager.Instance.Unload(ref loadId);
-        Type t = hotAssembly.GetType("HotAssembly.GameStart");
+        var hotAssembly = Assembly.Load(asset.bytes);
+        Type t = hotAssembly.GetType("GameStart");
         PropertyInfo p = t.BaseType.GetProperty("Instance");
         object o = p.GetMethod.Invoke(null, null);
         MethodInfo m = t.GetMethod("Init");
         m.Invoke(o, null);
+#endif
     }
     private void Update()
     {

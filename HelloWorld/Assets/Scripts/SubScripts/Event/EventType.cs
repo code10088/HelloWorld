@@ -1,12 +1,9 @@
-﻿namespace HotAssembly
+﻿public enum EventType
 {
-    public enum EventType
-    {
-        Test,
-        SetSceneLoadingBg,
-        SetSceneLoadingProgress,
-        RefreshGuide,
-        RefreshActivity,
-        EndActivity,
-    }
+    Test,
+    SetSceneLoadingBg,
+    SetSceneLoadingProgress,
+    RefreshGuide,
+    RefreshActivity,
+    EndActivity,
 }

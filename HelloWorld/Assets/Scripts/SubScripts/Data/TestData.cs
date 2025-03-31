@@ -1,12 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
-namespace HotAssembly
+public class TestData : DataBase
 {
-    public class TestData : DataBase
-    {
-        public List<TestItemData> testItemDatas = new List<TestItemData>()
+    public List<TestItemData> testItemDatas = new List<TestItemData>()
         {
             new TestItemData(){ id = 1, name="1" },
             new TestItemData(){ id = 2, name="2" },
@@ -15,16 +11,15 @@ namespace HotAssembly
             new TestItemData(){ id = 5, name="5" },
         };
 
-        public void Clear()
-        {
-            
-        }
+    public void Clear()
+    {
+
+    }
 
 
-        public class TestItemData
-        {
-            public int id;
-            public string name;
-        }
+    public class TestItemData
+    {
+        public int id;
+        public string name;
     }
 }

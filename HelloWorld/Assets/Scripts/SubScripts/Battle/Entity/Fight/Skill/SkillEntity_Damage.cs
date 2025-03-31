@@ -1,32 +1,29 @@
 using UnityEngine;
 
-namespace HotAssembly
+public class SkillEntity_Damage : SkillEntity
 {
-    public class SkillEntity_Damage : SkillEntity
-    {
-        private int count = 0;
+    private int count = 0;
 
-        public override void Clear()
+    public override void Clear()
+    {
+        base.Clear();
+        count = 0;
+    }
+    public override void PlaySkill(float t)
+    {
+        //伤害次数
+        int count1 = 1;
+        if (skill.Config.Internal > 0)
         {
-            base.Clear();
-            count = 0;
+            int count2 = 1 + Mathf.FloorToInt((t - skill.Config.Delay) / skill.Config.Internal);
+            count1 = count2 - count;
+            count = count2;
         }
-        public override void PlaySkill(float t)
+        if (count1 == 0) return;
+        //伤害命中
+        for (int i = 0; i < count1; i++)
         {
-            //伤害次数
-            int count1 = 1;
-            if (skill.Config.Internal > 0)
-            {
-                int count2 = 1 + Mathf.FloorToInt((t - skill.Config.Delay) / skill.Config.Internal);
-                count1 = count2 - count;
-                count = count2;
-            }
-            if (count1 == 0) return;
-            //伤害命中
-            for (int i = 0; i < count1; i++)
-            {
-                BattleCalculation.Instance.Attack(this, target);
-            }
+            BattleCalculation.Instance.Attack(this, target);
         }
     }
 }

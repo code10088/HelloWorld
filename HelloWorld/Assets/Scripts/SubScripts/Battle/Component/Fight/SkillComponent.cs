@@ -1,43 +1,40 @@
 using cfg;
 
-namespace HotAssembly
+public class SkillComponent : ECS_Component
 {
-    public class SkillComponent : ECS_Component
+    private SkillEntity entity;
+    private SkillConfig config;
+    private float timer = 0;
+
+    public SkillConfig Config => config;
+
+    public void Init(SkillEntity entity, SkillConfig config)
     {
-        private SkillEntity entity;
-        private SkillConfig config;
-        private float timer = 0;
-
-        public SkillConfig Config => config;
-
-        public void Init(SkillEntity entity, SkillConfig config)
+        this.entity = entity;
+        this.config = config;
+    }
+    public void Update(float t)
+    {
+        timer += t;
+        if (config.Duration > 0 && timer >= config.Duration)
         {
-            this.entity = entity;
-            this.config = config;
+            entity.Remove();
+            return;
         }
-        public void Update(float t)
+        if (timer <= config.Delay)
         {
-            timer += t;
-            if (config.Duration > 0 && timer >= config.Duration)
-            {
-                entity.Remove();
-                return;
-            }
-            if (timer <= config.Delay)
-            {
-                return;
-            }
-            if (config.Duration == 0)
-            {
-                entity.Remove();
-            }
-            entity.PlaySkill(timer);
+            return;
         }
-        public void Clear()
+        if (config.Duration == 0)
         {
-            entity = null;
-            config = null;
-            timer = 0;
+            entity.Remove();
         }
+        entity.PlaySkill(timer);
+    }
+    public void Clear()
+    {
+        entity = null;
+        config = null;
+        timer = 0;
     }
 }

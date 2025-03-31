@@ -1,7 +1,4 @@
-﻿namespace HotAssembly
+﻿public enum NetMsgId
 {
-    public enum NetMsgId
-    {
-        Person = 1,
-    }
+    Person = 1,
 }

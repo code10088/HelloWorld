@@ -1,22 +1,19 @@
 using cfg;
 using System;
 
-namespace HotAssembly
+public class Condition_Action : ConditionBase
 {
-	public class Condition_Action : ConditionBase
+	private Func<bool> condition;
+
+	public Condition_Action(ConditionConfig _config) : base(_config) { }
+
+	public void Init(Func<bool> _condition)
 	{
-		private Func<bool> condition;
+		condition = _condition;
+	}
 
-		public Condition_Action(ConditionConfig _config) : base(_config) { }
-
-		public void Init(Func<bool> _condition)
-		{
-			condition = _condition;
-		}
-
-		public override bool CheckCondition(params object[] param)
-		{
-			return condition != null && condition.Invoke();
-		}
+	public override bool CheckCondition(params object[] param)
+	{
+		return condition != null && condition.Invoke();
 	}
 }

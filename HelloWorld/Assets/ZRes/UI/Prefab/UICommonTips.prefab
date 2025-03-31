@@ -115,7 +115,7 @@ MonoBehaviour:
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
-  m_ActiveFontFeatures: 00000000
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
@@ -164,6 +164,7 @@ GameObject:
   - component: {fileID: 2291949672352292986}
   - component: {fileID: 7013088764165475755}
   - component: {fileID: 1008856141902637505}
+  - component: {fileID: 9103672161309490519}
   m_Layer: 5
   m_Name: Item
   m_TagString: Untagged
@@ -243,6 +244,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   path: Assets/Scripts/SubScripts/UI/Auto/
   className: UICommonTipsItem
+--- !u!114 &1008856141902637505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4506988812419148411}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  exportComponent:
+  - {fileID: 0}
+  - {fileID: 9103672161309490519}
 --- !u!114 &9103672161309490519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,7 +286,7 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 6603607759915581441
-      type: {class: TweenTransformEulerAngles, ns: UnityExtensions.Tween, asm: Assembly-CSharp-firstpass}
+      type: {class: TweenTransformEulerAngles, ns: UnityExtensions.Tween, asm: UITween}
       data:
         enabled: 1
         _minNormalizedTime: 0
@@ -297,7 +313,7 @@ MonoBehaviour:
           z: 0
         space: 1
     - rid: 6603607759915581442
-      type: {class: TweenTransformPosition, ns: UnityExtensions.Tween, asm: Assembly-CSharp-firstpass}
+      type: {class: TweenTransformPosition, ns: UnityExtensions.Tween, asm: UITween}
       data:
         enabled: 1
         _minNormalizedTime: 0
@@ -323,21 +339,6 @@ MonoBehaviour:
           y: 0
           z: 1
         space: 1
---- !u!114 &1008856141902637505
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4506988812419148411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  exportComponent:
-  - {fileID: 0}
-  - {fileID: 9103672161309490519}
 --- !u!1 &6141825163329895830
 GameObject:
   m_ObjectHideFlags: 0

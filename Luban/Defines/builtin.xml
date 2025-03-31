@@ -16,11 +16,11 @@
         <var name="y" type="float"/>
         <mapper target="client" codeTarget="cs-bin,cs-simple-json,cs-newtonsoft-json">
             <option name="type" value="UnityEngine.Vector2"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector2"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector2"/>
         </mapper>
         <mapper target="server" codeTarget="cs-bin,cs-dotnet-json,cs-newtonsoft-json">
             <option name="type" value="System.Numerics.Vector2"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector2"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector2"/>
         </mapper>
     </bean>
     <bean name="vec2int" valueType="1" sep=",">
@@ -28,11 +28,11 @@
         <var name="y" type="int"/>
         <mapper target="client" codeTarget="cs-bin,cs-simple-json,cs-newtonsoft-json">
             <option name="type" value="UnityEngine.Vector2Int"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector2Int"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector2Int"/>
         </mapper>
         <mapper target="server" codeTarget="cs-bin,cs-dotnet-json,cs-newtonsoft-json">
             <option name="type" value="System.Numerics.Vector2"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector2"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector2"/>
         </mapper>
     </bean>
     <bean name="vec3" valueType="1" sep=",">
@@ -41,11 +41,11 @@
         <var name="z" type="float"/>
         <mapper target="client" codeTarget="cs-bin,cs-simple-json,cs-newtonsoft-json">
             <option name="type" value="UnityEngine.Vector3"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector3"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector3"/>
         </mapper>
         <mapper target="server,all" codeTarget="cs-bin,cs-dotnet-json,cs-newtonsoft-json">
             <option name="type" value="System.Numerics.Vector3"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector3"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector3"/>
         </mapper>
     </bean>
     <bean name="vec3int" valueType="1" sep=",">
@@ -54,11 +54,11 @@
         <var name="z" type="int"/>
         <mapper target="client" codeTarget="cs-bin,cs-simple-json,cs-newtonsoft-json">
             <option name="type" value="UnityEngine.Vector3Int"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector3Int"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector3Int"/>
         </mapper>
         <mapper target="server,all" codeTarget="cs-bin,cs-dotnet-json,cs-newtonsoft-json">
             <option name="type" value="System.Numerics.Vector3"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector3"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector3"/>
         </mapper>
     </bean>
     <bean name="vec4" valueType="1" sep=",">
@@ -68,11 +68,11 @@
         <var name="w" type="float"/>
         <mapper target="client" codeTarget="cs-bin,cs-simple-json,cs-newtonsoft-json">
             <option name="type" value="UnityEngine.Vector4"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector4"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector4"/>
         </mapper>
         <mapper target="server" codeTarget="cs-bin,cs-dotnet-json,cs-newtonsoft-json">
             <option name="type" value="System.Numerics.Vector4"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewVector4"/>
+            <option name="constructor" value="ExternalTypeUtil.NewVector4"/>
         </mapper>
     </bean>
 	<bean name="color32" valueType="1" sep=",">
@@ -82,7 +82,7 @@
         <var name="a" type="byte"/>
         <mapper target="client" codeTarget="cs-bin,cs-simple-json,cs-newtonsoft-json">
             <option name="type" value="UnityEngine.Color"/>
-            <option name="constructor" value="HotAssembly.ExternalTypeUtil.NewColor"/>
+            <option name="constructor" value="ExternalTypeUtil.NewColor"/>
         </mapper>
     </bean>
 </module>

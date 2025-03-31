@@ -4,7 +4,6 @@ using UnityEngine;
 public class CustomerPreferenceData : ScriptableObject
 {
     public string BuildPlayerPath;
-    public string MSBuildPath;
     public string LubanPath;
     public CosBucketConfig CosBucketConfig = new CosBucketConfig();
 }

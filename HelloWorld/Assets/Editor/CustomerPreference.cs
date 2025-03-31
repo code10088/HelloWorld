@@ -6,7 +6,6 @@ using UnityEditorInternal;
 public enum CustomerPreferenceEnum
 {
     BuildPlayerPath,
-    MSBuildPath,
     LubanPath,
     CosBucketConfig,
 }
@@ -42,7 +41,6 @@ public class CustomerPreference
             guiHandler = (searchContext) =>
             {
                 BuildPlayerPathGUI();
-                MSBuildPathGUI();
                 LubanPathGUI();
                 CosBucketConfigGUI();
             }
@@ -72,20 +70,6 @@ public class CustomerPreference
             if (GUILayout.Button("浏览", GUILayout.Width(50f)))
             {
                 data.BuildPlayerPath = EditorUtility.OpenFolderPanel("选择文件", Environment.CurrentDirectory, "Build");
-                Save();
-            }
-        }
-        GUILayout.EndHorizontal();
-    }
-    static void MSBuildPathGUI()
-    {
-        GUILayout.BeginHorizontal();
-        {
-            GUILayout.Label("MSBuild路径", GUILayout.Width(100f));
-            GUILayout.TextField(data.MSBuildPath);
-            if (GUILayout.Button("浏览", GUILayout.Width(50f)))
-            {
-                data.MSBuildPath = EditorUtility.OpenFilePanel("选择文件", Application.dataPath, "exe");
                 Save();
             }
         }

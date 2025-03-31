@@ -1,7 +1,4 @@
-namespace HotAssembly
+public class ECS_Component
 {
-    public class ECS_Component
-    {
-        
-    }
+
 }

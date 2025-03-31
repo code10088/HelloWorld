@@ -7,6 +7,6 @@ public class VersionConfig
 }
 public class HotUpdateConfig
 {
-    public List<string> Metadata { get; set; }
-    public List<string> HotUpdateRes { get; set; }
+    public string[] HotAssembly { get; set; }
+    public string[] HotUpdateRes { get; set; }
 }

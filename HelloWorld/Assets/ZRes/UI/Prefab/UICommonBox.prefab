@@ -875,7 +875,7 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 0
-      type: {class: TweenCanvasGroupAlpha, ns: UnityExtensions.Tween, asm: Assembly-CSharp-firstpass}
+      type: {class: TweenCanvasGroupAlpha, ns: UnityExtensions.Tween, asm: UITween}
       data:
         enabled: 1
         _minNormalizedTime: 0
@@ -897,7 +897,7 @@ MonoBehaviour:
         to: 1
         target: {fileID: 787921943325592899}
     - rid: 1
-      type: {class: TweenTransformPosition, ns: UnityExtensions.Tween, asm: Assembly-CSharp-firstpass}
+      type: {class: TweenTransformPosition, ns: UnityExtensions.Tween, asm: UITween}
       data:
         enabled: 1
         _minNormalizedTime: 0
@@ -924,7 +924,7 @@ MonoBehaviour:
           z: 1
         space: 1
     - rid: 2
-      type: {class: TweenTransformRotation, ns: UnityExtensions.Tween, asm: Assembly-CSharp-firstpass}
+      type: {class: TweenTransformRotation, ns: UnityExtensions.Tween, asm: UITween}
       data:
         enabled: 1
         _minNormalizedTime: 0

@@ -1,7 +1,4 @@
-namespace HotAssembly
+public class PlayerPrefsConst
 {
-    public class PlayerPrefsConst
-    {
-        public static readonly string DPQuality = "DPQuality";
-    }
+    public static readonly string DPQuality = "DPQuality";
 }

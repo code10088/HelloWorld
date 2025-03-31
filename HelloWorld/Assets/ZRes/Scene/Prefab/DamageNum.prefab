@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4446632275415726514}
-  - component: {fileID: 1782670934012300086}
+  - component: {fileID: 4473401262622498860}
   m_Layer: 0
   m_Name: DamageNum
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   - {fileID: 4771036821356969003}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1782670934012300086
+--- !u!114 &4473401262622498860
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -53,12 +53,6 @@ MonoBehaviour:
   wrapMode: 0
   arrivedAction: 3
   sampleOnAwake: 1
-  _onForwardArrived:
-    m_PersistentCalls:
-      m_Calls: []
-  _onBackArrived:
-    m_PersistentCalls:
-      m_Calls: []
   _animations:
   - rid: 5757310345198174208
   - rid: 5757310345198174209
@@ -66,7 +60,7 @@ MonoBehaviour:
     version: 2
     RefIds:
     - rid: 5757310345198174208
-      type: {class: TweenRectTransformAnchoredPosition, ns: UnityExtensions.Tween, asm: Assembly-CSharp}
+      type: {class: TweenRectTransformAnchoredPosition, ns: UnityExtensions.Tween, asm: UITween}
       data:
         enabled: 1
         _minNormalizedTime: 0
@@ -91,7 +85,7 @@ MonoBehaviour:
           x: 0
           y: 1
     - rid: 5757310345198174209
-      type: {class: TweenGraphicColor, ns: UnityExtensions.Tween, asm: Assembly-CSharp}
+      type: {class: TweenGraphicColor, ns: UnityExtensions.Tween, asm: UITween}
       data:
         enabled: 1
         _minNormalizedTime: 0
@@ -199,6 +193,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -287,15 +284,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 0
+  m_TextWrappingMode: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 0
   m_isCullingEnabled: 0

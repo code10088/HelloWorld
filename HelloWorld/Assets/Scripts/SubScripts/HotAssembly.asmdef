@@ -1,0 +1,23 @@
+{
+    "name": "HotAssembly",
+    "rootNamespace": "",
+    "references": [
+        "GUID:15fc0a57446b3144c949da3e2b9737a9",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:2a81c6962524d424a8ef5072bd3b0fa0",
+        "GUID:e34a5702dd353724aa315fb8011f08c3",
+        "GUID:f3c1812a918d69d4aa4c8f9f2acdde2a",
+        "GUID:38bd9eadcca0348479bdf0d3ae508554",
+        "GUID:67a14cf1d442bdf4d99cb24b22d31936",
+        "GUID:47df34592f7b7e84085db1e22c4fedd1"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

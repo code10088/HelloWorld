@@ -1,49 +1,46 @@
 ﻿using ProtoBuf;
 using System.Collections.Generic;
 
-namespace HotAssembly
+public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
 {
-    public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
+    class NetMsgItem
     {
-        class NetMsgItem
-        {
-            public ushort id;
-            public IExtensible msg;
-        }
-        private Queue<NetMsgItem> msgPool = new Queue<NetMsgItem>();
+        public ushort id;
+        public IExtensible msg;
+    }
+    private Queue<NetMsgItem> msgPool = new Queue<NetMsgItem>();
 
-        public void Init()
+    public void Init()
+    {
+        SocketManager.Instance.SetDeserialize(Deserialize);
+        Updater.Instance.StartUpdate(Update);
+    }
+    public void Add(ushort id, IExtensible msg)
+    {
+        lock (msgPool)
         {
-            SocketManager.Instance.SetDeserialize(Deserialize);
-            Updater.Instance.StartUpdate(Update);
+            var item = new NetMsgItem();
+            item.id = id;
+            item.msg = msg;
+            msgPool.Enqueue(item);
         }
-        public void Add(ushort id, IExtensible msg)
+    }
+    private void Update(float t)
+    {
+        while (msgPool.Count > 0)
         {
             lock (msgPool)
             {
-                var item = new NetMsgItem();
-                item.id = id;
-                item.msg = msg;
-                msgPool.Enqueue(item);
+                NetMsgItem msg = msgPool.Dequeue();
+                Dispatch(msg);
             }
         }
-        private void Update(float t)
+    }
+    private void Dispatch(NetMsgItem msg)
+    {
+        switch ((NetMsgId)msg.id)
         {
-            while (msgPool.Count > 0)
-            {
-                lock (msgPool)
-                {
-                    NetMsgItem msg = msgPool.Dequeue();
-                    Dispatch(msg);
-                }
-            }
-        }
-        private void Dispatch(NetMsgItem msg)
-        {
-            switch ((NetMsgId)msg.id)
-            {
-                case NetMsgId.Person:; break;
-            }
+            case NetMsgId.Person:; break;
         }
     }
 }
