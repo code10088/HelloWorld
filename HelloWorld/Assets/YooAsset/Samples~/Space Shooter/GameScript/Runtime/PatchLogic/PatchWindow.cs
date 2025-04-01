@@ -126,7 +126,7 @@ public class PatchWindow : MonoBehaviour
             {
                 UserEventDefine.UserTryRequestPackageVersion.SendEventMessage();
             };
-            ShowMessageBox($"Failed to update static version, please check the network status.", callback);
+            ShowMessageBox($"Failed to request package version, please check the network status.", callback);
         }
         else if (message is PatchEventDefine.PackageManifestUpdateFailed)
         {

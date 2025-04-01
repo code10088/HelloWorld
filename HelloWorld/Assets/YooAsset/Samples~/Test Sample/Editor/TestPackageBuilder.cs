@@ -71,7 +71,7 @@ public static class TestPackageBuilder
             buildParameters.ClearBuildCacheFiles = true;
             buildParameters.UseAssetDependencyDB = true;
             buildParameters.BuiltinShadersBundleName = builtinShaderBundleName;
-            buildParameters.EncryptionServices = new FileStreamEncryption();
+            buildParameters.EncryptionServices = new FileStreamTestEncryption();
 
             var pipeline = new ScriptableBuildPipeline();
             BuildResult buildResult = pipeline.Run(buildParameters, false);
@@ -108,7 +108,7 @@ public static class TestPackageBuilder
             buildParameters.CompressOption = ECompressOption.LZ4;
             buildParameters.ClearBuildCacheFiles = true;
             buildParameters.UseAssetDependencyDB = true;
-            buildParameters.EncryptionServices = new FileStreamEncryption();
+            buildParameters.EncryptionServices = new FileStreamTestEncryption();
 
             var pipeline = new BuiltinBuildPipeline();
             BuildResult buildResult = pipeline.Run(buildParameters, false);

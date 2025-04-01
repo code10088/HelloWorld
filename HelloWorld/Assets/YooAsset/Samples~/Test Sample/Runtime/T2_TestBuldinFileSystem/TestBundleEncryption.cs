@@ -34,7 +34,7 @@ public class TestBundleEncryption
 /// <summary>
 /// 文件流加密方式
 /// </summary>
-public class FileStreamEncryption : IEncryptionServices
+public class FileStreamTestEncryption : IEncryptionServices
 {
     public EncryptResult Encrypt(EncryptFileInfo fileInfo)
     {
@@ -64,7 +64,7 @@ public class FileStreamEncryption : IEncryptionServices
 /// <summary>
 /// 文件偏移加密方式
 /// </summary>
-public class FileOffsetEncryption : IEncryptionServices
+public class FileOffsetTestEncryption : IEncryptionServices
 {
     public EncryptResult Encrypt(EncryptFileInfo fileInfo)
     {
@@ -119,7 +119,7 @@ public class BundleStream : FileStream
 /// <summary>
 /// 资源文件流解密类
 /// </summary>
-public class FileStreamDecryption : IDecryptionServices
+public class FileStreamTestDecryption : IDecryptionServices
 {
     /// <summary>
     /// 同步方式获取解密的资源包对象
@@ -172,7 +172,7 @@ public class FileStreamDecryption : IDecryptionServices
 /// <summary>
 /// 资源文件偏移解密类
 /// </summary>
-public class FileOffsetDecryption : IDecryptionServices
+public class FileOffsetTestDecryption : IDecryptionServices
 {
     /// <summary>
     /// 同步方式获取解密的资源包对象
@@ -224,7 +224,7 @@ public class FileOffsetDecryption : IDecryptionServices
 /// WebGL平台解密类
 /// 注意：WebGL平台支持内存解密
 /// </summary>
-public class WebFileStreamDecryption : IWebDecryptionServices
+public class WebFileStreamTestDecryption : IWebDecryptionServices
 {
     public WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
     {
