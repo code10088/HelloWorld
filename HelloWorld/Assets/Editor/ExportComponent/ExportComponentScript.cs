@@ -13,7 +13,7 @@ public class ExportComponentScript
     [ExecuteInEditMode,InitializeOnLoadMethod]
     public static void Init()
     {
-        if (texture == null) texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Scripts/MainScripts/Tools/ExportComponent/Editor/1.png");
+        if (texture == null) texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Editor/ExportComponent/1.png");
         EditorApplication.hierarchyWindowItemOnGUI -= DrawItemGUI;
         EditorApplication.hierarchyWindowItemOnGUI += DrawItemGUI;
         EditorApplication.playModeStateChanged -= Hide;
@@ -36,7 +36,7 @@ public class ExportComponentScript
         var obj = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
         if (obj == null) return;
         var ec = obj.GetComponent<ExportComponent>();
-        if (ec) GUI.DrawTexture(new Rect(selectionRect.x - (obj.transform.childCount > 0 ? 20 : 8), selectionRect.y + 6, 6, 6), texture);
+        if (ec) GUI.DrawTexture(new Rect(selectionRect.x - (obj.transform.childCount > 0 ? 26 : 13), selectionRect.y, 16, 16), texture);
     }
 
     [MenuItem("GameObject/Tools/ExportScript", false, -1)]

@@ -4,6 +4,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Unity.Collections;
+using UnityEditor.Build;
 
 public class GameEditorTools
 {
@@ -105,17 +106,19 @@ public class GameEditorTools
     public static void AddScriptingDefineSymbols(string str)
     {
         var buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
-        var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
-        if (string.IsNullOrEmpty(symbols)) PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, str);
-        else if (!symbols.Contains(str)) PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, $"{symbols};{str}");
+        var namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(buildTargetGroup);
+        var symbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
+        if (string.IsNullOrEmpty(symbols)) PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, str);
+        else if (!symbols.Contains(str)) PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, $"{symbols};{str}");
         AssetDatabase.Refresh();
     }
     public static void RemoveScriptingDefineSymbols(string str)
     {
         var buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
-        var symbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
+        var namedBuildTarget = NamedBuildTarget.FromBuildTargetGroup(buildTargetGroup);
+        var symbols = PlayerSettings.GetScriptingDefineSymbols(namedBuildTarget);
         symbols = symbols.Replace(str, string.Empty);
-        PlayerSettings.SetScriptingDefineSymbolsForGroup(buildTargetGroup, symbols);
+        PlayerSettings.SetScriptingDefineSymbols(namedBuildTarget, symbols);
         AssetDatabase.Refresh();
     }
 

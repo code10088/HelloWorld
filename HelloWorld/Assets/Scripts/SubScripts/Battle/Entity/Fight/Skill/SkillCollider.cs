@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
-public class FightCollider : MonoBehaviour
+public class SkillCollider : MonoBehaviour
 {
-    private static Dictionary<int, FightCollider> dic = new Dictionary<int, FightCollider>();
+    private static Dictionary<int, SkillCollider> dic = new Dictionary<int, SkillCollider>();
     public static int Find(int code)
     {
-        if (dic.TryGetValue(code, out FightCollider collider)) return collider.id;
+        if (dic.TryGetValue(code, out SkillCollider collider)) return collider.id;
         else return 0;
     }
     public static void Clear()

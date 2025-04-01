@@ -56,7 +56,7 @@ public class SkillEntity_Bullet : SkillEntity, MoveSystemInterface
         for (int i = 0; i < count3; i++)
         {
             int code = results[i].GetHashCode();
-            int id = FightCollider.Find(code);
+            int id = SkillCollider.Find(code);
             target[i] = EntityCacheManager.Instance.FightCache.GetEntity<FightEntity>(id);
         }
         for (int i = 0; i < count1; i++)
