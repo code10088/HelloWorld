@@ -81,13 +81,17 @@ public class BuildEditor
             var hotUpdateDir = HybridCLR.Editor.SettingsUtil.GetHotUpdateDllsOutputDirByTarget(EditorUserBuildSettings.activeBuildTarget);
             var path = config.HotAssembly[0];
             var name = Path.GetFileNameWithoutExtension(path);
-            File.Copy($"{hotUpdateDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
+            File.Copy($"{hotUpdateDir}/{name}", $"{Environment.CurrentDirectory}/{path}", true);
+            path = config.HotAssembly[1];
+            name = Path.GetFileNameWithoutExtension(path);
+            File.Copy($"{hotUpdateDir}/{name}", $"{Environment.CurrentDirectory}/{path}", true);
+
             string stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
-            for (int i = 1; i < config.HotAssembly.Length; i++)
+            for (int i = 2; i < config.HotAssembly.Length; i++)
             {
                 path = config.HotAssembly[i];
                 name = Path.GetFileNameWithoutExtension(path);
-                File.Copy($"{stripDir}/{name}.dll", $"{Environment.CurrentDirectory}/{path}", true);
+                File.Copy($"{stripDir}/{name}", $"{Environment.CurrentDirectory}/{path}", true);
             }
             AssetDatabase.Refresh();
         }

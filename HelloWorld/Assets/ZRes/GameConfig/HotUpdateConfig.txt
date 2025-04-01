@@ -1,9 +1,10 @@
 {
 	"HotAssembly":
 	[
-		"Assets/ZRes/Assembly/HotAssembly.bytes",
-		"Assets/ZRes/Assembly/mscorlib.bytes",
-		"Assets/ZRes/Assembly/protobuf-net.bytes"
+		"Assets/ZRes/Assembly/HotAssembly.dll.bytes",
+		"Assets/ZRes/Assembly/HotAssembly.pdb.bytes",
+		"Assets/ZRes/Assembly/mscorlib.dll.bytes",
+		"Assets/ZRes/Assembly/protobuf-net.dll.bytes",
 	],
 	"HotUpdateRes":
 	[

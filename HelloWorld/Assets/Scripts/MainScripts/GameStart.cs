@@ -61,18 +61,17 @@ public class GameStart : MonoSingletion<GameStart>
     }
     private void LoadMetadataForAOTAssembly(string[] path, Object[] assets)
     {
-        for (int i = 1; i < assets.Length; i++)
+        for (int i = 2; i < assets.Length; i++)
         {
-            if (assets[i] != null)
-            {
-                var ta = assets[i] as TextAsset;
-                RuntimeApi.LoadMetadataForAOTAssembly(ta.bytes, HomologousImageMode.SuperSet);
-            }
+            var ta = assets[i] as TextAsset;
+            RuntimeApi.LoadMetadataForAOTAssembly(ta.bytes, HomologousImageMode.SuperSet);
         }
-        StartHotAssembly(assets[0] as TextAsset);
+        var dll = assets[0] as TextAsset;
+        var pdb = assets[1] as TextAsset;
+        StartHotAssembly(dll.bytes, pdb.bytes);
         AssetManager.Instance.Unload(ref loadId);
     }
-    private void StartHotAssembly(TextAsset asset)
+    private void StartHotAssembly(byte[] dll, byte[] pdb)
     {
 #if UNITY_EDITOR && !HotUpdateDebug
         var hotAssembly = AppDomain.CurrentDomain.GetAssemblies().First(a => a.FullName.Contains("HotAssembly"));
@@ -82,7 +81,7 @@ public class GameStart : MonoSingletion<GameStart>
         MethodInfo m = t.GetMethod("Init");
         m.Invoke(o, null);
 #else
-        var hotAssembly = Assembly.Load(asset.bytes);
+        var hotAssembly = Assembly.Load(dll, pdb);
         Type t = hotAssembly.GetType("GameStart");
         PropertyInfo p = t.BaseType.GetProperty("Instance");
         object o = p.GetMethod.Invoke(null, null);
