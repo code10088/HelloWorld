@@ -8,7 +8,7 @@ namespace YooAsset
     {
         private ESteps _steps = ESteps.None;
 
-        internal DownloadWechatAssetBundleOperation(PackageBundle bundle, DownloadParam param) : base(bundle, param)
+        internal DownloadWechatAssetBundleOperation(PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
         {
         }
         internal override void InternalStart()

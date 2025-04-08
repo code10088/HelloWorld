@@ -8,7 +8,7 @@ internal class TTFSDownloadFileOperation : DefaultDownloadFileOperation
     private TiktokFileSystem _fileSystem;
     private ESteps _steps = ESteps.None;
 
-    internal TTFSDownloadFileOperation(TiktokFileSystem fileSystem, PackageBundle bundle, DownloadParam param) : base(bundle, param)
+    internal TTFSDownloadFileOperation(TiktokFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
     {
         _fileSystem = fileSystem;
     }

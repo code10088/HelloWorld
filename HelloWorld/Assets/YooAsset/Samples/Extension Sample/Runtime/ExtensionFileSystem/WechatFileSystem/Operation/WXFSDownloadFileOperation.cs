@@ -9,7 +9,7 @@ internal class WXFSDownloadFileOperation : DefaultDownloadFileOperation
     private WechatFileSystem _fileSystem;
     private ESteps _steps = ESteps.None;
 
-    internal WXFSDownloadFileOperation(WechatFileSystem fileSystem, PackageBundle bundle, DownloadParam param) : base(bundle, param)
+    internal WXFSDownloadFileOperation(WechatFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
     {
         _fileSystem = fileSystem;
     }

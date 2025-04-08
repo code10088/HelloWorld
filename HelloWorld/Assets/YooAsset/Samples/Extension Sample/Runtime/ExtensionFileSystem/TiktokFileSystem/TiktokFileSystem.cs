@@ -124,16 +124,16 @@ internal class TiktokFileSystem : IFileSystem
         var operation = new TTFSRequestPackageVersionOperation(this, timeout);
         return operation;
     }
-    public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, string clearMode, object clearParam)
+    public virtual FSClearCacheFilesOperation ClearCacheFilesAsync(PackageManifest manifest, ClearCacheFilesOptions options)
     {
         var operation = new FSClearCacheFilesCompleteOperation();
         return operation;
     }
-    public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadParam param)
+    public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
     {
-        param.MainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
-        param.FallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
-        var operation = new TTFSDownloadFileOperation(this, bundle, param);
+        options.MainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
+        options.FallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+        var operation = new TTFSDownloadFileOperation(this, bundle, options);
         return operation;
     }
     public virtual FSLoadBundleOperation LoadBundleFile(PackageBundle bundle)
