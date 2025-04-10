@@ -1,6 +1,7 @@
 ﻿#if UNITY_WEBGL && WEIXINMINIGAME
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using YooAsset;
 using WeChatWASM;
 
@@ -47,8 +48,9 @@ internal class WXFSClearUnusedBundleFilesAsync : FSClearCacheFilesOperation
             {
                 foreach (var fileStat in response.stats)
                 {
-                    // 注意：存储文件必须按照Bundle文件哈希值存储！
-                    string bundleGUID = Path.GetFileNameWithoutExtension(fileStat.path);
+                    // 注意：适配不同的文件命名方式！
+                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileStat.path);
+                    string bundleGUID = fileNameWithoutExtension.Split('_').Last();
                     if (_manifest.TryGetPackageBundleByBundleGUID(bundleGUID, out PackageBundle value) == false)
                     {
                         string fullPath = WX.GetCachePath(fileStat.path);
