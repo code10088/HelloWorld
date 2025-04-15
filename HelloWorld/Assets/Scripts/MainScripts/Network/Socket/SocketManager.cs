@@ -4,56 +4,32 @@ using System.Collections.Generic;
 
 public class SocketManager : Singletion<SocketManager>
 {
-    public enum SType
-    {
-        MainT,
-        FightT,
-        T2K,
-        MainK,
-        FightK,
-        K2Web,
-        MainWeb,
-        FightWeb,
-    }
-
-    private Dictionary<SType, STCP> tcp = new Dictionary<SType, STCP>();
-    private Dictionary<SType, SKCP> kcp = new Dictionary<SType, SKCP>();
-    private Dictionary<SType, SWeb> web = new Dictionary<SType, SWeb>();
+    private int uniqueId = 0;
+    private Dictionary<int, SInterface> socket = new Dictionary<int, SInterface>();
     private Func<byte[], bool> deserialize;
 
     public void SetDeserialize(Func<byte[], bool> deserialize)
     {
         this.deserialize = deserialize;
     }
-    public void Create(SType st, string ip, ushort port, uint connectId = 0)
+    public int Create<T>(string ip, ushort port, uint connectId) where T : SInterface, new()
     {
-        if (st < SType.T2K)
+        T s = new T();
+        s.Init(ip, port, connectId, deserialize);
+        socket.Add(uniqueId, s);
+        return uniqueId++;
+    }
+    public void Disconnect(int id)
+    {
+        if (socket.TryGetValue(id, out SInterface s))
         {
-            if (tcp.ContainsKey(st)) return;
-            STCP so = new STCP();
-            so.Init(ip, port);
-            tcp.Add(st, so);
-        }
-        else if (st < SType.K2Web)
-        {
-            if (kcp.ContainsKey(st)) return;
-            SKCP so = new SKCP();
-            so.Init(ip, port, connectId);
-            kcp.Add(st, so);
-        }
-        else
-        {
-            if (kcp.ContainsKey(st)) return;
-            SWeb so = new SWeb();
-            so.Init(ip, port);
-            web.Add(st, so);
+            s.Disconnect();
+            socket.Remove(id);
         }
     }
-    public void Send(ushort id, IExtensible msg, SType st = SType.MainK)
+    public void Send(ushort id, IExtensible msg, int sid = 0)
     {
-        if (st < SType.T2K) tcp[st].Send(id, msg);
-        else if (st < SType.K2Web) kcp[st].Send(id, msg);
-        else web[st].Send(id, msg);
+        socket[sid].Send(id, msg);
     }
     public bool Deserialize(byte[] bytes)
     {

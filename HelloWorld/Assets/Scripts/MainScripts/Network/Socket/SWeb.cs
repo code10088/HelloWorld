@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using System.IO;
 using WebSocketSharp;
 
-public class SWeb
+public class SWeb : SInterface
 {
     private string ip;
     private WebSocket socket;
+    private Func<byte[], bool> deserialize;
     private Queue<WebSendItem> sendPool = new Queue<WebSendItem>();
 
-    private int connectTimer = -1;
     private int updateId = -1;
-    private int sendFailCount = 0;
-    private byte[] receiveBuffer = new byte[1024];
+    private bool connectMark = false;
+    private bool sendMark = false;
+    private byte[] receiveBuffer;
     private byte[] headBuffer = new byte[4];
     private byte[] bodyBuffer;
     private int headPos = 0;
@@ -21,9 +22,10 @@ public class SWeb
     private int headLength = 4;
     private int bodyLength = 0;
 
-    public void Init(string ip, ushort port)
+    public void Init(string ip, ushort port, uint connectId, Func<byte[], bool> deserialize)
     {
         this.ip = $"{ip}:{port}";
+        this.deserialize = deserialize;
         Connect();
     }
 
@@ -35,12 +37,17 @@ public class SWeb
         socket.OnMessage += Receive;
         socket.OnError += Error;
         socket.ConnectAsync();
-        if (connectTimer < 0) connectTimer = TimeManager.Instance.StartTimer(10, finish: Reconect);
     }
     private void ConnectCallback(object sender, EventArgs e)
     {
-        TimeManager.Instance.StopTimer(connectTimer);
+        connectMark = true;
+        sendMark = true;
         if (updateId < 0) updateId = Updater.Instance.StartUpdate(Handle);
+    }
+    private void Error(object sender, WebSocketSharp.ErrorEventArgs error)
+    {
+        GameDebug.LogError(error.Message);
+        Reconect();
     }
     /// <summary>
     /// 断线重连
@@ -55,9 +62,8 @@ public class SWeb
         socket.Close();
         socket = null;
         sendPool.Clear();
-        TimeManager.Instance.StopTimer(connectTimer);
-        Updater.Instance.StopUpdate(updateId);
-        sendFailCount = 0;
+        connectMark = false;
+        sendMark = false;
         bodyBuffer = null;
         headPos = 0;
         bodyPos = 0;
@@ -67,37 +73,59 @@ public class SWeb
 
     private void Handle(float t)
     {
-        Send();
+        if (connectMark) Send();
     }
 
     #region 发送
+    class WebSendItem
+    {
+        public ushort id;
+        public IExtensible msg;
+    }
     public void Send(ushort id, IExtensible msg)
     {
-        WebSendItem nmb = new WebSendItem(id, msg);
-        sendPool.Enqueue(nmb);
+        WebSendItem wsi = new WebSendItem() { id = id, msg = msg };
+        lock (sendPool) sendPool.Enqueue(wsi);
     }
-    private void Send()
+    public void Send()
     {
-        if (sendPool.Count > 0)
-        {
-            WebSendItem nmb = sendPool.Dequeue();
-            nmb.Send(socket, Send);
-        }
+        if (!sendMark && sendPool.Count == 0) return;
+        WebSendItem wsi = sendPool.Dequeue();
+        byte[] bytes = Serialize(wsi.id, wsi.msg);
+        socket.SendAsync(bytes, SendCallback);
+        sendMark = false;
     }
-    private void Send(bool result, WebSendItem nmb)
+    private void SendCallback(bool result)
     {
         if (result)
         {
-            sendFailCount = 0;
-        }
-        else if (sendFailCount < 3)
-        {
-            sendFailCount++;
-            sendPool.Enqueue(nmb);
+            sendMark = true;
         }
         else
         {
             Reconect();
+        }
+    }
+    /// <summary>
+    /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
+    /// </summary>
+    private byte[] Serialize(ushort id, IExtensible msg)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            Serializer.Serialize(ms, msg);
+            byte[] source = ms.ToArray();
+            int l = source.Length;
+            byte[] result = new byte[6 + l];
+            //消息长度
+            byte[] temp = BitConverter.GetBytes(2 + l);
+            Buffer.BlockCopy(temp, 0, result, 0, 4);
+            //消息ID
+            temp = BitConverter.GetBytes(id);
+            Buffer.BlockCopy(temp, 0, result, 4, 2);
+            //消息内容
+            Buffer.BlockCopy(source, 0, result, 6, l);
+            return result;
         }
     }
     #endregion
@@ -122,7 +150,17 @@ public class SWeb
                 if (headPos == headLength)
                 {
                     bodyLength = BitConverter.ToInt32(headBuffer, 0);
-                    bodyBuffer = new byte[bodyLength];
+                    if (bodyLength >= 0 && bodyLength <= 0x100000)
+                    {
+                        bodyBuffer = new byte[bodyLength];
+                    }
+                    else
+                    {
+                        headPos = 0;
+                        bodyPos = 0;
+                        bodyLength = 0;
+                        return;
+                    }
                 }
             }
             else
@@ -133,83 +171,13 @@ public class SWeb
                 bodyPos += l;
                 if (bodyPos == bodyLength)
                 {
-                    bool success = Deserialize(bodyBuffer);
-                    if (!success) return;
                     headPos = 0;
                     bodyPos = 0;
+                    bodyLength = 0;
+                    if (!deserialize(bodyBuffer)) return;
                 }
             }
         }
     }
-    private bool Deserialize(byte[] bytes)
-    {
-        bool success = SocketManager.Instance.Deserialize(bytes);
-        if (!success) Reconect();
-        return success;
-    }
     #endregion
-
-    private void Error(object sender, WebSocketSharp.ErrorEventArgs error)
-    {
-        GameDebug.LogError(error.Message);
-    }
-
-    class WebSendItem
-    {
-        private ushort id;
-        private IExtensible msg;
-        private Action<bool, WebSendItem> finish;
-        private int sendTimer = -1;
-        private int retryTime;
-        public WebSendItem(ushort id, IExtensible msg)
-        {
-            this.id = id;
-            this.msg = msg;
-        }
-        public void Send(WebSocket socket, Action<bool, WebSendItem> finish)
-        {
-            this.finish = finish;
-            byte[] bytes = Serialize();
-            socket.SendAsync(bytes, SendCallback);
-            if (sendTimer < 0) sendTimer = TimeManager.Instance.StartTimer(10, finish: () => SendCallback(false));
-        }
-        private byte[] Serialize()
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                Serializer.Serialize(ms, msg);
-                byte[] source = ms.ToArray();
-                int l = source.Length;
-                byte[] result = new byte[6 + l];
-                //消息长度
-                byte[] temp = BitConverter.GetBytes(2 + l);
-                Buffer.BlockCopy(temp, 0, result, 0, 4);
-                //消息ID
-                temp = BitConverter.GetBytes(id);
-                Buffer.BlockCopy(temp, 0, result, 4, 2);
-                //消息内容
-                Buffer.BlockCopy(source, 0, result, 6, l);
-                return result;
-            }
-        }
-        private void SendCallback(bool result)
-        {
-            TimeManager.Instance.StopTimer(sendTimer);
-            if (result)
-            {
-                retryTime = 0;
-                finish(true, this);
-            }
-            else if (retryTime < 3)
-            {
-                retryTime++;
-                finish(false, this);
-            }
-            else
-            {
-                retryTime = 0;
-                GameDebug.LogError("消息发送失败:" + this);
-            }
-        }
-    }
 }
