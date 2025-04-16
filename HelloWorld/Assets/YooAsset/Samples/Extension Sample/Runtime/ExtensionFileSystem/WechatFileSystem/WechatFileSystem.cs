@@ -191,11 +191,6 @@ internal class WechatFileSystem : IFileSystem
             throw new System.Exception("请配置微信小游戏缓存根目录！");
         }
 
-        if (_wxCacheRoot.StartsWith(WX.PluginCachePath) == false)
-        {
-            _wxCacheRoot = PathUtility.Combine(WX.PluginCachePath, _wxCacheRoot);
-        }
-
         // 注意：CDN服务未启用的情况下，使用微信WEB服务器
         if (RemoteServices == null)
         {
