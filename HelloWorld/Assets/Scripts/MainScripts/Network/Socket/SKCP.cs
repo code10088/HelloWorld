@@ -154,15 +154,15 @@ public class SKCP : SInterface
     #endregion
 
     #region 接收
-    /// <summary>
-    /// 流模式不需要PeekSize
-    /// </summary>
     private void Receive()
     {
         if (!receiveMark) return;
         socket.BeginReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref endPoint, ReceiveCallback, null);
         receiveMark = false;
     }
+    /// <summary>
+    /// 流模式不需要PeekSize
+    /// </summary>
     private void ReceiveCallback(IAsyncResult ar)
     {
         int receiveLength = socket.EndReceiveFrom(ar, ref endPoint);
