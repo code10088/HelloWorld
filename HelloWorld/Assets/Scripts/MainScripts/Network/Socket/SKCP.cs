@@ -21,6 +21,8 @@ public class SKCP : SInterface
     private Queue<KcpSendItem> sendPool = new Queue<KcpSendItem>();
 
     private bool connectMark = false;
+    private bool sendMark = false;
+    private bool receiveMark = false;
     private byte[] receiveBuffer = new byte[1024];
     private byte[] headBuffer = new byte[4];
     private byte[] bodyBuffer;
@@ -47,6 +49,8 @@ public class SKCP : SInterface
     {
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         connectMark = true;
+        sendMark = true;
+        receiveMark = true;
 
         kcp = new Kcp<KcpSegment>(connectId, kcpSend);
         kcp.NoDelay(1, 10, 2, 1);
@@ -55,6 +59,14 @@ public class SKCP : SInterface
 
         thread = new Thread(Handle);
         thread.Start();
+    }
+    /// <summary>
+    /// 断线重连
+    /// </summary>
+    private void Reconect()
+    {
+        Disconnect();
+        Connect();
     }
     public void Disconnect()
     {
@@ -65,6 +77,8 @@ public class SKCP : SInterface
         kcp.Dispose();
         kcp = null;
         sendPool.Clear();
+        sendMark = false;
+        receiveMark = false;
         bodyBuffer = null;
         headPos = 0;
         bodyPos = 0;
@@ -77,7 +91,6 @@ public class SKCP : SInterface
         while (connectMark)
         {
             kcp.Update(DateTime.UtcNow);
-            Send();
             Receive();
             Thread.Sleep(GameSetting.updateTimeSliceMS);
         }
@@ -86,20 +99,12 @@ public class SKCP : SInterface
     #region 发送
     class KcpSendItem
     {
-        public ushort id;
-        public IExtensible msg;
+        public byte[] bytes;
+        public int length;
     }
     public void Send(ushort id, IExtensible msg)
     {
-        KcpSendItem ksi = new KcpSendItem() { id = id, msg = msg };
-        lock (sendPool) sendPool.Enqueue(ksi);
-    }
-    private void Send()
-    {
-        if (sendPool.Count == 0) return;
-        KcpSendItem ksi;
-        lock (sendPool) ksi = sendPool.Dequeue();
-        byte[] bytes = Serialize(ksi.id, ksi.msg);
+        byte[] bytes = Serialize(id, msg);
         kcp.Send(bytes);
     }
     /// <summary>
@@ -124,9 +129,27 @@ public class SKCP : SInterface
             return result;
         }
     }
-    private void Send(byte[] buffer, int length)
+    /// <summary>
+    /// kcp.Update中执行
+    /// </summary>
+    private void Send(byte[] bytes, int length)
     {
-        if (length > 0) socket.SendTo(buffer, length, SocketFlags.None, endPoint);
+        if (length > 0)
+        {
+            KcpSendItem ksi = new KcpSendItem() { bytes = bytes, length = length };
+            sendPool.Enqueue(ksi);
+        }
+        if (sendMark && sendPool.Count > 0)
+        {
+            KcpSendItem ksi = sendPool.Dequeue();
+            socket.BeginSendTo(ksi.bytes, 0, ksi.length, SocketFlags.None, endPoint, SendCallback, null);
+            sendMark = false;
+        }
+    }
+    private void SendCallback(IAsyncResult ar)
+    {
+        socket.EndSendTo(ar);
+        sendMark = true;
     }
     #endregion
 
@@ -136,10 +159,16 @@ public class SKCP : SInterface
     /// </summary>
     private void Receive()
     {
-        int receiveLength = socket.ReceiveFrom(receiveBuffer, ref endPoint);
-        if (receiveLength <= 0) return;
-        kcp.Input(receiveBuffer.AsSpan(0, receiveLength));
+        if (!receiveMark) return;
+        socket.BeginReceiveFrom(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ref endPoint, ReceiveCallback, null);
+        receiveMark = false;
+    }
+    private void ReceiveCallback(IAsyncResult ar)
+    {
+        int receiveLength = socket.EndReceiveFrom(ar, ref endPoint);
+        if (receiveLength > 0) kcp.Input(receiveBuffer.AsSpan(0, receiveLength));
         while ((receiveLength = kcp.Recv(receiveBuffer)) > 0) Parse(receiveLength);
+        receiveMark = true;
     }
     private void Parse(int receiveLength)
     {

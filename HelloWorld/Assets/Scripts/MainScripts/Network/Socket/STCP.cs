@@ -103,7 +103,7 @@ public class STCP : SInterface
     }
     private void Send()
     {
-        if (!sendMark && sendPool.Count == 0) return;
+        if (!sendMark || sendPool.Count == 0) return;
         TcpSendItem tsi;
         lock (sendPool) tsi = sendPool.Dequeue();
         byte[] bytes = Serialize(tsi.id, tsi.msg);
@@ -112,15 +112,8 @@ public class STCP : SInterface
     }
     private void SendCallback(IAsyncResult ar)
     {
-        int sendLength = socket.EndSend(ar);
-        if (sendLength > 0)
-        {
-            sendMark = true;
-        }
-        else
-        {
-            Reconect();
-        }
+        socket.EndSend(ar);
+        sendMark = true;
     }
     /// <summary>
     /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
@@ -156,15 +149,8 @@ public class STCP : SInterface
     private void ReceiveCallback(IAsyncResult ar)
     {
         int receiveLength = socket.EndReceive(ar);
-        if (receiveLength > 0)
-        {
-            Parse(receiveLength);
-            receiveMark = true;
-        }
-        else
-        {
-            Reconect();
-        }
+        if (receiveLength > 0) Parse(receiveLength);
+        receiveMark = true;
     }
     private void Parse(int receiveLength)
     {

@@ -89,7 +89,7 @@ public class SWeb : SInterface
     }
     public void Send()
     {
-        if (!sendMark && sendPool.Count == 0) return;
+        if (!sendMark || sendPool.Count == 0) return;
         WebSendItem wsi = sendPool.Dequeue();
         byte[] bytes = Serialize(wsi.id, wsi.msg);
         socket.SendAsync(bytes, SendCallback);
@@ -97,14 +97,7 @@ public class SWeb : SInterface
     }
     private void SendCallback(bool result)
     {
-        if (result)
-        {
-            sendMark = true;
-        }
-        else
-        {
-            Reconect();
-        }
+        sendMark = true;
     }
     /// <summary>
     /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
