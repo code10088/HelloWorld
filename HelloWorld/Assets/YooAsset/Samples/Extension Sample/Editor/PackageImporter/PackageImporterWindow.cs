@@ -51,10 +51,6 @@ namespace YooAsset.Editor
             string manifestFileName = Path.GetFileNameWithoutExtension(manifestFilePath);
             string outputDirectory = Path.GetDirectoryName(manifestFilePath);
 
-            // 加载补丁清单
-            byte[] bytesData = FileUtility.ReadAllBytes(manifestFilePath);
-            PackageManifest manifest = ManifestTools.DeserializeFromBinary(bytesData);
-
             // 拷贝核心文件
             {
                 string sourcePath = $"{outputDirectory}/{manifestFileName}.bytes";
@@ -67,11 +63,15 @@ namespace YooAsset.Editor
                 EditorTools.CopyFile(sourcePath, destPath, true);
             }
             {
-                string fileName = YooAssetSettingsData.GetPackageVersionFileName(manifest.PackageName);
+                string fileName = YooAssetSettingsData.GetPackageVersionFileName(_packageName);
                 string sourcePath = $"{outputDirectory}/{fileName}";
                 string destPath = $"{AssetBundleBuilderHelper.GetStreamingAssetsRoot()}/{_packageName}/{fileName}";
                 EditorTools.CopyFile(sourcePath, destPath, true);
             }
+
+            // 加载补丁清单
+            byte[] bytesData = FileUtility.ReadAllBytes(manifestFilePath);
+            PackageManifest manifest = ManifestTools.DeserializeFromBinary(bytesData);
 
             // 拷贝文件列表
             int fileCount = 0;
