@@ -153,7 +153,7 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
-      - CollectPath: Assets/Samples/Space Shooter/GameRes/SpriteAtlas
+      - CollectPath: Assets/Samples/Space Shooter/GameRes/UISpriteAtlas
         CollectorGUID: c355c783476322b4cacac98c5e1b46d8
         CollectorType: 0
         AddressRuleName: AddressByFileName
@@ -161,7 +161,7 @@ MonoBehaviour:
         FilterRuleName: CollectAll
         AssetTags: 
         UserData: 
-      - CollectPath: Assets/Samples/Space Shooter/GameRes/Sprites
+      - CollectPath: Assets/Samples/Space Shooter/GameRes/UISprite
         CollectorGUID: 935d7f20c085cc141a3daf9cacfabfae
         CollectorType: 1
         AddressRuleName: AddressByFileName

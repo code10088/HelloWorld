@@ -166,6 +166,7 @@ GameObject:
   - component: {fileID: 4142826567245113225}
   - component: {fileID: 446002385128238495}
   - component: {fileID: 6653013303473587574}
+  - component: {fileID: 5570311910315361439}
   m_Layer: 5
   m_Name: UILoading
   m_TagString: Untagged
@@ -246,3 +247,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2bfcc4f450a0b94bb7748fb4788630e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5570311910315361439
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4142826567245113227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2537124b11b52a458e01629f6b18f55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ReferencesAtlas: []
