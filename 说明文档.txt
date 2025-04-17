@@ -64,7 +64,7 @@ protobuf-net
 	网络消息体积优先所以使用ProtoBuf，客户端本地保存速度所以使用MemoryBuffer
     ProtoBuf:       序列化速度=2，反序列化=10，体积小1
     FlatBuffers:    序列化速度=4，反序列化=0，体积大2
-    MemoryBuffer:   序列化速度=1，反序列化=0，体积大1.5
+    MemoryPack:   序列化速度=1，反序列化=0，体积大1.5
 	
 newtonjson
 	release13.0.3 bin/.net45/dll
