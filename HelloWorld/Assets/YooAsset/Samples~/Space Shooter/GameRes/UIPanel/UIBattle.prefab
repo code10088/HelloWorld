@@ -377,7 +377,6 @@ GameObject:
   - component: {fileID: 4142826567245113225}
   - component: {fileID: 446002385128238495}
   - component: {fileID: 3593489457066976788}
-  - component: {fileID: 6254029933122384597}
   m_Layer: 5
   m_Name: UIBattle
   m_TagString: Untagged
@@ -458,20 +457,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9776c197a7f86e94c9484946495616bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6254029933122384597
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4142826567245113227}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2537124b11b52a458e01629f6b18f55, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ReferencesAtlas:
-  - {fileID: 4343727234628468602, guid: 2a1b1891e0f61ff498a73d9ff86c26d7, type: 2}
 --- !u!1 &5051316305113654670
 GameObject:
   m_ObjectHideFlags: 0

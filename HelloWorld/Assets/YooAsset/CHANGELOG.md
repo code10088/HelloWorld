@@ -2,6 +2,19 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.8] - 2025-04-17
+
+### Improvements
+
+- 扩展工程里增加了“图集丢失变白块的解决方案”的相关代码。
+
+### Fixed
+
+- (#528) 修复了微信小游戏平台WXFSClearUnusedBundleFiles无法清理的问题。
+- (#531) 修复了微信小游戏平台WXFSClearUnusedBundleFiles没有适配BundleName_HashName命名方式。
+- (#533) 修复了Editor程序集下无法访问YooAsset.Editor程序集里的internal字段的问题。
+- (#534) 修复了资源报告窗口AssetView视图里，依赖资源包列表显示不准确的问题。
+
 ## [2.3.7] - 2025-04-01
 
 ### Improvements
