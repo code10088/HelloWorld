@@ -1,4 +1,4 @@
-﻿public enum NetMsgId
+﻿public class NetMsgId
 {
-    Person = 1,
+    public const ushort Person = 1;
 }

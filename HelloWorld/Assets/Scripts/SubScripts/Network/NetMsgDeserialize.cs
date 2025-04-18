@@ -10,7 +10,7 @@ public partial class NetMsgDispatch
             var id = BitConverter.ToUInt16(bytes, 0);
             var mm = new Memory<byte>(bytes, 2, bytes.Length - 2);
             IExtensible msg = null;
-            switch ((NetMsgId)id)
+            switch (id)
             {
                 case NetMsgId.Person: msg = Serializer.Deserialize<ProtoTest.Person>(mm); break;
             }
