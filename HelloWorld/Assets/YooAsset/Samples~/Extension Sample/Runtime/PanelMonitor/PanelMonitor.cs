@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+﻿#if UNITY_EDITOR && UNITY_2021_3_OR_NEWER
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
