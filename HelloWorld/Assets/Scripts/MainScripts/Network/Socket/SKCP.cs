@@ -90,7 +90,7 @@ public class SKCP : SInterface
     {
         while (connectMark)
         {
-            kcp.Update(DateTime.UtcNow);
+            Send();
             Receive();
             Thread.Sleep(GameSetting.updateTimeSliceMS);
         }
@@ -128,6 +128,10 @@ public class SKCP : SInterface
             Buffer.BlockCopy(source, 0, result, 6, l);
             return result;
         }
+    }
+    private void Send()
+    {
+        kcp.Update(DateTime.UtcNow);
     }
     /// <summary>
     /// kcp.Update中执行
