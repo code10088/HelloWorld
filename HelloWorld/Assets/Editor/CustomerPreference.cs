@@ -7,6 +7,7 @@ public enum CustomerPreferenceEnum
 {
     BuildPlayerPath,
     LubanPath,
+    MsgPath,
     CosBucketConfig,
 }
 public class CustomerPreference
@@ -42,6 +43,7 @@ public class CustomerPreference
             {
                 BuildPlayerPathGUI();
                 LubanPathGUI();
+                MsgPathGUI();
                 CosBucketConfigGUI();
             }
         };
@@ -84,6 +86,20 @@ public class CustomerPreference
             if (GUILayout.Button("浏览", GUILayout.Width(50f)))
             {
                 data.LubanPath = EditorUtility.OpenFolderPanel("选择文件夹", Environment.CurrentDirectory, "Luban");
+                Save();
+            }
+        }
+        GUILayout.EndHorizontal();
+    }
+    static void MsgPathGUI()
+    {
+        GUILayout.BeginHorizontal();
+        {
+            GUILayout.Label("Msg路径", GUILayout.Width(100f));
+            GUILayout.TextField(data.MsgPath);
+            if (GUILayout.Button("浏览", GUILayout.Width(50f)))
+            {
+                data.MsgPath = EditorUtility.OpenFolderPanel("选择文件夹", Environment.CurrentDirectory, "NetMsg");
                 Save();
             }
         }

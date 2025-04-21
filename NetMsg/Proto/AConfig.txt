@@ -1,1 +1,2 @@
-Person:ProtoTest.Person
+//Id=(Namespace.)CalssName
+10001=ProtoTest.Person

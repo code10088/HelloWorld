@@ -14,5 +14,5 @@ for /r %PROTO_PATH% %%f in (*.proto) do (
     %PROTOGEN_PATH% %%~nxf --proto_path=%%~pf --csharp_out=%OUTCODES_PATH%
 )
 
-echo [完成]
+echo finish
 pause

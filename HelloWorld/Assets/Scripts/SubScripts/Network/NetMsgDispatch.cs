@@ -38,9 +38,9 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
     }
     private void Dispatch(NetMsgItem msg)
     {
-        switch ((MessageType)msg.id)
+        switch (msg.id)
         {
-            case MessageType.Person:; break;
+            case NetMsgId.ProtoTest_Person:; break;
         }
     }
 }

@@ -1,13 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using UnityEditor;
 
 public class ExportComponentScript
 {
-    private static string Head1 = "using UnityEngine;\n";
-    private static string TabEmpty = "    ";
     private static Texture2D texture;
 
     [ExecuteInEditMode,InitializeOnLoadMethod]
@@ -107,16 +104,16 @@ public class ExportComponentScript
         if (classInfoList.Count == 0) return "沒有可用的变量名";
 
         //导出
+        string result = string.Empty;
         if (!Directory.Exists(classInfoList[0].path)) Directory.CreateDirectory(classInfoList[0].path);
         string scriptName = classInfoList[0].path + classInfoList[0].className + ".cs";
-        FileStream fs = File.Open(scriptName, FileMode.Create);
-        WriteString(fs, 0, Head1);
+        result += GameEditorTools.WriteLine(0, "using UnityEngine;");
         for (int i = 0; i < classInfoList.Count; i++)
         {
             ClassInfo ci = classInfoList[i];
-            WriteString(fs, 0, "public partial class " + ci.className + "\n");
-            WriteString(fs, 0, "{\n");
-            WriteString(fs, 1, "public GameObject obj;\n");
+            result += GameEditorTools.WriteLine(0, "public partial class " + ci.className);
+            result += GameEditorTools.WriteLine(0, "{");
+            result += GameEditorTools.WriteLine(1, "public GameObject obj;");
             for (int j = 0; j < ci.component.Count; j++)
             {
                 ExportComponent tempComponent = ci.component[j];
@@ -137,7 +134,7 @@ public class ExportComponentScript
                             tempNameDic.Add(tempName, 0);
                         }
                         tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        WriteString(fs, 1, "public GameObject " + tempName + " = null;\n");
+                        result += GameEditorTools.WriteLine(1, "public GameObject " + tempName + " = null;");
                     }
                     else
                     {
@@ -154,14 +151,14 @@ public class ExportComponentScript
                             tempNameDic.Add(tempName, 0);
                         }
                         tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        WriteString(fs, 1, "public " + tempStr + " " + tempName + " = null;\n");
+                        result += GameEditorTools.WriteLine(1, "public " + tempStr + " " + tempName + " = null;");
                     }
                 }
             }
-            WriteString(fs, 1, "public void Init(GameObject obj)\n");
-            WriteString(fs, 1, "{\n");
-            WriteString(fs, 2, "this.obj = obj;\n");
-            WriteString(fs, 2, "ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);\n");
+            result += GameEditorTools.WriteLine(1, "public void Init(GameObject obj)");
+            result += GameEditorTools.WriteLine(1, "{");
+            result += GameEditorTools.WriteLine(2, "this.obj = obj;");
+            result += GameEditorTools.WriteLine(2, "ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);");
             for (int j = 0; j < ci.component.Count; j++)
             {
                 ExportComponent tempComponent = ci.component[j];
@@ -182,7 +179,7 @@ public class ExportComponentScript
                             tempNameDic.Add(tempName, 0);
                         }
                         tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        WriteString(fs, 2, tempName + " = allData[" + ci.componentIndex[j] + "].gameObject;\n");
+                        result += GameEditorTools.WriteLine(2, tempName + " = allData[" + ci.componentIndex[j] + "].gameObject;");
                     }
                     else
                     {
@@ -199,28 +196,14 @@ public class ExportComponentScript
                             tempNameDic.Add(tempName, 0);
                         }
                         tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        WriteString(fs, 2, tempName + " = allData[" + ci.componentIndex[j] + "].exportComponent[" + k + "] as " + tempStr + ";\n");
+                        result += GameEditorTools.WriteLine(2, tempName + " = allData[" + ci.componentIndex[j] + "].exportComponent[" + k + "] as " + tempStr + ";");
                     }
                 }
             }
-            WriteString(fs, 1, "}\n");
-            WriteString(fs, 0, "}\n");
+            result += GameEditorTools.WriteLine(1, "}");
+            result += GameEditorTools.WriteLine(0, "}");
         }
-
-        fs.Flush();
-        fs.Close();
+        File.WriteAllText(scriptName, result);
         return string.Empty;
-    }
-    private static void WriteString(FileStream fs, int tabCount, string str)
-    {
-        if (fs == null || string.IsNullOrEmpty(str)) return;
-        string tab = string.Empty;
-        for (int i = 0; i < tabCount; i++)
-        {
-            tab += TabEmpty;
-        }
-        tab += str;
-        byte[] bytes = Encoding.UTF8.GetBytes(tab);
-        fs.Write(bytes, 0, bytes.Length);
     }
 }

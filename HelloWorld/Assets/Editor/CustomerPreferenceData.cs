@@ -5,6 +5,7 @@ public class CustomerPreferenceData : ScriptableObject
 {
     public string BuildPlayerPath;
     public string LubanPath;
+    public string MsgPath;
     public CosBucketConfig CosBucketConfig = new CosBucketConfig();
 }
 [Serializable]
