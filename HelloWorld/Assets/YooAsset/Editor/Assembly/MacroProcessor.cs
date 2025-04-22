@@ -22,13 +22,21 @@ namespace YooAsset.Editor
                 return content;
 
             // 将修改后的XML结构重新输出为文本
-            var stringWriter = new StringWriter();
-            var writerSettings = new XmlWriterSettings();
-            writerSettings.Indent = true;
-            var xmlWriter = XmlWriter.Create(stringWriter, writerSettings);
-            xmlDoc.WriteTo(xmlWriter);
-            xmlWriter.Flush();
-            return stringWriter.ToString();
+            using (var memoryStream = new MemoryStream())
+            {
+                var writerSettings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    Encoding = new UTF8Encoding(false), //无BOM
+                    OmitXmlDeclaration = false
+                };
+
+                using (var xmlWriter = XmlWriter.Create(memoryStream, writerSettings))
+                {
+                    xmlDoc.Save(xmlWriter);
+                }
+                return Encoding.UTF8.GetString(memoryStream.ToArray());
+            }
         }
 
         /// <summary>
