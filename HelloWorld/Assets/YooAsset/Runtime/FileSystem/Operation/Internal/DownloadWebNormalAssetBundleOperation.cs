@@ -133,23 +133,11 @@ namespace YooAsset
                 // 注意：优先从浏览器缓存里获取文件
                 // The file hash defining the version of the asset bundle.
                 Hash128 fileHash = Hash128.Parse(Bundle.FileHash);
-                var cachedBundle = new CachedAssetBundle(Bundle.BundleName, fileHash);
-                if (Caching.IsVersionCached(cachedBundle))
-                {
-                    var downloadhandler = new DownloadHandlerAssetBundle(_requestURL, cachedBundle, 0);
+                var downloadhandler = new DownloadHandlerAssetBundle(_requestURL, fileHash, Bundle.UnityCRC);
 #if UNITY_2020_3_OR_NEWER
-                    downloadhandler.autoLoadAssetBundle = false;
+                downloadhandler.autoLoadAssetBundle = false;
 #endif
-                    return downloadhandler;
-                }
-                else
-                {
-                    var downloadhandler = new DownloadHandlerAssetBundle(_requestURL, cachedBundle, Bundle.UnityCRC);
-#if UNITY_2020_3_OR_NEWER
-                    downloadhandler.autoLoadAssetBundle = false;
-#endif
-                    return downloadhandler;
-                }
+                return downloadhandler;
             }
         }
     }

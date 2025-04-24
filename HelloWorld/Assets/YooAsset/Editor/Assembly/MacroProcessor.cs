@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml;
 using UnityEditor;
 
+#if YOO_ASSET_EXPERIMENT
 namespace YooAsset.Editor
 {
     [InitializeOnLoad]
@@ -102,3 +103,4 @@ namespace YooAsset.Editor
         }
     }
 }
+#endif

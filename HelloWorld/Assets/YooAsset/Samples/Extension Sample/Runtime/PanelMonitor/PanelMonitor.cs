@@ -7,6 +7,11 @@ using UnityEngine.U2D;
 public static class UIPanelSettings
 {
     /// <summary>
+    /// 是否开启面板监测
+    /// </summary>
+    public static bool EnablePanelMonitor = false;
+
+    /// <summary>
     /// 面板文件夹GUID
     /// </summary>
     private const string UIPanelDirectoryGUID = "12d33f33f3a55224c9c747d7bffa1c68";
@@ -60,6 +65,9 @@ public class UIPanelMonitor : UnityEditor.Editor
 
     static void OnPrefabSaving(GameObject go)
     {
+        if (UIPanelSettings.EnablePanelMonitor == false)
+            return;
+
         UnityEditor.SceneManagement.PrefabStage stage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
         if (stage != null)
         {
@@ -78,7 +86,7 @@ public class UIPanelMonitor : UnityEditor.Editor
     /// <summary>
     /// 刷新面板清单
     /// </summary>
-    public static void RefreshPanelManifest(PanelManifest manifest)
+    private static void RefreshPanelManifest(PanelManifest manifest)
     {
         manifest.ReferencesAtlas.Clear();
 
