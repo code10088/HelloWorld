@@ -12,9 +12,9 @@ public class GameObjectPool
         var id = obj.GetInstanceID();
         if (pool.TryGetValue(id, out var temp)) temp.Enqueue(itemId);
     }
-    public ObjectPoolItem Dequeue(GameObject obj, Action<int, GameObject, object[]> action = null, int cacheCount = 10, params object[] param)
+    public int Dequeue(GameObject obj, Action<int, GameObject, object[]> action = null, int cacheCount = 10, params object[] param)
     {
-        if (obj == null) return null;
+        if (obj == null) return -1;
         var id = obj.GetInstanceID();
         GameObjectPool<ObjectPoolItem> temp = null;
         if (!pool.TryGetValue(id, out temp))
@@ -23,7 +23,7 @@ public class GameObjectPool
             temp.Init(obj, cacheCount);
             pool.Add(id, temp);
         }
-        return temp.Dequeue(action, param);
+        return temp.Dequeue(action, param).ItemID;
     }
     public void Release()
     {
@@ -95,9 +95,9 @@ public class AssetObjectPool
         if (string.IsNullOrEmpty(path)) return;
         if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
     }
-    public ObjectPoolItem Dequeue(string path, Action<int, GameObject, object[]> action = null, int cacheCount = 10, params object[] param)
+    public int Dequeue(string path, Action<int, GameObject, object[]> action = null, int cacheCount = 10, params object[] param)
     {
-        if (string.IsNullOrEmpty(path)) return null;
+        if (string.IsNullOrEmpty(path)) return -1;
         AssetObjectPool<ObjectPoolItem> temp = null;
         if (!pool.TryGetValue(path, out temp))
         {
@@ -106,7 +106,7 @@ public class AssetObjectPool
             temp.Init(cacheCount);
             pool.Add(path, temp);
         }
-        return temp.Dequeue(action, param);
+        return temp.Dequeue(action, param).ItemID;
     }
     public void Release()
     {
@@ -300,9 +300,9 @@ public class AssetPool
         if (string.IsNullOrEmpty(path)) return;
         if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
     }
-    public AssetPoolItem Dequeue<T>(string path, Action<int, Object, object[]> action = null, int cacheCount = 10, params object[] param) where T : Object
+    public int Dequeue<T>(string path, Action<int, Object, object[]> action = null, int cacheCount = 10, params object[] param) where T : Object
     {
-        if (string.IsNullOrEmpty(path)) return null;
+        if (string.IsNullOrEmpty(path)) return -1;
         AssetPool<AssetPoolItem> temp = null;
         if (!pool.TryGetValue(path, out temp))
         {
@@ -311,7 +311,7 @@ public class AssetPool
             temp.Init(cacheCount);
             pool.Add(path, temp);
         }
-        return temp.Dequeue<T>(action, param);
+        return temp.Dequeue<T>(action, param).ItemID;
     }
     public void Release()
     {

@@ -5,6 +5,7 @@ public class GameObjectComponent : ECS_Component
 {
     private int itemId;
     private string path;
+    private Transform parent;
     private GameObject obj;
     private Action finish;
 
@@ -15,12 +16,17 @@ public class GameObjectComponent : ECS_Component
         if (itemId > 0) Clear();
         if (string.IsNullOrEmpty(path)) return;
         this.path = path;
+        this.parent = parent;
         this.finish = finish;
-        itemId = BattleManager.Instance.Pool.Dequeue(path, parent, LoadFinish).ItemID;
+        itemId = BattleManager.Instance.Pool.Dequeue(path, LoadFinish);
     }
     protected void LoadFinish(int itemId, GameObject obj, object[] param)
     {
         this.obj = obj;
+        obj.transform.SetParent(parent);
+        obj.transform.localPosition = Vector3.zero;
+        obj.transform.localRotation = Quaternion.identity;
+        obj.transform.localScale = Vector3.one;
         finish?.Invoke();
     }
     public void Clear()

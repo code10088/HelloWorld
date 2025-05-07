@@ -36,10 +36,22 @@ public class TestScene : SceneBase
 
     public void LoadBulletFromPool()
     {
-        pool.Dequeue(component.obj.transform, (a, b, c) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
-        pool.Dequeue(component.obj.transform, (a, b, c) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
+        pool.Dequeue((a, b, c) =>
+        {
+            b.transform.SetParent(component.obj.transform);
+            b.transform.localScale = Vector3.one * Random.Range(0, 10);
+        });
+        pool.Dequeue((a, b, c) =>
+        {
+            b.transform.SetParent(component.obj.transform);
+            b.transform.localScale = Vector3.one * Random.Range(0, 10);
+        });
         pool.Enqueue(pool.Use[0].ItemID);
-        pool.Dequeue(component.obj.transform, (a, b, c) => b.transform.localScale = Vector3.one * Random.Range(0, 10));
+        pool.Dequeue((a, b, c) =>
+        {
+            b.transform.SetParent(component.obj.transform);
+            b.transform.localScale = Vector3.one * Random.Range(0, 10);
+        });
     }
     public void DelectBullet()
     {

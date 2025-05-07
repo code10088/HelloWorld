@@ -110,7 +110,7 @@ public class UIBase
             loadId1.Remove(image.loadId);
             loader1.Enqueue(path, image.loadId);
         }
-        image.loadId = loader1.Dequeue<Sprite>(path, (a, b, c) => image.sprite = (Sprite)b).ItemID;
+        image.loadId = loader1.Dequeue<Sprite>(path, (a, b, c) => image.sprite = (Sprite)b);
         loadId1.Add(image.loadId);
     }
     /// <summary>
@@ -125,18 +125,18 @@ public class UIBase
             loadId1.Remove(image.loadId);
             loader1.Enqueue(path, image.loadId);
         }
-        image.loadId = loader1.Dequeue<Texture>(path, (a, b, c) => image.texture = (Texture)b).ItemID;
+        image.loadId = loader1.Dequeue<Texture>(path, (a, b, c) => image.texture = (Texture)b);
         loadId1.Add(image.loadId);
     }
     /// <summary>
     /// 加载Prefab
     /// </summary>
     /// <param name="path">相对于Assets/ZRes/UI/Prefab的相对路径</param>
-    protected void LoadPrefab(ref int itemId, string path, Transform parent, Action<GameObject> finish)
+    protected void LoadPrefab(ref int itemId, string path, Action<GameObject> finish)
     {
         path = $"{ZResConst.ResUIPrefabPath}{path}.prefab";
         if (itemId > 0) loader2.Enqueue(path, itemId);
-        itemId = loader2.Dequeue(path, parent, (a, b, c) => finish?.Invoke(b)).ItemID;
+        itemId = loader2.Dequeue(path, (a, b, c) => finish?.Invoke(b));
     }
     protected void RemovePrefab(ref int itemId, string path)
     {
@@ -147,11 +147,11 @@ public class UIBase
             itemId = -1;
         }
     }
-    protected void AddEffect(ref int itemId, string path, Transform parent)
+    protected void AddEffect(ref int itemId, string path, Action<GameObject> finish)
     {
         path = $"{ZResConst.ResUIEffectPath}{path}.prefab";
         if (itemId > 0) loader2.Enqueue(path, itemId);
-        itemId = loader2.Dequeue(path, parent).ItemID;
+        itemId = loader2.Dequeue(path, (a, b, c) => finish?.Invoke(b));
     }
     protected void RemoveEffect(ref int itemId, string path)
     {

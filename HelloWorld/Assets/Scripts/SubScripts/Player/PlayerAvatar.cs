@@ -72,11 +72,15 @@ public class PlayerAvatar
             this.avatar = avatar;
             this.finish = finish;
             partCfg = ConfigManager.Instance.GameConfigs.TbPlayerAvatarPart.Get(partId);
-            Init(partCfg.PrefabPath, avatar.modelT);
+            Init(partCfg.PrefabPath);
         }
         protected override void Finish(GameObject obj)
         {
             if (obj == null) return;
+            obj.transform.SetParent(avatar.modelT);
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
+            obj.transform.localScale = Vector3.one;
             Combine(obj);
             finish(partCfg.ID);
         }
