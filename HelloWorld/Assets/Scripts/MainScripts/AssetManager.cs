@@ -186,7 +186,6 @@ public enum LoadState
 public class LoadGameObjectItem
 {
     protected string path;
-    protected Transform parent;
     protected Object asset;
     private AsyncInstantiateOperation<Object> aio;
     protected GameObject obj;
@@ -198,10 +197,9 @@ public class LoadGameObjectItem
     private Action<GameObject, object[]> action;
     protected object[] param;
 
-    public void Init(string path, Transform parent, Action<GameObject, object[]> action = null, params object[] param)
+    public void Init(string path, Action<GameObject, object[]> action = null, params object[] param)
     {
         this.path = path;
-        this.parent = parent;
         this.action = action;
         this.param = param;
     }
@@ -270,10 +268,6 @@ public class LoadGameObjectItem
         {
             obj = aio.Result[0] as GameObject;
             state = LoadState.InstantiateFinish | LoadState.Release;
-            obj.transform.SetParent(parent);
-            obj.transform.localPosition = Vector3.zero;
-            obj.transform.localRotation = Quaternion.identity;
-            obj.transform.localScale = Vector3.one;
             obj.SetActive(false);
             Finish(null);
         }
@@ -281,10 +275,6 @@ public class LoadGameObjectItem
         {
             obj = aio.Result[0] as GameObject;
             state = LoadState.InstantiateFinish;
-            obj.transform.SetParent(parent);
-            obj.transform.localPosition = Vector3.zero;
-            obj.transform.localRotation = Quaternion.identity;
-            obj.transform.localScale = Vector3.one;
             Finish(obj);
         }
     }
@@ -300,7 +290,6 @@ public class LoadGameObjectItem
     }
     public virtual void Release()
     {
-        parent = null;
         asset = null;
         aio = null;
         if (obj != null) GameObject.Destroy(obj);

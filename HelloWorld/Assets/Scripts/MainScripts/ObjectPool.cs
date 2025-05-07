@@ -12,7 +12,7 @@ public class GameObjectPool
         var id = obj.GetInstanceID();
         if (pool.TryGetValue(id, out var temp)) temp.Enqueue(itemId);
     }
-    public ObjectPoolItem Dequeue(GameObject obj, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
+    public ObjectPoolItem Dequeue(GameObject obj, Action<int, GameObject, object[]> action = null, int cacheCount = 10, params object[] param)
     {
         if (obj == null) return null;
         var id = obj.GetInstanceID();
@@ -20,10 +20,10 @@ public class GameObjectPool
         if (!pool.TryGetValue(id, out temp))
         {
             temp = new GameObjectPool<ObjectPoolItem>();
-            temp.Init(obj);
+            temp.Init(obj, cacheCount);
             pool.Add(id, temp);
         }
-        return temp.Dequeue(parent, action, param);
+        return temp.Dequeue(action, param);
     }
     public void Release()
     {
@@ -40,9 +40,10 @@ public class GameObjectPool<T> where T : ObjectPoolItem, new()
 
     public List<T> Use => use;
 
-    public void Init(GameObject obj)
+    public void Init(GameObject obj, int cacheCount = 10)
     {
         this.obj = obj;
+        this.cacheCount = cacheCount;
     }
     public void Enqueue(int itemId)
     {
@@ -52,13 +53,13 @@ public class GameObjectPool<T> where T : ObjectPoolItem, new()
         if (cache.Count >= cacheCount) temp.Release();
         else { temp.Delay(); cache.Add(temp); }
     }
-    public T Dequeue(Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
+    public T Dequeue(Action<int, GameObject, object[]> action = null, params object[] param)
     {
         T temp = null;
         if (cache.Count > 0) temp = cache[0];
         if (temp != null) cache.RemoveAt(0);
         else temp = new T();
-        temp.Init(parent, Delete, action, param);
+        temp.Init(Delete, action, param);
         use.Add(temp);
         temp.InstantiateAsync(obj);
         return temp;
@@ -94,7 +95,7 @@ public class AssetObjectPool
         if (string.IsNullOrEmpty(path)) return;
         if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
     }
-    public ObjectPoolItem Dequeue(string path, Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
+    public ObjectPoolItem Dequeue(string path, Action<int, GameObject, object[]> action = null, int cacheCount = 10, params object[] param)
     {
         if (string.IsNullOrEmpty(path)) return null;
         AssetObjectPool<ObjectPoolItem> temp = null;
@@ -102,9 +103,10 @@ public class AssetObjectPool
         {
             temp = new AssetObjectPool<ObjectPoolItem>();
             temp.Init(path);
+            temp.Init(cacheCount);
             pool.Add(path, temp);
         }
-        return temp.Dequeue(parent, action, param);
+        return temp.Dequeue(action, param);
     }
     public void Release()
     {
@@ -121,6 +123,11 @@ public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
 
     public List<T> Use => use;
 
+    public void Init(int cacheCount = 10)
+    {
+        this.cacheCount = cacheCount;
+    }
+
     public void Enqueue(int itemId)
     {
         T temp = use.Find(a => a.ItemID == itemId);
@@ -130,13 +137,13 @@ public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
         if (cache.Count >= cacheCount) temp.Release();
         else { temp.Delay(); cache.Add(temp); }
     }
-    public T Dequeue(Transform parent, Action<int, GameObject, object[]> action = null, params object[] param)
+    public T Dequeue(Action<int, GameObject, object[]> action = null, params object[] param)
     {
         T temp = null;
         if (cache.Count > 0) temp = cache[0];
         if (temp != null) cache.RemoveAt(0);
         else temp = new T();
-        temp.Init(parent, Delete, action, param);
+        temp.Init(Delete, action, param);
         use.Add(temp);
         wait.Add(temp);
         Load<GameObject>();
@@ -178,7 +185,6 @@ public class ObjectPoolItem
 {
     private static int uniqueId = 0;
     private int itemId = -1;
-    private Transform parent;
     protected Object asset;
     private AsyncInstantiateOperation<Object> aio;
     protected GameObject obj;
@@ -192,10 +198,9 @@ public class ObjectPoolItem
     public int ItemID => itemId;
 
     [Obsolete("请使用GameObjectPool")]
-    public void Init(Transform parent, Action<int> release, Action<int, GameObject, object[]> action, params object[] param)
+    public void Init(Action<int> release, Action<int, GameObject, object[]> action, params object[] param)
     {
         itemId = ++uniqueId;
-        this.parent = parent;
         this.release = release;
         this.action = action;
         this.param = param;
@@ -250,10 +255,6 @@ public class ObjectPoolItem
         if (obj != null)
         {
             obj.SetActive(true);
-            obj.transform.SetParent(parent);
-            obj.transform.localPosition = Vector3.zero;
-            obj.transform.localRotation = Quaternion.identity;
-            obj.transform.localScale = Vector3.one;
         }
         if (action != null)
         {
@@ -271,7 +272,6 @@ public class ObjectPoolItem
     [Obsolete("请使用GameObjectPool")]
     public virtual void Release()
     {
-        parent = null;
         asset = null;
         aio = null;
         if (obj != null) GameObject.Destroy(obj);
@@ -300,7 +300,7 @@ public class AssetPool
         if (string.IsNullOrEmpty(path)) return;
         if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
     }
-    public AssetPoolItem Dequeue<T>(string path, Action<int, Object, object[]> action = null, params object[] param) where T : Object
+    public AssetPoolItem Dequeue<T>(string path, Action<int, Object, object[]> action = null, int cacheCount = 10, params object[] param) where T : Object
     {
         if (string.IsNullOrEmpty(path)) return null;
         AssetPool<AssetPoolItem> temp = null;
@@ -308,6 +308,7 @@ public class AssetPool
         {
             temp = new AssetPool<AssetPoolItem>();
             temp.Init(path);
+            temp.Init(cacheCount);
             pool.Add(path, temp);
         }
         return temp.Dequeue<T>(action, param);
@@ -326,6 +327,11 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
     private int cacheCount = 10;
 
     public List<T> Use => use;
+
+    public void Init(int cacheCount = 10)
+    {
+        this.cacheCount = cacheCount;
+    }
 
     public void Enqueue(int itemId)
     {
