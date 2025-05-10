@@ -31,7 +31,7 @@ public class TestScene : SceneBase
     {
         base.OnDestroy();
         GameDebug.Log("TestScene OnDestroy");
-        pool.Release();
+        pool.Destroy();
     }
 
     public void LoadBulletFromPool()

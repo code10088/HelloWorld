@@ -24,7 +24,7 @@ public class BattleManager : Singletion<BattleManager>
         SystemManager.Instance.Clear();
         EntityCacheManager.Instance.Clear();
 
-        Pool.Release();
+        Pool.Destroy();
         Updater.Instance.StopUpdate(updateId);
         SceneManager.Instance.CloseScene(sceneId);
         BattleScene = null;

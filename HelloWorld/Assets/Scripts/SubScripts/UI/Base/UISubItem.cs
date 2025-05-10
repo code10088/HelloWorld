@@ -25,7 +25,7 @@ public class UISubItem : UIBase
     {
         prefabPath = path;
     }
-    private void Load(Transform parent, Action<bool> open = null, params object[] param)
+    private void Enable(Transform parent, Action<bool> open = null, params object[] param)
     {
         this.parent = parent;
         this.open = open;
@@ -57,7 +57,7 @@ public class UISubItem : UIBase
     {
         if (_asset == null)
         {
-            Release(true);
+            Destroy();
             open?.Invoke(false);
         }
         else if (state.HasFlag(LoadState.Release))
@@ -78,7 +78,7 @@ public class UISubItem : UIBase
     {
         if (aio.Result.Length == 0)
         {
-            Release(true);
+            Destroy();
             open?.Invoke(false);
         }
         else if (state.HasFlag(LoadState.Release))
@@ -116,14 +116,13 @@ public class UISubItem : UIBase
             open?.Invoke(true);
         }
     }
-    private void Release(bool immediate = false)
+    private void Disable()
     {
         if (state.HasFlag(LoadState.InstantiateFinish)) OnDisable();
-        if (immediate) _Release();
-        else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: Destroy);
         state |= LoadState.Release;
     }
-    private void _Release()
+    private void Destroy()
     {
         OnDestroy();
         parent = null;
@@ -151,20 +150,16 @@ public class UISubItem : UIBase
     private bool active = false;
     public bool Active => active;
 
-    public void SetActive(Transform parent, bool state, Action<bool> open = null, params object[] param)
-    {
-        if (state && !active) Open(parent, open, param);
-        else if (!state && active) Close();
-    }
     public void Open(Transform parent, Action<bool> open = null, params object[] param)
     {
         active = true;
-        Load(parent, open, param);
+        Enable(parent, open, param);
     }
     public void Close(bool immediate = false)
     {
         active = false;
-        Release(immediate);
+        if (immediate) Destroy();
+        else Disable();
     }
     protected override void RefreshUILayer()
     {

@@ -159,7 +159,7 @@ public class UITest : UIBase
     }
     private void OnOpenSub()
     {
-        if (subUI.Active) subUI.SetActive(component.subRootObj.transform, false);
+        if (subUI.Active) subUI.Close();
         else subUI.Open(component.subRootObj.transform);
     }
     private void LoadSprite()

@@ -203,20 +203,12 @@ public class LoadGameObjectItem
         this.action = action;
         this.param = param;
     }
-    public void SetActive(bool b)
+    public void Enable()
     {
-        if (b && state.HasFlag(LoadState.Release))
+        if (state.HasFlag(LoadState.Release))
         {
             Recycle();
-            Load();
         }
-        else if (!b && !state.HasFlag(LoadState.Release))
-        {
-            Delay();
-        }
-    }
-    private void Load()
-    {
         switch (state)
         {
             case LoadState.None:
@@ -240,7 +232,7 @@ public class LoadGameObjectItem
     {
         if (_asset == null)
         {
-            Release();
+            Destroy();
             Finish(null);
         }
         else if (state.HasFlag(LoadState.Release))
@@ -261,7 +253,7 @@ public class LoadGameObjectItem
     {
         if (aio.Result.Length == 0)
         {
-            Release();
+            Destroy();
             Finish(null);
         }
         else if (state.HasFlag(LoadState.Release))
@@ -282,13 +274,13 @@ public class LoadGameObjectItem
     {
         action?.Invoke(obj, param);
     }
-    private void Delay()
+    public void Disable()
     {
         obj?.SetActive(false);
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Release);
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Destroy);
         state |= LoadState.Release;
     }
-    public virtual void Release()
+    public virtual void Destroy()
     {
         asset = null;
         aio = null;
@@ -327,7 +319,7 @@ public class LoadAssetItem
         this.action = action;
         this.param = param;
     }
-    public void Load<T>() where T : Object
+    public void Enable<T>() where T : Object
     {
         if (state.HasFlag(LoadState.Release))
         {
@@ -350,7 +342,7 @@ public class LoadAssetItem
     {
         if (_asset == null)
         {
-            Release();
+            Destroy();
             Finish(null);
         }
         else if (state.HasFlag(LoadState.Release))
@@ -370,12 +362,12 @@ public class LoadAssetItem
     {
         action?.Invoke(asset, param);
     }
-    public void Delay()
+    public void Disable()
     {
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Release);
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Destroy);
         state |= LoadState.Release;
     }
-    public virtual void Release()
+    public virtual void Destroy()
     {
         asset = null;
         AssetManager.Instance.Unload(ref loadId);

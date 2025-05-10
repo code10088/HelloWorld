@@ -40,7 +40,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         item.SetParam(from, open, progress, param);
         if (tempIndex >= 0) cacheScene.RemoveAt(tempIndex);
         loadScene.Add(item);
-        item.Load();
+        item.Enable();
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(-1, 1, UpdateProgress);
         return item.ID;
     }
@@ -58,7 +58,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         if (tempIndex >= 0)
         {
             SceneItem item = loadScene[tempIndex];
-            item.Release();
+            item.Disable();
             item.OpenActionInvoke(false);
             loadScene.RemoveAt(tempIndex);
             cacheScene.Add(item);
@@ -69,7 +69,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         if (tempIndex >= 0)
         {
             SceneItem item = curScene[tempIndex];
-            item.Release();
+            item.Disable();
             curScene.RemoveAt(tempIndex);
             cacheScene.Add(item);
             return;
@@ -81,7 +81,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         if (tempIndex >= 0)
         {
             SceneItem item = loadScene[tempIndex];
-            item.Release();
+            item.Disable();
             item.OpenActionInvoke(false);
             loadScene.RemoveAt(tempIndex);
             cacheScene.Add(item);
@@ -92,7 +92,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         if (tempIndex >= 0)
         {
             SceneItem item = curScene[tempIndex];
-            item.Release();
+            item.Disable();
             curScene.RemoveAt(tempIndex);
             cacheScene.Add(item);
             return;
@@ -168,7 +168,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
             progress = _progress;
             UIManager.Instance.OpenUI(UIType.UISceneLoading);
         }
-        public void Load()
+        public void Enable()
         {
             if (state.HasFlag(LoadState.Release))
             {
@@ -196,7 +196,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         {
             if (_asset == null)
             {
-                Release(true);
+                Destroy();
                 Instance.InitScene();
             }
             else if (state.HasFlag(LoadState.Release))
@@ -217,7 +217,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         {
             if (aio.Result.Length == 0)
             {
-                Release(true);
+                Destroy();
             }
             else
             {
@@ -267,15 +267,14 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
             EventManager.Instance.FireEvent(EventType.SetSceneLoadingProgress, "Loading Scene", f);
             if (progress != null) progress(f);
         }
-        public void Release(bool immediate = false)
+        public void Disable()
         {
             baseObj?.SetActive(false);
             baseScene?.OnDisable();
-            if (immediate) _Release();
-            else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);
+            if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: Destroy);
             state |= LoadState.Release;
         }
-        private void _Release()
+        public void Destroy()
         {
             Instance.cacheScene.Remove(this);
             if (baseScene != null) baseScene?.OnDestroy();

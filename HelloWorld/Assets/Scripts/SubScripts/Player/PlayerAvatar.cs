@@ -31,7 +31,7 @@ public class PlayerAvatar
         var target = cache.Find(a => a.PartCfg.ID == partId);
         if (target == null) target = new PlayerAvatarPartItem(this, partId, ChangeFinish);
         else cache.Remove(target);
-        target.SetActive(true);
+        target.Enable();
         dress.Add(target);
     }
     private void ChangeFinish(int partId)
@@ -42,18 +42,18 @@ public class PlayerAvatar
         {
             var tempItem = dress.Find(a => a.PartCfg.ID != partId && a.PartCfg.OccupyPart.Contains(partCfg.OccupyPart[i]));
             if (tempItem == null) continue;
-            tempItem.SetActive(false);
+            tempItem.Disable();
             dress.Remove(tempItem);
             cache.Add(tempItem);
             if (cache.Count < cacheCount) continue;
-            cache[0].Release();
+            cache[0].Destroy();
             cache.RemoveAt(0);
         }
     }
-    public void Release()
+    public void Destroy()
     {
-        for (int i = 0; i < dress.Count; i++) dress[i].Release();
-        for (int i = 0; i < cache.Count; i++) cache[i].Release();
+        for (int i = 0; i < dress.Count; i++) dress[i].Destroy();
+        for (int i = 0; i < cache.Count; i++) cache[i].Destroy();
         allBones.Clear();
         dress.Clear();
         cache.Clear();

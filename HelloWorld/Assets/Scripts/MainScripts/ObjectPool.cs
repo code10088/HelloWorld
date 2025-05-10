@@ -25,9 +25,9 @@ public class GameObjectPool
         }
         return temp.Dequeue(action, param).ItemID;
     }
-    public void Release()
+    public void Destroy()
     {
-        foreach (var item in pool) item.Value.Release();
+        foreach (var item in pool) item.Value.Destroy();
         pool.Clear();
     }
 }
@@ -50,8 +50,8 @@ public class GameObjectPool<T> where T : ObjectPoolItem, new()
         T temp = use.Find(a => a.ItemID == itemId);
         if (temp == null) return;
         use.Remove(temp);
-        if (cache.Count >= cacheCount) temp.Release();
-        else { temp.Delay(); cache.Add(temp); }
+        if (cache.Count >= cacheCount) temp.Destroy();
+        else { temp.Disable(); cache.Add(temp); }
     }
     public T Dequeue(Action<int, GameObject, object[]> action = null, params object[] param)
     {
@@ -61,13 +61,13 @@ public class GameObjectPool<T> where T : ObjectPoolItem, new()
         else temp = new T();
         temp.Init(Delete, action, param);
         use.Add(temp);
-        temp.InstantiateAsync(obj);
+        temp.Enable(obj);
         return temp;
     }
-    public void Release()
+    public void Destroy()
     {
-        for (int i = use.Count - 1; i >= 0; i--) use[i].Release();
-        for (int i = cache.Count - 1; i >= 0; i--) cache[i].Release();
+        for (int i = use.Count - 1; i >= 0; i--) use[i].Destroy();
+        for (int i = cache.Count - 1; i >= 0; i--) cache[i].Destroy();
         use.Clear();
         cache.Clear();
     }
@@ -108,9 +108,9 @@ public class AssetObjectPool
         }
         return temp.Dequeue(action, param).ItemID;
     }
-    public void Release()
+    public void Destroy()
     {
-        foreach (var item in pool) item.Value.Release();
+        foreach (var item in pool) item.Value.Destroy();
         pool.Clear();
     }
 }
@@ -134,8 +134,8 @@ public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
         if (temp == null) return;
         use.Remove(temp);
         wait.Remove(temp);
-        if (cache.Count >= cacheCount) temp.Release();
-        else { temp.Delay(); cache.Add(temp); }
+        if (cache.Count >= cacheCount) temp.Destroy();
+        else { temp.Disable(); cache.Add(temp); }
     }
     public T Dequeue(Action<int, GameObject, object[]> action = null, params object[] param)
     {
@@ -146,17 +146,17 @@ public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
         temp.Init(Delete, action, param);
         use.Add(temp);
         wait.Add(temp);
-        Load<GameObject>();
+        Enable<GameObject>();
         return temp;
     }
-    public override void Release()
+    public override void Destroy()
     {
-        for (int i = use.Count - 1; i >= 0; i--) use[i].Release();
-        for (int i = cache.Count - 1; i >= 0; i--) cache[i].Release();
+        for (int i = use.Count - 1; i >= 0; i--) use[i].Destroy();
+        for (int i = cache.Count - 1; i >= 0; i--) cache[i].Destroy();
         use.Clear();
         wait.Clear();
         cache.Clear();
-        base.Release();
+        base.Destroy();
     }
     private void Delete(int itemId)
     {
@@ -164,20 +164,20 @@ public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
         if (index >= 0)
         {
             use.RemoveAt(index);
-            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Delay();
+            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Disable();
             return;
         }
         index = cache.FindIndex(a => a.ItemID == itemId);
         if (index >= 0)
         {
             cache.RemoveAt(index);
-            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Delay();
+            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Disable();
             return;
         }
     }
     protected override void Finish(Object asset)
     {
-        for (int i = 0; i < wait.Count; i++) wait[i].InstantiateAsync(asset);
+        for (int i = 0; i < wait.Count; i++) wait[i].Enable(asset);
         wait.Clear();
     }
 }
@@ -206,7 +206,7 @@ public class ObjectPoolItem
         this.param = param;
     }
     [Obsolete("请使用GameObjectPool")]
-    public void InstantiateAsync(Object _asset)
+    public void Enable(Object _asset)
     {
         if (state.HasFlag(LoadState.Release))
         {
@@ -214,7 +214,7 @@ public class ObjectPoolItem
         }
         if (_asset == null)
         {
-            Release();
+            Destroy();
             Finish(null);
         }
         else if (state == LoadState.None)
@@ -233,7 +233,7 @@ public class ObjectPoolItem
     {
         if (aio.Result.Length == 0)
         {
-            Release();
+            Destroy();
             Finish(null);
         }
         else if (state.HasFlag(LoadState.Release))
@@ -261,16 +261,16 @@ public class ObjectPoolItem
             action?.Invoke(itemId, obj, param);
         }
     }
-    public virtual void Delay()
+    public virtual void Disable()
     {
         obj?.SetActive(false);
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Destroy);
         state |= LoadState.Release;
         action = null;
         param = null;
     }
     [Obsolete("请使用GameObjectPool")]
-    public virtual void Release()
+    public virtual void Destroy()
     {
         asset = null;
         aio = null;
@@ -313,9 +313,9 @@ public class AssetPool
         }
         return temp.Dequeue<T>(action, param).ItemID;
     }
-    public void Release()
+    public void Destroy()
     {
-        foreach (var item in pool) item.Value.Release();
+        foreach (var item in pool) item.Value.Destroy();
         pool.Clear();
     }
 }
@@ -339,8 +339,8 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
         if (temp == null) return;
         use.Remove(temp);
         wait.Remove(temp);
-        if (cache.Count >= cacheCount) temp.Release();
-        else { temp.Delay(); cache.Add(temp); }
+        if (cache.Count >= cacheCount) temp.Destroy();
+        else { temp.Disable(); cache.Add(temp); }
     }
     public T Dequeue<K>(Action<int, Object, object[]> action = null, params object[] param) where K : Object
     {
@@ -351,17 +351,17 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
         temp.Init(Delete, action, param);
         use.Add(temp);
         wait.Add(temp);
-        Load<K>();
+        Enable<K>();
         return temp;
     }
-    public override void Release()
+    public override void Destroy()
     {
-        for (int i = use.Count - 1; i >= 0; i--) use[i].Release();
-        for (int i = cache.Count - 1; i >= 0; i--) cache[i].Release();
+        for (int i = use.Count - 1; i >= 0; i--) use[i].Destroy();
+        for (int i = cache.Count - 1; i >= 0; i--) cache[i].Destroy();
         use.Clear();
         wait.Clear();
         cache.Clear();
-        base.Release();
+        base.Destroy();
     }
     private void Delete(int itemId)
     {
@@ -369,20 +369,20 @@ public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
         if (index >= 0)
         {
             use.RemoveAt(index);
-            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Delay();
+            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Disable();
             return;
         }
         index = cache.FindIndex(a => a.ItemID == itemId);
         if (index >= 0)
         {
             cache.RemoveAt(index);
-            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Delay();
+            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Disable();
             return;
         }
     }
     protected override void Finish(Object asset)
     {
-        for (int i = 0; i < wait.Count; i++) wait[i].InstantiateAsync(asset);
+        for (int i = 0; i < wait.Count; i++) wait[i].Enable(asset);
         wait.Clear();
     }
 }
@@ -409,7 +409,7 @@ public class AssetPoolItem
         this.param = param;
     }
     [Obsolete("请使用AssetPool")]
-    public void InstantiateAsync(Object _asset)
+    public void Enable(Object _asset)
     {
         if (state == LoadState.Release)
         {
@@ -417,7 +417,7 @@ public class AssetPoolItem
         }
         if (_asset == null)
         {
-            Release();
+            Destroy();
             Finish(null);
         }
         else
@@ -430,15 +430,15 @@ public class AssetPoolItem
     {
         action?.Invoke(itemId, asset, param);
     }
-    public virtual void Delay()
+    public virtual void Disable()
     {
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Release);
+        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Destroy);
         state = LoadState.Release;
         action = null;
         param = null;
     }
     [Obsolete("请使用AssetPool")]
-    public virtual void Release()
+    public virtual void Destroy()
     {
         asset = null;
         state = LoadState.None;

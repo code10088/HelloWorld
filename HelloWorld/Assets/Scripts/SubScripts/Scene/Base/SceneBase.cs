@@ -45,12 +45,12 @@ public class SceneBase
         loader1.Clear();
         for (int i = 0; i < loader2.Count; i++)
         {
-            loader2[i].SetActive(false);
+            loader2[i].Disable();
         }
     }
     public virtual void OnDestroy()
     {
-        for (int i = 0; i < loader2.Count; i++) loader2[i].Release();
+        for (int i = 0; i < loader2.Count; i++) loader2[i].Destroy();
         loader1 = null;
         loader2 = null;
     }

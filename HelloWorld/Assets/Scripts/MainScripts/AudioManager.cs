@@ -123,7 +123,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             this.loop = loop;
             if (source) source.loop = loop;
         }
-        public override void Delay()
+        public override void Disable()
         {
             if (source)
             {
@@ -135,9 +135,9 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
                 TimeManager.Instance.StopTimer(timerId);
                 timerId = -1;
             }
-            base.Delay();
+            base.Disable();
         }
-        public override void Release()
+        public override void Destroy()
         {
             if (source)
             {
@@ -149,7 +149,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
                 TimeManager.Instance.StopTimer(timerId);
                 timerId = -1;
             }
-            base.Release();
+            base.Destroy();
         }
         public override void Finish(Object asset)
         {

@@ -33,7 +33,7 @@ public class EffectManager : Singletion<EffectManager>
     public void Clear()
     {
         foreach (var item in list) item.Reset();
-        foreach (var item in effectDic) item.Value.Release();
+        foreach (var item in effectDic) item.Value.Destroy();
         list.Clear();
         effectDic.Clear();
     }

@@ -47,7 +47,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         {
             UIItem item = loadUI[tempIndex];
             item.SetParam(from, open, param);
-            item.Load();
+            item.Enable();
             return;
         }
 
@@ -58,7 +58,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
             item.SetParam(from, open, param);
             curUI.RemoveAt(tempIndex);
             loadUI.Add(item);
-            item.Load();
+            item.Enable();
             return;
         }
 
@@ -69,14 +69,14 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
             item.SetParam(from, open, param);
             cacheUI.RemoveAt(tempIndex);
             loadUI.Add(item);
-            item.Load();
+            item.Enable();
             return;
         }
 
         UIItem _item = new UIItem(type);
         _item.SetParam(from, open, param);
         loadUI.Add(_item);
-        _item.Load();
+        _item.Enable();
     }
     private void InitUI()
     {
@@ -92,7 +92,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         if (tempIndex >= 0)
         {
             UIItem item = loadUI[tempIndex];
-            item.Release();
+            item.Disable();
             item.OpenActionInvoke(false);
             loadUI.RemoveAt(tempIndex);
             cacheUI.Add(item);
@@ -103,7 +103,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         if (tempIndex >= 0)
         {
             UIItem item = curUI[tempIndex];
-            item.Release();
+            item.Disable();
             curUI.RemoveAt(tempIndex);
             cacheUI.Add(item);
             return;
@@ -167,7 +167,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
             this.open = open;
             this.param = param;
         }
-        public void Load()
+        public void Enable()
         {
             Instance.SetEventSystemState(false);
             if (state.HasFlag(LoadState.Release))
@@ -196,7 +196,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         {
             if (_asset == null)
             {
-                Release(true);
+                Destroy();
                 Finish();
             }
             else if (state.HasFlag(LoadState.Release))
@@ -217,7 +217,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         {
             if (aio.Result.Length == 0)
             {
-                Release(true);
+                Destroy();
             }
             else
             {
@@ -268,14 +268,13 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         {
             open?.Invoke(success);
         }
-        public void Release(bool immediate = false)
+        public void Disable()
         {
             baseUI?.OnDisable();
-            if (immediate) _Release();
-            else if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: _Release);
+            if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: Destroy);
             state |= LoadState.Release;
         }
-        private void _Release()
+        public void Destroy()
         {
             if (baseUI != null) baseUI.OnDestroy();
             baseUI = null;

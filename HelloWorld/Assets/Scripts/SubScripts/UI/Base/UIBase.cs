@@ -91,9 +91,9 @@ public class UIBase
         layerRecord2 = null;
         layerRecord3 = null;
         loadId1 = null;
-        loader1?.Release();
+        loader1?.Destroy();
         loader1 = null;
-        loader2?.Release();
+        loader2?.Destroy();
         loader2 = null;
     }
     protected virtual void OnClose()
