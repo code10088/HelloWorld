@@ -151,7 +151,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             }
             base.Destroy();
         }
-        public override void Finish(Object asset)
+        protected override void Finish(Object asset)
         {
             source = Instance.GetEmptyAudioSource();
             source.loop = loop;

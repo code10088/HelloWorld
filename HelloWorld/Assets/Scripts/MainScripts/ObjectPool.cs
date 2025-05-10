@@ -261,6 +261,7 @@ public class ObjectPoolItem
             action?.Invoke(itemId, obj, param);
         }
     }
+    [Obsolete("请使用GameObjectPool")]
     public virtual void Disable()
     {
         obj?.SetActive(false);
@@ -426,10 +427,11 @@ public class AssetPoolItem
             Finish(asset);
         }
     }
-    public virtual void Finish(Object asset)
+    protected virtual void Finish(Object asset)
     {
         action?.Invoke(itemId, asset, param);
     }
+    [Obsolete("请使用GameObjectPool")]
     public virtual void Disable()
     {
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Destroy);

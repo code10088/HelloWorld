@@ -279,6 +279,8 @@ public class LoadGameObjectItem
         obj?.SetActive(false);
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Destroy);
         state |= LoadState.Release;
+        action = null;
+        param = null;
     }
     public virtual void Destroy()
     {
@@ -366,6 +368,8 @@ public class LoadAssetItem
     {
         if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Destroy);
         state |= LoadState.Release;
+        action = null;
+        param = null;
     }
     public virtual void Destroy()
     {
