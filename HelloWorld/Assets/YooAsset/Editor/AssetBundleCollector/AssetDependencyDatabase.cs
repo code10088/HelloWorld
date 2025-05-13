@@ -70,7 +70,7 @@ namespace YooAsset.Editor
                     foreach (var cacheInfoPair in _database)
                     {
                         var assetPath = cacheInfoPair.Key;
-                        var assetGUID = AssetDatabase.AssetPathToGUID(assetPath);
+                        var assetGUID = AssetDatabase.AssetPathToGUID(assetPath, AssetPathToGUIDOptions.OnlyExistingAssets);
                         if (string.IsNullOrEmpty(assetGUID))
                         {
                             removeList.Add(assetPath);

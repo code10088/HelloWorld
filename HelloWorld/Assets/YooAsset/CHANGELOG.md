@@ -2,6 +2,46 @@
 
 All notable changes to this package will be documented in this file.
 
+## [2.3.9] - 2025-05-13
+
+### Improvements
+
+- 增加了YOO_ASSET_EXPERIMENT宏，用于控制实验性代码的开关。
+- 构建管线目前会输出构建日志到输出目录下，方便查看引擎在构建时主动清空的控制台日志。
+- 优化了收集器tag传染扩散逻辑，避免Group里配置了Tag导致的无意义的警告信息。
+- 扩展工程内PanelMonitor代码默认关闭状态。
+
+### Fixed
+
+- (#528) 修复了AssetDependencyDatabase在查询引擎资源对象是否存在的时效问题。
+
+### Added
+
+- (#542) 新增了资源管理系统销毁方法。
+
+  该方法会销毁所有的资源包裹和异步操作任务，以及卸载所有AssetBundle对象！
+
+  ```csharp
+  public class YooAssets
+  {
+      /// <summary>
+      /// 销毁资源系统
+      /// </summary>
+      public static void Destroy();
+  }
+  ```
+
+- 新增了SBP构建管线的构建参数
+
+  ```csharp
+  /// <summary>
+  /// 从AssetBundle文件头里剥离Unity版本信息
+  /// </summary>
+  public bool StripUnityVersion = false;
+  ```
+
+- 新增了构建错误码：BuiltinShadersBundleNameIsNull 
+
 ## [2.3.8] - 2025-04-17
 
 ### Improvements

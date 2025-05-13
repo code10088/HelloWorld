@@ -24,7 +24,7 @@ namespace YooAsset
 #if UNITY_EDITOR
         void OnApplicationQuit()
         {
-            YooAssets.OnApplicationQuit();
+            YooAssets.OnApplicationQuit(false);
         }
 #endif
 
