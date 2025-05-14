@@ -75,7 +75,14 @@ namespace YooAsset
                 if (_driver != null)
                     GameObject.Destroy(_driver);
 
-                OnApplicationQuit(true);
+                // 终止并清空所有包裹的异步操作
+                ClearAllPackageOperation();
+
+                // 卸载所有AssetBundle
+                AssetBundle.UnloadAllAssetBundles(true);
+
+                // 清空资源包裹列表
+                _packages.Clear();
             }
         }
 
@@ -91,25 +98,15 @@ namespace YooAsset
         }
 
         /// <summary>
-        /// 应用程序退出处理
+        /// 终止并清空所有包裹的异步操作
         /// </summary>
-        internal static void OnApplicationQuit(bool unloadAllAssetBundles)
+        internal static void ClearAllPackageOperation()
         {
-            // 说明：在编辑器下确保播放被停止时IO类操作被终止。
             foreach (var package in _packages)
             {
                 OperationSystem.ClearPackageOperation(package.PackageName);
             }
             OperationSystem.DestroyAll();
-
-            // 清空资源包裹列表
-            _packages.Clear();
-
-            // 卸载所有AssetBundle
-            if (unloadAllAssetBundles)
-            {
-                AssetBundle.UnloadAllAssetBundles(true);
-            }
         }
 
         /// <summary>
