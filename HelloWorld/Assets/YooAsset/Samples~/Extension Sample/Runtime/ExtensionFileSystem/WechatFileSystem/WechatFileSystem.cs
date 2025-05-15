@@ -198,6 +198,15 @@ internal class WechatFileSystem : IFileSystem
             RemoteServices = new WebRemoteServices(webRoot);
         }
 
+        // 检查URL双斜杠
+        // 注意：双斜杠会导致微信插件加载文件失败，但网络请求又不返回失败！
+        {
+            var mainURL = RemoteServices.GetRemoteMainURL("test.bundle");
+            var fallbackURL = RemoteServices.GetRemoteFallbackURL("test.bundle");
+            if (PathUtility.HasDoubleSlashes(mainURL) || PathUtility.HasDoubleSlashes(fallbackURL))
+                throw new Exception($"{nameof(RemoteServices)} returned URL contains double slashes. !");
+        }
+
         _fileSystemMgr = WX.GetFileSystemManager();
     }
     public virtual void OnDestroy()
