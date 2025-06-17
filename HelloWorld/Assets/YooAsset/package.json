@@ -15,6 +15,11 @@
             "path": "Samples~/Space Shooter"
         },
         {
+            "displayName": "Mini Game",
+            "description": "YooAsset extension file system, Include wechat file system, tiktok file system.",
+            "path": "Samples~/Mini Game"
+        },
+        {
             "displayName": "Extension Sample",
             "description": "YooAsset extension sample, Include patcher combine, patcher compare, patcher importer and other functions.",
             "path": "Samples~/Extension Sample"

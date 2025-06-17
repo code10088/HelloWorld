@@ -70,7 +70,11 @@ namespace YooAsset.Editor
                     foreach (var cacheInfoPair in _database)
                     {
                         var assetPath = cacheInfoPair.Key;
+#if UNITY_2021_3_OR_NEWER
                         var assetGUID = AssetDatabase.AssetPathToGUID(assetPath, AssetPathToGUIDOptions.OnlyExistingAssets);
+#else
+                        var assetGUID = AssetDatabase.AssetPathToGUID(assetPath);
+#endif
                         if (string.IsNullOrEmpty(assetGUID))
                         {
                             removeList.Add(assetPath);
