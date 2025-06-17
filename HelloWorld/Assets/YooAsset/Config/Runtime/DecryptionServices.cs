@@ -34,6 +34,10 @@ public class DecryptionServices : IDecryptionServices
         decryptResult.CreateRequest = AssetBundle.LoadFromStreamAsync(bundleStream, fileInfo.FileLoadCRC, 1024);
         return decryptResult;
     }
+    DecryptResult IDecryptionServices.LoadAssetBundleFallback(DecryptFileInfo fileInfo)
+    {
+        return new DecryptResult();
+    }
     byte[] IDecryptionServices.ReadFileData(DecryptFileInfo fileInfo)
     {
         throw new NotImplementedException();
