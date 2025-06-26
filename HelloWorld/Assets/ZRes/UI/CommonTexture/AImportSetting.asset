@@ -12,17 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e494f574f80e543e78da3b08a102430b, type: 3}
   m_Name: AImportSetting
   m_EditorClassIdentifier: 
-  IsEnabled: 1
-  ConfigSortOrder: 10
   MatchList:
-  - ZRes/UI/Texture
+  - ZRes/UI/CommonTexture
   IgnoreList: []
   TextureType: 0
   NPOTScale: 1
   StreamingMipmaps: 0
   VirtualTextureOnly: 0
   SpriteMode: 1
-  PackingTag: 
   PixelsPerUnit: 100
   MeshType: 1
   ExtrudeEdges: 1

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using Unity.Collections;
 using UnityEditor.Build;
 using System;
+using System.Text;
 
 public class GameEditorTools
 {
@@ -137,7 +138,7 @@ public class GameEditorTools
     }
 
     [MenuItem("Tools/Editor/CopyAutoIndex &d")]
-    public static void Copy()
+    public static void CopyAutoIndex()
     {
         foreach (Transform t in Selection.GetTransforms(SelectionMode.TopLevel | SelectionMode.ExcludePrefab | SelectionMode.Editable))
         {
@@ -172,6 +173,20 @@ public class GameEditorTools
             newObject.transform.SetSiblingIndex(sibling + 1);
             Undo.RegisterCreatedObjectUndo(newObject, "CopyAutoIndex");
         }
+    }
+    [MenuItem("GameObject/Tools/CopyPath", false, -1)]
+    public static void CopyPath()
+    {
+        if (Selection.activeGameObject == null) return;
+        StringBuilder pathBuilder = new StringBuilder();
+        Transform current = Selection.activeGameObject.transform;
+        while (current)
+        {
+            pathBuilder.Insert(0, current.name);
+            current = current.parent;
+            if (current) pathBuilder.Insert(0, "/");
+        }
+        EditorGUIUtility.systemCopyBuffer = pathBuilder.ToString();
     }
     [MenuItem("Tools/Editor/EditorFastForward %RIGHT")]
     public static void FastForward()
