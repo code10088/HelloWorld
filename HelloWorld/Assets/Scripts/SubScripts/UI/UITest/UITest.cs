@@ -1,6 +1,15 @@
 using cfg;
+using Newtonsoft.Json;
 using SuperScrollView;
 using System.Collections.Generic;
+using UnityEngine;
+
+#if WEIXINMINIGAME
+using WeChatWASM;
+#elif DOUYINMINIGAME
+using TTSDK;
+using TTSDK.UNBridgeLib.LitJson;
+#endif
 
 public class UITest : UIBase
 {
@@ -224,6 +233,111 @@ public class UITest : UIBase
     }
     #endregion
 
+    #region –°”Œœ∑
+    private int adId = -1;
+    private int retry = 3;
+    private void CreateAd()
+    {
+#if WEIXINMINIGAME
+        AdConst.TempId1 = SDK.Instance.WXCreateRewardedVideoAd(AdConst.WXAdUnitId1);
+        adId = SDK.Instance.WXCreateCustomAd(AdConst.WXAdUnitId2, 30, 0, -200, Screen.width);
+#elif DOUYINMINIGAME
+        AdConst.TempId1 = SDK.Instance.TTCreateRewardedVideoAd(AdConst.TTAdUnitId1);
+        adId = SDK.Instance.TTCreateBannerAd(AdConst.TTAdUnitId2, 30, 0, -200, Screen.width);
+#endif
+    }
+    private void ShowAd()
+    {
+        var result = SDK.Instance.Show(adId);
+        if (result == ShowAdResult.Fail)
+        {
+            if (--retry < 0) return;
+#if WEIXINMINIGAME
+            adId = SDK.Instance.WXCreateCustomAd(AdConst.WXAdUnitId2, 30, 0, -200, Screen.width);
+#elif DOUYINMINIGAME
+            adId = SDK.Instance.TTCreateBannerAd(AdConst.TTAdUnitId2, 30, 0, -200, Screen.width);
+#endif
+            ShowAd();
+        }
+        else if (result == ShowAdResult.Loading)
+        {
+            TimeManager.Instance.StartTimer(30, 0, a => ShowAd());
+        }
+    }
+    private void ShowAdVideo()
+    {
+        SDK.Instance.Show(AdConst.TempId1, OnShowAdVideoCallback);
+    }
+    private void OnShowAdVideoCallback(bool isEnded)
+    {
+        GameDebug.Log(isEnded);
+    }
+    int record = 0;
+    private void UploadRankData()
+    {
+#if WEIXINMINIGAME
+        var message = new OpenDataMessage();
+        message.type = "setUserRecord";
+        message.score = record++;
+        string str = JsonConvert.SerializeObject(message);
+        SDK.Instance.PostMessage(str);
+#elif DOUYINMINIGAME
+        void SetImRankData()
+        {
+            var message = new JsonData
+            {
+                ["dataType"] = 0,
+                ["value"] = record++.ToString(),
+                ["priority"] = 0,
+                ["extra"] = "extra",
+                ["zoneId"] = "default",
+            };
+            TT.SetImRankData(message);
+        }
+        if (SDK.Instance.LoginState) SetImRankData();
+        else SDK.Instance.Login(a => { if (a) SetImRankData(); });
+#endif
+    }
+    private void OnClickRank()
+    {
+#if WEIXINMINIGAME
+        component.rankObj.SetActive(true);
+        var x = Mathf.FloorToInt(-component.rankRectTransform.offsetMax.x);
+        var y = Mathf.FloorToInt(150 - component.rankRectTransform.offsetMax.y);
+        var offset = Screen.width / component.uITestCanvasScaler.referenceResolution.x;
+        var width = Mathf.FloorToInt(component.rankRectTransform.rect.width * offset);
+        var height = Mathf.FloorToInt(component.rankRectTransform.rect.height * offset);
+        WX.ShowOpenData(component.rankRawImage.texture, x, y, width, height);
+        var message = new OpenDataMessage();
+        message.type = "showFriendsRank";
+        var str = JsonConvert.SerializeObject(message);
+        SDK.Instance.PostMessage(str);
+#elif DOUYINMINIGAME
+        void GetImRankList()
+        {
+            var data = new JsonData
+            {
+                ["relationType"] = "default",
+                ["dataType"] = 0,
+                ["rankType"] = "week",
+                ["rankTitle"] = "≈≈––∞Ò",
+                ["zoneId"] = "default",
+                ["suffix"] = "",
+            };
+            TT.GetImRankList(data);
+        }
+        if (SDK.Instance.LoginState) GetImRankList();
+        else SDK.Instance.Login(a => { if (a) GetImRankList(); });
+#endif
+    }
+    private void OnClickMenu()
+    {
+#if DOUYINMINIGAME
+        SDK.Instance.TTNavigateToScene();
+#endif
+    }
+    #endregion
+
     private void OnOpenUISetting()
     {
         UIManager.Instance.OpenUI(UIType.UISetting);
@@ -237,3 +351,11 @@ public partial class UITestItem
         itemTextTextMeshProUGUI.text = data.name;
     }
 }
+#if WEIXINMINIGAME
+[System.Serializable]
+public class OpenDataMessage
+{
+    public string type;
+    public int score;
+}
+#endif

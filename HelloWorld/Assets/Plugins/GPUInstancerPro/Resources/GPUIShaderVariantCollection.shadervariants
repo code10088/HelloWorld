@@ -18,13 +18,3 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 0
-  - first: {fileID: -6465566751694194690, guid: 78f1b5ae9238ef140869bdba4aef19db, type: 3}
-    second:
-      variants:
-      - keywords: 
-        passType: 0
-  - first: {fileID: 4800000, guid: d5a4b84d191e1994e8250a125f3b1095, type: 3}
-    second:
-      variants:
-      - keywords: LOD_FADE_CROSSFADE _ENVIRONMENTREFLECTIONS_OFF
-        passType: 0
