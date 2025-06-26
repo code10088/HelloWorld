@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement name="TerrainHelpBoxes" />
+    <uie:Toolbar name="TerrainToolbar" style="border-bottom-width: 0; border-top-width: 1px; height: 26px; border-left-width: 1px; border-right-width: 1px;">
+        <uie:ToolbarButton text="Terrain Settings" focusable="false" name="TerrainSettingsToolbarButton" class="gpui-prototype-list-toolbar-button gpui-prototype-list-toolbar-button-active" style="justify-content: center;" />
+        <uie:ToolbarButton text="Terrain Data" focusable="false" name="TerrainDataToolbarButton" class="gpui-prototype-list-toolbar-button" style="justify-content: center;" />
+        <uie:ToolbarButton text="Info" focusable="false" name="TerrainDebugToolbarButton" class="gpui-prototype-list-toolbar-button" style="justify-content: center; width: 60px; flex-grow: 0;" />
+    </uie:Toolbar>
+    <ui:VisualElement name="TerrainContentElement" class="gpui-border gpui-bg-light" style="margin-bottom: 5px; border-top-width: 0;" />
+    <ui:VisualElement name="TerrainActionButtons" style="flex-grow: 1; flex-direction: row; flex-wrap: wrap;" />
+    <ui:VisualElement name="TerrainActionButtonsHelp" style="flex-grow: 1; flex-direction: column; flex-wrap: wrap;" />
+</ui:UXML>

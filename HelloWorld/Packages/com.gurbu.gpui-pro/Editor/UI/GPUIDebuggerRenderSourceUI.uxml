@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement style="border-left-color: rgba(17, 0, 0, 0.39); border-right-color: rgba(17, 0, 0, 0.39); border-top-color: rgba(17, 0, 0, 0.39); border-bottom-color: rgba(17, 0, 0, 0.39); border-top-width: 1px; padding-bottom: 4px;">
+        <ui:VisualElement style="flex-direction: row; max-height: 36px; margin-top: 4px;">
+            <ui:Label tabindex="-1" text="Source:" parse-escape-sequences="true" display-tooltip-when-elided="true" style="padding-top: 3px;" />
+            <uie:ObjectField name="SourceObjectField" type="UnityEngine.Object, UnityEngine.CoreModule" style="width: 200px;" />
+            <ui:Label tabindex="-1" text="Key:" parse-escape-sequences="true" display-tooltip-when-elided="true" style="padding-top: 3px; margin-left: 8px;" />
+            <ui:IntegerField name="RSKey" style="min-width: 80px; max-width: 80px; width: 80px; height: 20px; max-height: 20px; min-height: 20px; overflow: visible; margin-right: 6px;" />
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-direction: row; max-height: 36px; margin-top: 4px;">
+            <ui:Label tabindex="-1" text="Start index:" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+            <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SourceStartIndexValue" style="width: 50px; max-width: 50px; min-width: 50px; -unity-font-style: bold;" />
+            <ui:Label tabindex="-1" text="Buffer size:" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+            <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SourceBufferSizeValue" style="-unity-font-style: bold; width: 50px; max-width: 50px; min-width: 50px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

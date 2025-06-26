@@ -1,0 +1,134 @@
+﻿// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+#pragma kernel CSOffsetTransformPositions
+#pragma kernel CSMultiplyTransformsWithMatrix
+#pragma kernel CSCullInstancesInsideBounds
+#pragma kernel CSCullInstancesInsideBox
+#pragma kernel CSCullInstancesInsideSphere
+#pragma kernel CSCullInstancesInsideCapsule
+#pragma kernel CSTransformFaceCamView
+#pragma kernel CSTransformFaceCamPos
+#pragma kernel CSTransformSetAll
+#pragma kernel CSResetCulledInstances
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/GPUIDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/Collider.hlsl"
+
+RWStructuredBuffer<float4x4> gpuiTransformBuffer;
+uniform uint bufferSize;
+uniform uint startIndex;
+
+uniform float3 position;
+uniform float4x4 matrix44;
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSOffsetTransformPositions(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+
+    gpuiTransformBuffer[index]._14_24_34 += position;
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSMultiplyTransformsWithMatrix(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+
+    gpuiTransformBuffer[index] = mul(matrix44, gpuiTransformBuffer[index]);
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSCullInstancesInsideBounds(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+    
+    if (IsInsideBounds(gpuiTransformBuffer[index]._14_24_34))
+        gpuiTransformBuffer[index]._44 = 0;
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSCullInstancesInsideBox(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+    
+    if (IsInsideBox(gpuiTransformBuffer[index]._14_24_34))
+        gpuiTransformBuffer[index]._44 = 0;
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSCullInstancesInsideSphere(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+    
+    if (IsInsideSphere(gpuiTransformBuffer[index]._14_24_34))
+        gpuiTransformBuffer[index]._44 = 0;
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSCullInstancesInsideCapsule(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+    
+    if (IsInsideCapsule(gpuiTransformBuffer[index]._14_24_34))
+        gpuiTransformBuffer[index]._44 = 0;
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSTransformFaceCamView(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+
+    float4x4 transform = gpuiTransformBuffer[index];
+
+    gpuiTransformBuffer[index] = TRS(transform._14_24_34, matrix44, GetScale(transform));
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSTransformFaceCamPos(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+    
+    float4x4 transform = gpuiTransformBuffer[index];
+
+    float4x4 rotationCamMatrix = SetMatrixRotationWithQuaternion(identityMatrix, FromToRotation(float3(0, 0, 1), transform._14_24_34 - position));
+
+    gpuiTransformBuffer[index] = TRS(transform._14_24_34, rotationCamMatrix, GetScale(transform));
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSTransformSetAll(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+
+    gpuiTransformBuffer[index] += matrix44;
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSResetCulledInstances(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    uint index = id.x + startIndex;
+
+    gpuiTransformBuffer[index]._44 = 1;
+}

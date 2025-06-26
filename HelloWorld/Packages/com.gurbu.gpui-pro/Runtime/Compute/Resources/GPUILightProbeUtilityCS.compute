@@ -1,0 +1,34 @@
+﻿// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/GPUIDefines.hlsl"
+
+#pragma kernel CSCalculateSHCoeffs
+
+uniform RWStructuredBuffer<float4> gpuiPerInstanceLightProbesBuffer;
+uniform StructuredBuffer<GPUISphericalHarmonicsL2> sphericalHarmonicsBuffer;
+uniform StructuredBuffer<float4> occlusionProbesBuffer;
+uniform uint count;
+uniform uint startIndex;
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSCalculateSHCoeffs(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= count)
+        return;
+    
+    GPUISphericalHarmonicsL2 sh = sphericalHarmonicsBuffer[id.x];
+    uint index = (startIndex + id.x) * 8;
+    
+    gpuiPerInstanceLightProbesBuffer[index + 0] = float4(sh.shr3, sh.shr1, sh.shr2, sh.shr0 - sh.shr6);
+    gpuiPerInstanceLightProbesBuffer[index + 1] = float4(sh.shg3, sh.shg1, sh.shg2, sh.shg0 - sh.shg6);
+    gpuiPerInstanceLightProbesBuffer[index + 2] = float4(sh.shb3, sh.shb1, sh.shb2, sh.shb0 - sh.shb6);
+    gpuiPerInstanceLightProbesBuffer[index + 3] = float4(sh.shr4, sh.shr5, sh.shr6 * 3.0, sh.shr7);
+    gpuiPerInstanceLightProbesBuffer[index + 4] = float4(sh.shg4, sh.shg5, sh.shg6 * 3.0, sh.shg7);
+    gpuiPerInstanceLightProbesBuffer[index + 5] = float4(sh.shb4, sh.shb5, sh.shb6 * 3.0, sh.shb7);
+    gpuiPerInstanceLightProbesBuffer[index + 6] = float4(sh.shb8, sh.shg8, sh.shb8, 1.0f);
+    gpuiPerInstanceLightProbesBuffer[index + 7] = occlusionProbesBuffer[id.x];
+
+}

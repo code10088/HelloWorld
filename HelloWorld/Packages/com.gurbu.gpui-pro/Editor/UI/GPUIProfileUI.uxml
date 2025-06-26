@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement name="CullingVE" class="gpui-border gpui-bg-light">
+        <ui:Label text="Culling" display-tooltip-when-elided="true" class="gpui-header" />
+        <ui:VisualElement name="CullingContent" />
+    </ui:VisualElement>
+    <ui:VisualElement name="ShadowCullingVE" class="gpui-border gpui-bg-light">
+        <ui:Label text="Shadow Culling" display-tooltip-when-elided="true" class="gpui-header" />
+        <ui:VisualElement name="ShadowCullingContent" />
+    </ui:VisualElement>
+    <ui:VisualElement name="LODVE" class="gpui-border gpui-bg-light">
+        <ui:Label text="LOD" display-tooltip-when-elided="true" class="gpui-header" />
+        <ui:VisualElement name="LODContent" />
+    </ui:VisualElement>
+    <ui:VisualElement name="OtherVE" class="gpui-border gpui-bg-light">
+        <ui:Label text="Other" display-tooltip-when-elided="true" class="gpui-header" />
+        <ui:VisualElement name="OtherContent" />
+    </ui:VisualElement>
+</ui:UXML>

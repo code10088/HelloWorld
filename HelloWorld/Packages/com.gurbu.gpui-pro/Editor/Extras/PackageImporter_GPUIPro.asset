@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da0439c35f3230a4c816775190e2b29b, type: 3}
+  m_Name: PackageImporter_GPUIPro
+  m_EditorClassIdentifier: 
+  domain: com.gurbu.gpui-pro
+  packageDefinitions:
+  - packageName: GPUI Pro XR Support
+    packageToImport: {fileID: 102900000, guid: fd56d9d8b7774cb4ca0853a661903d79, type: 3}
+    packageToImportVersion: 1.0.0
+    packageConditions:
+    - conditionType: 0
+      dependentPackageName: com.unity.xr.management
+      dependentPackageExpression: 0
+      dependentPackageVersion: 1.0.0
+  storeImportedDataExternally: 1
+  importedPackageInfos: []
+  importedDataFolder: {fileID: 0}
+  importedDataSubFolder: GPUInstancerPro/Editor

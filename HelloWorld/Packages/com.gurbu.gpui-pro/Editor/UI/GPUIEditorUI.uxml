@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement name="GPUIEditorElement" style="flex-grow: 1;">
+        <ui:VisualElement name="HeaderElement" style="flex-direction: row; align-items: center; min-height: 20px;">
+            <ui:Label text="GPU Instancer Pro" name="TitleText" style="flex-grow: 1; flex-direction: row;" />
+            <ui:Label text="v2.0.0" name="VersionText" enable-rich-text="false" style="width: 50px; -unity-text-align: upper-right;" />
+            <ui:Button text="Wiki" display-tooltip-when-elided="true" enable-rich-text="false" name="WikiButton" tooltip="Go to Wiki page" focusable="false" class="gpui-help-button" style="width: 36px; height: 20px;" />
+            <ui:Button text="?" display-tooltip-when-elided="true" enable-rich-text="false" name="HelpButton" tooltip="Show Help" focusable="false" class="gpui-help-button" style="width: 20px; height: 20px;" />
+        </ui:VisualElement>
+        <ui:ScrollView horizontal-scroller-visibility="Hidden" name="ContentScrollView" style="flex-grow: 1; display: none;">
+            <ui:VisualElement name="ScrollContentElement" style="flex-shrink: 0; flex-grow: 1; margin-top: 2px; margin-bottom: 2px; background-color: rgba(0, 0, 0, 0.08);" />
+        </ui:ScrollView>
+        <ui:VisualElement name="ContentElement" style="flex-shrink: 0; flex-grow: 1; margin-top: 2px; margin-bottom: 2px; background-color: rgba(0, 0, 0, 0.08);" />
+        <ui:VisualElement name="FooterElement" style="display: none;" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,26 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement class="gpui-prototype-statistics" style="padding-top: 8px; flex-grow: 1; border-left-color: rgba(0, 0, 0, 0.39); border-right-color: rgba(0, 0, 0, 0.39); border-top-color: rgba(0, 0, 0, 0.39); border-bottom-color: rgba(0, 0, 0, 0.39); border-top-width: 1px;">
+        <ui:VisualElement name="GroupSummary" style="flex-direction: row;">
+            <ui:VisualElement name="PrototypeIcon" class="gpui-prototype-statistics__icon" />
+            <ui:VisualElement style="flex-grow: 1; margin-left: 5px;">
+                <ui:VisualElement style="flex-direction: row; max-height: 36px;">
+                    <uie:ObjectField name="PrefabField" type="UnityEngine.GameObject, UnityEngine.CoreModule" style="width: 45%;" />
+                    <uie:ObjectField name="LGDField" type="GPUInstancerPro.GPUILODGroupData, GPUInstancerPro.Core" style="width: 45%; flex-grow: 1;" />
+                    <ui:Button text="..." parse-escape-sequences="true" display-tooltip-when-elided="true" name="RSGActionsButton" focusable="false" style="padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; width: 20px; height: 20px;" />
+                </ui:VisualElement>
+                <ui:VisualElement style="flex-direction: row; margin-top: 3px;">
+                    <ui:VisualElement style="flex-direction: row; padding-top: 3px; margin-left: 4px;">
+                        <ui:Label tabindex="-1" text="Buffer size: " parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                        <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BufferSizeValue" style="width: 50px; max-width: 50px; min-width: 50px; -unity-font-style: bold;" />
+                        <ui:Label tabindex="-1" text="Instance count:" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                        <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="InstanceCountValue" style="-unity-font-style: bold; width: 50px; max-width: 50px; min-width: 50px;" />
+                        <ui:Label tabindex="-1" text="Key:" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                        <ui:IntegerField name="RSGKey" style="min-width: 80px; max-width: 80px; width: 80px; height: 20px; max-height: 20px; min-height: 20px; overflow: visible; margin-top: 0;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:ListView name="SourcesListView" fixed-item-height="50" selection-type="None" virtualization-method="DynamicHeight" style="margin-top: 5px; margin-left: 15px; margin-right: 20px;" />
+    </ui:VisualElement>
+</ui:UXML>

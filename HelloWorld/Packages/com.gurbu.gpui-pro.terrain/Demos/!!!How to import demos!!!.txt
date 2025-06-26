@@ -1,0 +1,7 @@
+To import demo scenes, please either
+- Select the "Tools -> GPU Instancer Pro -> Import Demos" menu item.
+or
+- Click the "Import Demos" button on the Inpector window when you select the Assets/GPUInstancerPro/Demos/ImportDemos asset.
+
+
+The demo scenes will be imported under "Assets/GPUInstancerPro/Demos" folder.

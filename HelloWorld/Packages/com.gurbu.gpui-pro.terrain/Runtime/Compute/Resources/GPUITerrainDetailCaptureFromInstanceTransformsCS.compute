@@ -1,0 +1,55 @@
+﻿// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+// Converts terrain detail instance transform values to detail layer values matching Instance Count Mode
+#pragma kernel CSWriteTerrainDetailsToTexture
+#pragma kernel CSResetDetailLayerBuffer
+
+#pragma multi_compile _ GPUI_TERRAIN_HOLES
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+struct DetailInstanceTransform
+{
+    float posX;
+    float posY;
+    float posZ;
+    float scaleXZ;
+    float scaleY;
+    float rotationY;
+};
+
+#ifdef __INTELLISENSE__
+#define GPUI_TERRAIN_HOLES
+#endif // __INTELLISENSE__
+
+// Result buffer
+uniform RWStructuredBuffer<int> detailLayerBuffer;
+
+// Input buffers
+uniform StructuredBuffer<DetailInstanceTransform> detailInstanceTransformBuffer;
+uniform uint detailResolution;
+uniform float3 terrainSize;
+uniform uint bufferSize;
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSWriteTerrainDetailsToTexture(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    
+    DetailInstanceTransform instanceTransform = detailInstanceTransformBuffer[id.x];
+    int indexX = (instanceTransform.posX / terrainSize.x) * detailResolution;
+    int indexZ = (instanceTransform.posZ / terrainSize.z) * detailResolution;
+    int bufferIndex = indexX + indexZ * detailResolution;
+    
+    InterlockedAdd(detailLayerBuffer[bufferIndex], 1);
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSResetDetailLayerBuffer(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    detailLayerBuffer[id.x] = 0;
+
+}

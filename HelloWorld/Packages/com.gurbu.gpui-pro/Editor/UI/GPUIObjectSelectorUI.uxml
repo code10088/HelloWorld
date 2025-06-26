@@ -1,0 +1,28 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement name="PrefabSelectorButtons" style="flex-direction: row; justify-content: center; height: 30px; width: 100%; max-height: 30px; min-height: 30px; margin-top: 5px; margin-bottom: 5px;">
+        <ui:Button text="Select" name="SelectButton" style="width: 150px; background-color: rgb(36, 126, 85); color: rgb(255, 255, 255); -unity-font-style: bold; margin-right: 6px;" />
+        <ui:Button text="Cancel" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CancelButton" style="width: 150px; -unity-font-style: bold; background-color: rgb(120, 0, 0); color: rgb(255, 255, 255); margin-left: 6px;" />
+    </ui:VisualElement>
+    <ui:VisualElement style="flex-direction: row; min-height: 24px; height: 24px;">
+        <uie:ToolbarSearchField name="ObjectSearchField" style="flex-grow: 1;" />
+        <ui:Label text="Packages" style="position: absolute; right: 5px; font-size: 12px; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; height: 24px; -unity-text-align: middle-left;" />
+        <ui:Toggle name="PackagesToggle" style="flex-direction: row-reverse; flex-shrink: 1; padding-right: 60px;" />
+    </ui:VisualElement>
+    <ui:Label text="*Ctrl+Click to select multiple, Shift+Click to select adjacent items." display-tooltip-when-elided="true" name="PrototypesHelpText" style="font-size: 11px; -unity-font-style: italic; white-space: normal;" />
+    <ui:VisualElement style="flex-direction: row-reverse; height: 24px; flex-shrink: 0; width: 100%;">
+        <ui:Slider picking-mode="Ignore" value="0" high-value="8" tooltip="Icon size" name="IconSizeSlider" style="width: 80px; height: 24px; position: absolute; left: 0; top: 0; display: none;" />
+        <ui:Label tabindex="-1" text="Intance Count" name="InstanceCountTitleLabel" style="font-size: 12px; -unity-text-align: upper-right; margin-top: 0; margin-right: 4px; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-font-style: normal; flex-shrink: 1; align-self: flex-end; min-width: 82px; position: relative;" />
+    </ui:VisualElement>
+    <ui:ListView focusable="true" name="PrefabListView" style="border-top-color: rgba(0, 0, 0, 0.39); border-top-width: 1px; border-bottom-color: rgba(0, 0, 0, 0.39); border-bottom-width: 1px;" />
+    <ui:VisualElement style="flex-grow: 1;" />
+    <ui:Foldout text="Preview" name="PrefabPreviewFoldout" style="margin-top: 5px; margin-bottom: 5px; margin-left: 0; flex-shrink: 0;">
+        <ui:VisualElement style="flex-direction: row; min-height: 128px; min-width: 100%; flex-shrink: 0;">
+            <ui:IMGUIContainer name="PrefabPreviewIMGUI" style="align-self: flex-start; min-height: 128px; flex-shrink: 0; min-width: 128px; width: 128px; height: 128px;" />
+            <ui:VisualElement style="flex-grow: 1; justify-content: center; align-items: flex-start; padding-left: 5px;">
+                <ui:Label text="Prefab Name&#10;Prefab Path Prefab Path Prefab Path" name="PrefabPreviewLabel" style="font-size: 12px; -unity-font-style: bold;" />
+                <ui:Button text="Ping" name="PingButton" focusable="false" style="background-color: rgb(36, 85, 125); color: rgb(255, 255, 255); -unity-font-style: bold; font-size: 12px; padding-top: 5px; padding-right: 6px; padding-bottom: 5px; padding-left: 6px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:Foldout>
+</ui:UXML>

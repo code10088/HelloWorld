@@ -1,0 +1,20 @@
+{
+    "name": "GPUInstancerPro.TerrainModule",
+    "rootNamespace": "GPUInstancerPro.TerrainModule",
+    "references": [
+        "GUID:2665a8d13d1b3f18800f46e256720795",
+        "GUID:e0cd26848372d4e5c891c569017e11f1",
+        "GUID:d8b63aba1907145bea998dd612889d6b",
+        "GUID:3b7622431700fb240ae5afd170731645",
+        "GUID:10c2c8b9f42fe8c43bbe8dae22545979"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

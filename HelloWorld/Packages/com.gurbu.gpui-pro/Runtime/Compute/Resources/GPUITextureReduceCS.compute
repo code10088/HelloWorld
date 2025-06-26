@@ -1,0 +1,40 @@
+﻿// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/GPUIDefines.hlsl"
+
+#pragma kernel CSReduceTexture
+
+uniform RWTexture2D<float> source;
+uniform RWTexture2D<float> destination;
+uniform uint sourceSizeX;
+uniform uint sourceSizeY;
+uniform uint destinationSizeX;
+uniform uint destinationSizeY;
+
+[numthreads(GPUI_THREADS_2D, GPUI_THREADS_2D, 1)]
+void CSReduceTexture(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= destinationSizeX || id.y >= destinationSizeY)
+        return;
+    
+    uint2 sourceCoord = uint2(round((float(id.x + 0.5) / destinationSizeX) * sourceSizeX), round((float(id.y + 0.5) / destinationSizeY) * sourceSizeY));
+    uint2 coordMax = uint2(sourceSizeX - 1, sourceSizeY - 1);
+    
+    float minimum = source[clamp(sourceCoord, uint2Zero, coordMax)];
+    sourceCoord.x++;
+    minimum = min(minimum, source[clamp(sourceCoord, uint2Zero, coordMax)]);
+    sourceCoord.x--;
+    sourceCoord.y++;
+    minimum = min(minimum, source[clamp(sourceCoord, uint2Zero, coordMax)]);
+    sourceCoord.y--;
+    sourceCoord.x--;
+    minimum = min(minimum, source[clamp(sourceCoord, uint2Zero, coordMax)]);
+    sourceCoord.x++;
+    sourceCoord.y--;
+    minimum = min(minimum, source[clamp(sourceCoord, uint2Zero, coordMax)]);
+    
+    destination[id.xy] = minimum;
+}

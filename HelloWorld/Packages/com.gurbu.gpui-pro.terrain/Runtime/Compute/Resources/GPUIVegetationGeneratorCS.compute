@@ -1,0 +1,199 @@
+﻿// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/GPUIDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/Matrix.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/Random.hlsl"
+#include "Packages/com.gurbu.gpui-pro.terrain/Runtime/Compute/Include/Terrain.hlsl"
+#include_with_pragmas "Packages/com.gurbu.gpui-pro.terrain/Runtime/Compute/Include/GPUITerrainHeightmap.hlsl"
+
+#pragma kernel CSVegetationGenerationKernel
+#pragma kernel CSResetCounterBuffer
+#pragma kernel CSClearTransformBuffer
+
+#pragma multi_compile _ GPUI_DETAIL_DENSITY_REDUCE
+#pragma multi_compile _ GPUI_TERRAIN_HOLES
+#pragma multi_compile _ GPUI_TRANSFORM_OFFSET
+
+#ifdef __INTELLISENSE__
+#define GPUI_DETAIL_DENSITY_REDUCE
+#define GPUI_TERRAIN_HOLES
+#define GPUI_TRANSFORM_OFFSET
+#endif // __INTELLISENSE__
+
+// Result buffer
+uniform RWStructuredBuffer<float4x4> gpuiTransformBuffer;
+uniform RWStructuredBuffer<GPUICounterData> detailCounterBuffer;
+
+// Input buffers
+uniform StructuredBuffer<float> parameterBuffer;
+uniform Texture2D<float> terrainDetailTexture;
+
+#ifdef GPUI_TRANSFORM_OFFSET
+uniform float4x4 gpuiTransformOffset;
+#endif
+
+uniform uint4 sizeAndIndexes; // x=> bufferSize, y => prototypeIndex, z => detailPrototypeParameterBufferIndex, w => subSettingParameterBufferIndex
+
+uniform uint detailTextureSize;
+uniform float3 startPosition;
+uniform float3 terrainSize;
+
+uniform float3 cameraPos;
+uniform float density;
+uniform float detailObjectDistance;
+
+uniform Texture2D<float> healthyDryNoiseTexture;
+uniform SamplerState samplerhealthyDryNoiseTexture;
+
+#ifdef GPUI_TERRAIN_HOLES
+uniform Texture2D<float> terrainHoleTexture;
+uniform SamplerState samplerterrainHoleTexture;
+#endif
+
+[numthreads(GPUI_THREADS_2D, 1, GPUI_THREADS_2D)]
+void CSVegetationGenerationKernel(uint3 id : SV_DispatchThreadID)
+{
+    // Runs for each resolution coordinate
+    if (id.x >= detailTextureSize || id.z >= detailTextureSize)
+        return;
+    
+    uint bufferSize = sizeAndIndexes.x;
+    uint prototypeIndex = sizeAndIndexes.y;
+    uint detailPrototypeParameterBufferIndex = sizeAndIndexes.z;
+    uint subSettingParameterBufferIndex = sizeAndIndexes.w;
+    
+    float2 detailTextureUV = id.xz / float(detailTextureSize);
+    
+#ifdef GPUI_TERRAIN_HOLES
+    float holeSample = terrainHoleTexture.SampleLevel(samplerterrainHoleTexture, detailTextureUV, 0);
+    if (holeSample == 0.0)
+        return;
+#endif
+    
+    float sampleHeight = SampleHeightmapTexture(uint2(floor(detailTextureUV.x * heightmapTextureSize), floor(detailTextureUV.y * heightmapTextureSize))) * 2;
+    
+    float3 detailPosLocal = float3(detailTextureUV.x * terrainSize.x, sampleHeight * terrainSize.y, detailTextureUV.y * terrainSize.z);
+#ifdef GPUI_TRANSFORM_OFFSET
+    float3 offsettedPos = mul((float3x3)gpuiTransformOffset, detailPosLocal);
+    offsettedPos -= gpuiTransformOffset._14_24_34;
+    float detailDist = distance(cameraPos, offsettedPos + startPosition);
+#else
+    float detailDist = distance(cameraPos, detailPosLocal + startPosition);
+#endif
+    if (detailDist > detailObjectDistance)
+        return;
+    
+    float p_detailUniqueValue = parameterBuffer[subSettingParameterBufferIndex + 6];
+    float p_alignToGround = parameterBuffer[subSettingParameterBufferIndex + 5];
+    float p_densityAdjustmentPF = parameterBuffer[detailPrototypeParameterBufferIndex + 4];
+    float p_noiseSpread = parameterBuffer[detailPrototypeParameterBufferIndex + 7];
+    float p_isBillboard = parameterBuffer[detailPrototypeParameterBufferIndex + 5];
+    float scaleXZ = 1;
+    float densityMultiplier = p_densityAdjustmentPF * density;
+    float p_densityReduceHeightScale = 0;
+    
+    float unitSizeX = terrainSize.x / detailTextureSize;
+    float unitSizeZ = terrainSize.z / detailTextureSize;
+#ifdef GPUI_DETAIL_DENSITY_REDUCE
+    float p_densityReduceDistance = parameterBuffer[detailPrototypeParameterBufferIndex];
+    
+    if (detailDist > p_densityReduceDistance)
+    {
+        float p_densityReduceMultiplier = parameterBuffer[detailPrototypeParameterBufferIndex + 1];
+        float p_densityReduceMaxScale = parameterBuffer[detailPrototypeParameterBufferIndex + 2];
+        p_densityReduceHeightScale = parameterBuffer[detailPrototypeParameterBufferIndex + 3];
+        
+        float add = (detailDist - p_densityReduceDistance) / (detailTextureSize * sqrt(unitSizeX * unitSizeZ));
+        scaleXZ = add * p_densityReduceMaxScale + 1;
+        densityMultiplier = densityMultiplier / (add * p_densityReduceMultiplier + 1);
+    }
+#endif
+    float p_maxDetailInstanceCountPerUnit = parameterBuffer[detailPrototypeParameterBufferIndex + 6];
+    float numGrassToAdd = clamp(terrainDetailTexture[id.xz] * densityMultiplier, 0.0, p_maxDetailInstanceCountPerUnit);
+    int numGrassToAddInt = floor(numGrassToAdd);
+    float numGrassToAddFrac = frac(numGrassToAdd);
+    float2 rand2 = randomFloat2(id.xz * (p_detailUniqueValue * 100));
+    if (numGrassToAddFrac > (rand2.x + rand2.y) / 2.0)
+        numGrassToAddInt++;
+    
+    if (numGrassToAddInt == 0)
+        return;
+    
+    float p_minWidth = parameterBuffer[subSettingParameterBufferIndex];
+    float p_maxWidth = parameterBuffer[subSettingParameterBufferIndex + 1];
+    float p_minHeight = parameterBuffer[subSettingParameterBufferIndex + 2];
+    float p_maxHeight = parameterBuffer[subSettingParameterBufferIndex + 3];
+    float p_healthyDryScaleAdjustment = parameterBuffer[detailPrototypeParameterBufferIndex + 8];
+    
+    float heightmapUnitSizeX = terrainSize.x / (heightmapTextureSize - 1);
+    float heightmapUnitSizeZ = terrainSize.z / (heightmapTextureSize - 1);
+    
+    float3 scale = float3(scaleXZ, 1.0 + sqrt(scaleXZ - 1) * p_densityReduceHeightScale, scaleXZ);
+    uint index;
+    InterlockedAdd(detailCounterBuffer[prototypeIndex].count, numGrassToAddInt, index);
+    for (int i = 0; i < numGrassToAddInt; i++)
+    {
+        if (index + i >= bufferSize)
+            return;
+        
+        float3 position = detailPosLocal;
+        float multiplierRandom = (i + 1) * p_detailUniqueValue * 93;
+        float2 randomPoint = randomFloat2(float2(id.z + 0.5, id.x + 0.5) * multiplierRandom);
+        position.x += randomPoint.x * unitSizeX;
+        position.z += randomPoint.y * unitSizeZ;
+        
+        // Calculate height
+        float2 heightmapTextureUV = (position.xz) / terrainSize.xz;
+        float2 heightmapPos = float2(heightmapTextureUV.x * (heightmapTextureSize - 1), heightmapTextureUV.y * (heightmapTextureSize - 1));
+        uint2 heightmapIndex = uint2(floor(heightmapPos));
+        float leftBottomH = SampleHeightmapTexture(heightmapIndex) * 2 * terrainSize.y;
+        heightmapIndex.y++;
+        float leftTopH = SampleHeightmapTexture(heightmapIndex) * 2 * terrainSize.y;
+        heightmapIndex.x++;
+        float rightTopH = SampleHeightmapTexture(heightmapIndex) * 2 * terrainSize.y;
+        heightmapIndex.y--;
+        float rightBottomH = SampleHeightmapTexture(heightmapIndex) * 2 * terrainSize.y;
+        position.y = SampleHeight(frac(heightmapPos), leftBottomH, leftTopH, rightBottomH, rightTopH);
+        
+        // Calculate normal
+        float3 normal = lerp(vector3Up, normalize(cross(float3(0, leftTopH - leftBottomH, heightmapUnitSizeZ), float3(heightmapUnitSizeX, rightBottomH - leftBottomH, 0))), p_alignToGround * (1.0 - p_isBillboard));
+        float4 q = FromToRotation(vector3Up, normal);
+        // Calculate random rotation
+        float randomRotation = randomFloat(((detailTextureUV.x + 0.5 + i) * multiplierRandom) + detailTextureUV.y);
+        float4 q2 = AngleAxis(vector3Up, randomRotation * GPUITwoPI);
+        float4x4 rotation = SetMatrixRotationWithQuaternion(identityMatrix, QuatMul(q, q2));
+        
+        // Calculate scale
+        float randomScale = healthyDryNoiseTexture.SampleLevel(samplerhealthyDryNoiseTexture, position.xz * 0.05 * p_noiseSpread, 0);
+        randomScale = saturate(randomScale + (randomScale - 0.5) * p_healthyDryScaleAdjustment);
+        float xzScale = p_minWidth + ((p_maxWidth - p_minWidth) * randomScale);
+        float yScale = p_minHeight + ((p_maxHeight - p_minHeight) * randomScale);
+        float3 instanceScale = float3(xzScale, yScale, xzScale) * scale;
+        
+        float4x4 transformMatrix = TRS(position, rotation, instanceScale);
+#ifdef GPUI_TRANSFORM_OFFSET
+        transformMatrix = mul(gpuiTransformOffset, transformMatrix);
+        transformMatrix._14_24_34 -= gpuiTransformOffset._14_24_34;
+#endif
+        transformMatrix._14_24_34 += startPosition;
+        gpuiTransformBuffer[index + i] = transformMatrix;
+    }
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSResetCounterBuffer(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= sizeAndIndexes.x)
+        return;
+    detailCounterBuffer[id.x].count = 0;
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSClearTransformBuffer(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= sizeAndIndexes.x || id.x < detailCounterBuffer[sizeAndIndexes.y].count)
+        return;
+    gpuiTransformBuffer[id.x] = zeroMatrix;
+}

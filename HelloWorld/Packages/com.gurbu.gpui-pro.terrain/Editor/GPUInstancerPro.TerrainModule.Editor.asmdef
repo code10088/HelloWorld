@@ -1,0 +1,20 @@
+{
+    "name": "GPUInstancerPro.TerrainModule.Editor",
+    "rootNamespace": "GPUInstancerPro.TerrainModule",
+    "references": [
+        "GUID:3b7622431700fb240ae5afd170731645",
+        "GUID:5dffeef69173e0b4f889c9771b98dee7",
+        "GUID:4f64864a268dcca4291e747f5a335914"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

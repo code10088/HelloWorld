@@ -1,0 +1,20 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement name="DebuggerContainer" style="flex-grow: 1;">
+        <ui:VisualElement name="TopHelpText" />
+        <ui:VisualElement name="DebuggerTopButtons" style="flex-direction: row; padding-top: 5px; padding-bottom: 10px; padding-left: 10px; min-height: 45px;">
+            <ui:Button text="Regenerate Renderers" parse-escape-sequences="true" display-tooltip-when-elided="true" name="RegenerateRenderersButton" class="gpui-debugger-button" style="background-color: rgb(36, 85, 125);" />
+        </ui:VisualElement>
+        <ui:VisualElement name="TopButtonsHelpText" />
+        <ui:VisualElement name="DebuggerContent" style="flex-grow: 1; margin-left: 5px; margin-right: 5px;">
+            <ui:ListView name="CamerasListView" selection-type="None" show-foldout-header="true" header-title="Cameras" fixed-item-height="76" focusable="false" class="gpui-border gpui-bg-light gpui-debugger-list-view" style="border-left-color: rgba(0, 0, 0, 0.31); border-right-color: rgba(0, 0, 0, 0.31); border-top-color: rgba(0, 0, 0, 0.31); border-bottom-color: rgba(0, 0, 0, 0.31);" />
+            <ui:VisualElement name="CamerasHelpText" />
+            <ui:ListView name="PrototypesListView" selection-type="None" header-title="Render Groups" show-foldout-header="true" fixed-item-height="120" virtualization-method="DynamicHeight" focusable="false" class="gpui-border gpui-bg-light gpui-debugger-list-view" style="margin-top: 5px; border-left-color: rgba(0, 0, 0, 0.31); border-right-color: rgba(0, 0, 0, 0.31); border-top-color: rgba(0, 0, 0, 0.31); border-bottom-color: rgba(0, 0, 0, 0.31);" />
+            <ui:VisualElement name="PrototypesListHelpText" />
+        </ui:VisualElement>
+        <ui:VisualElement name="DebuggerBottomButtons" style="flex-direction: row; padding-top: 10px; padding-bottom: 5px; min-height: 45px; bottom: 0; padding-left: 10px;">
+            <ui:Button text="Dispose All" parse-escape-sequences="true" display-tooltip-when-elided="true" style="color: rgb(255, 255, 255); background-color: rgb(120, 0, 0); -unity-font-style: bold;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="BottomButtonsHelpText" />
+    </ui:VisualElement>
+</ui:UXML>

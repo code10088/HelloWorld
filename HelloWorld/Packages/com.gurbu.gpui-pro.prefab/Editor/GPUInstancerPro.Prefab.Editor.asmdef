@@ -1,0 +1,26 @@
+{
+    "name": "GPUInstancerPro.Prefab.Editor",
+    "rootNamespace": "GPUInstancerPro.Prefab",
+    "references": [
+        "GUID:3b7622431700fb240ae5afd170731645",
+        "GUID:5dffeef69173e0b4f889c9771b98dee7",
+        "GUID:9924352885f142b44b19797866589eb3"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.gurbu.gpui-pro.crowd-animations",
+            "expression": "0.8.0",
+            "define": "GPUI_CROWD"
+        }
+    ],
+    "noEngineReferences": false
+}

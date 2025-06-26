@@ -1,0 +1,39 @@
+// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+// Copies buffer data from source to a render texture
+#pragma kernel CSCopyBufferToTexture
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+
+#pragma multi_compile _ GPUI_FLOAT4_BUFFER
+
+#if GPUI_FLOAT4_BUFFER
+uniform StructuredBuffer<float4> sourceBuffer;
+#else
+uniform StructuredBuffer<float4x4> sourceBuffer;
+#endif
+uniform RWTexture2D<float4> targetTexture;
+uniform uint count;
+uniform uint maxTextureSize;
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSCopyBufferToTexture(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= count)
+        return;
+    
+    uint indexX = id.x % maxTextureSize;
+    uint indexY = id.x / maxTextureSize;
+    
+#if GPUI_FLOAT4_BUFFER
+    targetTexture[uint2(indexX, indexY)] = sourceBuffer[id.x];
+#else
+    indexY *= 4;
+    float4x4 transformData = sourceBuffer[id.x];
+    targetTexture[uint2(indexX, 0 + indexY)] = transformData._11_12_13_14; // row0
+    targetTexture[uint2(indexX, 1 + indexY)] = transformData._21_22_23_24; // row1
+    targetTexture[uint2(indexX, 2 + indexY)] = transformData._31_32_33_34; // row2
+    targetTexture[uint2(indexX, 3 + indexY)] = float4(transformData._41_42_43, 1.0); // row3
+#endif
+}

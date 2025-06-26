@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement name="LODGroupElement" style="margin-top: 5px; margin-bottom: 5px;">
+        <ui:VisualElement name="LODGroupSlider" style="flex-direction: row; align-items: center; width: 100%; height: 40px; border-left-color: rgb(40, 40, 40); border-right-color: rgb(40, 40, 40); border-top-color: rgb(40, 40, 40); border-bottom-color: rgb(40, 40, 40); border-top-width: 1px; border-bottom-width: 1px; margin-top: 10px; margin-bottom: 10px; border-right-width: 1px;">
+            <ui:VisualElement name="LOD0" class="gpui-lod" style="background-color: rgb(60, 70, 36);">
+                <ui:Label text="LOD 0\n100%" />
+            </ui:VisualElement>
+            <ui:VisualElement name="LOD1" class="gpi-lod gpui-lod" style="background-color: rgb(46, 55, 67); left: 40%;">
+                <ui:Label text="LOD 1\n60%" style="overflow: hidden;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="LOD0Separator" class="gpui-lod-separator" style="left: 100px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="LODRenderers" style="margin-bottom: 10px;">
+        <ui:VisualElement name="LOD0RenderersContainer" class="gpui-lod-renderer-container gpui-bg-light">
+            <ui:Foldout text="         LOD 0" value="true" name="LODFoldout">
+                <uie:PropertyField name="rendererDataArray" label="Renderers" />
+            </ui:Foldout>
+            <ui:VisualElement name="LODColor" class="gpui-lod-renderer-title-color" style="background-color: rgb(60, 70, 36);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

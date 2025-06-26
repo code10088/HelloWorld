@@ -1,0 +1,430 @@
+Foldout {
+    margin-left: 12px;
+}
+
+.unity-foldout .unity-list-view__foldout-header {
+    margin-left: 0;
+}
+
+.unity-foldout .unity-list-view__foldout-header .unity-foldout__content {
+    margin-left: 12px;
+}
+
+.gpui-foldout-title {
+    -unity-font-style: bold;
+}
+
+.gpui-foldout-title .unity-toggle {
+    margin-bottom: 5px;
+}
+
+.gpui-foldout-title .unity-foldout__content {
+    margin-left: -8px;
+    -unity-font-style: normal;
+}
+
+.gpui-field {
+    white-space: nowrap;
+}
+
+.gpui-hidden {
+    display: none;
+}
+
+.gpui-header {
+    flex-direction: row;
+    -unity-font-style: bold;
+    -unity-text-align: upper-center;
+}
+
+.gpui-help-button {
+    -unity-font-style: bold;
+    width: 18px;
+    height: 18px;
+}
+
+.gpui-help-button-active {
+    -unity-font-style: bold;
+    width: 18px;
+    height: 18px;
+    background-color: rgb(35, 59, 70);
+    color: rgb(255, 255, 255);
+}
+
+.gpui-bg-light {
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.gpui-box {
+    background-color: rgba(0, 0, 0, 0.1);
+    margin-left: 4px;
+    padding-top: 4px;
+    padding-left: 6px;
+}
+
+.gpui-lod {
+    height: 100%;
+    flex-grow: 1;
+    justify-content: center;
+    padding: 4px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-color: rgb(40, 40, 40);
+    border-width: 0;
+    border-left-width: 1px;
+    font-size: 10px;
+    overflow: hidden;
+}
+
+.gpui-lod-focused {
+    border-color: rgb(42, 114, 168);
+    border-left-width: 3px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+    margin-left: -2px;
+    margin-top: -2px;
+    margin-bottom: -2px;
+}
+
+.gpui-lod-separator {
+    height: 100%;
+    width: 12px;
+    position: absolute;
+    cursor: split-resize-left-right;
+    margin-left: -6px;
+    margin-right: -6px;
+    overflow: hidden;
+}
+
+.gpui-border {
+    border-width: 1px;
+    border-radius: 2px;
+    padding: 4px;
+}
+
+.gpui-lod-renderer-container {
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-left-color: rgb(40, 40, 40);
+    border-right-color: rgb(40, 40, 40);
+    border-top-color: rgb(40, 40, 40);
+    border-bottom-color: rgb(40, 40, 40);
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    margin-bottom: 2px;
+}
+
+.gpui-lod-renderer-container-focused {
+    border-color: rgb(42, 114, 168);
+}
+
+.gpui-lod-renderer-title-color {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 22px;
+}
+
+.gpui-pre-prototype-button {
+    background-color: rgba(36, 85, 125, 0.6);
+    -unity-font-style: bold;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+    color: rgb(255, 255, 255);
+    height: 25px;
+    min-width: 160px;
+}
+
+.gpui-prototype-button {
+    width: 65px;
+    height: 75px;
+    padding-bottom: 10px;
+    background-color: rgba(150, 150, 150, 0.47);
+}
+
+.gpui-prototype-button-label {
+    position: absolute;
+    left: 4px;
+    right: 4px;
+    bottom: 2px;
+    height: 10px;
+    padding-left: 0;
+    padding-right: 0;
+    font-size: 10px;
+    -unity-text-align: middle-center;
+}
+
+.gpui-prototype-button-textMode {
+    width: 180px;
+    height: 25px;
+    background-color: rgba(150, 150, 150, 0.47);
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+    padding-top: 4px;
+}
+
+.gpui-prototype-add-button {
+    width: 65px;
+    height: 65px;
+    background-color: rgba(36, 125, 85, 0.47);
+}
+
+.gpui-prototype-add-button-textMode {
+    width: 180px;
+    height: 25px;
+    background-color: rgba(36, 125, 85, 0.47);
+}
+
+.gpui-prototype-multiadd-button {
+    width: 65px;
+    height: 20px;
+    background-color: rgba(36, 85, 125, 0.47);
+}
+
+.gpui-prototype-button-selected {
+    background-color: rgba(46, 228, 46, 0.47);
+}
+
+.gpui-prototype-button-error {
+    background-color: rgba(204, 51, 51, 0.47);
+}
+
+.gpui-prototype-button-error-selected {
+    background-color: rgb(150, 15, 15);
+}
+
+.gpui-prototype-button-preview {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    flex-grow: 1;
+}
+
+.gpui-prototype-action-button {
+    width: 50%;
+    flex-shrink: 1;
+    -unity-font-style: bold;
+}
+
+.gpui-is-enabled-toggle {
+    position: absolute;
+    right: 4px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    align-self: stretch;
+    font-size: 12px;
+    -unity-text-align: upper-right;
+    white-space: normal;
+    text-overflow: clip;
+    margin-left: -80px;
+    margin-bottom: 0;
+}
+
+.gpui-help-box {
+    width: 96%;
+}
+
+.gpui-help-box-button-list {
+    flex-grow: 1;
+    align-items: flex-end;
+}
+
+.gpui-help-box-button {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    -unity-font-style: bold;
+    font-size: 10px;
+    width: 50px;
+}
+
+.gpui-prefab-selector-element {
+    flex-direction: row;
+    align-items: center;
+    border-left-color: rgba(0, 0, 0, 0.39);
+    border-right-color: rgba(0, 0, 0, 0.39);
+    border-top-color: rgba(0, 0, 0, 0.39);
+    border-bottom-color: rgba(0, 0, 0, 0.39);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 1px;
+    border-left-width: 0;
+    padding-top: 0;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+}
+
+.gpui-prefab-selector-element__toggle {
+    position: absolute;
+    width: 90%;
+}
+
+.gpui-prefab-selector-element__icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+}
+
+.gpui-prefab-selector-element__label {
+    flex-grow: 1;
+    margin-top: 4px;
+    margin-right: 4px;
+    margin-bottom: 2px;
+    margin-left: 5px;
+}
+
+.gpui-statistics-element {
+    border-bottom-width: 1px;
+    padding-left: 4px;
+    min-height: 60px;
+}
+
+.gpui-statistics-element__icon {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+}
+
+.gpui-statistics-element__title {
+    -unity-font-style: bold;
+    padding-top: 6px;
+    padding-bottom: 4px;
+}
+
+.gpui-statistics-element__count {
+    position: absolute;
+    right: 0;
+    margin-right: 5px;
+    max-width: 70px;
+    -unity-text-align: upper-right;
+    padding-top: 4px;
+}
+
+.gpui-statistics-element__lgd {
+    width: 100px;
+    position: absolute;
+    right: 80px;
+    padding-top: 2px;
+}
+
+.gpui-statistics-element__visibilityData {
+    align-items: flex-end;
+}
+
+.gpui-statistics-element__visibilityData .unity-label {
+    width: 50px;
+    min-width: 50px;
+}
+
+.gpui-statistics-element__visibilityData .unity-text-field__label {
+    -unity-text-align: upper-right;
+    width: 50px;
+    min-width: 50px;
+    margin-left: 5px;
+}
+
+.gpui-statistics-element__visibilityData .unity-text-field__input {
+    width: 120px;
+    min-width: 120px;
+}
+
+.gpui-statistics-element__visibilityData-lod {
+    flex-direction: row;
+}
+
+.gpui-prototype-list-toolbar-button {
+    flex-grow: 1;
+    -unity-text-align: middle-center;
+    border-bottom-width: 1px;
+    border-right-width: 0;
+}
+
+.gpui-prototype-list-toolbar-button:disabled {
+}
+
+.gpui-prototype-list-toolbar-button-active {
+    -unity-font-style: bold;
+    border-bottom-width: 0;
+}
+
+.unity-collection-view__item--selected {
+    background-color: rgba(44, 93, 135, 0.4);
+}
+
+.gpui-statistics-summary__label {
+    width: 170px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    -unity-text-align: middle-left;
+}
+
+.gpui-camera-statistics {
+}
+
+.gpui-camera-statistics__content {
+    -unity-font-style: normal;
+    font-size: 12px;
+    padding-left: 8px;
+}
+
+.gpui-camera-statistics__item {
+    padding-bottom: 4px;
+}
+
+.gpui-prototype-statistics {
+}
+
+.gpui-prototype-statistics__icon {
+    width: 46px;
+    height: 46px;
+}
+
+.gpui-render-source-group__title {
+    -unity-font-style: normal;
+    font-size: 12px;
+    padding-left: 5px;
+}
+
+.gpui-debugger-button {
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    max-height: 30px;
+}
+
+.gpui-debugger-list-view {
+    margin-left: 2px;
+}
+
+.gpui-debugger-list-view .unity-list-view__foldout-header {
+    margin-left: 2px;
+    padding-left: 0;
+    -unity-font-style: bold;
+    font-size: 13px;
+}
+
+.gpui-debugger-list-view .unity-list-view__item {
+    margin-left: 14px;
+    font-size: 12px;
+    -unity-font-style: normal;
+}
+
+.gpui-action-button {
+    padding: 4px;
+    min-width: 160px;
+    -unity-font-style: bold;
+}

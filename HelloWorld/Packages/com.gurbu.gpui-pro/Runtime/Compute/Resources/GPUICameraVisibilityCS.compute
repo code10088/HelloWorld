@@ -1,0 +1,14 @@
+// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+// Makes visibility calculations such as LOD and culling
+#pragma kernel CSCameraVisibility
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefinesHeavy.hlsl"
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/CameraVisibility.hlsl"
+
+[numthreads(GPUI_THREADS_HEAVY, 1, 1)]
+void CSCameraVisibility(uint3 id : SV_DispatchThreadID)
+{
+    CameraVisibility(id);
+}

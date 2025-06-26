@@ -1,0 +1,23 @@
+.gpui-border {
+    border-color: rgb(40, 40, 40);
+}
+
+.gpui-statistics-element {
+    border-bottom-color: rgb(40, 40, 40);
+}
+
+.gpui-prototype-list-toolbar-button {
+    background-color: rgba(80, 80, 80, 0.78);
+}
+
+.gpui-prototype-list-toolbar-button:hover {
+    background-color: rgb(50, 50, 50);
+}
+
+.gpui-prototype-list-toolbar-button-active {
+    background-color: rgb(60, 60, 60);
+}
+
+.gpui-prototype-list-toolbar-button-active:hover {
+    background-color: rgb(60, 60, 60);
+}

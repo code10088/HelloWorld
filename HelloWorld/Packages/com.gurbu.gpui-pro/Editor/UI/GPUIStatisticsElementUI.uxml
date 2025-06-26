@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement name="HorizontalVE" style="flex-direction: row;">
+        <ui:VisualElement name="IconVE" class="gpui-statistics-element__icon" />
+        <ui:VisualElement name="VerticalVE" style="flex-grow: 1;">
+            <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="TitleLabel" class="gpui-statistics-element__title" />
+            <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="CountLabel" class="gpui-statistics-element__count" style="right: 25px;" />
+            <ui:Button text="..." focusable="false" name="ActionsButton" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; width: 20px; height: 20px; position: absolute; right: 0;" />
+            <uie:ObjectField name="LGDObjectField" focusable="false" class="gpui-statistics-element__lgd" />
+            <ui:VisualElement name="Horizontal2VE" style="flex-direction: row;">
+                <ui:VisualElement name="DetailsVE" style="min-width: 100px; padding-right: 10px;">
+                    <ui:Label tabindex="-1" text="DrawCalls: X" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DrawCallsLabel" />
+                    <ui:Label tabindex="-1" text="Verts: X" parse-escape-sequences="true" display-tooltip-when-elided="true" name="VertsLabel" />
+                </ui:VisualElement>
+                <ui:VisualElement name="VisibilityDataVE" class="gpui-statistics-element__visibilityData" style="flex-grow: 1;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

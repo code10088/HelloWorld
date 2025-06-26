@@ -1,0 +1,46 @@
+// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+// Copies buffer data from source to target
+#pragma kernel CSCopyBufferData
+#pragma kernel CSClearBufferData
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/GPUIDefines.hlsl"
+
+#pragma multi_compile _ GPUI_TRANSFORM_DATA GPUI_FLOAT4_BUFFER
+
+#ifdef GPUI_TRANSFORM_DATA
+uniform StructuredBuffer<GPUITransformData> sourceBuffer;
+uniform RWStructuredBuffer<GPUITransformData> targetBuffer;
+#elif defined(GPUI_FLOAT4_BUFFER)
+uniform StructuredBuffer<float4> sourceBuffer;
+uniform RWStructuredBuffer<float4> targetBuffer;
+#else
+uniform StructuredBuffer<float4x4> sourceBuffer;
+uniform RWStructuredBuffer<float4x4> targetBuffer;
+#endif
+
+uniform uint sourceStartIndex;
+uniform uint targetStartIndex;
+uniform uint count;
+
+uniform RWStructuredBuffer<uint> destination;
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSCopyBufferData(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= count)
+        return;
+    
+    targetBuffer[targetStartIndex + id.x] = sourceBuffer[sourceStartIndex + id.x];
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSClearBufferData(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= count)
+        return;
+    
+    destination[targetStartIndex + id.x] = 0;
+}

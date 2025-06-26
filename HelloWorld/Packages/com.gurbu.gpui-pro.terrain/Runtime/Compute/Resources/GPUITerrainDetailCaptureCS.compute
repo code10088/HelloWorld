@@ -1,0 +1,46 @@
+﻿// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+// Saves terrain detail layer values into a texture
+#pragma kernel CSWriteTerrainDetailsToTexture
+
+#pragma multi_compile _ GPUI_TERRAIN_HOLES
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+
+#ifdef __INTELLISENSE__
+#define GPUI_TERRAIN_HOLES
+#endif // __INTELLISENSE__
+
+// Result buffer
+uniform RWTexture2D<float> terrainDetailTexture;
+
+// Input buffers
+uniform StructuredBuffer<int> detailLayerBuffer;
+uniform uint detailResolution;
+
+#ifdef GPUI_TERRAIN_HOLES
+uniform Texture2D<float> terrainHoleTexture;
+uniform SamplerState samplerterrainHoleTexture;
+#endif
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSWriteTerrainDetailsToTexture(uint3 id : SV_DispatchThreadID)
+{
+    uint bufferSize = detailResolution * detailResolution;
+    if (id.x >= bufferSize)
+        return;
+    
+    uint2 textureIndex = uint2(id.x % detailResolution, floor(id.x / detailResolution));
+    
+#ifdef GPUI_TERRAIN_HOLES
+    float2 uv = float2(textureIndex.x / float(detailResolution), textureIndex.y / float(detailResolution));
+    float holeSample = terrainHoleTexture.SampleLevel(samplerterrainHoleTexture, uv, 0);
+    if (holeSample > 0.0)
+#endif
+        terrainDetailTexture[textureIndex] = detailLayerBuffer[id.x] / 255.0;
+#ifdef GPUI_TERRAIN_HOLES
+    else
+        terrainDetailTexture[textureIndex] = 0.0;
+#endif
+}

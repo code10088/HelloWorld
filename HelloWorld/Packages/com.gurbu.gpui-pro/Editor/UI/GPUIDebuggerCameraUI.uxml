@@ -1,0 +1,44 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement class="gpui-camera-statistics" style="padding-top: 4px; flex-grow: 1;">
+        <ui:VisualElement style="flex-direction: row;">
+            <uie:ObjectField type="UnityEngine.Camera, UnityEngine.CoreModule" name="CameraField" style="flex-shrink: 1; flex-grow: 1; margin-right: 155px; height: 20px; max-height: 20px;" />
+            <ui:Label tabindex="-1" text="Scene" parse-escape-sequences="true" display-tooltip-when-elided="true" name="SceneViewRenderingLabel" style="position: absolute; right: 110px; top: 2px; padding-right: 0;" />
+            <ui:Toggle name="SceneViewRenderingToggle" focusable="false" tooltip="The &lt;b&gt;Scene&lt;/b&gt; toggle determines whether the objects visible to this camera will be shown in the Scene View." style="padding-left: 40px; position: absolute; right: 80px; padding-right: 5px; padding-top: 2px;" />
+            <ui:Label tabindex="-1" text="Visibility" parse-escape-sequences="true" display-tooltip-when-elided="true" style="position: absolute; right: 30px; top: 2px; padding-right: 0;" />
+            <ui:Toggle name="ShowVisibilityToggle" focusable="false" tooltip="When the &lt;b&gt;Visibility&lt;/b&gt; option is enabled, the culling results will also be shown, along with estimated vertex counts." style="padding-left: 50px; position: absolute; right: 0; padding-right: 5px; padding-top: 2px;" />
+        </ui:VisualElement>
+        <ui:VisualElement class="gpui-camera-statistics__content" style="flex-direction: row; padding-top: 5px; padding-bottom: 5px;">
+            <ui:VisualElement style="width: 130px; min-width: 130px;">
+                <ui:VisualElement class="gpui-camera-statistics__item" style="flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Draw calls:" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                    <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="DrawCallsValue" style="-unity-font-style: bold;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="gpui-camera-statistics__item" style="flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Buffer size:" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                    <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="BufferSizeValue" style="-unity-font-style: bold;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="width: 100px; min-width: 100px;">
+                <ui:VisualElement class="gpui-camera-statistics__item" style="flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Shadow DC:" parse-escape-sequences="true" display-tooltip-when-elided="true" tooltip="Shadow Draw call count" />
+                    <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="ShadowCastersValue" style="-unity-font-style: bold;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="gpui-camera-statistics__item" style="flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Visible:" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                    <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="VisibleValue" style="-unity-font-style: bold;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement style="width: 130px; min-width: 130px;">
+                <ui:VisualElement class="gpui-camera-statistics__item" style="flex-direction: row;">
+                    <ui:Label tabindex="-1" text="Verts:" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                    <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="VertsValue" style="-unity-font-style: bold;" />
+                </ui:VisualElement>
+                <ui:VisualElement class="gpui-camera-statistics__item" style="flex-direction: row;">
+                    <ui:Label tabindex="-1" text="V. Shadow:" parse-escape-sequences="true" display-tooltip-when-elided="true" tooltip="Visible Shadow Count" />
+                    <ui:Label tabindex="-1" text="N/A" parse-escape-sequences="true" display-tooltip-when-elided="true" name="VisibleShadowValue" style="-unity-font-style: bold;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

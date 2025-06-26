@@ -1,0 +1,50 @@
+﻿// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/GPUIDefines.hlsl"
+
+#pragma kernel CSCopyTexture
+#pragma kernel CSCopyTextureArray
+
+uniform Texture2D<float> source;
+uniform Texture2DArray<float> textureArray;
+uniform RWTexture2D<float> destination;
+uniform uint offsetX;
+uniform uint sourceSizeX;
+uniform uint sourceSizeY;
+uniform uint reverseZ;
+uniform uint textureArrayIndex;
+
+[numthreads(GPUI_THREADS_2D, GPUI_THREADS_2D, 1)]
+void CSCopyTexture(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= sourceSizeX || id.y >= sourceSizeY)
+        return;    
+
+    uint indexX = id.x + offsetX;
+    
+    float color = source[id.xy];
+
+    color = reverseZ * (1 - color) + (1 - reverseZ) * color;
+
+    destination[uint2(indexX, id.y)] = color;
+
+}
+
+[numthreads(GPUI_THREADS_2D, GPUI_THREADS_2D, 1)]
+void CSCopyTextureArray(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= sourceSizeX || id.y >= sourceSizeY)
+        return;
+
+    uint indexX = id.x + offsetX;
+    
+    float color = textureArray[uint3(id.x, id.y, textureArrayIndex)];
+    
+    color = reverseZ * (1 - color) + (1 - reverseZ) * color;
+
+    destination[uint2(indexX, id.y)] = color;
+
+}

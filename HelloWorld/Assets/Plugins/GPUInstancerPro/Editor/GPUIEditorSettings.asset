@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f114f251a87571a4a8acdc699b3c6eb4, type: 3}
+  m_Name: GPUIEditorSettings
+  m_EditorClassIdentifier: 
+  _version: 0.11.0
+  _buildNo: 33
+  _subModuleVersions:
+  - packageName: com.gurbu.gpui-pro.prefab
+    version: 0.11.0
+    processedVersion: 0.11.0
+  - packageName: com.gurbu.gpui-pro.terrain
+    version: 0.11.0
+    processedVersion: 0.11.0
+  isGenerateShaderVariantCollection: 1
+  isAutoShaderConversion: 1
+  _requirePackageReload: 0
+  stripDOTSInstancingVariants: 1
+  stripObjectMotionVectorVariants: 0
+  stripPerInstanceLightProbeVariants: 0
+  stripNonProceduralGPUIGeneratedVariants: 0
+  _customEditorSettings: []
+  packageImportList: []

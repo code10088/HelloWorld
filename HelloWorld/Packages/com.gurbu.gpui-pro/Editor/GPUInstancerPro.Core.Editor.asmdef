@@ -1,0 +1,46 @@
+{
+    "name": "GPUInstancerPro.Core.Editor",
+    "rootNamespace": "GPUInstancerPro",
+    "references": [
+        "GUID:3b7622431700fb240ae5afd170731645",
+        "GUID:9e24947de15b9834991c9d8411ea37cf",
+        "GUID:69448af7b92c7f342b298e06a37122aa"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "10.0.0",
+            "define": "GPUI_URP"
+        },
+        {
+            "name": "com.unity.render-pipelines.high-definition",
+            "expression": "10.0.0",
+            "define": "GPUI_HDRP"
+        },
+        {
+            "name": "com.unity.modules.xr",
+            "expression": "1.0.0",
+            "define": "GPUI_XR"
+        },
+        {
+            "name": "com.gurbu.gpui-pro.crowd-animations",
+            "expression": "0.8.0",
+            "define": "GPUI_CROWD"
+        },
+        {
+            "name": "com.unity.addressables",
+            "expression": "1.0.0",
+            "define": "GPUI_ADDRESSABLES"
+        }
+    ],
+    "noEngineReferences": false
+}

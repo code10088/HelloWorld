@@ -1,0 +1,113 @@
+﻿// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/GPUIDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/Matrix.hlsl"
+#include "Packages/com.gurbu.gpui-pro.terrain/Runtime/Compute/Include/GPUITerrainDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro.terrain/Runtime/Compute/Include/Terrain.hlsl"
+
+#pragma kernel CSTreeGenerationKernel
+
+#pragma multi_compile _ GPUI_TREE_INSTANCE_COLOR
+#pragma multi_compile _ GPUI_TERRAIN_HOLES
+#pragma multi_compile _ GPUI_TRANSFORM_OFFSET
+
+#ifdef __INTELLISENSE__
+#define GPUI_TREE_INSTANCE_COLOR
+#define GPUI_TERRAIN_HOLES
+#define GPUI_TRANSFORM_OFFSET
+#endif 
+
+// Result buffers
+uniform RWStructuredBuffer<float4x4> gpuiTransformBuffer;
+uniform RWStructuredBuffer<GPUICounterData> counterBuffer;
+#ifdef GPUI_TREE_INSTANCE_COLOR
+uniform RWStructuredBuffer<float4> gpuiTreeInstanceDataBuffer;
+#endif
+
+// Input buffers
+uniform StructuredBuffer<TerrainTreeInstance> treeData;
+
+uniform uint bufferSize;
+uniform uint transformBufferStartIndex;
+uniform int prototypeIndex;
+uniform int terrainPrototypeIndex;
+uniform float3 terrainSize;
+uniform float3 terrainPosition;
+uniform float3 prefabScale;
+uniform bool applyPrefabScale;
+uniform bool applyRotation;
+uniform bool applyHeight;
+#ifdef GPUI_TERRAIN_HOLES
+uniform Texture2D<float> terrainHoleTexture;
+uniform SamplerState samplerterrainHoleTexture;
+#endif
+#ifdef GPUI_TRANSFORM_OFFSET
+uniform float4x4 gpuiTransformOffset;
+#endif
+
+inline float4 EncodeFloatRGBA(float v)
+{
+    float4 kEncodeMul = float4(1.0, 255.0, 65025.0, 16581375.0);
+    float kEncodeBit = 1.0 / 255.0;
+    float4 enc = kEncodeMul * v;
+    enc = frac(enc);
+    enc -= enc.yzww * kEncodeBit;
+    enc.a = 1;
+    return enc;
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSTreeGenerationKernel(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    
+    TerrainTreeInstance treeInstance = treeData[id.x];
+    
+    if (treeInstance.prototypeIndex != terrainPrototypeIndex)
+        return;
+    
+    uint index;
+    InterlockedAdd(counterBuffer[prototypeIndex].count, 1, index);
+    
+#ifdef GPUI_TERRAIN_HOLES
+    float holeSample = terrainHoleTexture.SampleLevel(samplerterrainHoleTexture, treeInstance.position.xz, 0);
+    if (holeSample < 1.0)
+    {
+        gpuiTransformBuffer[index + transformBufferStartIndex] = zeroMatrix;
+        return;
+    }
+#endif
+    
+    float4x4 rotation = identityMatrix;
+    if (applyRotation)
+        rotation = MatrixRotate(vector3Up, treeInstance.rotation);
+    
+    float3 scale = vector3One;
+    if (applyHeight)
+        scale = float3(treeInstance.widthScale, treeInstance.heightScale, treeInstance.widthScale);
+    if (applyPrefabScale)
+        scale *= prefabScale;
+    
+    float3 position = float3(
+            treeInstance.position.x * terrainSize.x,
+            treeInstance.position.y * terrainSize.y,
+            treeInstance.position.z * terrainSize.z
+            );
+    
+    float4x4 transformMatrix = TRS(position, rotation, scale);
+#ifdef GPUI_TRANSFORM_OFFSET
+    transformMatrix = mul(gpuiTransformOffset, transformMatrix);
+    transformMatrix._14_24_34 -= gpuiTransformOffset._14_24_34;
+#endif
+    transformMatrix._14_24_34 += terrainPosition;
+    
+    gpuiTransformBuffer[index + transformBufferStartIndex] = transformMatrix;
+    
+#ifdef GPUI_TREE_INSTANCE_COLOR
+    gpuiTreeInstanceDataBuffer[index] = EncodeFloatRGBA(treeInstance.color);
+#endif
+}

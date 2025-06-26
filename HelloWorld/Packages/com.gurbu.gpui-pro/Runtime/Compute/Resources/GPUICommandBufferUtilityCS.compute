@@ -1,0 +1,41 @@
+// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+// Resets counts before visibility calculations
+#pragma kernel CSPreVisibilityCalculations
+// Copies instance counts
+#pragma kernel CSPostVisibilityCalculations
+
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/GPUIDefines.hlsl"
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+
+uniform RWStructuredBuffer<GPUIVisibilityData> visibilityBuffer;
+uniform RWStructuredBuffer<uint> commandBuffer;
+uniform uint bufferSize;
+uniform uint multiplier;
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSPreVisibilityCalculations(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    
+    visibilityBuffer[id.x].visibleCount = 0;
+}
+
+[numthreads(GPUI_THREADS, 1, 1)]
+void CSPostVisibilityCalculations(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= bufferSize)
+        return;
+    
+    GPUIVisibilityData visibilityData = visibilityBuffer[id.x];
+    uint mul = multiplier;
+    if (visibilityData.additional > 0)
+        mul = 1;
+    
+    for (uint i = visibilityData.commandStartIndex; i < visibilityData.commandStartIndex + visibilityData.commandCount; i++)
+    {
+        commandBuffer[i * 5 + 1] = visibilityData.visibleCount * mul;
+    }
+}

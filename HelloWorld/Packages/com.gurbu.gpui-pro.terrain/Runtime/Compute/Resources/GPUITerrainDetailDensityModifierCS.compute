@@ -1,0 +1,70 @@
+﻿// GPU Instancer Pro
+// Copyright (c) GurBu Technologies
+
+
+#include_with_pragmas "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/PlatformDefines.hlsl"
+#include "Packages/com.gurbu.gpui-pro/Runtime/Compute/Include/Collider.hlsl"
+#include_with_pragmas "Packages/com.gurbu.gpui-pro.terrain/Runtime/Compute/Include/GPUITerrainHeightmap.hlsl"
+
+#pragma kernel CSDensitySetValueInsideBounds
+#pragma kernel CSDensitySetValueInsideBox
+#pragma kernel CSDensitySetValueInsideSphere
+#pragma kernel CSDensitySetValueInsideCapsule
+
+// Result buffer
+uniform RWTexture2D<float> terrainDetailTexture;
+
+// Input buffers
+uniform uint detailTextureSize;
+uniform float3 terrainPosition;
+uniform float3 terrainSize;
+uniform float valueToSet;
+
+float3 GetPosition(uint3 id)
+{
+    float3 pos = terrainPosition + float3((id.x + 0.5) / detailTextureSize, 0, (id.z + 0.5) / detailTextureSize) * terrainSize;
+    float2 detailTextureUV = id.xz / float2(detailTextureSize, detailTextureSize);
+    pos.y += SampleHeightmapTexture(uint2(floor(detailTextureUV.x * heightmapTextureSize), floor(detailTextureUV.y * heightmapTextureSize))) * 2 * terrainSize.y;
+    
+    return pos;
+}
+
+[numthreads(GPUI_THREADS_2D, 1, GPUI_THREADS_2D)]
+void CSDensitySetValueInsideBounds(uint3 id : SV_DispatchThreadID)
+{    
+    if (id.x >= detailTextureSize || id.z >= detailTextureSize)
+        return;
+    
+    if (IsInsideBounds(GetPosition(id)))
+        terrainDetailTexture[id.xz] = valueToSet;
+}
+
+[numthreads(GPUI_THREADS_2D, 1, GPUI_THREADS_2D)]
+void CSDensitySetValueInsideBox(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= detailTextureSize || id.z >= detailTextureSize)
+        return;
+    
+    if (IsInsideBox(GetPosition(id)))
+        terrainDetailTexture[id.xz] = valueToSet;
+}
+
+[numthreads(GPUI_THREADS_2D, 1, GPUI_THREADS_2D)]
+void CSDensitySetValueInsideSphere(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= detailTextureSize || id.z >= detailTextureSize)
+        return;
+    
+    if (IsInsideSphere(GetPosition(id)))
+        terrainDetailTexture[id.xz] = valueToSet;
+}
+
+[numthreads(GPUI_THREADS_2D, 1, GPUI_THREADS_2D)]
+void CSDensitySetValueInsideCapsule(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= detailTextureSize || id.z >= detailTextureSize)
+        return;
+    
+    if (IsInsideCapsule(GetPosition(id)))
+        terrainDetailTexture[id.xz] = valueToSet;
+}

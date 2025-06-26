@@ -1,0 +1,37 @@
+{
+  "name": "com.gurbu.gpui-pro.prefab",
+  "version": "0.11.0",
+  "displayName": "GPU Instancer Pro - Prefab Module",
+  "description": "Using GPU instancing and Compute Shaders, GPU Instancer Pro helps users efficiently manage and render many objects by reducing draw calls and improving performance.\n\nPlease use the \"Documentation\" link to access the online documentation.\nPlease go to the \"Samples\" tab to import Sample scenes.",
+  "author": {
+    "name": "GurBu Technologies",
+    "email": "support@gurbu.com",
+    "url": "https://gurbu.com/"
+  },
+  "unity": "2022.3",
+  "type": "tool",
+  "documentationUrl": "https://wiki.gurbu.com/index.php?title=GPU_Instancer_Pro:GettingStarted",
+  "dependencies": {
+    "com.gurbu.gpui-pro": "0.11.0"
+  },
+  "samples": [
+    {
+      "displayName": "Demos",
+      "description": "Contains demo scenes.",
+      "path": "Demos/DemosBase",
+      "interactiveImport": true
+    },
+    {
+      "displayName": "URP Overwrite",
+      "description": "Modifies demo scenes for the Universal render pipeline. [Demos] must be imported first.",
+      "path": "Demos/DemosURPOverwrite",
+      "interactiveImport": true
+    },
+    {
+      "displayName": "HDRP Overwrite",
+      "description": "Modifies demo scenes for the High Definition render pipeline. [Demos] must be imported first.",
+      "path": "Demos/DemosHDRPOverwrite",
+      "interactiveImport": true
+    }
+  ]
+}

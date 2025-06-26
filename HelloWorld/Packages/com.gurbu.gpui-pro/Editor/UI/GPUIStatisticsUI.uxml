@@ -1,0 +1,20 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="StatisticsTabWarnings" style="flex-grow: 1;" />
+    <GPUInstancerPro.GPUIHelpBox help-text="The Statistics Tab provides insights into GPU Instancer rendering information, enabling users to identify bottlenecks and optimize performance.\n\n&lt;b&gt;Show Visibility:&lt;/b&gt; When enabled, the GPUI Manager will readback culling results from the GPU and display additional information such as vertex counts and visible LOD counts." name="StatisticsTabHelpBox" class="gpui-hidden" />
+    <ui:VisualElement name="StatisticsSummary" class="gpui-border" style="margin-bottom: 5px; align-self: flex-end;">
+        <ui:Label text="Summary" style="width: 100%; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: upper-center; -unity-font-style: bold; font-size: 12px;" />
+        <ui:VisualElement style="flex-direction: row;">
+            <ui:Label text="Draw Calls: 15" name="StatisticsSummaryDrawCalls" class="gpui-analysis-summary__label" style="min-width: 140px;" />
+            <ui:Label text="Instance C.: 435.3k" name="StatisticsSummaryInstanceCount" class="gpui-analysis-summary__label" style="flex-grow: 1; -unity-text-align: upper-right;" />
+        </ui:VisualElement>
+        <ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row;">
+                <ui:Label text="Visible: 15.2k" name="StatisticsSummaryVisibleCount" class="gpui-analysis-summary__label" style="min-width: 100px;" />
+                <ui:Label text="V. Shadow: 15.2k" name="StatisticsSummaryVisibleShadowCount" class="gpui-analysis-summary__label" style="min-width: 100px; -unity-text-align: upper-right; flex-grow: 1;" />
+            </ui:VisualElement>
+            <ui:Label text="Verts: 2.3M" name="StatisticsSummaryVerts" class="gpui-analysis-summary__label" style="min-width: 100px;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:Label tabindex="-1" text="Instance Counts" parse-escape-sequences="true" display-tooltip-when-elided="true" name="StatisticsCountsLabel" style="font-size: 12px; -unity-text-align: lower-right; padding-bottom: 0; margin-bottom: 0; padding-right: 0; margin-right: 0; flex-grow: 1; max-height: 15px; min-height: 15px; height: 15px;" />
+    <ui:ListView name="StatisticsListView" show-border="true" show-bound-collection-size="false" selection-type="Multiple" focusable="false" style="flex-grow: 1; min-height: auto; max-height: 400px;" />
+</ui:UXML>

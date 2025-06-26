@@ -1,0 +1,11 @@
+BEGIN_OPTIONS
+    Stackable"False"
+END_OPTIONS
+
+BEGIN_SUBSHADERS
+    "GPUInstancerSetup.hlsl"
+END_SUBSHADERS
+
+BEGIN_DEFINES
+    #pragma instancing_options procedural:setupGPUI
+END_DEFINES

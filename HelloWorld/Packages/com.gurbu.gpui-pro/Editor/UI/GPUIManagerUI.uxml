@@ -1,0 +1,53 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:Template name="GPUIStatisticsUI" src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIStatisticsUI.uxml?fileID=9197481963319205126&amp;guid=ac30f59098f7d86498ff82c09bf3046b&amp;type=3#GPUIStatisticsUI" />
+    <Style src="project://database/Packages/com.gurbu.gpui-pro/Editor/UI/GPUIEditorStyle.uss?fileID=7433441132597879392&amp;guid=a2a4445c56ecf5c47947568de4aa6d27&amp;type=3#GPUIEditorStyle" />
+    <ui:VisualElement name="ManagerHelpBoxes" />
+    <ui:VisualElement name="ManagerSettingsElement" class="gpui-border gpui-bg-light" style="margin-bottom: 5px;">
+        <ui:Foldout text="Manager Settings" name="ManagerSettingsFoldout" class="gpui-foldout-title">
+            <ui:VisualElement name="ManagerSettingsContent" style="flex-grow: 1;" />
+            <ui:Foldout text="Advanced Settings" value="false" name="ManagerAdvancedSettingsFoldout" style="display: none;" />
+        </ui:Foldout>
+    </ui:VisualElement>
+    <ui:VisualElement name="RegisteredInstancesElement" class="gpui-border gpui-bg-light" style="margin-bottom: 5px;">
+        <ui:Foldout text="Registered Instances" name="RegisteredInstancesFoldout" class="gpui-foldout-title" />
+    </ui:VisualElement>
+    <uie:Toolbar style="border-bottom-width: 0; border-top-width: 1px; height: 26px; border-left-width: 1px; border-right-width: 1px;">
+        <uie:ToolbarButton text="Prototype Settings" focusable="false" name="PrototypesToolbarButton" class="gpui-prototype-list-toolbar-button gpui-prototype-list-toolbar-button-active" style="justify-content: center;">
+            <ui:VisualElement style="background-color: rgba(204, 66, 59, 0.71); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; width: 18px; height: 18px; align-self: center; left: 72px;">
+                <ui:Label tabindex="-1" text="X" parse-escape-sequences="true" display-tooltip-when-elided="true" name="PrototypesErrorCountLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; height: 100%; -unity-font-style: bold; font-size: 11px; width: 100%;" />
+            </ui:VisualElement>
+        </uie:ToolbarButton>
+        <uie:ToolbarButton text="Statistics" focusable="false" name="StatisticsToolbarButton" class="gpui-prototype-list-toolbar-button" style="justify-content: center;">
+            <ui:VisualElement style="background-color: rgba(204, 154, 6, 0.71); border-top-width: 3px; border-right-width: 3px; border-bottom-width: 3px; border-left-width: 3px; border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; width: 18px; height: 18px; align-self: center; left: 38px;">
+                <ui:Label tabindex="-1" text="X" parse-escape-sequences="true" display-tooltip-when-elided="true" name="StatisticsErrorCountLabel" style="margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; width: 100%; height: 100%; -unity-font-style: bold; font-size: 11px;" />
+            </ui:VisualElement>
+        </uie:ToolbarButton>
+    </uie:Toolbar>
+    <ui:VisualElement name="RightTopCheckbox" class="gpui-border gpui-bg-light" style="flex-direction: row-reverse; border-top-width: 0; border-bottom-width: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;">
+        <ui:VisualElement name="ShowVisibilityElement" style="flex-direction: row; margin-top: 5px; align-self: flex-start; margin-right: 5px; justify-content: flex-end; width: 140px;">
+            <ui:Label tabindex="-1" text="Show Visibility" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-text-align: upper-right; font-size: 12px;" />
+            <ui:Toggle name="ShowVisibilityDataToggle" focusable="false" />
+        </ui:VisualElement>
+        <ui:VisualElement name="TextModeElement" style="flex-direction: row; margin-top: 5px; align-self: flex-start; margin-right: 5px; display: none; justify-content: flex-end;">
+            <ui:Label tabindex="-1" text="Text" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-text-align: upper-right; font-size: 12px;" />
+            <ui:Toggle name="TextModeToggle" focusable="false" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:Instance template="GPUIStatisticsUI" name="StatisticsTabElement" class="gpui-bg-light gpui-border" style="border-top-width: 0;" />
+    <ui:VisualElement name="PrototypesElement" class="gpui-bg-light gpui-border" style="border-top-width: 0; padding-top: 0;">
+        <ui:VisualElement name="PrePrototypeButtons" style="padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; flex-direction: row; flex-wrap: wrap; margin-right: 35px; margin-top: -20px; min-height: 20px;" />
+        <ui:VisualElement name="PrototypesVE" style="flex-grow: 1;">
+            <ui:VisualElement name="PrototypeButtons" style="flex-direction: row; flex-wrap: wrap; margin-bottom: 5px;" />
+            <ui:Label text="*Ctrl+Click to select multiple, Shift+Click to select adjacent items." display-tooltip-when-elided="true" name="PrototypesHelpText" style="font-size: 11px; -unity-font-style: italic; white-space: normal;" />
+            <ui:VisualElement name="PrototypeSettings" class="gpui-bg-light gpui-border" style="margin-top: 5px;">
+                <ui:Foldout text="Prototype Settings" name="PrototypeSettingsFoldout" class="gpui-foldout-title">
+                    <ui:VisualElement name="PrototypeSettingsContent" style="flex-grow: 1;" />
+                    <ui:Foldout text="Advanced Settings" name="PrototypeAdvancedActionsFoldout" value="false" class="gpui-foldout-title" style="display: none; padding-top: 5px; -unity-font-style: normal;" />
+                </ui:Foldout>
+                <ui:VisualElement name="ActionButtons" style="flex-direction: row; padding-top: 5px;">
+                    <ui:Button text="Remove" display-tooltip-when-elided="true" name="RemoveButton" focusable="false" class="gpui-prototype-action-button" style="background-color: rgb(120, 0, 0); width: 100%;" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
