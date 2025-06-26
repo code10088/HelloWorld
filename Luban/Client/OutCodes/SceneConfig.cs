@@ -20,8 +20,8 @@ public sealed partial class SceneConfig : Luban.BeanBase
         Name = _buf.ReadString();
         PrefabPath = _buf.ReadString();
         SkyBoxPath = _buf.ReadString();
-        CameraPos = HotAssembly.ExternalTypeUtil.NewVector3(vec3.Deserializevec3(_buf));
-        CameraEuler = HotAssembly.ExternalTypeUtil.NewVector3(vec3.Deserializevec3(_buf));
+        CameraPos = ExternalTypeUtil.NewVector3(vec3.Deserializevec3(_buf));
+        CameraEuler = ExternalTypeUtil.NewVector3(vec3.Deserializevec3(_buf));
     }
 
     public static SceneConfig DeserializeSceneConfig(ByteBuf _buf)

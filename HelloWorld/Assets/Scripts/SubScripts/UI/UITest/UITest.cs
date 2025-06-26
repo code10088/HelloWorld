@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class UITest : UIBase
 {
     private UITestComponent component = new UITestComponent();
-    private UISubTest subUI = new UISubTest("UISubTest");
+    private UISubTest subUI = new UISubTest("UITest/UISubTest");
     private int updateId = -1;
 
     protected override void Init()
@@ -31,6 +31,8 @@ public class UITest : UIBase
         component.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
         component.openRvoSceneUIButton.onClick.AddListener(OpenRvoScene);
         component.closeRvoSceneUIButton.onClick.AddListener(CloseRvoScene);
+        component.openInfiniteTerrainSceneUIButton.onClick.AddListener(OpenInfiniteTerrainScene);
+        component.closeInfiniteTerrainSceneUIButton.onClick.AddListener(CloseInfiniteTerrainScene);
         component.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
         component.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
         component.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
@@ -124,6 +126,14 @@ public class UITest : UIBase
     private void CloseRvoScene()
     {
         BattleManager.Instance.Exit();
+    }
+    private void OpenInfiniteTerrainScene()
+    {
+        SceneManager.Instance.OpenScene(SceneType.InfiniteTerrainScene);
+    }
+    private void CloseInfiniteTerrainScene()
+    {
+        SceneManager.Instance.CloseScene(SceneType.InfiniteTerrainScene);
     }
     #endregion
 

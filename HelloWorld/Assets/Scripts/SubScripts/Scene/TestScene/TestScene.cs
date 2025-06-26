@@ -11,14 +11,14 @@ public class TestScene : SceneBase
     {
         base.Init();
         component.Init(SceneObj);
-        pool.Init($"{ZResConst.ResUIPrefabPath}TestBullet.prefab");
+        pool.Init($"{ZResConst.ResScenePrefabPath}TestScene/TestBullet.prefab");
     }
     public override void OnEnable(params object[] param)
     {
         base.OnEnable(param);
         GameDebug.Log("TestScene OnEnable");
 
-        testEffectId = EffectManager.Instance.AddEffect($"{ZResConst.ResSceneEffectPath}Fire.prefab", component.fireRootTransform);
+        testEffectId = EffectManager.Instance.AddEffect($"{ZResConst.ResSceneEffectPath}Fire/Fire.prefab", component.fireRootTransform);
     }
     public override void OnDisable()
     {

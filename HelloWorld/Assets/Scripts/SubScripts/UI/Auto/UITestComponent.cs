@@ -18,6 +18,8 @@ public partial class UITestComponent
     public UIButton closeBattleSceneUIButton = null;
     public UIButton openRvoSceneUIButton = null;
     public UIButton closeRvoSceneUIButton = null;
+    public UIButton openInfiniteTerrainSceneUIButton = null;
+    public UIButton closeInfiniteTerrainSceneUIButton = null;
     public GameObject uIObj = null;
     public GameObject subRootObj = null;
     public SuperScrollView.LoopListView2 loopLoopListView2 = null;
@@ -53,21 +55,23 @@ public partial class UITestComponent
         closeBattleSceneUIButton = allData[13].exportComponent[0] as UIButton;
         openRvoSceneUIButton = allData[14].exportComponent[0] as UIButton;
         closeRvoSceneUIButton = allData[15].exportComponent[0] as UIButton;
-        uIObj = allData[16].gameObject;
-        subRootObj = allData[17].gameObject;
-        loopLoopListView2 = allData[18].exportComponent[0] as SuperScrollView.LoopListView2;
-        itemLoopListViewItem2 = allData[19].exportComponent[0] as SuperScrollView.LoopListViewItem2;
-        openSubBtnUIButton = allData[21].exportComponent[0] as UIButton;
-        openMsgBtnUIButton = allData[22].exportComponent[0] as UIButton;
-        openTipsBtnUIButton = allData[23].exportComponent[0] as UIButton;
-        loadSpriteUIButton = allData[24].exportComponent[0] as UIButton;
-        imageUIImage = allData[25].exportComponent[0] as UIImage;
-        functionObj = allData[26].gameObject;
-        openSDKBtnUIButton = allData[27].exportComponent[0] as UIButton;
-        coroutineBtnUIButton = allData[28].exportComponent[0] as UIButton;
-        addTriggerBtnUIButton = allData[29].exportComponent[0] as UIButton;
-        excuteTriggerBtnUIButton = allData[30].exportComponent[0] as UIButton;
-        guideUIButton = allData[31].exportComponent[0] as UIButton;
+        openInfiniteTerrainSceneUIButton = allData[16].exportComponent[0] as UIButton;
+        closeInfiniteTerrainSceneUIButton = allData[17].exportComponent[0] as UIButton;
+        uIObj = allData[18].gameObject;
+        subRootObj = allData[19].gameObject;
+        loopLoopListView2 = allData[20].exportComponent[0] as SuperScrollView.LoopListView2;
+        itemLoopListViewItem2 = allData[21].exportComponent[0] as SuperScrollView.LoopListViewItem2;
+        openSubBtnUIButton = allData[23].exportComponent[0] as UIButton;
+        openMsgBtnUIButton = allData[24].exportComponent[0] as UIButton;
+        openTipsBtnUIButton = allData[25].exportComponent[0] as UIButton;
+        loadSpriteUIButton = allData[26].exportComponent[0] as UIButton;
+        imageUIImage = allData[27].exportComponent[0] as UIImage;
+        functionObj = allData[28].gameObject;
+        openSDKBtnUIButton = allData[29].exportComponent[0] as UIButton;
+        coroutineBtnUIButton = allData[30].exportComponent[0] as UIButton;
+        addTriggerBtnUIButton = allData[31].exportComponent[0] as UIButton;
+        excuteTriggerBtnUIButton = allData[32].exportComponent[0] as UIButton;
+        guideUIButton = allData[33].exportComponent[0] as UIButton;
     }
 }
 public partial class UITestItem : LoopItemData
