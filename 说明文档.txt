@@ -80,12 +80,6 @@ SuperScrollView调整
 	LoopListViewItem2中添加LoopItemData
 	修改mDistanceForRecycle0、mDistanceForNew0、mDistanceForRecycle1、mDistanceForNew1默认值
 
-Occlusion Culling
-	消耗部分CPU去掉不可见物体，降低GPU的负载
-LOD
-	消耗内存换性能
-GPU地形大世界地形解决方案
-
 SpriteAtlas
 	无法使用自动导入设置，common是已调好的设置参数，新建SpriteAtlas时copy后修改文件夹即可
 	
