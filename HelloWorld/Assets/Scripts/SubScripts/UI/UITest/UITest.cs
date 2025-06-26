@@ -22,30 +22,46 @@ public class UITest : UIBase
         base.Init();
         component.Init(UIObj);
         component.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
+        component.closeBtnUIButton.onClick.AddListener(OnClickClose);
         component.openSceneBtnUIButton.onClick.AddListener(OnOpenScene);
         component.openUIBtnUIButton.onClick.AddListener(OnOpenUI);
         component.openFunctionBtnUIButton.onClick.AddListener(OnOpenFunction);
         component.openUISettingUIButton.onClick.AddListener(OnOpenUISetting);
-        component.closeBtnUIButton.onClick.AddListener(OnClickClose);
-        component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
-        component.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);
-        component.openTipsBtnUIButton.onClick.AddListener(OnOpenTips);
-        component.openSDKBtnUIButton.onClick.AddListener(SDKInit);
-        component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
-        component.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
-        component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
+        component.openMiniGameBtnUIButton.onClick.AddListener(OnOpenMiniGame);
+
+        //Scene
         component.openTestSceneUIButton.onClick.AddListener(OpenTestScene);
         component.closeTestSceneUIButton.onClick.AddListener(CloseTestScene);
+        component.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
+        component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
         component.openBattleSceneUIButton.onClick.AddListener(OpenBattleScene);
         component.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
         component.openRvoSceneUIButton.onClick.AddListener(OpenRvoScene);
         component.closeRvoSceneUIButton.onClick.AddListener(CloseRvoScene);
         component.openInfiniteTerrainSceneUIButton.onClick.AddListener(OpenInfiniteTerrainScene);
         component.closeInfiniteTerrainSceneUIButton.onClick.AddListener(CloseInfiniteTerrainScene);
+
+        //UI
+        component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
+        component.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);
+        component.openTipsBtnUIButton.onClick.AddListener(OnOpenTips);
+        component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
+
+        //Function
+        component.openSDKBtnUIButton.onClick.AddListener(SDKInit);
         component.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
         component.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
         component.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
         component.guideUIButton.onClick.AddListener(StartGuide);
+
+        //小游戏
+        component.createAdBtnUIButton.onClick.AddListener(CreateAd);
+        component.showAdBtnUIButton.onClick.AddListener(ShowAd);
+        component.showAdVideoBtnUIButton.onClick.AddListener(ShowAdVideo);
+        component.uploadRankDataBtnUIButton.onClick.AddListener(UploadRankData);
+        component.openRankBtnUIButton.onClick.AddListener(OnOpenRank);
+        component.openMenuBtnUIButton.onClick.AddListener(OnOpenMenu);
+
         component.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
     }
     public override void OnEnable(params object[] param)
@@ -93,12 +109,22 @@ public class UITest : UIBase
         component.totalObj.SetActive(false);
         component.functionObj.SetActive(true);
     }
+    private void OnOpenUISetting()
+    {
+        UIManager.Instance.OpenUI(UIType.UISetting);
+    }
+    private void OnOpenMiniGame()
+    {
+        component.totalObj.SetActive(false);
+        component.miniGameObj.SetActive(true);
+    }
     private void OnClickClose()
     {
         component.totalObj.SetActive(true);
         component.sceneObj.SetActive(false);
         component.uIObj.SetActive(false);
         component.functionObj.SetActive(false);
+        component.miniGameObj.SetActive(false);
     }
 
     #region Scene
@@ -236,6 +262,9 @@ public class UITest : UIBase
     #region 小游戏
     private int adId = -1;
     private int retry = 3;
+    /// <summary>
+    /// banner广告初始化
+    /// </summary>
     private void CreateAd()
     {
 #if WEIXINMINIGAME
@@ -246,6 +275,9 @@ public class UITest : UIBase
         adId = SDK.Instance.TTCreateBannerAd(AdConst.TTAdUnitId2, 30, 0, -200, Screen.width);
 #endif
     }
+    /// <summary>
+    /// banner广告
+    /// </summary>
     private void ShowAd()
     {
         var result = SDK.Instance.Show(adId);
@@ -264,6 +296,9 @@ public class UITest : UIBase
             TimeManager.Instance.StartTimer(30, 0, a => ShowAd());
         }
     }
+    /// <summary>
+    /// 视频广告
+    /// </summary>
     private void ShowAdVideo()
     {
         SDK.Instance.Show(AdConst.TempId1, OnShowAdVideoCallback);
@@ -273,6 +308,9 @@ public class UITest : UIBase
         GameDebug.Log(isEnded);
     }
     int record = 0;
+    /// <summary>
+    /// 上传排行榜数据
+    /// </summary>
     private void UploadRankData()
     {
 #if WEIXINMINIGAME
@@ -298,7 +336,10 @@ public class UITest : UIBase
         else SDK.Instance.Login(a => { if (a) SetImRankData(); });
 #endif
     }
-    private void OnClickRank()
+    /// <summary>
+    /// 打开排行榜
+    /// </summary>
+    private void OnOpenRank()
     {
 #if WEIXINMINIGAME
         component.rankObj.SetActive(true);
@@ -330,7 +371,10 @@ public class UITest : UIBase
         else SDK.Instance.Login(a => { if (a) GetImRankList(); });
 #endif
     }
-    private void OnClickMenu()
+    /// <summary>
+    /// 跳转到小游戏菜单界面
+    /// </summary>
+    private void OnOpenMenu()
     {
 #if DOUYINMINIGAME
         SDK.Instance.TTNavigateToScene();
@@ -338,10 +382,6 @@ public class UITest : UIBase
     }
     #endregion
 
-    private void OnOpenUISetting()
-    {
-        UIManager.Instance.OpenUI(UIType.UISetting);
-    }
 }
 public partial class UITestItem
 {
