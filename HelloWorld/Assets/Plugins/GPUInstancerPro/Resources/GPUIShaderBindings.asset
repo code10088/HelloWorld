@@ -12,6 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f01694a6d0ad91f4985ea0689f262c1b, type: 3}
   m_Name: GPUIShaderBindings
   m_EditorClassIdentifier: 
-  shaderInstances: []
+  shaderInstances:
+  - shaderName: GPUInstancerPro/Foliage_SG
+    replacementShaderName: GPUInstancerPro/Foliage_SG
+    extensionCode: 
+    isUseOriginal: 0
+    modifiedDate: 06/26/2025 22:40:35.549
+  - shaderName: Universal Render Pipeline/Lit
+    replacementShaderName: GPUInstancerPro/Universal Render Pipeline/Lit
+    extensionCode: 
+    isUseOriginal: 0
+    modifiedDate: 06/26/2025 22:40:36.548
   stripObjectMotionVectorVariants: 0
   stripPerInstanceLightProbeVariants: 0

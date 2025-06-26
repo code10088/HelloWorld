@@ -159,9 +159,9 @@ MonoBehaviour:
     profile: {fileID: 11400000, guid: a6a4e387c75305b4a8e6bd0c576190f9, type: 2}
     prefabObject: {fileID: 0}
     gpuiLODGroupData: {fileID: 0}
-    prototypeMesh: {fileID: 4300000, guid: bf19427e4ff811c47ba8cf003ae419a0, type: 2}
+    prototypeMesh: {fileID: 4300000, guid: 722dfa9d8454c2c4397eb695b42ae537, type: 2}
     prototypeMaterials:
-    - {fileID: 2100000, guid: 6fb1fab9198c8544496233cfccff039a, type: 2}
+    - {fileID: 2100000, guid: 4140e63a4509b95449f93a30afea4e7f, type: 2}
     layer: 0
     isGenerateBillboard: 0
     isBillboardReplaceLODCulled: 0
@@ -254,7 +254,7 @@ MonoBehaviour:
   editor_isTextMode: 0
   editor_isRollbackRuntimeProfileChanges: 1
   _prototypeDataArray:
-  - mpbDescription: {fileID: 11400000, guid: 29686ee48a28f574f87ea6088932c40b, type: 2}
+  - mpbDescription: {fileID: 11400000, guid: 12b3d553acefb9249ae5f8f58525a486, type: 2}
     detailTexture: {fileID: 2800000, guid: f2c2903aba06c144d9fbed1a3f66deb6, type: 3}
     noiseSpread: 0.1
     healthyColor: {r: 0.44313726, g: 0.67058825, b: 0.20392157, a: 0}
