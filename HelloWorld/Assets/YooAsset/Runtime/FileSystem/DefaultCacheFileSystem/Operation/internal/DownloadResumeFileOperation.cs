@@ -40,7 +40,10 @@ namespace YooAsset
                 }
                 else
                 {
-                    _steps = ESteps.CreateRequest;
+                    if (_isReuqestLocalFile && _fileSystem.CopyBuildinBundleServices != null)
+                        _steps = ESteps.CopyBuildinBundle;
+                    else
+                        _steps = ESteps.CreateRequest;
                 }
             }
 
@@ -102,6 +105,42 @@ namespace YooAsset
 
                 // 注意：最终释放请求器
                 DisposeWebRequest();
+            }
+
+            // 拷贝内置文件
+            if (_steps == ESteps.CopyBuildinBundle)
+            {
+                FileUtility.CreateFileDirectory(_tempFilePath);
+
+                // 删除临时文件（不支持断点续传）
+                if (File.Exists(_tempFilePath))
+                    File.Delete(_tempFilePath);
+
+                // 获取请求地址
+                _requestURL = GetRequestURL();
+
+                try
+                {
+                    //TODO 团结引擎，在某些机型（红米），拷贝包内文件会小概率失败！需要借助其它方式来拷贝包内文件。
+                    _fileSystem.CopyBuildinBundleServices.CopyBuildinFile(_requestURL, _tempFilePath);
+                    if (File.Exists(_tempFilePath))
+                    {
+                        DownloadProgress = 1f;
+                        DownloadedBytes = Bundle.FileSize;
+                        Progress = DownloadProgress;
+                        _steps = ESteps.VerifyTempFile;
+                    }
+                    else
+                    {
+                        Error = $"Failed copy buildin bundle : {_requestURL}";
+                        _steps = ESteps.TryAgain;
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Error = $"Failed copy buildin bundle : {ex.Message}";
+                    _steps = ESteps.TryAgain;
+                }
             }
 
             // 验证下载文件
@@ -187,12 +226,15 @@ namespace YooAsset
         {
             while (true)
             {
-                //TODO 如果是导入或解压本地文件，执行等待完毕
+                //TODO 如果是导入或解压本地文件，执行等待完毕，该操作会挂起主线程！
                 if (_isReuqestLocalFile)
                 {
                     InternalUpdate();
                     if (IsDone)
                         break;
+
+                    // 短暂休眠避免完全卡死
+                    System.Threading.Thread.Sleep(1);
                 }
                 else
                 {

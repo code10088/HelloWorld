@@ -124,6 +124,7 @@ public class BuildEditor
         buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;
         buildParameters.BuildinFileCopyParams = "Builtin";
         buildParameters.EncryptionServices = new EncryptionServices();
+        buildParameters.ManifestServices = null;
         buildParameters.CompressOption = ECompressOption.LZ4;
         buildParameters.StripUnityVersion = false;
         buildParameters.DisableWriteTypeTree = false;
