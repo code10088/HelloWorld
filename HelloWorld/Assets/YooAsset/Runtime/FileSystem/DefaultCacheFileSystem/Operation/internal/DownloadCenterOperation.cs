@@ -82,33 +82,40 @@ namespace YooAsset
                 return oldDownloader;
             }
 
-            // 设置请求URL
-            if (string.IsNullOrEmpty(options.ImportFilePath))
-            {
-                options.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(bundle.FileName);
-                options.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(bundle.FileName);
-            }
-            else
-            {
-                // 注意：把本地文件路径指定为远端下载地址
-                options.MainURL = DownloadSystemHelper.ConvertToWWWPath(options.ImportFilePath);
-                options.FallbackURL = options.MainURL;
-            }
-
             // 创建新的下载器
             DefaultDownloadFileOperation newDownloader;
-            if (bundle.FileSize >= _fileSystem.ResumeDownloadMinimumSize)
+            if (string.IsNullOrEmpty(options.ImportFilePath))
             {
-                newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, options);
-                AddChildOperation(newDownloader);
-                _downloaders.Add(bundle.BundleGUID, newDownloader);
+                // 远端下载地址
+                options.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(bundle.FileName);
+                options.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+
+                // 创建新的下载器
+                if (bundle.FileSize >= _fileSystem.ResumeDownloadMinimumSize)
+                {
+                    newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, options);
+                    AddChildOperation(newDownloader);
+                    _downloaders.Add(bundle.BundleGUID, newDownloader);
+                }
+                else
+                {
+                    newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, options);
+                    AddChildOperation(newDownloader);
+                    _downloaders.Add(bundle.BundleGUID, newDownloader);
+                }
             }
             else
             {
-                newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, options);
+                // 注意：把本地文件路径指定为可下载地址
+                options.MainURL = DownloadSystemHelper.ConvertToWWWPath(options.ImportFilePath);
+                options.FallbackURL = options.MainURL;
+
+                // 创建新的下载器
+                newDownloader = new DownloadLocalFileOperation(_fileSystem, bundle, options);
                 AddChildOperation(newDownloader);
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }
+
             return newDownloader;
         }
 

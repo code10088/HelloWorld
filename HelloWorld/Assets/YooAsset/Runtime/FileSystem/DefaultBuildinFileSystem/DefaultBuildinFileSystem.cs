@@ -97,7 +97,7 @@ namespace YooAsset
         /// <summary>
         /// 自定义参数：拷贝内置文件服务类
         /// </summary>
-        public ICopyBuildinBundleServices CopyBuildinBundleServices { private set; get; }
+        public ICopyLocalFileServices CopyLocalFileServices { private set; get; }
         #endregion
 
 
@@ -188,9 +188,9 @@ namespace YooAsset
             {
                 ManifestServices = (IManifestServices)value;
             }
-            else if (name == FileSystemParametersDefine.COPY_BUILDIN_BUNDLE_SERVICES)
+            else if (name == FileSystemParametersDefine.COPY_LOCAL_FILE_SERVICES)
             {
-                CopyBuildinBundleServices = (ICopyBuildinBundleServices)value;
+                CopyLocalFileServices = (ICopyLocalFileServices)value;
             }
             else
             {
@@ -214,7 +214,7 @@ namespace YooAsset
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.INSTALL_CLEAR_MODE, InstallClearMode);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, AppendFileExtension);
             _unpackFileSystem.SetParameter(FileSystemParametersDefine.DECRYPTION_SERVICES, DecryptionServices);
-            _unpackFileSystem.SetParameter(FileSystemParametersDefine.COPY_BUILDIN_BUNDLE_SERVICES, CopyBuildinBundleServices);
+            _unpackFileSystem.SetParameter(FileSystemParametersDefine.COPY_LOCAL_FILE_SERVICES, CopyLocalFileServices);
             _unpackFileSystem.OnCreate(packageName, null);
         }
         public virtual void OnDestroy()

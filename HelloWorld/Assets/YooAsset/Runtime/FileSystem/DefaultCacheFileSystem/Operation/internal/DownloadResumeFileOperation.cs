@@ -9,11 +9,9 @@ namespace YooAsset
         private readonly DefaultCacheFileSystem _fileSystem;
         private DownloadHandlerFileRange _downloadHandle;
         private VerifyTempFileOperation _verifyOperation;
-        private bool _isReuqestLocalFile;
         private long _fileOriginLength = 0;
         private string _tempFilePath;
         private ESteps _steps = ESteps.None;
-
 
         internal DownloadResumeFileOperation(DefaultCacheFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
         {
@@ -21,7 +19,6 @@ namespace YooAsset
         }
         internal override void InternalStart()
         {
-            _isReuqestLocalFile = DownloadSystemHelper.IsRequestLocalFile(Options.MainURL);
             _tempFilePath = _fileSystem.GetTempFilePath(Bundle);
             _steps = ESteps.CheckExists;
         }
@@ -40,10 +37,7 @@ namespace YooAsset
                 }
                 else
                 {
-                    if (_isReuqestLocalFile && _fileSystem.CopyBuildinBundleServices != null)
-                        _steps = ESteps.CopyBuildinBundle;
-                    else
-                        _steps = ESteps.CreateRequest;
+                    _steps = ESteps.CreateRequest;
                 }
             }
 
@@ -107,42 +101,6 @@ namespace YooAsset
                 DisposeWebRequest();
             }
 
-            // 拷贝内置文件
-            if (_steps == ESteps.CopyBuildinBundle)
-            {
-                FileUtility.CreateFileDirectory(_tempFilePath);
-
-                // 删除临时文件（不支持断点续传）
-                if (File.Exists(_tempFilePath))
-                    File.Delete(_tempFilePath);
-
-                // 获取请求地址
-                _requestURL = GetRequestURL();
-
-                try
-                {
-                    //TODO 团结引擎，在某些机型（红米），拷贝包内文件会小概率失败！需要借助其它方式来拷贝包内文件。
-                    _fileSystem.CopyBuildinBundleServices.CopyBuildinFile(_requestURL, _tempFilePath);
-                    if (File.Exists(_tempFilePath))
-                    {
-                        DownloadProgress = 1f;
-                        DownloadedBytes = Bundle.FileSize;
-                        Progress = DownloadProgress;
-                        _steps = ESteps.VerifyTempFile;
-                    }
-                    else
-                    {
-                        Error = $"Failed copy buildin bundle : {_requestURL}";
-                        _steps = ESteps.TryAgain;
-                    }
-                }
-                catch (System.Exception ex)
-                {
-                    Error = $"Failed copy buildin bundle : {ex.Message}";
-                    _steps = ESteps.TryAgain;
-                }
-            }
-
             // 验证下载文件
             if (_steps == ESteps.VerifyTempFile)
             {
@@ -191,15 +149,6 @@ namespace YooAsset
             // 重新尝试下载
             if (_steps == ESteps.TryAgain)
             {
-                //TODO 拷贝本地文件失败后不再尝试！
-                if (_isReuqestLocalFile)
-                {
-                    Status = EOperationStatus.Failed;
-                    _steps = ESteps.Done;
-                    YooLogger.Error(Error);
-                    return;
-                }
-
                 if (FailedTryAgain <= 0)
                 {
                     Status = EOperationStatus.Failed;
@@ -226,23 +175,14 @@ namespace YooAsset
         {
             while (true)
             {
-                //TODO 如果是导入或解压本地文件，执行等待完毕，该操作会挂起主线程！
-                if (_isReuqestLocalFile)
+                if (ExecuteWhileDone())
                 {
-                    InternalUpdate();
-                    if (IsDone)
-                        break;
+                    //TODO 同步加载失败
+                    if (Status == EOperationStatus.Failed)
+                        YooLogger.Error($"Try load bundle {Bundle.BundleName} from remote !");
 
-                    // 短暂休眠避免完全卡死
-                    System.Threading.Thread.Sleep(1);
-                }
-                else
-                {
-                    if (ExecuteWhileDone())
-                    {
-                        _steps = ESteps.Done;
-                        break;
-                    }
+                    _steps = ESteps.Done;
+                    break;
                 }
             }
         }

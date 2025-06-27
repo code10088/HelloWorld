@@ -108,7 +108,7 @@ namespace YooAsset
         /// <summary>
         /// 自定义参数：拷贝内置文件服务类
         /// </summary>
-        public ICopyBuildinBundleServices CopyBuildinBundleServices { private set; get; }
+        public ICopyLocalFileServices CopyLocalFileServices { private set; get; }
         #endregion
 
 
@@ -235,9 +235,9 @@ namespace YooAsset
             {
                 ManifestServices = (IManifestServices)value;
             }
-            else if (name == FileSystemParametersDefine.COPY_BUILDIN_BUNDLE_SERVICES)
+            else if (name == FileSystemParametersDefine.COPY_LOCAL_FILE_SERVICES)
             {
-                CopyBuildinBundleServices = (ICopyBuildinBundleServices)value;
+                CopyLocalFileServices = (ICopyLocalFileServices)value;
             }
             else
             {

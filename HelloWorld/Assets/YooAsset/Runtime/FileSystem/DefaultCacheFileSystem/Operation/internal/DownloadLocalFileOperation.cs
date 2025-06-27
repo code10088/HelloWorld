@@ -4,14 +4,14 @@ using UnityEngine.Networking;
 
 namespace YooAsset
 {
-    internal sealed class DownloadNormalFileOperation : DefaultDownloadFileOperation
+    internal class DownloadLocalFileOperation : DefaultDownloadFileOperation
     {
         private readonly DefaultCacheFileSystem _fileSystem;
         private VerifyTempFileOperation _verifyOperation;
         private string _tempFilePath;
         private ESteps _steps = ESteps.None;
 
-        internal DownloadNormalFileOperation(DefaultCacheFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
+        internal DownloadLocalFileOperation(DefaultCacheFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
         {
             _fileSystem = fileSystem;
         }
@@ -35,7 +35,10 @@ namespace YooAsset
                 }
                 else
                 {
-                    _steps = ESteps.CreateRequest;
+                    if (_fileSystem.CopyLocalFileServices != null)
+                        _steps = ESteps.CopyBuildinBundle;
+                    else
+                        _steps = ESteps.CreateRequest;
                 }
             }
 
@@ -80,6 +83,46 @@ namespace YooAsset
 
                 // 注意：最终释放请求器
                 DisposeWebRequest();
+            }
+
+            // 拷贝内置文件
+            if (_steps == ESteps.CopyBuildinBundle)
+            {
+                FileUtility.CreateFileDirectory(_tempFilePath);
+
+                // 删除临时文件
+                if (File.Exists(_tempFilePath))
+                    File.Delete(_tempFilePath);
+
+                // 获取请求地址
+                _requestURL = GetRequestURL();
+
+                try
+                {
+                    //TODO 团结引擎，在某些机型（红米），拷贝包内文件会小概率失败！需要借助其它方式来拷贝包内文件。
+                    var localFileInfo = new LocalFileInfo();
+                    localFileInfo.PackageName = _fileSystem.PackageName;
+                    localFileInfo.BundleName = Bundle.BundleName;
+                    localFileInfo.SourceFileURL = _requestURL;
+                    _fileSystem.CopyLocalFileServices.CopyFile(localFileInfo, _tempFilePath);
+                    if (File.Exists(_tempFilePath))
+                    {
+                        DownloadProgress = 1f;
+                        DownloadedBytes = Bundle.FileSize;
+                        Progress = DownloadProgress;
+                        _steps = ESteps.VerifyTempFile;
+                    }
+                    else
+                    {
+                        Error = $"Failed copy buildin bundle : {_requestURL}";
+                        _steps = ESteps.TryAgain;
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    Error = $"Failed copy buildin bundle : {ex.Message}";
+                    _steps = ESteps.TryAgain;
+                }
             }
 
             // 验证下载文件
@@ -131,21 +174,10 @@ namespace YooAsset
             // 重新尝试下载
             if (_steps == ESteps.TryAgain)
             {
-                if (FailedTryAgain <= 0)
-                {
-                    Status = EOperationStatus.Failed;
-                    _steps = ESteps.Done;
-                    YooLogger.Error(Error);
-                    return;
-                }
-
-                _tryAgainTimer += Time.unscaledDeltaTime;
-                if (_tryAgainTimer > 1f)
-                {
-                    FailedTryAgain--;
-                    _steps = ESteps.CreateRequest;
-                    YooLogger.Warning(Error);
-                }
+                //TODO 拷贝本地文件失败后不再尝试！
+                Status = EOperationStatus.Failed;
+                _steps = ESteps.Done;
+                YooLogger.Error(Error);
             }
         }
         internal override void InternalAbort()
@@ -157,15 +189,13 @@ namespace YooAsset
         {
             while (true)
             {
-                if (ExecuteWhileDone())
-                {
-                    //TODO 同步加载失败
-                    if (Status == EOperationStatus.Failed)
-                        YooLogger.Error($"Try load bundle {Bundle.BundleName} from remote !");
-
-                    _steps = ESteps.Done;
+                //TODO 等待导入或解压本地文件完毕，该操作会挂起主线程！
+                InternalUpdate();
+                if (IsDone)
                     break;
-                }
+
+                // 短暂休眠避免完全卡死
+                System.Threading.Thread.Sleep(1);
             }
         }
 
