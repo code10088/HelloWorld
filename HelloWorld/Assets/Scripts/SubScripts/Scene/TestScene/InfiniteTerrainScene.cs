@@ -4,6 +4,7 @@ using UnityEngine;
 public class InfiniteTerrainScene : SceneBase
 {
     private InfiniteTerrainSceneComponent component = new InfiniteTerrainSceneComponent();
+    private GPUICamera gpui;
     private GPUIFlyCamera control;
 
     protected override void Init()
@@ -16,6 +17,8 @@ public class InfiniteTerrainScene : SceneBase
         base.OnEnable(param);
         GameDebug.Log("InfiniteTerrainScene OnEnable");
 
+        if (gpui) gpui.enabled = false;
+        else gpui = camera.gameObject.AddComponent<GPUICamera>();
         if (control) control.enabled = true;
         else control = camera.gameObject.AddComponent<GPUIFlyCamera>();
     }
@@ -24,6 +27,7 @@ public class InfiniteTerrainScene : SceneBase
         base.OnDisable();
         GameDebug.Log("InfiniteTerrainScene OnDisable");
 
+        gpui.enabled = false;
         control.enabled = false;
     }
     public override void OnDestroy()
@@ -31,6 +35,7 @@ public class InfiniteTerrainScene : SceneBase
         base.OnDestroy();
         GameDebug.Log("InfiniteTerrainScene OnDestroy");
 
+        GameObject.Destroy(gpui);
         GameObject.Destroy(control);
     }
 }
