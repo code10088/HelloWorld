@@ -5,7 +5,6 @@ using Object = UnityEngine.Object;
 using Newtonsoft.Json;
 using HybridCLR;
 using UnityEngine.SceneManagement;
-using UnityEngine.Rendering;
 using System.Linq;
 
 #if WEIXINMINIGAME
@@ -18,18 +17,13 @@ public class GameStart : MonoSingletion<GameStart>
 {
     private int loadId = -1;
 
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void _()
     {
-        SplashScreen.Stop(SplashScreen.StopBehavior.StopImmediate);
-    }
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-    private static void __()
-    {
         var scene = SceneManager.GetActiveScene();
-        if (scene.buildIndex == 0) Instance.___();
+        if (scene.buildIndex == 0) Instance.__();
     }
-    private void ___()
+    private void __()
     {
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;

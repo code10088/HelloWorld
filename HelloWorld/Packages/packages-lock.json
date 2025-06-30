@@ -14,6 +14,20 @@
       "dependencies": {},
       "hash": "57e577126c4bac9abef927babb848a457ad5d563"
     },
+    "com.code-philosophy.obfuz": {
+      "version": "https://github.com/focus-creative-games/obfuz.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "bf3f6e45340b78ce0572e736da69e843d60d069c"
+    },
+    "com.code-philosophy.obfuz4hybridclr": {
+      "version": "https://github.com/focus-creative-games/obfuz4hybridclr.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "064af2872e7d2eff586b28a16505705766a56bb0"
+    },
     "com.gurbu.gpui-pro": {
       "version": "file:com.gurbu.gpui-pro",
       "depth": 0,

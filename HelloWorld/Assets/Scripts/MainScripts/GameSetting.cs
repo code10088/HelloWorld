@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public static class GameSetting
 {
@@ -62,4 +63,17 @@ public static class GameSetting
 #else
         string.Empty;
 #endif
+
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+    private static void StopSplashScreen()
+    {
+        SplashScreen.Stop(SplashScreen.StopBehavior.StopImmediate);
+    }
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+    private static void SetUpStaticSecret()
+    {
+        var key = Resources.Load<TextAsset>("StaticSecretKey").bytes;
+        Obfuz.EncryptionService<Obfuz.DefaultStaticEncryptionScope>.Encryptor = new Obfuz.EncryptionVM.GeneratedEncryptionVirtualMachine(key);
+    }
 }

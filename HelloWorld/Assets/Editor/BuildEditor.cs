@@ -2,7 +2,6 @@ using UnityEditor;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
-using HybridCLR.Editor.Commands;
 using System;
 using System.Collections.Generic;
 using COSXML;
@@ -75,7 +74,7 @@ public class BuildEditor
     {
         try
         {
-            PrebuildCommand.GenerateAll();
+            Obfuz4HybridCLR.PrebuildCommandExt.GenerateAll();
             TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(GameSetting.HotUpdateConfigPath);
             var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
             var hotUpdateDir = HybridCLR.Editor.SettingsUtil.GetHotUpdateDllsOutputDirByTarget(EditorUserBuildSettings.activeBuildTarget);
