@@ -13,6 +13,7 @@ using WeChatWASM;
 using YooAsset;
 using TTSDK.Tool;
 using TTSDK.Tool.API;
+using Obfuz4HybridCLR;
 
 public class BuildEditor
 {
@@ -74,23 +75,21 @@ public class BuildEditor
     {
         try
         {
-            Obfuz4HybridCLR.PrebuildCommandExt.GenerateAll();
+            PrebuildCommandExt.GenerateAll();
             TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(GameSetting.HotUpdateConfigPath);
             var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
+            var obfuscatedHotUpdateDir = PrebuildCommandExt.GetObfuscatedHotUpdateAssemblyOutputPath(EditorUserBuildSettings.activeBuildTarget);
+            var stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
             var hotUpdateDir = HybridCLR.Editor.SettingsUtil.GetHotUpdateDllsOutputDirByTarget(EditorUserBuildSettings.activeBuildTarget);
-            var path = config.HotAssembly[0];
-            var name = Path.GetFileNameWithoutExtension(path);
-            File.Copy($"{hotUpdateDir}/{name}", $"{Environment.CurrentDirectory}/{path}", true);
-            path = config.HotAssembly[1];
-            name = Path.GetFileNameWithoutExtension(path);
-            File.Copy($"{hotUpdateDir}/{name}", $"{Environment.CurrentDirectory}/{path}", true);
-
-            string stripDir = HybridCLR.Editor.SettingsUtil.GetAssembliesPostIl2CppStripDir(EditorUserBuildSettings.activeBuildTarget);
-            for (int i = 2; i < config.HotAssembly.Length; i++)
+            for (int i = 0; i < config.HotAssembly.Length; i++)
             {
-                path = config.HotAssembly[i];
-                name = Path.GetFileNameWithoutExtension(path);
-                File.Copy($"{stripDir}/{name}", $"{Environment.CurrentDirectory}/{path}", true);
+                var dest = config.HotAssembly[i];
+                var name = Path.GetFileNameWithoutExtension(dest);
+                var source = string.Empty;
+                if (File.Exists($"{obfuscatedHotUpdateDir}/{name}")) source = $"{obfuscatedHotUpdateDir}/{name}";
+                else if (File.Exists($"{stripDir}/{name}")) source = $"{stripDir}/{name}";
+                else source = $"{hotUpdateDir}/{name}";
+                File.Copy(source, $"{Environment.CurrentDirectory}/{dest}", true);
             }
             AssetDatabase.Refresh();
         }
