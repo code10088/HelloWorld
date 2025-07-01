@@ -1,0 +1,17 @@
+<obfuz>
+  <assembly name="MainAssembly">
+  </assembly>
+
+  <assembly name="HotAssembly">
+    <type name="GameStart" obName="0" classType="class">
+      <property name="Instance" obName="0"/>
+      <method name="Init" obName="0"/>
+    </type>
+    <type name="*" obName="0" classType="enum" applyToMembers="*">
+    </type>
+    <type name="*" obName="0" classType="class" inherit="UIBase,SceneBase">
+    </type>
+    <type name="cfg.Tables" obName="0" classType="class" applyToMembers="*">
+    </type>
+  </assembly>
+</obfuz>

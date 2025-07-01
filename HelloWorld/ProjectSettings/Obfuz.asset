@@ -25,8 +25,7 @@ MonoBehaviour:
     obfuscateObfuzRuntime: 1
   obfuscationPassSettings:
     enabledPasses: -1
-    ruleFiles:
-    - Assets/Obfuz/Pass.xml
+    ruleFiles: []
   secretSettings:
     defaultStaticSecretKey: A
     defaultDynamicSecretKey: B
@@ -46,7 +45,8 @@ MonoBehaviour:
     keepUnknownSymbolInSymbolMappingFile: 1
     symbolMappingFile: Assets/Obfuz/SymbolObfus/symbol-mapping.xml
     debugSymbolMappingFile: Assets/Obfuz/SymbolObfus/symbol-mapping-debug.xml
-    ruleFiles: []
+    ruleFiles:
+    - Assets/Obfuz/SymbolObfusRule.xml
     customRenamePolicyTypes: []
   constEncryptSettings:
     encryptionLevel: 1
