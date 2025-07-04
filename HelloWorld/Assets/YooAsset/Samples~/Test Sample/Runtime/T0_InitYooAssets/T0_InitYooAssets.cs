@@ -168,14 +168,14 @@ public class T0_InitYooAssets : IPrebuildSetup, IPostBuildCleanup
             collector1.CollectPath = "";
             collector1.CollectorGUID = "e082d492b9da65e499cee3495be3645d"; //TestRes3/music目录
             collector1.CollectorType = YooAsset.Editor.ECollectorType.MainAssetCollector;
-            collector1.PackRuleName = nameof(YooAsset.Editor.PackDirectory);
+            collector1.PackRuleName = nameof(YooAsset.Editor.PackSeparately);
             YooAsset.Editor.AssetBundleCollectorSettingData.CreateCollector(referenceGroup, collector1);
 
             var collector2 = new YooAsset.Editor.AssetBundleCollector();
             collector2.CollectPath = "";
             collector2.CollectorGUID = "8c5a1726d94498e4cbe30f5f510cc796"; //TestRes3/prefab目录
             collector2.CollectorType = YooAsset.Editor.ECollectorType.MainAssetCollector;
-            collector2.PackRuleName = nameof(YooAsset.Editor.PackDirectory);
+            collector2.PackRuleName = nameof(YooAsset.Editor.PackSeparately);
             YooAsset.Editor.AssetBundleCollectorSettingData.CreateCollector(referenceGroup, collector2);
         }
     }

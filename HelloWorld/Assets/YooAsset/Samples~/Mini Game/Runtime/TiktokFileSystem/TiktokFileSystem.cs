@@ -103,6 +103,11 @@ internal class TiktokFileSystem : IFileSystem
     ///  自定义参数：解密方法类
     /// </summary>
     public IWebDecryptionServices DecryptionServices { private set; get; }
+
+    /// <summary>
+    /// 自定义参数：资源清单服务类
+    /// </summary>
+    public IManifestServices ManifestServices { private set; get; }
     #endregion
 
 
@@ -160,6 +165,10 @@ internal class TiktokFileSystem : IFileSystem
         else if (name == FileSystemParametersDefine.DECRYPTION_SERVICES)
         {
             DecryptionServices = (IWebDecryptionServices)value;
+        }
+        else if (name == FileSystemParametersDefine.MANIFEST_SERVICES)
+        {
+            ManifestServices = (IManifestServices)value;
         }
         else
         {

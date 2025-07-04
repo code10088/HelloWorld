@@ -21,6 +21,7 @@ namespace YooAsset
 
     /// <summary>
     /// 本地文件拷贝服务类
+    /// 备注：包体内文件拷贝，沙盒内文件导入都会触发该服务！
     /// </summary>
     public interface ICopyLocalFileServices
     {

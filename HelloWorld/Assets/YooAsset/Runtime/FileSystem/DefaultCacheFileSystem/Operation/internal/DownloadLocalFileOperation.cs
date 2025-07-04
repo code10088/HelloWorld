@@ -114,13 +114,13 @@ namespace YooAsset
                     }
                     else
                     {
-                        Error = $"Failed copy buildin bundle : {_requestURL}";
+                        Error = $"Failed copy local file : {_requestURL}";
                         _steps = ESteps.TryAgain;
                     }
                 }
                 catch (System.Exception ex)
                 {
-                    Error = $"Failed copy buildin bundle : {ex.Message}";
+                    Error = $"Failed copy local file : {ex.Message}";
                     _steps = ESteps.TryAgain;
                 }
             }

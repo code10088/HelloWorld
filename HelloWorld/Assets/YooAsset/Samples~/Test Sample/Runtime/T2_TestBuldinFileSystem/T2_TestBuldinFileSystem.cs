@@ -47,7 +47,7 @@ public class T2_TestBuldinFileSystem : IPrebuildSetup, IPostBuildCleanup
     [UnityTest]
     public IEnumerator A_InitializePackage()
     {
-        // 初始化资源包
+        // 初始化资源包 ASSET_BUNDLE
         {
             string packageRoot = string.Empty;
 #if UNITY_EDITOR
@@ -60,8 +60,11 @@ public class T2_TestBuldinFileSystem : IPrebuildSetup, IPostBuildCleanup
 
             // 初始化资源包
             var initParams = new OfflinePlayModeParameters();
-            var decryption = new FileStreamTestDecryption();
-            initParams.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryption, packageRoot);
+            var fileDecryption = new TestFileStreamDecryption();
+            var manifestProcess = new TestProcessManifest();
+            initParams.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(fileDecryption, packageRoot);
+            initParams.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.DISABLE_CATALOG_FILE, true);
+            initParams.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestProcess);
             var initializeOp = package.InitializeAsync(initParams);
             yield return initializeOp;
             if (initializeOp.Status != EOperationStatus.Succeed)
@@ -83,7 +86,7 @@ public class T2_TestBuldinFileSystem : IPrebuildSetup, IPostBuildCleanup
             Assert.AreEqual(EOperationStatus.Succeed, updateManifestOp.Status);
         }
 
-        // 初始化资源包
+        // 初始化资源包 RAW_BUNDLE
         {
             string packageRoot = string.Empty;
 #if UNITY_EDITOR
@@ -98,6 +101,7 @@ public class T2_TestBuldinFileSystem : IPrebuildSetup, IPostBuildCleanup
             var initParams = new OfflinePlayModeParameters();
             initParams.BuildinFileSystemParameters = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(null, packageRoot);
             initParams.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.APPEND_FILE_EXTENSION, true);
+            initParams.BuildinFileSystemParameters.AddParameter(FileSystemParametersDefine.DISABLE_CATALOG_FILE, true);
             var initializeOp = package.InitializeAsync(initParams);
             yield return initializeOp;
             if (initializeOp.Status != EOperationStatus.Succeed)

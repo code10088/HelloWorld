@@ -13,9 +13,22 @@ public class TestBundleEncryption
         ResourcePackage package = YooAssets.GetPackage(TestDefine.AssetBundlePackageName);
         Assert.IsNotNull(package);
 
-        // 加载音乐播放预制体
+        // 异步加载音乐播放预制体
         {
-            var assetHandle = package.LoadAssetAsync<GameObject>("prefab_audio");
+            var assetHandle = package.LoadAssetAsync<GameObject>("prefab_audioA");
+            yield return assetHandle;
+            Assert.AreEqual(EOperationStatus.Succeed, assetHandle.Status);
+
+            var go = assetHandle.InstantiateSync(Vector3.zero, Quaternion.identity);
+            Assert.IsNotNull(go);
+
+            var audioSource = go.GetComponent<AudioSource>();
+            Assert.IsNotNull(audioSource.clip);
+        }
+
+        // 同步加载音乐播放预制体
+        {
+            var assetHandle = package.LoadAssetSync<GameObject>("prefab_audioB");
             yield return assetHandle;
             Assert.AreEqual(EOperationStatus.Succeed, assetHandle.Status);
 
@@ -34,7 +47,7 @@ public class TestBundleEncryption
 /// <summary>
 /// 文件流加密方式
 /// </summary>
-public class FileStreamTestEncryption : IEncryptionServices
+public class TestFileStreamEncryption : IEncryptionServices
 {
     public EncryptResult Encrypt(EncryptFileInfo fileInfo)
     {
@@ -64,7 +77,7 @@ public class FileStreamTestEncryption : IEncryptionServices
 /// <summary>
 /// 文件偏移加密方式
 /// </summary>
-public class FileOffsetTestEncryption : IEncryptionServices
+public class TestFileOffsetEncryption : IEncryptionServices
 {
     public EncryptResult Encrypt(EncryptFileInfo fileInfo)
     {
@@ -119,7 +132,7 @@ public class BundleStream : FileStream
 /// <summary>
 /// 资源文件流解密类
 /// </summary>
-public class FileStreamTestDecryption : IDecryptionServices
+public class TestFileStreamDecryption : IDecryptionServices
 {
     /// <summary>
     /// 同步方式获取解密的资源包对象
@@ -180,7 +193,7 @@ public class FileStreamTestDecryption : IDecryptionServices
 /// <summary>
 /// 资源文件偏移解密类
 /// </summary>
-public class FileOffsetTestDecryption : IDecryptionServices
+public class TestFileOffsetDecryption : IDecryptionServices
 {
     /// <summary>
     /// 同步方式获取解密的资源包对象
@@ -240,7 +253,7 @@ public class FileOffsetTestDecryption : IDecryptionServices
 /// WebGL平台解密类
 /// 注意：WebGL平台支持内存解密
 /// </summary>
-public class WebFileStreamTestDecryption : IWebDecryptionServices
+public class TestWebFileStreamDecryption : IWebDecryptionServices
 {
     public WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
     {

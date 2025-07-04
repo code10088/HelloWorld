@@ -177,9 +177,12 @@ namespace YooAsset
             {
                 if (ExecuteWhileDone())
                 {
-                    //TODO 同步加载失败
+                    //TODO 尝试同步加载远端的资源文件失败
                     if (Status == EOperationStatus.Failed)
+                    {
                         YooLogger.Error($"Try load bundle {Bundle.BundleName} from remote !");
+                        YooLogger.Error($"The load remote bundle url : {_requestURL}");
+                    }
 
                     _steps = ESteps.Done;
                     break;
