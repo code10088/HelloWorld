@@ -32,31 +32,17 @@ WebGL
 		bundleExcludeExtension缓存需要.version;.bytes;.hash;.json;
 		bundlePathIdentifier缓存需要1.2.0
 	
-ECS+Job+Brust
+ECS
 	ECS中Component
 		都是数据，方便数据回滚，逻辑都在System中
 		都是值类型，内存连续提高缓存命中率(List、Array引用连续内存分散，Array<值类型>内存连续)
 		热插拔减少耦合
 	ecs实践
-		C#无法保证内存连续，system筛选entity性能差，采用注册方式，又会增加耦合，所以ecs牺牲性能解耦(多线程除外)
-	我的ecs
 		没有数据回滚需求
 		不需要值类型增加代码复杂度
 		只保留ec热插拔结构，s中的逻辑分散到ec中
 		采用注册方式:cs无耦合、es注册耦合、ec强耦合(e依赖c、特殊c依赖e)
-	Job多线程有些类似于computeShader
-	Brust只能在Job中使用
-	万人同屏：JobSystem+Brust+BatchRendererGroup(ECS目前阶段局限性太大)
-		https://www.wpsshop.cn/blog/UNITY/detail/36281
-		https://blog.csdn.net/final5788/article/details/132912995
-		https://blog.csdn.net/final5788/article/details/132953620
-		https://github.com/Unity-Technologies/brg-shooter
-		
-GPUInstancing限制
-	DrawMeshInstanced只能有一个mesh数据
-	动画：预计算所有动画的所有顶点数据(转成贴图)即GPU动画
-	IK动画：无法预计算，只能GPU实现一套动画系统
-	
+
 protobuf-net
 	github下载最新版，使用vs2022编译(如果编译失败尝试更新vs)
 	修改global.json为当前使用的.net sdk版本
@@ -71,10 +57,6 @@ newtonjson
 	使用packagemanager add packet by name方式添加
 	name:com.unity.nuget.newtonsoft-json
 	version:3.2.1
-	
-URP
-	Profiler显示urp Gfx.PresentFrame耗时高，并非GPU渲染耗时高，Gfx.PresentFrame=GPU渲染时间+WaitForTargetFPS时间
-	Unity.Profiling.ProfilerMarker.Begin对urp性能严重影响，务必添加宏UNITY_EDITOR判断
 	
 SuperScrollView调整
 	LoopListViewItem2中添加LoopItemData
@@ -93,3 +75,7 @@ RVO
 		Simulator中SetNumWorkers进行workers_初始化
 		KdTree中buildAgentTree修改
 		初始位置必须添加随机，保证两个Agent不同，否则会出现NaN报错
+		
+obfuz
+	MainAssembly加密会出现hotAssembly.GetType()报错，且无法再编辑器下测试热更
+	MainAssembly只有开源的框架代码，所以不用加密

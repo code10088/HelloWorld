@@ -1,10 +1,6 @@
 <obfuz>
-  <assembly name="MainAssembly">
-  </assembly>
-
   <assembly name="HotAssembly">
     <type name="GameStart" obName="0" classType="class">
-      <property name="Instance" obName="0"/>
       <method name="Init" obName="0"/>
     </type>
     <type name="*" obName="0" classType="enum" applyToMembers="*">

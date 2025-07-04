@@ -18,9 +18,9 @@ MonoBehaviour:
     obfuscationProcessCallbackOrder: 10000
   assemblySettings:
     assembliesToObfuscate:
-    - MainAssembly
     - HotAssembly
-    nonObfuscatedButReferencingObfuscatedAssemblies: []
+    nonObfuscatedButReferencingObfuscatedAssemblies:
+    - MainAssembly
     additionalAssemblySearchPaths: []
     obfuscateObfuzRuntime: 1
   obfuscationPassSettings:
@@ -57,6 +57,7 @@ MonoBehaviour:
     encryptionLevel: 1
     ruleFiles: []
   callObfusSettings:
+    proxyMode: 0
     obfuscationLevel: 1
     maxProxyMethodCountPerDispatchMethod: 100
     obfuscateCallToMethodInMscorlib: 0
