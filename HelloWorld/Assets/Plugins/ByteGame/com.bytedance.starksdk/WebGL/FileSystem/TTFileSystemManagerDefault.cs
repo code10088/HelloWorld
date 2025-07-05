@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
-
+using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Text;
 namespace TTSDK
 {
     public class TTFileSystemManagerDefault : TTFileSystemManager
@@ -615,6 +618,422 @@ namespace TTSDK
             var epochTicks = new System.DateTime(1970, 1, 1).Ticks;
             var unixTime = ((ticks - epochTicks) / System.TimeSpan.TicksPerSecond);
             return unixTime;
+        }
+
+        //文件流式读写
+        /// <summary>
+        /// (FileStream, string, bool, string)
+        /// 文件流对象，打开参数，是否首次操作，路径
+        /// </summary>
+        private Dictionary<string, (FileStream, string, bool, string)> _openFiles = new();
+        private int _fdCounter = 0;
+
+        /// <summary>
+        /// 生成唯一标识符
+        /// </summary>
+        /// <returns></returns>
+        private string GenerateFd()
+        {
+            using var sha256 = SHA256.Create();
+            var input = Encoding.UTF8.GetBytes(Guid.NewGuid().ToString() + _fdCounter++);
+            var hash = sha256.ComputeHash(input);
+            return Convert.ToBase64String(hash).Replace("/", "_").Replace("+", "-").Substring(0, 16);
+        }
+
+        /// <summary>
+        /// 打开文件
+        /// </summary>
+        /// <param name="param"></param>
+        public override void Open(OpenParam param)
+        {
+            string err = "";
+            string fd = null;
+            FileMode mode = FileMode.Open;
+            FileAccess access = FileAccess.Read;
+            try
+            {
+                switch (param.flag)
+                {
+                    case "a":
+                        mode = FileMode.OpenOrCreate;
+                        access = FileAccess.Write;
+                        break;
+                    case "ax":
+                        mode = FileMode.CreateNew;
+                        access = FileAccess.Write;
+                        break;
+                    case "a+":
+                        mode = FileMode.OpenOrCreate;
+                        access = FileAccess.ReadWrite;
+                        break;
+                    case "ax+":
+                        mode = FileMode.CreateNew;
+                        access = FileAccess.ReadWrite;
+                        break;
+                    case "as":
+                        mode = FileMode.OpenOrCreate;
+                        access = FileAccess.Write;
+                        break;
+                    case "as+":
+                        mode = FileMode.OpenOrCreate;
+                        access = FileAccess.ReadWrite;
+                        break;
+                    case "r":
+                        mode = FileMode.Open;
+                        access = FileAccess.Read;
+                        break;
+                    case "r+":
+                        mode = FileMode.Open;
+                        access = FileAccess.ReadWrite;
+                        break;
+                    case "w":
+                        mode = FileMode.Create;
+                        access = FileAccess.Write;
+                        break;
+                    case "wx":
+                        mode = FileMode.CreateNew;
+                        access = FileAccess.Write;
+                        break;
+                    case "w+":
+                        mode = FileMode.Create;
+                        access = FileAccess.ReadWrite;
+                        break;
+                    case "wx+":
+                        mode = FileMode.CreateNew;
+                        access = FileAccess.ReadWrite;
+                        break;
+                    default:
+                        throw new Exception("invalid flag");
+                }
+                var fs = new FileStream(param.filePath, mode, access);
+                fd = GenerateFd();
+                _openFiles[fd] = (fs, param.flag, true, param.filePath);
+            }
+            catch (Exception e)
+            {
+                err = e.Message;
+            }
+
+            if (string.IsNullOrEmpty(err))
+            {
+                param.success?.Invoke(new TTOpenResponse { fd = fd });
+            }
+            else
+            {
+                param.fail?.Invoke(new TTOpenResponse { errCode = -1, errMsg = err });
+            }
+        }
+
+        public override string OpenSync(OpenSyncParam param)
+        {
+            FileMode mode = FileMode.Open;
+            FileAccess access = FileAccess.Read;
+            switch (param.flag)
+            {
+                case "a":
+                    mode = FileMode.OpenOrCreate;
+                    access = FileAccess.Write;
+                    break;
+                case "a+":
+                    mode = FileMode.OpenOrCreate;
+                    access = FileAccess.ReadWrite;
+                    break;
+                case "as":
+                    mode = FileMode.OpenOrCreate;
+                    access = FileAccess.Write;
+                    break;
+                case "as+":
+                    mode = FileMode.OpenOrCreate;
+                    access = FileAccess.ReadWrite;
+                    break;
+                case "ax":
+                    mode = FileMode.CreateNew;
+                    access = FileAccess.Write;
+                    break;
+                case "ax+":
+                    mode = FileMode.CreateNew;
+                    access = FileAccess.ReadWrite;
+                    break;
+                case "r":
+                    mode = FileMode.Open;
+                    access = FileAccess.Read;
+                    break;
+                case "r+":
+                    mode = FileMode.Open;
+                    access = FileAccess.ReadWrite;
+                    break;
+                case "w":
+                    mode = FileMode.Create;
+                    access = FileAccess.Write;
+                    break;
+                case "wx":
+                    mode = FileMode.CreateNew;
+                    access = FileAccess.Write;
+                    break;
+                case "w+":
+                    mode = FileMode.Create;
+                    access = FileAccess.ReadWrite;
+                    break;
+                case "wx+":
+                    mode = FileMode.CreateNew;
+                    access = FileAccess.ReadWrite;
+                    break;
+                default:
+                    throw new Exception("invalid flag");
+            }
+            var fs = new FileStream(param.filePath, mode, access);
+            string fd = GenerateFd();
+            _openFiles[fd] = (fs, param.flag, true, param.filePath);
+            return fd;
+        }
+
+        public override void Close(CloseParam param)
+        {
+            string err = CloseSyncInternal(param.fd);
+            CallbackBaseResponse(err, param.success, param.fail);
+        }
+
+        public override void CloseSync(CloseSyncParam param)
+        {
+            var errMsg = CloseSyncInternal(param.fd);
+            if (!string.IsNullOrEmpty(errMsg))
+            {
+                throw new Exception(errMsg);
+            }
+        }
+
+        private string CloseSyncInternal(string fd)
+        {
+            if (_openFiles.TryGetValue(fd, out var fs))
+            {
+                fs.Item1.Close();
+                _openFiles.Remove(fd);
+                return "";
+            }
+            return "bad file descriptor";
+        }
+
+        public override void Write(WriteBinParam param)
+        {
+            var err = WriteInternal(param.fd, param.data, param.offset, param.length ?? (param.data.Length - param.offset));
+            if (err == null)
+            {
+                param.success?.Invoke(new TTWriteResponse { bytesWritten = param.length ?? (param.data.Length - param.offset) });
+            }
+            else
+            {
+                param.fail?.Invoke(new TTWriteResponse { errCode = -1, errMsg = err });
+            }
+        }
+
+        public override void Write(WriteStringParam param)
+        {
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(param.data);
+            Write(new WriteBinParam
+            {
+                fd = param.fd,
+                data = data,
+                offset = param.offset,
+                length = param.length,
+                success = param.success,
+                fail = param.fail
+            });
+        }
+
+        public override WriteResult WriteSync(WriteBinSyncParam param)
+        {
+            var err = WriteInternal(param.fd, param.data, param.offset, param.length ?? (param.data.Length - param.offset));
+            if (err == null) return new WriteResult { bytesWritten = param.length ?? (param.data.Length - param.offset)};
+            throw new Exception(err);
+        }
+
+        public override WriteResult WriteSync(WriteStringSyncParam param)
+        {
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(param.data);
+            return WriteSync(new WriteBinSyncParam
+            {
+                fd = param.fd,
+                data = data,
+                encoding = param.encoding
+            });
+        }
+
+        private string WriteInternal(string fd, byte[] data, int offset, int length)
+        {
+            if (!_openFiles.TryGetValue(fd, out var fs))
+                return "bad file descriptor";
+            try
+            {
+                if(fs.Item2.Contains("a")) fs.Item1.Seek(0, SeekOrigin.End);
+                fs.Item1.Write(data, offset, length);
+                fs.Item1.Flush();
+                return null;
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
+        }
+
+        public override void Read(ReadParam param)
+        {
+            var (buffer, bytesRead, err) = ReadInternal(param.fd, param.arrayBuffer, param.offset, param.length, param.position);
+            if (err == null)
+            {
+                param.success?.Invoke(new TTReadResponse
+                {
+                    arrayBuffer = buffer,
+                    bytesRead = bytesRead
+                });
+            }
+            else
+            {
+                param.fail?.Invoke(new TTReadResponse { errCode = -1, errMsg = err });
+            }
+        }
+
+        public override ReadResult ReadSync(ReadSyncParam param)
+        {
+            var (buffer, bytesRead, err) = ReadInternal(param.fd, param.arrayBuffer, param.offset, param.length, param.position);
+            if (err == null) return new ReadResult { arrayBuffer = buffer, bytesRead = bytesRead };
+            throw new Exception(err);
+        }
+
+        private (byte[] buffer, int bytesRead, string err) ReadInternal(string fd, byte[] buffer, int offset, int length, int? position)
+        {
+            if (!_openFiles.TryGetValue(fd, out var fs))
+                return (null, 0, "bad file descriptor");
+            try
+            {
+                if (position.HasValue)
+                    fs.Item1.Seek(position.Value, SeekOrigin.Begin);
+
+                int read = fs.Item1.Read(buffer, offset, length);
+                return (buffer, read, null);
+            }
+            catch (Exception e)
+            {
+                return (null, 0, e.Message);
+            }
+        }
+
+        public override void ReadCompressedFile(ReadCompressedFileParam param)
+        {
+            string err = "";
+            using MemoryStream ms = new MemoryStream();
+            try
+            {
+                if (param.compressionAlgorithm != "br")
+                {
+                    throw new Exception("brotli decompress fail");
+                }
+                using FileStream fs = new FileStream(param.filePath, FileMode.Open, FileAccess.Read);
+                using BrotliStream brotliStream = new BrotliStream(fs, CompressionMode.Decompress);
+                brotliStream.CopyTo(ms);
+            }
+            catch (Exception e)
+            {
+                err = e.Message;
+            }
+
+            if (string.IsNullOrEmpty(err))
+            {
+                param.success?.Invoke(new() { arrayBuffer = ms.ToArray() });
+            }
+            else
+            {
+                param.fail?.Invoke(new() { errCode = -1, errMsg = err });
+            }
+        }
+
+        public override byte[] ReadCompressedFileSync(ReadCompressedFileSyncParam param)
+        {
+            if (param.compressionAlgorithm != "br")
+            {
+                throw new Exception("brotli decompress fail");
+            }
+            using FileStream fs = new FileStream(param.filePath, FileMode.Open, FileAccess.Read);
+            using BrotliStream brotliStream = new BrotliStream(fs, CompressionMode.Decompress);
+            using MemoryStream ms = new MemoryStream();
+            brotliStream.CopyTo(ms);
+            return ms.ToArray();
+        }
+
+        public override void Fstat(FstatParam param)
+        {
+            if (!_openFiles.TryGetValue(param.fd, out var entry))
+            {
+                param.fail?.Invoke(new()
+                {
+                    errCode = -1,
+                    errMsg = "bad file descriptor"
+                });
+                return;
+            }
+
+            try
+            {
+                FileInfo fileInfo = new FileInfo(entry.Item4);
+                var info = new TTStatInfo
+                {
+                    size = fileInfo.Length,
+                    mode = 33060,
+                    lastAccessedTime = GetUnixTime(fileInfo.LastAccessTimeUtc.Ticks),
+                    lastModifiedTime = GetUnixTime(fileInfo.LastWriteTimeUtc.Ticks)
+                };
+                param.success?.Invoke(new(){ stats = info });
+            }
+            catch (Exception e)
+            {
+                param.fail?.Invoke(new(){ errCode = -1, errMsg = e.Message });
+            }
+        }
+
+        public override TTStatInfo FstatSync(FstatSyncParam param)
+        {
+            if (!_openFiles.TryGetValue(param.fd, out var entry))
+            {
+                throw new Exception("bad file descriptor");
+            }
+
+            FileInfo fileInfo = new FileInfo(entry.Item4);
+            return new TTStatInfo
+            {
+                size = fileInfo.Length,
+                mode = 33060,
+                lastAccessedTime = GetUnixTime(fileInfo.LastAccessTimeUtc.Ticks),
+                lastModifiedTime = GetUnixTime(fileInfo.LastWriteTimeUtc.Ticks)
+            };
+        }
+
+        public override void Ftruncate(FtruncateParam param)
+        {
+            if (!_openFiles.TryGetValue(param.fd, out var entry))
+            {
+                param.fail?.Invoke(new TTBaseResponse { errCode = -1, errMsg = "bad file descriptor" });
+                return;
+            }
+            try
+            {
+                entry.Item1.SetLength(param.length);
+                entry.Item1.Flush();
+                param.success?.Invoke(new TTBaseResponse());
+            }
+            catch (Exception e)
+            {
+                param.fail?.Invoke(new TTBaseResponse { errCode = -1, errMsg = e.Message });
+            }
+        }
+
+        public override void FtruncateSync(FtruncateSyncParam param)
+        {
+            if (!_openFiles.TryGetValue(param.fd, out var entry))
+            {
+                throw new Exception("bad file descriptor");
+            }
+
+            entry.Item1.SetLength(param.length);
+            entry.Item1.Flush();
         }
     }
 }

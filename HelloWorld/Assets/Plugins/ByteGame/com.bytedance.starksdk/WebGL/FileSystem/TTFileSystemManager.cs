@@ -264,6 +264,108 @@ namespace TTSDK
         [TTVersion(MinTTContainerAndroidVersion = "1.0", WebGLMethod = "truncate")]
         public abstract string TruncateSync(string filePath, int length);
 
+#region 流式读写
+        /// <summary>
+        /// 打开一个文件
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public abstract void Open(OpenParam param);
+
+        /// <summary>
+        /// 同步打开一个文件
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <returns></returns>
+        public abstract string OpenSync(OpenSyncParam param);
+
+        /// <summary>
+        /// 关闭一个文件
+        /// </summary>
+        /// <param name="fd"></param>
+        /// <returns></returns>
+        public abstract void Close(CloseParam param);
+
+        /// <summary>
+        /// 同步关闭一个文件
+        /// </summary>
+        /// <param name="fd"></param>
+        /// <returns></returns>
+        public abstract void CloseSync(CloseSyncParam param);
+        /// <summary>
+        /// 写文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract void Write(WriteBinParam param);
+        /// <summary>
+        /// 写文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract void Write(WriteStringParam param);
+        /// <summary>
+        /// 同步写文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract WriteResult WriteSync(WriteBinSyncParam param);
+        /// <summary>
+        /// 同步写文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract WriteResult WriteSync(WriteStringSyncParam param);
+        /// <summary>
+        /// 读文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract void Read(ReadParam param);
+        /// <summary>
+        /// 同步读文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract ReadResult ReadSync(ReadSyncParam param);
+        /// <summary>
+        /// 读压缩文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract void ReadCompressedFile(ReadCompressedFileParam param);
+        /// <summary>
+        /// 同步读压缩文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract byte[] ReadCompressedFileSync(ReadCompressedFileSyncParam param);
+        /// <summary>
+        /// 获取文件状态
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract void Fstat(FstatParam param);
+        /// <summary>
+        /// 同步获取文件状态
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract TTStatInfo FstatSync(FstatSyncParam param);
+        /// <summary>
+        /// 截断文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract void Ftruncate(FtruncateParam param);
+        /// <summary>
+        /// 同步截断文件
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public abstract void FtruncateSync(FtruncateSyncParam param);
+
+#endregion
         
         private static int _isDataMigrated = -1;
 

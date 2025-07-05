@@ -494,5 +494,168 @@ mergeInto(LibraryManager.library, {
 	},
 	TT_SetPreferredDevicePixelRatioPercent: function(dprPct) {
 		Module.devicePixelRatio = dprPct * 0.01;
+	},
+	TT_FOpenFile: function (filePath, flag, callbackId) {
+		window.StarkSDK && window.StarkSDK.FOpen(
+			_StarkPointerStringify(filePath),
+			_StarkPointerStringify(flag),
+			_StarkPointerStringify(callbackId)
+		);
+	},
+	TT_FOpenFileSync: function (filePath, flag) {
+		if (!window.StarkSDK) return;
+		var returnStr = window.StarkSDK.FOpenSync(_StarkPointerStringify(filePath), _StarkPointerStringify(flag));
+		if (!returnStr) {
+			return;
+		}
+		var bufferSize = lengthBytesUTF8(returnStr) + 1;
+		var buffer = _malloc(bufferSize);
+		stringToUTF8(returnStr, buffer, bufferSize);
+		return buffer;
+	},
+	TT_FCloseFile: function (fd, s, f) {
+		window.StarkSDK && window.StarkSDK.FClose(
+			_StarkPointerStringify(fd),
+			_StarkPointerStringify(s),
+			_StarkPointerStringify(f)
+		);
+	},
+	TT_FCloseFileSync: function (fd) {
+		if (!window.StarkSDK) return;
+		var returnStr = window.StarkSDK.FCloseSync(_StarkPointerStringify(fd));
+		if (!returnStr) {
+			return;
+		}
+		var bufferSize = lengthBytesUTF8(returnStr) + 1;
+		var buffer = _malloc(bufferSize);
+		stringToUTF8(returnStr, buffer, bufferSize);
+		return buffer;
+	},
+	TT_FWriteBinFile: function (fd, data, dataLength, offset, length, callbackId) {
+		window.StarkSDK && window.StarkSDK.FWrite(
+			_StarkPointerStringify(fd),
+			HEAPU8.slice(data, dataLength + data),
+			offset,
+			length == -1 ? undefined : length,
+			"binary",
+			_StarkPointerStringify(callbackId)
+		)
+	},
+	TT_FWriteBinFileSync: function (fd, data, dataLength, offset, length) {
+		if (!window.StarkSDK) return;
+		var returnStr = window.StarkSDK.FWriteSync(
+			_StarkPointerStringify(fd),
+			HEAPU8.slice(data, dataLength + data),
+			offset,
+			length == -1 ? undefined : length,
+			"binary"
+		);
+		if (!returnStr) {
+			return;
+		}
+		var bufferSize = lengthBytesUTF8(returnStr) + 1;
+		var buffer = _malloc(bufferSize);
+		stringToUTF8(returnStr, buffer, bufferSize);
+		return buffer;
+		
+	},
+	TT_FWriteStringFile: function (fd, data, encoding, callbackId) {
+		window.StarkSDK && window.StarkSDK.FWrite(
+			_StarkPointerStringify(fd),
+			_StarkPointerStringify(data),
+			0,
+			0,
+			_StarkPointerStringify(encoding),
+			_StarkPointerStringify(callbackId)
+		)
+	},
+	TT_FWriteStringFileSync: function (fd, data, encoding) {
+		if (!window.StarkSDK) return;
+		var returnStr = window.StarkSDK.FWriteSync(_StarkPointerStringify(fd), _StarkPointerStringify(data), 0, 0, _StarkPointerStringify(encoding));
+		if (!returnStr) {
+			return;
+		}
+		var bufferSize = lengthBytesUTF8(returnStr) + 1;
+		var buffer = _malloc(bufferSize);
+		stringToUTF8(returnStr, buffer, bufferSize);
+		return buffer;
+	},
+	TT_FReadFile: function (fd, arrayBufferLength, offset, length, position, callbackId) {
+		window.StarkSDK && window.StarkSDK.FRead(
+			_StarkPointerStringify(fd),
+			arrayBufferLength,
+			offset,
+			length,
+			position == -1 ? undefined : position,
+			_StarkPointerStringify(callbackId)
+		);
+	},
+	TT_FReadFileSync: function (fd, arrayBufferLength, offset, length, position) {
+		if (!window.StarkSDK) return;
+		var returnStr = window.StarkSDK.FReadSync(_StarkPointerStringify(fd), arrayBufferLength, offset, length, position == -1 ? undefined : position);
+		if (!returnStr) {
+			return;
+		}
+		var bufferSize = lengthBytesUTF8(returnStr) + 1;
+		var buffer = _malloc(bufferSize);
+		stringToUTF8(returnStr, buffer, bufferSize);
+		return buffer;
+	},
+	TT_FReadCompressedFile: function (filePath, compressionAlgorithm, callbackId) {
+		window.StarkSDK && window.StarkSDK.FReadCompressedFile(
+			_StarkPointerStringify(filePath),
+			_StarkPointerStringify(compressionAlgorithm),
+			_StarkPointerStringify(callbackId)
+		);
+	},
+	TT_FReadCompressedFileSync: function (filePath, compressionAlgorithm) {
+		if (!window.StarkSDK) return;
+		var returnStr = window.StarkSDK.FReadCompressedFileSync(_StarkPointerStringify(filePath), _StarkPointerStringify(compressionAlgorithm));
+		if (!returnStr) {
+			return;
+		}
+		var bufferSize = lengthBytesUTF8(returnStr) + 1;
+		var buffer = _malloc(bufferSize);
+		stringToUTF8(returnStr, buffer, bufferSize);
+		return buffer;
+	},
+	TT_Fstat: function (fd, callbackId) {
+		window.StarkSDK && window.StarkSDK.FStat(
+			_StarkPointerStringify(fd),
+			_StarkPointerStringify(callbackId)
+		);
+	},
+	TT_FstatSync: function (fd) {
+		if (!window.StarkSDK) return;
+		var returnStr = window.StarkSDK.FStatSync(_StarkPointerStringify(fd));
+		if (!returnStr) {
+			return;
+		}
+		var bufferSize = lengthBytesUTF8(returnStr) + 1;
+		var buffer = _malloc(bufferSize);
+		stringToUTF8(returnStr, buffer, bufferSize);
+		return buffer;
+	},
+	TT_Ftruncate: function (fd, length, s, f) {
+		window.StarkSDK && window.StarkSDK.FTruncate(
+			_StarkPointerStringify(fd),
+			length,
+			_StarkPointerStringify(s),
+			_StarkPointerStringify(f)
+		);
+	},
+	TT_FtruncateSync: function (fd, length) {
+		if (!window.StarkSDK) return;
+		var returnStr = window.StarkSDK.FTruncateSync(
+			_StarkPointerStringify(fd),
+			length
+		);
+		if (!returnStr) {
+			return;
+		}
+		var bufferSize = lengthBytesUTF8(returnStr) + 1;
+		var buffer = _malloc(bufferSize);
+		stringToUTF8(returnStr, buffer, bufferSize);
+		return buffer;
 	}
 });

@@ -1,7 +1,10 @@
 {
     "name": "com.bytedance.ttsdk-editor",
     "rootNamespace": "",
-    "references": ["GUID:90bf03ed3de697d459070eb3ca6bafa4"],
+    "references": [
+        "GUID:90bf03ed3de697d459070eb3ca6bafa4",
+        "GUID:0df35c79eba75be4b98b1cef0019f3f7"
+    ],
     "includePlatforms": [
         "Editor"
     ],

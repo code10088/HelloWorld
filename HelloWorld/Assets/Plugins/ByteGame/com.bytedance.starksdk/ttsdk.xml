@@ -1841,18 +1841,6 @@
             </summary>
             <param name="isExistCallback"> 是否存在的回调，参数表示是否已创建，true表示已创建，false表示未创建 </param>
         </member>
-        <member name="M:TTSDK.ITTAPI.Vibrate(System.Int64[],System.Int32)">
-            <summary>
-            可以配置震动周期的手机震动接口，单位ms
-            </summary>
-            <param name="pattern"> 震动周期 like long[] pattern = {0, 100, 1000, 300}; 传入null则取消震动  </param>
-            <param name="repeat"> 重复次数，为-1则不重复  </param>
-            <remarks>
-            注意：WebGL平台下，只有两种震动：长和短。
-                 pattern数组参数只能传入一个数值，传入小于1000则为短震动，否则为长震动。
-                 不支持取消和重复。即repeat参数无效。
-            </remarks>>
-        </member>
         <member name="M:TTSDK.ITTAPI.GetTTShare">
             <summary>
             获取分享相关接口
@@ -2168,6 +2156,17 @@
             设置期望的设备像素比
             影响实际的渲染分辨率，可以通过降低该值来减轻渲染压力。
             </summary>
+        </member>
+        <member name="M:TTSDK.ITTAPI.GetTTImageFileManager">
+            <summary>
+             图片操作
+            </summary>
+        </member>
+        <member name="M:TTSDK.ITTAPI.OpenFeedback(TTSDK.TTBaseParam)">
+            <summary>
+            跳转反馈页
+            </summary>
+            <param name="param"></param>
         </member>
         <member name="T:TTSDK.TTInvite.OnInviteStateChanged">
             <summary>
@@ -3093,6 +3092,11 @@
             单例抽象类
             </summary>
             <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:TTSDK.TTDeviceManagerImpl.OnDeviceOrientationChangeListener(TTSDK.OnDeviceOrientationChangeResult)">
+            <summary>
+            设备转屏监听
+            </summary>
         </member>
         <member name="F:TTSDK.GetLogManagerParam._level">
             <summary>
@@ -4479,6 +4483,37 @@
             单条tag最大长度
             </summary>
         </member>
+        <member name="T:TTSDK.SetDeviceOrientationParam">
+             <summary>
+             切换屏幕方向参数
+             </summary>
+            
+        </member>
+        <member name="P:TTSDK.SetDeviceOrientationParam.Value">
+            <summary>
+            切换为横屏or竖屏
+            </summary>
+        </member>
+        <member name="F:TTSDK.SetDeviceOrientationParam.Success">
+            <summary>
+            接口调用成功的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.SetDeviceOrientationParam.Fail">
+            <summary>
+            接口调用失败的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.SetDeviceOrientationParam.Complete">
+            <summary>
+            接口调用结束的回调函数（调用成功、失败都会执行）
+            </summary>
+        </member>
+        <member name="P:TTSDK.OnDeviceOrientationChangeResult.Value">
+            <summary>
+            横竖屏类型
+            </summary>
+        </member>
         <member name="T:TTSDK.TTRPC">
             <summary>
             网络调用的封装
@@ -5513,6 +5548,18 @@
                  不支持取消和重复。即repeat参数无效。
             </remarks>>
         </member>
+        <member name="M:TTSDK.TT.VibrateShort(TTSDK.VibrateShortParam)">
+            <summary>
+            使手机发生较短时间的振动。安卓震动时间为 30ms，ios 震动时间为 15ms。
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="M:TTSDK.TT.VibrateLong(TTSDK.VibrateLongParam)">
+            <summary>
+            使手机发生较长时间的振动（400 ms)。
+            </summary>
+            <param name="param"></param>
+        </member>
         <member name="M:TTSDK.TT.StartAccelerometer(TTSDK.OnAccelerometerChanged,System.Action{System.Boolean,System.String})">
             <summary>
             开始监听加速度数据
@@ -5568,10 +5615,18 @@
             取消监听直玩场景内外流的切换
             </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:TTSDK.TT.StoreFeedData(TTSDK.StoreFeedDataParam)" -->
+        <!-- Badly formed XML comment ignored for member "M:TTSDK.TT.GetFeedData(TTSDK.GetFeedDataParam)" -->
         <member name="M:TTSDK.TT.GetLiveManager">
             <summary>
             获取直播间管理器对象
             </summary>
+        </member>
+        <member name="M:TTSDK.TT.OperateGameLive(TTSDK.OperateGameLiveParam)">
+            <summary>
+            开启小游戏直播（打开直播引导弹窗）
+            </summary>
+            <param name="param"></param>
         </member>
         <member name="M:TTSDK.TT.IsRecovery">
             <summary>
@@ -5739,6 +5794,36 @@
             </summary>
             <param name="param"></param>
             <returns></returns>
+        </member>
+        <member name="M:TTSDK.TT.SetDeviceOrientation(TTSDK.SetDeviceOrientationParam)">
+            <summary>
+            调用该 API 可以切换小游戏横竖屏
+            </summary>
+            <param name="param"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TTSDK.TT.OnDeviceOrientationChange(TTSDK.OnDeviceOrientationChangeCallback)">
+            <summary>
+            添加监听转屏消息
+            </summary>
+        </member>
+        <member name="M:TTSDK.TT.OffDeviceOrientationChange(TTSDK.OnDeviceOrientationChangeCallback)">
+            <summary>
+            删除监听转屏消息
+            </summary>
+        </member>
+        <member name="M:TTSDK.TT.SaveImageToPhotosAlbum(System.String,System.Action{System.Boolean,System.String})">
+            <summary>
+            保存图片到系统相册
+            </summary>
+            <param name="path">图片文件路径，可以是临时文件路径(ttfile://temp），也可以是永久文件路径(ttfile://user)，不支持网络路径</param>
+            <param name="callback">bool = true保存成功，反则表示错误信息</param>
+        </member>
+        <member name="M:TTSDK.TT.OpenFeedback(TTSDK.TTBaseParam)">
+            <summary>
+            跳转反馈页面
+            </summary>
+            <param name="param"></param>
         </member>
         <member name="T:TTSDK.DouyinCloudImpl.DyCloudDownloadUploadProgressUpdateListener">
             <summary>
@@ -5974,12 +6059,73 @@
             销毁
             </summary>
         </member>
+        <member name="F:TTSDK.VibrateShortParam.Success">
+            <summary>
+            接口调用成功的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.VibrateShortParam.Fail">
+            <summary>
+            接口调用失败的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.VibrateShortParam.Complete">
+            <summary>
+            接口调用结束的回调函数（调用成功、失败都会执行）
+            </summary>
+        </member>
+        <member name="F:TTSDK.VibrateLongParam.Success">
+            <summary>
+            接口调用成功的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.VibrateLongParam.Fail">
+            <summary>
+            接口调用失败的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.VibrateLongParam.Complete">
+            <summary>
+            接口调用结束的回调函数（调用成功、失败都会执行）
+            </summary>
+        </member>
+        <member name="M:TTSDK.TTVibrateService.Vibrate(System.Int64[],System.Int32)">
+            <summary>
+            可以配置震动周期的手机震动接口，单位ms
+            </summary>
+            <param name="pattern"> 震动周期 like long[] pattern = {0, 100, 1000, 300}; 传入null则取消震动  </param>
+            <param name="repeat"> 重复次数，为-1则不重复  </param>
+            <remarks>
+            注意：WebGL平台下，只有两种震动：长和短。
+                 pattern数组参数只能传入一个数值，传入小于1000则为短震动，否则为长震动。
+                 不支持取消和重复。即repeat参数无效。
+            </remarks>>
+        </member>
+        <member name="M:TTSDK.TTVibrateService.VibrateShort(TTSDK.VibrateShortParam)">
+            <summary>
+            短震动
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="M:TTSDK.TTVibrateService.VibrateLong(TTSDK.VibrateLongParam)">
+            <summary>
+            长震动
+            </summary>
+            <param name="param"></param>
+        </member>
         <member name="M:TTSDK.StringExt.UnicodeToUtf8(System.String)">
             <summary>
             Unicode转utf8编码
             </summary>
             <param name="s"></param>
             <returns></returns>
+        </member>
+        <member name="M:TTSDK.TTImageFileManager.SaveImageToPhotosAlbum(System.String,System.Action{System.Boolean,System.String})">
+            <summary>
+            保存图片到系统相册
+            </summary>
+            <param name="path">图片文件路径，可以是临时文件路径(ttfile://temp），也可以是永久文件路径(ttfile://user)，不支持网络路径</param>
+            <param name="callback">bool = true保存成功，反则表示错误信息</param>
         </member>
         <member name="M:TTSDK.NavigateUIUtil.CreateNavigateTips(System.Action)">
             <summary>
@@ -6392,21 +6538,6 @@
             机型性能评分
             </summary>
         </member>
-        <member name="T:TTSDK.Orientation">
-            <summary>
-            屏幕方向
-            </summary>
-        </member>
-        <member name="F:TTSDK.Orientation.Portrait">
-            <summary>
-            竖屏
-            </summary>
-        </member>
-        <member name="F:TTSDK.Orientation.Landscape">
-            <summary>
-            横屏
-            </summary>
-        </member>
         <member name="T:TTSDK.TTSystemInfo">
             <summary>
             系统信息
@@ -6491,6 +6622,11 @@
         <member name="F:TTSDK.TTSystemInfo.deviceScore">
             <summary>
             机型性能评分
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTSystemInfo.deviceOrientation">
+            <summary>
+            屏幕方向
             </summary>
         </member>
         <member name="P:TTSDK.TTVersions.GameVersion">
@@ -6686,6 +6822,26 @@
             X分屏类型
             </summary>
         </member>
+        <member name="F:TTSDK.OperateGameLiveParam._type">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:TTSDK.OperateGameLiveParam.Success">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:TTSDK.OperateGameLiveParam.Fail">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:TTSDK.OperateGameLiveParam.Complete">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:TTSDK.TTLiveManager.CheckRoomIsValid(TTSDK.UNBridgeLib.LitJson.JsonData,System.Action{TTSDK.UNBridgeLib.LitJson.JsonData},System.Action{System.Int32,System.String},System.Action)">
             <summary>
             检查直播间/小游戏挂载状态是否有效
@@ -6721,6 +6877,11 @@
             删除监听X分屏变化事件，不传callback时，删除所有监听事件
             </summary>
             <param name="callback">可选，要删除的callback对象</param>
+        </member>
+        <member name="M:TTSDK.TTLiveManager.OperateGameLive(TTSDK.OperateGameLiveParam)">
+            <summary>
+            开启小游戏直播（打开直播引导弹窗）
+            </summary>
         </member>
         <member name="T:TTSDK.AndroidStarkCallBridge">
             <summary>
@@ -6836,6 +6997,21 @@
             <summary>
             标记一个 MonoBehaviour 是会打包在 .dll 文件中的
             SDK 正常开发时无影响，在正式打包时生成一份 .cs 副本代码保存在 sdk 发布文件夹中，以防止 .prefab 引用丢失
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTBaseParam.success">
+            <summary>
+            接口调用成功的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTBaseParam.fail">
+            <summary>
+            接口调用失败的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTBaseParam.complete">
+            <summary>
+            接口调用结束的回调函数（调用成功、失败都会执行）
             </summary>
         </member>
         <member name="T:TTSDK.MockSetting">
@@ -7768,6 +7944,16 @@
         <member name="M:TTSDK.PlayerPrefs.Save">
             <summary>
               <para>Writes all modified preferences to disk.</para>
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTWindowListener.onWindowResize">
+            <summary>
+            监听窗口大小变化。
+            </summary>
+        </member>
+        <member name="T:TTSDK.OnWindowResizeListenerResult">
+            <summary>
+            回调传参
             </summary>
         </member>
         <member name="T:TTSDK.GeneralCallbackResult">
@@ -8782,6 +8968,26 @@
         <member name="F:TTSDK.FeedStatusEnum.FeedExit">
             <summary>
             从游戏退回到Feed流
+            </summary>
+        </member>
+        <member name="F:TTSDK.StoreFeedDataParam.Fail">
+            <summary>
+            接口调用失败的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.StoreFeedDataParam.Complete">
+            <summary>
+            接口调用结束的回调函数（调用成功、失败都会执行）
+            </summary>
+        </member>
+        <member name="F:TTSDK.GetFeedDataParam.Fail">
+            <summary>
+            接口调用失败的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.GetFeedDataParam.Complete">
+            <summary>
+            接口调用结束的回调函数（调用成功、失败都会执行）
             </summary>
         </member>
         <member name="P:TTSDK.JFieldAttribute.Name">
@@ -11840,192 +12046,6 @@
             </summary>
             <param name="options"></param>
             <returns></returns>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContextOptions.src">
-            <summary>
-            音频资源 url 地址，也支持相对路径的地址。只支持 mp3、wav、m4a、aac 格式。
-            如果 url 地址是一个相对路径的地址，比如 Assets/Sound/music.mp3，
-            那么会自动根据配置的 url 前缀拼接为完整的url：${url_prefix}/Assets/Sound/music.mp3
-            有两种方法设置 url 前缀：
-              1. 构建 WebGL 时填写【游戏资源CDN】url 前缀，运行时会自动拼接为完整 url。
-              2. 通过调用 StarkAudioManager.SetAudioUrlPrefix 函数设置 url 前缀。
-            如果同时填写了【游戏资源CDN】和调用了 StarkAudioManager.SetAudioUrlPrefix 函数，默认优先使用构建时填写的【游戏资源CDN】url前缀。
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContextOptions.startTime">
-            <summary>
-            开始播放的位置（单位：s）
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContextOptions.autoPlay">
-            <summary>
-            是否自动播放
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContextOptions.loop">
-            <summary>
-            是否自动循环
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContextOptions.volume">
-            <summary>
-            当前音量，范围 0 ～ 1
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContextOptions.playbackRate">
-            <summary>
-            播放速度。范围 0.5 ～ 2.0，默认为 1
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContextOptions.needDownload">
-            <summary>
-            是否需要下载，如果为true，则会完全下载后再触发OnCanplay
-            </summary>
-        </member>
-        <member name="T:StarkSDKSpace.StarkAudioManager.InnerAudioContext">
-            <summary>
-            音频实例上下文对象，完成对音频播放
-            同时支持Android及WebGL平台，但如果是Android下播放mp3文件，Unity引擎需要为Unity2020.1.14f1及以上版本 
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContext.onCanPlay">
-            <summary>
-            监听音频进入可以播放状态，但不保证后面可以流畅播放
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContext.onPlay">
-            <summary>
-            监听音频播放事件
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContext.onPause">
-            <summary>
-            监听音频暂停事件
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContext.onStop">
-            <summary>
-            监听音频停止播放事件
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContext.onEnded">
-            监听自然播放结束事件
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContext.onError">
-            <summary>
-            监听音频播放出错事件,
-            (errMsg) => {}
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContext.onWaiting">
-            <summary>
-            监听音频加载中事件，当音频因为数据不足，需要停下来加载时会触发
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContext.onSeeking">
-            <summary>
-            监听音频开始进行 seek 操作的事件
-            </summary>
-        </member>
-        <member name="F:StarkSDKSpace.StarkAudioManager.InnerAudioContext.onSeeked">
-            <summary>
-            监听音频完成 seek 操作的事件
-            </summary>
-        </member>
-        <member name="P:StarkSDKSpace.StarkAudioManager.InnerAudioContext.AudioId">
-            <summary>
-            当前音频ID
-            </summary>
-        </member>
-        <member name="P:StarkSDKSpace.StarkAudioManager.InnerAudioContext.Duration">
-            <summary>
-            获取音频时长，单位 s
-            </summary>
-        </member>
-        <member name="M:StarkSDKSpace.StarkAudioManager.InnerAudioContext.GetCurrentTime(System.Action{System.Double})">
-            <summary>
-            获取当前播放时长，单位 s
-            （由于WebGL底层实现方案的原因，只能将结果异步返回）
-            </summary>
-            <param name="callback">(currentTime) => {}</param>
-            <example>
-            audioContext.GetCurrentTime(value =>
-            {
-                Debug.Log($"audio currentTime: {value} s");
-            });
-            </example>
-        </member>
-        <member name="M:StarkSDKSpace.StarkAudioManager.InnerAudioContext.GetPausedState(System.Action{System.Boolean})">
-            <summary>
-            获取当前音频是否是暂停状态
-            （由于WebGL底层实现方案的原因，只能将结果异步返回）
-            </summary>
-            <param name="callback">(isPaused) => {}</param>
-            <example>
-            audioContext.GetBuffered(isPaused =>
-            {
-                Debug.Log($"audio isPaused: {isPaused}");
-            });
-            </example>
-        </member>
-        <member name="M:StarkSDKSpace.StarkAudioManager.InnerAudioContext.GetBuffered(System.Action{System.Double})">
-            <summary>
-            获取当前已缓冲的音频长度，单位 s
-            （由于WebGL底层实现方案的原因，只能将结果异步返回）
-            </summary>
-            <example>
-            audioContext.GetBuffered(buffered =>
-            {
-                Debug.Log($"audio buffered: {buffered} s");
-            });
-            </example>
-        </member>
-        <member name="M:StarkSDKSpace.StarkAudioManager.InnerAudioContext.OnInnerAudioStateChanged(System.String,TTSDK.UNBridgeLib.LitJson.JsonData)">
-            <summary>
-            内部方法（请勿调用）
-            </summary>
-        </member>
-        <member name="M:StarkSDKSpace.StarkAudioManager.InnerAudioContext.Play">
-            <summary>
-            播放音频
-            同时支持Android及WebGL平台，但如果是Android下播放mp3文件，Unity引擎需要为Unity2020.1.14f1及以上版本
-            </summary>
-        </member>
-        <member name="M:StarkSDKSpace.StarkAudioManager.InnerAudioContext.Pause">
-            <summary>
-            暂停播放
-            </summary>
-        </member>
-        <member name="M:StarkSDKSpace.StarkAudioManager.InnerAudioContext.Stop">
-            <summary>
-            停止播放
-            </summary>
-        </member>
-        <member name="M:StarkSDKSpace.StarkAudioManager.InnerAudioContext.Destroy">
-            <summary>
-            销毁当前实例。销毁后该实例将不存在，如需播放需要再次创建
-            </summary>
-        </member>
-        <member name="M:StarkSDKSpace.StarkAudioManager.InnerAudioContext.Seek(System.Double)">
-            <summary>
-            跳转到指定位置播放
-            </summary>
-            <param name="position"></param>
-        </member>
-        <member name="P:StarkSDKSpace.StarkAudioManager.InnerAudioContext.Volume">
-            <summary>
-            音量。范围 0~1。默认为 1
-            </summary>
-        </member>
-        <member name="P:StarkSDKSpace.StarkAudioManager.InnerAudioContext.Mute">
-            <summary>
-            静音，静音时将音量设置为 0，取消静音则恢复原来的音量
-            </summary>
-        </member>
-        <member name="P:StarkSDKSpace.StarkAudioManager.InnerAudioContext.Loop">
-            <summary>
-            设置是否循环播放，默认为 false
-            </summary>
         </member>
         <member name="M:StarkSDKSpace.StarkDeviceMotion.StartDeviceMotionListening(StarkSDKSpace.StarkDeviceMotion.Interval,StarkSDKSpace.StarkDeviceMotion.MotionCallback)">
             <summary>

@@ -263,4 +263,312 @@
         public int Length;
     }
 
+    public class TTOpenResponse:TTBaseResponse
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+    }
+
+    public class OpenParam: TTBaseActionParam<TTOpenResponse>
+    {
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string filePath;
+        /// <summary>
+        /// 文件系统标志
+        /// </summary>
+        public string flag;
+    }
+
+    public class OpenSyncParam
+    {
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string filePath;
+        /// <summary>
+        /// 文件系统标志
+        /// </summary>
+        public string flag;
+    }
+
+    public class CloseParam: TTBaseActionParam<TTBaseResponse>
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+    }
+
+    public class CloseSyncParam
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+    }
+
+    public class TTWriteResponse: TTBaseResponse
+    {
+        /// <summary>
+        /// 被写入到文件中的字节数
+        /// </summary>
+        public int bytesWritten;
+    }
+
+    public class WriteParam: TTBaseActionParam<TTWriteResponse>
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+        /// <summary>
+        /// ArrayBuffer 时有效，决定 ArrayBuffer 中要被写入的部位
+        /// </summary>
+        public int offset;
+        /// <summary>
+        /// ArrayBuffer 时有效，指定要写入的字节数
+        /// </summary>
+        public int? length;
+        /// <summary>
+        /// String 时有效，指定写入文件的字符编码
+        /// </summary>
+        public string encoding;
+    }
+
+
+    public class WriteBinParam: WriteParam
+    {
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        public byte[] data;
+    }
+
+    public class WriteStringParam: WriteParam
+    {
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        public string data;
+    }
+
+    public class WriteBinSyncParam
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        public byte[] data;
+        /// <summary>
+        /// ArrayBuffer 时有效，决定 ArrayBuffer 中要被写入的部位
+        /// </summary>
+        public int offset;
+        /// <summary>
+        /// ArrayBuffer 时有效，指定要写入的字节数
+        /// </summary>
+        public int? length;
+        /// <summary>
+        /// String 时有效，指定写入文件的字符编码
+        /// </summary>
+        public string encoding;
+    }
+
+    public class WriteStringSyncParam
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+        /// <summary>
+        /// 写入数据
+        /// </summary>
+        public string data;
+        /// <summary>
+        /// ArrayBuffer 时有效，决定 ArrayBuffer 中要被写入的部位
+        /// </summary>
+        public int offset;
+        /// <summary>
+        /// ArrayBuffer 时有效，指定要写入的字节数
+        /// </summary>
+        public int? length;
+        /// <summary>
+        /// String 时有效，指定写入文件的字符编码
+        /// </summary>
+        public string encoding;
+    }
+
+    public class WriteResult
+    {
+        /// <summary>
+        /// 被写入到文件中的字节数
+        /// </summary>
+        public int bytesWritten;
+    }
+
+    public class TTReadResponse: TTBaseResponse
+    {
+        /// <summary>
+        /// 被写入的缓存区的对象
+        /// </summary>
+        public byte[] arrayBuffer;
+        /// <summary>
+        /// 实际读取的字节数
+        /// </summary>
+        public int bytesRead;
+    }
+
+    public class ReadParam: TTBaseActionParam<TTReadResponse>
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+        /// <summary>
+        /// 数据
+        /// </summary>
+        public byte[] arrayBuffer;
+        /// <summary>
+        /// 缓冲区中的写入偏移量
+        /// </summary>
+        public int offset;
+        /// <summary>
+        /// 要从文件中读取的字节数
+        /// </summary>
+        public int length;
+        /// <summary>
+        /// 文件读取的起始位置
+        /// </summary>
+        public int? position;
+    }
+
+    public class ReadSyncParam
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+        /// <summary>
+        /// 数据
+        /// </summary>
+        public byte[] arrayBuffer;
+        /// <summary>
+        /// 缓冲区中的写入偏移量
+        /// </summary>
+        public int offset;
+        /// <summary>
+        /// 要从文件中读取的字节数
+        /// </summary>
+        public int length;
+        /// <summary>
+        /// 文件读取的起始位置
+        /// </summary>
+        public int? position;
+    }
+
+    public class ReadResult
+    {
+        /// <summary>
+        /// 被写入的缓存区的对象
+        /// </summary>
+        public byte[] arrayBuffer;
+        /// <summary>
+        /// 实际读取的字节数
+        /// </summary>
+        public int bytesRead;
+    }
+
+    public class TTReadCompressedCallback: TTBaseResponse
+    {
+        /// <summary>
+        /// 文件长度
+        /// </summary>
+        public int byteLength;
+    }
+
+    public class TTReadCompressedFileResponse: TTBaseResponse
+    {
+        /// <summary>
+        /// 文件内容
+        /// </summary>
+        public byte[] arrayBuffer;
+    }
+
+    public class ReadCompressedFileParam: TTBaseActionParam<TTReadCompressedFileResponse>
+    {
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string filePath;
+        /// <summary>
+        /// 文件压缩类型
+        /// </summary>
+        public string compressionAlgorithm;
+    }
+
+    public class ReadCompressedFileSyncParam
+    {
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string filePath;
+        /// <summary>
+        /// 文件压缩类型
+        /// </summary>
+        public string compressionAlgorithm;
+    }
+
+    public class FstatResponse: TTBaseResponse
+    {
+        /// <summary>
+        /// 文件状态
+        /// </summary>
+        public TTStatInfo stats;
+    }
+
+    public class FstatParam: TTBaseActionParam<FstatResponse>
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+    }
+
+    public class FstatSyncParam
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+    }
+
+    public class FtruncateParam: TTBaseActionParam<TTBaseResponse>
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+        /// <summary>
+        /// 截断位置
+        /// </summary>
+        public int length;
+    }
+
+    public class FtruncateSyncParam
+    {
+        /// <summary>
+        /// 文件标识符
+        /// </summary>
+        public string fd;
+        /// <summary>
+        /// 截断位置
+        /// </summary>
+        public int length;
+    }
 }

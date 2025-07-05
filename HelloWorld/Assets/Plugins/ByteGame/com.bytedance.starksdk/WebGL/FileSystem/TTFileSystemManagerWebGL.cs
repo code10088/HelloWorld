@@ -9,6 +9,7 @@ namespace TTSDK
 {
     public class TTFileSystemManagerWebGL : TTFileSystemManager
     {
+#region 非流式读写
 #if UNITY_WEBGL && !UNITY_EDITOR
         [DllImport("__Internal")]
         private static extern string StarkWriteStringFileSync(string filePath, string data, string encoding);
@@ -325,6 +326,63 @@ namespace TTSDK
             return TTFileSystemManagerDefault.Instance.ReadDirSync(filePath)[0];
         }
 #endif
+#endregion
+
+#region 流式读写
+#if UNITY_WEBGL && !UNITY_EDITOR 
+        //webgl
+        [DllImport("__Internal")]
+        private static extern void TT_FOpenFile(string filePath, string flag, string callbackId);
+        [DllImport("__Internal")]
+        private static extern string TT_FOpenFileSync(string filePath, string flag);
+        [DllImport("__Internal")]
+        private static extern void TT_FCloseFile(string fd, string s, string f);
+        [DllImport("__Internal")]
+        private static extern string TT_FCloseFileSync(string fd);
+        [DllImport("__Internal")]
+        private static extern void TT_FWriteBinFile(string fd, byte[] data, int dataLength, int offset, int length, string callbackId);
+        [DllImport("__Internal")]
+        private static extern void TT_FWriteStringFile(string fd, string data, string encoding, string callbackId);
+        [DllImport("__Internal")]
+        private static extern string TT_FWriteBinFileSync(string fd, byte[] data, int dataLength, int offset, int length);
+        [DllImport("__Internal")]
+        private static extern string TT_FWriteStringFileSync(string fd, string data, string encoding);
+        [DllImport("__Internal")]
+        private static extern void TT_FReadFile(string fd, int arrayBufferLength, int offset, int length, int position, string callbackId);
+        [DllImport("__Internal")]
+        private static extern string TT_FReadFileSync(string fd, int arrayBufferLength, int offset, int length, int position);
+        [DllImport("__Internal")]
+        private static extern void TT_FReadCompressedFile(string filePath, string compressionAlgorithm, string callbackId);
+        [DllImport("__Internal")]
+        private static extern string TT_FReadCompressedFileSync(string filePath, string compressionAlgorithm);
+        [DllImport("__Internal")]
+        private static extern void TT_Fstat(string fd, string callbackId);
+        [DllImport("__Internal")]
+        private static extern string TT_FstatSync(string fd);
+        [DllImport("__Internal")]
+        private static extern void TT_Ftruncate(string fd, int length, string s, string f);
+        [DllImport("__Internal")]
+        private static extern string TT_FtruncateSync(string fd, int length);
+#else 
+        //native
+        private static void TT_FOpenFile(string filePath, string flag, string callbackId) {}
+        private static string TT_FOpenFileSync(string filePath, string flag) { return null; }
+        private static void TT_FCloseFile(string fd, string s, string f) {}
+        private static string TT_FCloseFileSync(string fd) { return ""; }
+        private static void TT_FWriteBinFile(string fd, byte[] data, int dataLength, int offset, int length, string callbackId) {}
+        private static void TT_FWriteStringFile(string fd, string data, string encoding, string callbackId) {}
+        private static string TT_FWriteBinFileSync(string fd, byte[] data, int dataLength, int offset, int length) {return ""; }
+        private static string TT_FWriteStringFileSync(string fd, string data, string encoding) {return "";}
+        private static void TT_FReadFile(string fd, int arrayBufferLength, int offset, int length, int position, string callbackId) {}
+        private static string TT_FReadFileSync(string fd, int arrayBufferLength, int offset, int length, int position) { return ""; }
+        private static void TT_FReadCompressedFile(string filePath, string compressionAlgorithm, string callbackId) {}
+        private static string TT_FReadCompressedFileSync(string filePath, string compressionAlgorithm) { return ""; }
+        private static void TT_Fstat(string fd, string callbackId) {}
+        private static string TT_FstatSync(string fd) { return null; }
+        private static void TT_Ftruncate(string fd, int length, string s, string f) {}
+        private static string TT_FtruncateSync(string fd, int length) { return ""; }
+#endif
+#endregion
        
         
         public static readonly TTFileSystemManagerWebGL Instance = new TTFileSystemManagerWebGL();
@@ -335,6 +393,14 @@ namespace TTSDK
         private static Dictionary<string, GetSavedFileListParam> s_getSavedFileListParams =
             new Dictionary<string, GetSavedFileListParam>();
         private static Dictionary<string, ReadDirParam> s_readDirParams = new Dictionary<string, ReadDirParam>();
+
+        #region 流式读写
+        private static Dictionary<string, OpenParam> s_openParams = new();
+        private static Dictionary<string, WriteParam> s_writeParams = new();
+        private static Dictionary<string, ReadParam> s_readParams = new();
+        private static Dictionary<string, ReadCompressedFileParam> s_readCompressedFileParams = new();
+        private static Dictionary<string, FstatParam> s_fstatParams = new();
+        #endregion
 
         private static bool _initialized;
 
@@ -536,6 +602,138 @@ namespace TTSDK
                 }
             }
 
+#region 流式读写
+            public void HandleFOpenCallback(string msg)
+            {
+                Debug.Log($"HandleFOpenCallback - {msg}");
+                var res = JsonUtility.FromJson<TTOpenResponse>(msg);
+                var conf = s_openParams[res.callbackId];
+                if (conf == null)
+                {
+                    Debug.LogWarning($"HandleFOpenCallback - no callback for callbackId: {res.callbackId}");
+                    return;
+                }
+
+                s_openParams.Remove(res.callbackId);
+
+                if (res.errCode == 0)
+                {
+                    conf.success?.Invoke(res);
+                }
+                else
+                {
+                    conf.fail?.Invoke(res);
+                }
+            }
+
+            public void HandleFWriteCallback(string msg)
+            {
+                Debug.Log($"HandleFWriteCallback - {msg}");
+                var res = JsonUtility.FromJson<TTWriteResponse>(msg);
+                var conf = s_writeParams[res.callbackId];
+                if (conf == null)
+                {
+                    Debug.LogWarning($"HandleFWriteCallback - no callback for callbackId: {res.callbackId}");
+                    return;
+                }
+
+                s_writeParams.Remove(res.callbackId);
+
+                if (res.errCode == 0)
+                {
+                    conf.success?.Invoke(res);
+                }
+                else
+                {
+                    conf.fail?.Invoke(res);
+                }
+            }
+
+            public void HandleFReadCallback(string msg)
+            {
+                Debug.Log($"HandleFReadCallback - {msg}");
+                var res = JsonUtility.FromJson<TTReadResponse>(msg);
+                var conf = s_readParams[res.callbackId];
+                if (conf == null)
+                {
+                    Debug.LogWarning($"HandleFReadCallback - no callback for callbackId: {res.callbackId}");
+                    return;
+                }
+
+                s_readParams.Remove(res.callbackId);
+                res.bytesRead = Math.Max(res.bytesRead, 0);//根据平台不同，有的会返回-1有的是0
+
+
+                if (res.errCode == 0)
+                {
+                    res.arrayBuffer = conf.arrayBuffer;
+                    StarkShareFileBuffer(res.arrayBuffer, res.callbackId);
+                    conf.success?.Invoke(res);
+                }
+                else
+                {
+                    conf.fail?.Invoke(res);
+                }
+            }
+
+            public void HandleFReadCompressedFileCallback(string msg)
+            {
+                Debug.Log($"HandleFReadCompressedFileCallback - {msg}");
+                var res = JsonUtility.FromJson<TTReadCompressedCallback>(msg);
+                var conf = s_readCompressedFileParams[res.callbackId];
+                if (conf == null)
+                {
+                    Debug.LogWarning($"HandleFReadCompressedFileCallback - no callback for callbackId: {res.callbackId}");
+                    return;
+                }
+
+                s_readCompressedFileParams.Remove(res.callbackId);
+
+                if (res.errCode == 0)
+                {
+                    var sharedBuffer = new byte[res.byteLength];
+                    StarkShareFileBuffer(sharedBuffer, res.callbackId);
+                    var obj = new TTReadCompressedFileResponse()
+                    {
+                        arrayBuffer = sharedBuffer,
+                    };
+                    conf.success?.Invoke(obj);
+                }
+                else
+                {
+                    var obj = new TTReadCompressedFileResponse()
+                    {
+                        errCode = res.errCode,
+                        errMsg = res.errMsg
+                    };
+                    conf.fail?.Invoke(obj);
+                }
+            }
+
+            public void HandleFStatCallback(string msg)
+            {
+                Debug.Log($"HandleFStatCallback - {msg}");
+                var res = JsonMapper.ToObject<FstatResponse>(msg);
+                var conf = s_fstatParams[res.callbackId];
+                if (conf == null)
+                {
+                    Debug.LogWarning($"HandleFStatCallback - no callback for callbackId: {res.callbackId}");
+                    return;
+                }
+
+                s_fstatParams.Remove(res.callbackId);
+
+                if (res.errCode == 0)
+                {
+                    conf.success?.Invoke(res);
+                }
+                else
+                {
+                    conf.fail?.Invoke(res);
+                }
+            }
+#endregion
+
         }
 
         private string FixFilePath(string filePath)
@@ -646,7 +844,7 @@ namespace TTSDK
         public override byte[] ReadFileSync(string filePath)
         {
             if (Application.platform == RuntimePlatform.WebGLPlayer ||
-                (Application.version.Contains("t") && (int)Application.platform == 0x00000032))
+                (Application.unityVersion.Contains("t") && (int)Application.platform == 0x00000032))
             {
                 filePath = FixFilePath(filePath);
                 var length = StarkReadBinFileSync(filePath);
@@ -955,6 +1153,174 @@ namespace TTSDK
                 FixFilePath(filePath),
                 length);
         }
+
+        #region 流式读写
+        public override void Open(OpenParam param)
+        {
+            var key = TTCallbackHandler.MakeKey();
+            s_openParams.Add(key, param);
+            TT_FOpenFile(FixFilePath(param.filePath), param.flag, key);
+        }
+
+        public override string OpenSync(OpenSyncParam param)
+        {
+            var fd = TT_FOpenFileSync(FixFilePath(param.filePath), param.flag);
+            if (fd.Contains("ERROR"))
+            {
+                throw new Exception(fd);
+            }
+            return fd;
+        }
+
+        public override void Close(CloseParam param)
+        {
+            var pair = TTCallbackHandler.AddPair(param.success, param.fail);
+            TT_FCloseFile(param.fd, pair.success, pair.fail);
+        }
+
+        public override void CloseSync(CloseSyncParam param)
+        {
+            string info = TT_FCloseFileSync(param.fd);
+            if (!string.IsNullOrEmpty(info))
+            {
+                throw new Exception(info);
+            }
+        }
+
+        public override void Write(WriteBinParam param)
+        {
+            var key = TTCallbackHandler.MakeKey();
+            s_writeParams.Add(key, param);
+            int length = param.length == null ? -1 : Math.Max(param.length.Value, 0);
+            TT_FWriteBinFile(param.fd, param.data, param.data.Length, param.offset, length, key);
+        }
+
+        public override void Write(WriteStringParam param)
+        {
+            var key = TTCallbackHandler.MakeKey();
+            s_writeParams.Add(key, param);
+            TT_FWriteStringFile(param.fd, param.data, param.encoding, key);
+        }
+
+        public override WriteResult WriteSync(WriteBinSyncParam param)
+        {
+            int length = param.length == null ? -1 : Math.Max(param.length.Value, 0);
+            var result = TT_FWriteBinFileSync(param.fd, param.data, param.data.Length, param.offset, length);
+            if (int.TryParse(result, out int bytesWritten))
+            {
+                return new()
+                {
+                    bytesWritten = bytesWritten
+                };
+            }
+            else
+            {
+                throw new Exception(result);
+            }
+        }
+
+        public override WriteResult WriteSync(WriteStringSyncParam param)
+        {
+            var result = TT_FWriteStringFileSync(param.fd, param.data, param.encoding);
+            if (int.TryParse(result, out int bytesWritten))
+            {
+                return new()
+                {
+                    bytesWritten = bytesWritten
+                };
+            }
+            else
+            {
+                throw new Exception(result);
+            }
+        }
+
+        public override void Read(ReadParam param)
+        {
+            var key = TTCallbackHandler.MakeKey();
+            s_readParams.Add(key, param);
+            int position = param.position == null ? -1 : Math.Max(param.position.Value, 0);
+            TT_FReadFile(param.fd, param.arrayBuffer.Length, param.offset, param.length, position, key);
+        }
+
+        public override ReadResult ReadSync(ReadSyncParam param)
+        {
+            int position = param.position == null ? -1 : Math.Max(param.position.Value, 0);
+            var result = TT_FReadFileSync(param.fd, param.arrayBuffer.Length, param.offset, param.length, position);
+            if (int.TryParse(result, out int bytesRead))
+            {
+                bytesRead = Math.Max(bytesRead, 0);//根据平台不同，有的会返回-1有的是0
+                var sharedBuffer = new byte[bytesRead];
+                StarkShareFileBuffer(sharedBuffer, param.fd);
+                return new()
+                {
+                    bytesRead = bytesRead,
+                    arrayBuffer = sharedBuffer
+                };
+            }
+            else
+            {
+                throw new Exception(result);
+            }
+        }
+
+        public override void ReadCompressedFile(ReadCompressedFileParam param)
+        {
+            var key = TTCallbackHandler.MakeKey();
+            s_readCompressedFileParams.Add(key, param);
+            TT_FReadCompressedFile(FixFilePath(param.filePath), param.compressionAlgorithm, key);
+        }
+
+        public override byte[] ReadCompressedFileSync(ReadCompressedFileSyncParam param)
+        {
+            var result = TT_FReadCompressedFileSync(FixFilePath(param.filePath), param.compressionAlgorithm);
+            if (int.TryParse(result, out int length))
+            {
+                var sharedBuffer = new byte[length];
+                StarkShareFileBuffer(sharedBuffer, FixFilePath(param.filePath));
+                return sharedBuffer;
+            }
+            else
+            {
+                throw new Exception(result);
+            }
+        }
+
+        public override void Fstat(FstatParam param)
+        {
+            var key = TTCallbackHandler.MakeKey();
+            s_fstatParams.Add(key, param);
+            TT_Fstat(param.fd, key);
+        }
+
+        public override TTStatInfo FstatSync(FstatSyncParam param)
+        {
+            var info = TT_FstatSync(param.fd);
+            try
+            {
+                return JsonUtility.FromJson<TTStatInfo>(info);
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(info);
+            }
+        }
+
+        public override void Ftruncate(FtruncateParam param)
+        {
+            var pair = TTCallbackHandler.AddPair(param.success, param.fail);
+            TT_Ftruncate(param.fd, param.length, pair.success, pair.fail);
+        }
+
+        public override void FtruncateSync(FtruncateSyncParam param)
+        {
+            string info = TT_FtruncateSync(param.fd, param.length);
+            if (!string.IsNullOrEmpty(info))
+            {
+                throw new Exception(info);
+            }
+        }
+        #endregion
 
     }
 }

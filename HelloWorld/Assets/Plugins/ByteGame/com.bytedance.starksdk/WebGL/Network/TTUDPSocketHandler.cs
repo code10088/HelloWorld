@@ -178,7 +178,7 @@ namespace TTSDK.Network
         
 #if TT_UDP_ENABLED
         [DllImport("__Internal")]
-        public static extern int StarkUDPSocketDestroy(string id);
+        public static extern void StarkUDPSocketDestroy(string id);
 #else
         public static void StarkUDPSocketDestroy(string id)
         {
