@@ -12,16 +12,13 @@
       {{~it.data :item:index}}
         <view class="listItem">
           <image src="open-data/render/image/{{= item.isSelf ? 'rankBgSelf':'rankBg'}}.png" class="rankBg"></image>
-          <image class="rankAvatarBg" src="open-data/render/image/rankAvatar.png"></image>
+          <image class="rankAvatarBg" src="open-data/render/image/loading.png"></image>
           <image class="rankAvatar" src="{{= item.avatarUrl }}"></image>
           <view class="rankNameView">
             <text class="rankName" value="{{=item.nickname}}"></text>
           </view>
           <view class="rankScoreView">
             <text class="rankScoreVal" value="{{=item.score || 0}}"></text>
-          </view>
-          <view class="shareToBtn" data-isSelf="{{= item.isSelf ? true : false}}" data-id="{{= item.openid || ''}}">
-            <image src="open-data/render/image/{{= item.isSelf ? 'button1':'button2'}}.png" class="shareBtnBg"></image>
           </view>
         </view>
       {{~}}
@@ -43,9 +40,17 @@ export default function anonymous(it) {
         const l1 = arr1.length - 1;
         while (index < l1) {
             item = arr1[(index += 1)];
-            out += ' <view class="listItem"> <image src="open-data/render/image/' + (item.isSelf ? 'rankBgSelf' : 'rankBg') + '.png" class="rankBg"></image> <image class="rankAvatarBg" src="open-data/render/image/rankAvatar.png"></image> <image class="rankAvatar" src="' + (item.avatarUrl) + '"></image> <view class="rankNameView"> <text class="rankName" value="' + (item.nickname) + '"></text> </view> <view class="rankScoreView"> <text class="rankScoreVal" value="' + (item.score || 0) + '"></text> </view> <view class="shareToBtn" data-isSelf="' + (item.isSelf ? true : false) + '" data-id="' + (item.openid || '') + '"> <image src="open-data/render/image/' + (item.isSelf ? 'button1' : 'button2') + '.png" class="shareBtnBg"></image> </view> </view> ';
+            out += ' <view class="listItem"> <image src="open-data/render/image/' + (item.isSelf ? 'rankBgSelf' : 'rankBg') + '.png" class="rankBg"></image> <image class="rankAvatarBg" src="open-data/render/image/loading.png"></image> <image class="rankAvatar" src="' + (item.avatarUrl) + '"></image> <view class="rankNameView"> <text class="rankName" value="' + (item.nickname) + '"></text> </view> <view class="rankScoreView"> <text class="rankScoreVal" value="' + GetRank(item.score || 0) + '"></text> </view> </view> ';
         }
     }
     out += ' </scrollview> </view></view>';
     return out;
+}
+export function GetRank(score) {
+    if (score < 10) return score + "-青铜";
+    else if (score < 20) return score + "-白银";
+    else if (score < 30) return score + "-黄金";
+    else if (score < 40) return score + "-钻石";
+    else if (score < 50) return score + "-王者";
+    else return score + "-终结者";
 }

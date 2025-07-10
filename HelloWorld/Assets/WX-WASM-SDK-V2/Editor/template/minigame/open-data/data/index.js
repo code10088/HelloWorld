@@ -42,7 +42,7 @@ function rankDataFilter(res, selfUserInfo = false) {
     return data
         .map((item) => {
         const { score, update_time: updateTime } = getWxGameData(item);
-        item.score = score;
+        item.score = CheckWeek(updateTime * 1000) ? score : 0;
         item.update_time = updateTime;
         /**
          * 请注意，这里判断是否为自己并不算特别严谨的做法
@@ -55,6 +55,14 @@ function rankDataFilter(res, selfUserInfo = false) {
     })
         // 升序排序
         .sort((a, b) => b.score - a.score);
+}
+function CheckWeek(t) {
+    let date1 = new Date(2025, 0, 1);
+    let date2 = new Date(Date.now());
+    let date3 = new Date(t);
+    let day1 = Math.floor((date2.getTime() - date1.getTime()) / 86400000) + date1.getDay() - 1;
+    let day2 = Math.floor((date3.getTime() - date1.getTime()) / 86400000) + date1.getDay() - 1;
+    return Math.floor(day1 / 7) == Math.floor(day2 / 7);
 }
 /**
  * 获取好友排行榜列表
