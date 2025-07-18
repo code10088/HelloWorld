@@ -174,7 +174,7 @@ public class AssetManager : Singletion<AssetManager>
         public void Init<T>(int itemId, string path) where T : Object
         {
             this.path = path;
-            this.itemId = itemId << 8;
+            this.itemId = itemId;
             state = LoadState.Loading;
             ah = package.LoadAssetAsync<T>(path);
             ah.Completed += LoadFinish;
@@ -182,7 +182,7 @@ public class AssetManager : Singletion<AssetManager>
         public void Load(ref int loadId, Action<int, Object> action)
         {
             this.loadId = this.loadId + 1 & 0xFF;
-            loadId = itemId | this.loadId;
+            loadId = itemId << 8 | this.loadId;
             if (state.HasFlag(LoadState.Release))
             {
                 state &= LoadState.LoadFinish | LoadState.Loading;
