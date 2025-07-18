@@ -35,6 +35,7 @@ public class TestLoadPanel
 
             Assert.IsNotNull(instantiateOp.Result);
             TestLogger.Log(this, instantiateOp.Result.name);
+            GameObject.Destroy(instantiateOp.Result);
         }
     }
 }

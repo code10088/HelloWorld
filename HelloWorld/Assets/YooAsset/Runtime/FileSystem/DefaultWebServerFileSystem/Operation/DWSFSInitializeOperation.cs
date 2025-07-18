@@ -48,7 +48,7 @@ namespace YooAsset
                     */
 #endif
 
-                    _loadCatalogFileOp = new LoadWebServerCatalogFileOperation(_fileSystem);
+                    _loadCatalogFileOp = new LoadWebServerCatalogFileOperation(_fileSystem, 60);
                     _loadCatalogFileOp.StartOperation();
                     AddChildOperation(_loadCatalogFileOp);
                 }

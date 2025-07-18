@@ -1,6 +1,5 @@
 ﻿#if UNITY_WEBGL && DOUYINMINIGAME
 using UnityEngine;
-using UnityEngine.Networking;
 using YooAsset;
 
 internal class TTFSLoadBundleOperation : FSLoadBundleOperation
@@ -14,7 +13,7 @@ internal class TTFSLoadBundleOperation : FSLoadBundleOperation
 
     private readonly TiktokFileSystem _fileSystem;
     private readonly PackageBundle _bundle;
-    private DownloadAssetBundleOperation _downloadAssetBundleOp;
+    private LoadWebAssetBundleOperation _loadWebAssetBundleOp;
     private ESteps _steps = ESteps.None;
 
     internal TTFSLoadBundleOperation(TiktokFileSystem fileSystem, PackageBundle bundle)
@@ -33,54 +32,46 @@ internal class TTFSLoadBundleOperation : FSLoadBundleOperation
 
         if (_steps == ESteps.DownloadAssetBundle)
         {
-            if (_downloadAssetBundleOp == null)
+            if (_loadWebAssetBundleOp == null)
             {
-                DownloadFileOptions options = new DownloadFileOptions(int.MaxValue, 60);
-                options.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(_bundle.FileName); ;
-                options.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(_bundle.FileName);
+                string mainRUL = _fileSystem.RemoteServices.GetRemoteMainURL(_bundle.FileName);
+                string fallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(_bundle.FileName);
+                DownloadFileOptions options = new DownloadFileOptions(int.MaxValue);
+                options.SetURL(mainRUL, fallbackURL);
 
                 if (_bundle.Encrypted)
                 {
-                    _downloadAssetBundleOp = new DownloadWebEncryptAssetBundleOperation(false, _fileSystem.DecryptionServices, _bundle, options);
-                    _downloadAssetBundleOp.StartOperation();
-                    AddChildOperation(_downloadAssetBundleOp);
+                    _loadWebAssetBundleOp = new LoadWebEncryptAssetBundleOperation(_bundle, options, _fileSystem.DecryptionServices);
+                    _loadWebAssetBundleOp.StartOperation();
+                    AddChildOperation(_loadWebAssetBundleOp);
                 }
                 else
                 {
-                    _downloadAssetBundleOp = new DownloadTiktokAssetBundleOperation(_bundle, options);
-                    _downloadAssetBundleOp.StartOperation();
-                    AddChildOperation(_downloadAssetBundleOp);
+                    _loadWebAssetBundleOp = new LoadTiktokAssetBundleOperation(_bundle, options);
+                    _loadWebAssetBundleOp.StartOperation();
+                    AddChildOperation(_loadWebAssetBundleOp);
                 }
             }
 
-            _downloadAssetBundleOp.UpdateOperation();
-            DownloadProgress = _downloadAssetBundleOp.DownloadProgress;
-            DownloadedBytes = (long)_downloadAssetBundleOp.DownloadedBytes;
+            _loadWebAssetBundleOp.UpdateOperation();
+            DownloadProgress = _loadWebAssetBundleOp.DownloadProgress;
+            DownloadedBytes = (long)_loadWebAssetBundleOp.DownloadedBytes;
             Progress = DownloadProgress;
-            if (_downloadAssetBundleOp.IsDone == false)
+            if (_loadWebAssetBundleOp.IsDone == false)
                 return;
 
-            if (_downloadAssetBundleOp.Status == EOperationStatus.Succeed)
+            if (_loadWebAssetBundleOp.Status == EOperationStatus.Succeed)
             {
-                var assetBundle = _downloadAssetBundleOp.Result;
-                if (assetBundle == null)
-                {
-                    _steps = ESteps.Done;
-                    Status = EOperationStatus.Failed;
-                    Error = $"{nameof(DownloadAssetBundleOperation)} loaded asset bundle is null !";
-                }
-                else
-                {
-                    _steps = ESteps.Done;
-                    Result = new TTAssetBundleResult(_fileSystem, _bundle, assetBundle);
-                    Status = EOperationStatus.Succeed;
-                }
+                var assetBundle = _loadWebAssetBundleOp.Result;
+                _steps = ESteps.Done;
+                Result = new TTAssetBundleResult(_fileSystem, _bundle, assetBundle);
+                Status = EOperationStatus.Succeed;
             }
             else
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Failed;
-                Error = _downloadAssetBundleOp.Error;
+                Error = _loadWebAssetBundleOp.Error;
             }
         }
     }

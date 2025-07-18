@@ -11,8 +11,8 @@ using YooAsset;
 
 public class T2_TestBuldinFileSystem : IPrebuildSetup, IPostBuildCleanup
 {
-    private const string ASSET_BUNDLE_PACKAGE_ROOT_KEY = "T2_ASSET_BUNDLE_PACKAGE_ROOT_KEY";
-    private const string RAW_BUNDLE_PACKAGE_ROOT_KEY = "T2_RAW_BUNDLE_PACKAGE_ROOT_KEY";
+    public const string ASSET_BUNDLE_PACKAGE_ROOT_KEY = "T2_ASSET_BUNDLE_PACKAGE_ROOT_KEY";
+    public const string RAW_BUNDLE_PACKAGE_ROOT_KEY = "T2_RAW_BUNDLE_PACKAGE_ROOT_KEY";
 
     void IPrebuildSetup.Setup()
     {
@@ -24,7 +24,7 @@ public class T2_TestBuldinFileSystem : IPrebuildSetup, IPostBuildCleanup
             buildParams.InvokeAssmeblyName = "YooAsset.Test.Editor";
             buildParams.InvokeClassFullName = "TestPackageBuilder";
             buildParams.InvokeMethodName = "BuildPackage";
-            var simulateResult = PakcageInvokeBuilder.InvokeBuilder(buildParams);
+            var simulateResult = PackageInvokeBuilder.InvokeBuilder(buildParams);
             UnityEditor.EditorPrefs.SetString(ASSET_BUNDLE_PACKAGE_ROOT_KEY, simulateResult.PackageRootDirectory);
         }
 
@@ -35,7 +35,7 @@ public class T2_TestBuldinFileSystem : IPrebuildSetup, IPostBuildCleanup
             buildParams.InvokeAssmeblyName = "YooAsset.Test.Editor";
             buildParams.InvokeClassFullName = "TestPackageBuilder";
             buildParams.InvokeMethodName = "BuildPackage";
-            var simulateResult = PakcageInvokeBuilder.InvokeBuilder(buildParams);
+            var simulateResult = PackageInvokeBuilder.InvokeBuilder(buildParams);
             UnityEditor.EditorPrefs.SetString(RAW_BUNDLE_PACKAGE_ROOT_KEY, simulateResult.PackageRootDirectory);
         }
 #endif

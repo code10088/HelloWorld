@@ -42,6 +42,7 @@ public class TestLoadPrefab
 
             Assert.IsNotNull(instantiateOp.Result);
             TestLogger.Log(this, instantiateOp.Result.name);
+            GameObject.Destroy(instantiateOp.Result);
         }
 
         // 同步加载指定预制体
@@ -57,6 +58,7 @@ public class TestLoadPrefab
 
             Assert.IsNotNull(instantiateOp.Result);
             TestLogger.Log(this, instantiateOp.Result.name);
+            GameObject.Destroy(instantiateOp.Result);
         }
     }
 }

@@ -1,17 +1,30 @@
 ﻿#if UNITY_WEBGL && WEIXINMINIGAME
 using UnityEngine;
-using UnityEngine.Networking;
 using YooAsset;
-using WeChatWASM;
 
-internal class WXFSDownloadFileOperation : DefaultDownloadFileOperation
+internal class WXFSDownloadFileOperation : FSDownloadFileOperation
 {
-    private WechatFileSystem _fileSystem;
+    protected enum ESteps
+    {
+        None,
+        CreateRequest,
+        CheckRequest,
+        TryAgain,
+        Done,
+    }
+
+    private readonly WechatFileSystem _fileSystem;
+    private readonly DownloadFileOptions _options;
+    private UnityWebCacheRequestOperation _unityWebCacheRequestOp;
+    private int _requestCount = 0;
+    private float _tryAgainTimer;
+    private int _failedTryAgain;
     private ESteps _steps = ESteps.None;
 
-    internal WXFSDownloadFileOperation(WechatFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
+    internal WXFSDownloadFileOperation(WechatFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle)
     {
         _fileSystem = fileSystem;
+        _options = options;
     }
     internal override void InternalStart()
     {
@@ -22,34 +35,25 @@ internal class WXFSDownloadFileOperation : DefaultDownloadFileOperation
         // 创建下载器
         if (_steps == ESteps.CreateRequest)
         {
-            // 获取请求地址
-            _requestURL = GetRequestURL();
-
-            // 重置变量
-            ResetRequestFiled();
-
-            // 创建下载器
-            CreateWebRequest();
-
+            string url = GetRequestURL();
+            _unityWebCacheRequestOp = new UnityWebCacheRequestOperation(url);
+            _unityWebCacheRequestOp.SetRequestHeader("wechatminigame-preload", "1");
+            _unityWebCacheRequestOp.StartOperation();
+            AddChildOperation(_unityWebCacheRequestOp);
             _steps = ESteps.CheckRequest;
         }
 
         // 检测下载结果
         if (_steps == ESteps.CheckRequest)
         {
-            DownloadProgress = _webRequest.downloadProgress;
-            DownloadedBytes = (long)_webRequest.downloadedBytes;
-            Progress = DownloadProgress;
-            if (_webRequest.isDone == false)
-            {
-                //TODO 由于微信小游戏插件的问题，暂时不能判定超时！
-                // Issue : https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/issues/108#
-                //CheckRequestTimeout();
+            _unityWebCacheRequestOp.UpdateOperation();
+            Progress = _unityWebCacheRequestOp.Progress;
+            DownloadProgress = _unityWebCacheRequestOp.DownloadProgress;
+            DownloadedBytes = (long)_unityWebCacheRequestOp.DownloadedBytes;
+            if (_unityWebCacheRequestOp.IsDone == false)
                 return;
-            }
 
-            // 检查网络错误
-            if (CheckRequestResult())
+            if (_unityWebCacheRequestOp.Status == EOperationStatus.Succeed)
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Succeed;
@@ -62,49 +66,48 @@ internal class WXFSDownloadFileOperation : DefaultDownloadFileOperation
             }
             else
             {
-                _steps = ESteps.TryAgain;
+                if (_failedTryAgain > 0)
+                {
+                    _steps = ESteps.TryAgain;
+                    YooLogger.Warning($"Failed download : {_unityWebCacheRequestOp.URL} Try again !");
+                }
+                else
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = _unityWebCacheRequestOp.Error;
+                    YooLogger.Error(Error);
+                }
             }
-
-            // 注意：最终释放请求器
-            DisposeWebRequest();
         }
 
         // 重新尝试下载
         if (_steps == ESteps.TryAgain)
         {
-            if (FailedTryAgain <= 0)
-            {
-                Status = EOperationStatus.Failed;
-                _steps = ESteps.Done;
-                YooLogger.Error(Error);
-                return;
-            }
-
             _tryAgainTimer += Time.unscaledDeltaTime;
             if (_tryAgainTimer > 1f)
             {
-                FailedTryAgain--;
+                _tryAgainTimer = 0f;
+                _failedTryAgain--;
+                Progress = 0f;
+                DownloadProgress = 0f;
+                DownloadedBytes = 0;
                 _steps = ESteps.CreateRequest;
-                YooLogger.Warning(Error);
             }
         }
     }
 
-    private void CreateWebRequest()
+    /// <summary>
+    /// 获取网络请求地址
+    /// </summary>
+    private string GetRequestURL()
     {
-        _webRequest = UnityWebRequest.Get(_requestURL);
-        _webRequest.SetRequestHeader("wechatminigame-preload", "1");
-        _webRequest.disposeDownloadHandlerOnDispose = true;
-        _webRequest.SendWebRequest();
-    }
-    private void DisposeWebRequest()
-    {
-        if (_webRequest != null)
-        {
-            //注意：引擎底层会自动调用Abort方法
-            _webRequest.Dispose();
-            _webRequest = null;
-        }
+        // 轮流返回请求地址
+        _requestCount++;
+        if (_requestCount % 2 == 0)
+            return _options.FallbackURL;
+        else
+            return _options.MainURL;
     }
 }
 #endif

@@ -24,7 +24,7 @@ public class T1_TestEditorFileSystem : IPrebuildSetup, IPostBuildCleanup
             simulateParams.InvokeAssmeblyName = "YooAsset.Test.Editor";
             simulateParams.InvokeClassFullName = "TestPackageBuilder";
             simulateParams.InvokeMethodName = "BuildPackage";
-            var simulateResult = PakcageInvokeBuilder.InvokeBuilder(simulateParams);
+            var simulateResult = PackageInvokeBuilder.InvokeBuilder(simulateParams);
             UnityEditor.EditorPrefs.SetString(ASSET_BUNDLE_PACKAGE_ROOT_KEY, simulateResult.PackageRootDirectory);
         }
 
@@ -35,7 +35,7 @@ public class T1_TestEditorFileSystem : IPrebuildSetup, IPostBuildCleanup
             simulateParams.InvokeAssmeblyName = "YooAsset.Test.Editor";
             simulateParams.InvokeClassFullName = "TestPackageBuilder";
             simulateParams.InvokeMethodName = "BuildPackage";
-            var simulateResult = PakcageInvokeBuilder.InvokeBuilder(simulateParams);
+            var simulateResult = PackageInvokeBuilder.InvokeBuilder(simulateParams);
             UnityEditor.EditorPrefs.SetString(RAW_BUNDLE_PACKAGE_ROOT_KEY, simulateResult.PackageRootDirectory);
         }
 #endif

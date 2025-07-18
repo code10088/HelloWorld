@@ -37,8 +37,10 @@ public class SpriteAtlasLoader : MonoBehaviour
                 return;
             }
 
+            var atlas = loadHandle.AssetObject as SpriteAtlas;
+            _loadedAtlas.Add(atlasName, atlas);
             _loadHandles.Add(loadHandle);
-            callback.Invoke(loadHandle.AssetObject as SpriteAtlas);
+            callback.Invoke(atlas);
         }
     }
 }

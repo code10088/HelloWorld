@@ -49,13 +49,13 @@ namespace YooAsset
         /// <summary>
         /// 生成包裹的内置资源目录文件
         /// </summary>
-        public static bool CreateBuildinCatalogFile(IManifestServices services, string packageName, string pacakgeDirectory)
+        public static bool CreateBuildinCatalogFile(IManifestServices services, string packageName, string packageDirectory)
         {
             // 获取资源清单版本
             string packageVersion;
             {
                 string versionFileName = YooAssetSettingsData.GetPackageVersionFileName(packageName);
-                string versionFilePath = $"{pacakgeDirectory}/{versionFileName}";
+                string versionFilePath = $"{packageDirectory}/{versionFileName}";
                 if (File.Exists(versionFilePath) == false)
                 {
                     Debug.LogError($"Can not found package version file : {versionFilePath}");
@@ -69,7 +69,7 @@ namespace YooAsset
             PackageManifest packageManifest;
             {
                 string manifestFileName = YooAssetSettingsData.GetManifestBinaryFileName(packageName, packageVersion);
-                string manifestFilePath = $"{pacakgeDirectory}/{manifestFileName}";
+                string manifestFilePath = $"{packageDirectory}/{manifestFileName}";
                 if (File.Exists(manifestFilePath) == false)
                 {
                     Debug.LogError($"Can not found package manifest file : {manifestFilePath}");
@@ -110,7 +110,7 @@ namespace YooAsset
             };
 
             // 记录所有内置资源文件
-            DirectoryInfo rootDirectory = new DirectoryInfo(pacakgeDirectory);
+            DirectoryInfo rootDirectory = new DirectoryInfo(packageDirectory);
             FileInfo[] fileInfos = rootDirectory.GetFiles();
             foreach (var fileInfo in fileInfos)
             {
@@ -135,13 +135,13 @@ namespace YooAsset
             }
 
             // 创建输出文件
-            string jsonFilePath = $"{pacakgeDirectory}/{DefaultBuildinFileSystemDefine.BuildinCatalogJsonFileName}";
+            string jsonFilePath = $"{packageDirectory}/{DefaultBuildinFileSystemDefine.BuildinCatalogJsonFileName}";
             if (File.Exists(jsonFilePath))
                 File.Delete(jsonFilePath);
             CatalogTools.SerializeToJson(jsonFilePath, buildinFileCatalog);
 
             // 创建输出文件
-            string binaryFilePath = $"{pacakgeDirectory}/{DefaultBuildinFileSystemDefine.BuildinCatalogBinaryFileName}";
+            string binaryFilePath = $"{packageDirectory}/{DefaultBuildinFileSystemDefine.BuildinCatalogBinaryFileName}";
             if (File.Exists(binaryFilePath))
                 File.Delete(binaryFilePath);
             CatalogTools.SerializeToBinary(binaryFilePath, buildinFileCatalog);

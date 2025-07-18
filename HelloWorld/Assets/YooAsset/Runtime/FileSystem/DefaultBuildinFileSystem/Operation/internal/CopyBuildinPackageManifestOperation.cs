@@ -83,7 +83,7 @@ namespace YooAsset
                     string sourcePath = _fileSystem.GetBuildinPackageHashFilePath(_buildinPackageVersion);
                     string destPath = GetCopyPackageHashDestPath(_buildinPackageVersion);
                     string url = DownloadSystemHelper.ConvertToWWWPath(sourcePath);
-                    _hashFileRequestOp = new UnityWebFileRequestOperation(url, destPath);
+                    _hashFileRequestOp = new UnityWebFileRequestOperation(url, destPath, 60);
                     _hashFileRequestOp.StartOperation();
                     AddChildOperation(_hashFileRequestOp);
                 }
@@ -124,7 +124,7 @@ namespace YooAsset
                     string sourcePath = _fileSystem.GetBuildinPackageManifestFilePath(_buildinPackageVersion);
                     string destPath = GetCopyPackageManifestDestPath(_buildinPackageVersion);
                     string url = DownloadSystemHelper.ConvertToWWWPath(sourcePath);
-                    _manifestFileRequestOp = new UnityWebFileRequestOperation(url, destPath);
+                    _manifestFileRequestOp = new UnityWebFileRequestOperation(url, destPath, 60);
                     _manifestFileRequestOp.StartOperation();
                     AddChildOperation(_manifestFileRequestOp);
                 }

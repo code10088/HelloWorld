@@ -3,10 +3,21 @@ using System.Collections.Generic;
 
 namespace YooAsset
 {
+    /// <summary>
+    /// 下载器单元测试
+    /// 1. 下载失败重试机制
+    /// 2. 下载引用计数机制
+    /// 3. 最大下载并发机制
+    /// 4. 异步下载远端资源
+    /// 5. 同步下载远端资源
+    /// 6. 异步拷贝本地资源
+    /// 7. 同步拷贝本地资源
+    /// 9. 断点续传下载器
+    /// </summary>
     internal class DownloadCenterOperation : AsyncOperationBase
     {
         private readonly DefaultCacheFileSystem _fileSystem;
-        protected readonly Dictionary<string, DefaultDownloadFileOperation> _downloaders = new Dictionary<string, DefaultDownloadFileOperation>(1000);
+        protected readonly Dictionary<string, UnityDownloadFileOperation> _downloaders = new Dictionary<string, UnityDownloadFileOperation>(1000);
         protected readonly List<string> _removeDownloadList = new List<string>(1000);
 
         public DownloadCenterOperation(DefaultCacheFileSystem fileSystem)
@@ -74,34 +85,21 @@ namespace YooAsset
         /// <summary>
         /// 创建下载任务
         /// </summary>
-        public FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
+        public UnityDownloadFileOperation DownloadFileAsync(PackageBundle bundle, string url)
         {
             // 查询旧的下载器
             if (_downloaders.TryGetValue(bundle.BundleGUID, out var oldDownloader))
             {
+                oldDownloader.Reference();
                 return oldDownloader;
             }
 
-            // 获取下载地址
-            if (string.IsNullOrEmpty(options.ImportFilePath))
-            {
-                // 注意：如果是解压文件系统类，这里会返回本地内置文件的下载路径
-                options.MainURL = _fileSystem.RemoteServices.GetRemoteMainURL(bundle.FileName);
-                options.FallbackURL = _fileSystem.RemoteServices.GetRemoteFallbackURL(bundle.FileName);
-            }
-            else
-            {
-                // 注意：把本地导入文件路径转换为下载器请求地址
-                options.MainURL = DownloadSystemHelper.ConvertToWWWPath(options.ImportFilePath);
-                options.FallbackURL = options.MainURL;
-            }
-
             // 创建新的下载器
-            DefaultDownloadFileOperation newDownloader;
-            bool isRequestLocalFile = DownloadSystemHelper.IsRequestLocalFile(options.MainURL);
+            UnityDownloadFileOperation newDownloader;
+            bool isRequestLocalFile = DownloadSystemHelper.IsRequestLocalFile(url);
             if (isRequestLocalFile)
             {
-                newDownloader = new DownloadLocalFileOperation(_fileSystem, bundle, options);
+                newDownloader = new UnityDownloadLocalFileOperation(_fileSystem, bundle, url);
                 AddChildOperation(newDownloader);
                 _downloaders.Add(bundle.BundleGUID, newDownloader);
             }
@@ -109,17 +107,19 @@ namespace YooAsset
             {
                 if (bundle.FileSize >= _fileSystem.ResumeDownloadMinimumSize)
                 {
-                    newDownloader = new DownloadResumeFileOperation(_fileSystem, bundle, options);
+                    newDownloader = new UnityDownloadResumeFileOperation(_fileSystem, bundle, url);
                     AddChildOperation(newDownloader);
                     _downloaders.Add(bundle.BundleGUID, newDownloader);
                 }
                 else
                 {
-                    newDownloader = new DownloadNormalFileOperation(_fileSystem, bundle, options);
+                    newDownloader = new UnityDownloadNormalFileOperation(_fileSystem, bundle, url);
                     AddChildOperation(newDownloader);
                     _downloaders.Add(bundle.BundleGUID, newDownloader);
                 }
             }
+
+            newDownloader.Reference();
             return newDownloader;
         }
 

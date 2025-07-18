@@ -16,12 +16,14 @@ namespace YooAsset
         }
 
         private readonly DefaultWebServerFileSystem _fileSystem;
+        private readonly int _timeout;
         private UnityWebDataRequestOperation _webDataRequestOp;
         private ESteps _steps = ESteps.None;
 
-        internal LoadWebServerCatalogFileOperation(DefaultWebServerFileSystem fileSystem)
+        internal LoadWebServerCatalogFileOperation(DefaultWebServerFileSystem fileSystem, int timeout)
         {
             _fileSystem = fileSystem;
+            _timeout = timeout;
         }
         internal override void InternalStart()
         {
@@ -38,7 +40,7 @@ namespace YooAsset
                 {
                     string filePath = _fileSystem.GetCatalogBinaryFileLoadPath();
                     string url = DownloadSystemHelper.ConvertToWWWPath(filePath);
-                    _webDataRequestOp = new UnityWebDataRequestOperation(url);
+                    _webDataRequestOp = new UnityWebDataRequestOperation(url, _timeout);
                     _webDataRequestOp.StartOperation();
                     AddChildOperation(_webDataRequestOp);
                 }

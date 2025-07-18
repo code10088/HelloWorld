@@ -44,7 +44,7 @@ public class GetBuildinPackageVersionOperation : GameAsyncOperation
             {
                 string filePath = GetBuildinPackageVersionFilePath();
                 string url = DownloadSystemHelper.ConvertToWWWPath(filePath);
-                _versionFileRequestOp = new UnityWebTextRequestOperation(url);
+                _versionFileRequestOp = new UnityWebTextRequestOperation(url, 60);
                 OperationSystem.StartOperation(_packageName, _versionFileRequestOp);
             }
 

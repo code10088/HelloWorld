@@ -125,7 +125,7 @@ namespace YooAsset
         }
         public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
         {
-            // 注意：业务层的解压下载器会依赖内置文件系统的下载方法
+            // 注意：业务层的解压器会依赖该方法
             options.ImportFilePath = GetBuildinFileLoadPath(bundle);
             return _unpackFileSystem.DownloadFileAsync(bundle, options);
         }

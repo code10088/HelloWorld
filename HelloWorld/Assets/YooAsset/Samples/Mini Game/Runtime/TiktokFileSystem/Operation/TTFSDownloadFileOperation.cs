@@ -1,16 +1,30 @@
 ﻿#if UNITY_WEBGL && DOUYINMINIGAME
 using UnityEngine;
-using UnityEngine.Networking;
 using YooAsset;
 
-internal class TTFSDownloadFileOperation : DefaultDownloadFileOperation
+internal class TTFSDownloadFileOperation : FSDownloadFileOperation
 {
-    private TiktokFileSystem _fileSystem;
+    protected enum ESteps
+    {
+        None,
+        CreateRequest,
+        CheckRequest,
+        TryAgain,
+        Done,
+    }
+
+    private readonly TiktokFileSystem _fileSystem;
+    private readonly DownloadFileOptions _options;
+    private UnityWebCacheRequestOperation _unityWebCacheRequestOp;
+    private int _requestCount = 0;
+    private float _tryAgainTimer;
+    private int _failedTryAgain;
     private ESteps _steps = ESteps.None;
 
-    internal TTFSDownloadFileOperation(TiktokFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle, options)
+    internal TTFSDownloadFileOperation(TiktokFileSystem fileSystem, PackageBundle bundle, DownloadFileOptions options) : base(bundle)
     {
         _fileSystem = fileSystem;
+        _options = options;
     }
     internal override void InternalStart()
     {
@@ -21,81 +35,75 @@ internal class TTFSDownloadFileOperation : DefaultDownloadFileOperation
         // 创建下载器
         if (_steps == ESteps.CreateRequest)
         {
-            // 获取请求地址
-            _requestURL = GetRequestURL();
-
-            // 重置变量
-            ResetRequestFiled();
-
-            // 创建下载器
-            CreateWebRequest();
-
+            string url = GetRequestURL();
+            _unityWebCacheRequestOp = new UnityWebCacheRequestOperation(url);
+            _unityWebCacheRequestOp.StartOperation();
             _steps = ESteps.CheckRequest;
         }
 
         // 检测下载结果
         if (_steps == ESteps.CheckRequest)
         {
-            DownloadProgress = _webRequest.downloadProgress;
-            DownloadedBytes = (long)_webRequest.downloadedBytes;
-            Progress = DownloadProgress;
-            if (_webRequest.isDone == false)
-            {
-                CheckRequestTimeout();
+            Progress = _unityWebCacheRequestOp.Progress;
+            DownloadProgress = _unityWebCacheRequestOp.DownloadProgress;
+            DownloadedBytes = (long)_unityWebCacheRequestOp.DownloadedBytes;
+            if (_unityWebCacheRequestOp.IsDone == false)
                 return;
-            }
 
-            // 检查网络错误
-            if (CheckRequestResult())
+            if (_unityWebCacheRequestOp.Status == EOperationStatus.Succeed)
             {
                 _steps = ESteps.Done;
                 Status = EOperationStatus.Succeed;
+
+                //TODO 需要验证抖音插件请求器的下载进度
+                DownloadProgress = 1f;
+                DownloadedBytes = Bundle.FileSize;
+                Progress = 1f;
             }
             else
             {
-                _steps = ESteps.TryAgain;
+                if (_failedTryAgain > 0)
+                {
+                    _steps = ESteps.TryAgain;
+                    YooLogger.Warning($"Failed download : {_unityWebCacheRequestOp.URL} Try again !");
+                }
+                else
+                {
+                    _steps = ESteps.Done;
+                    Status = EOperationStatus.Failed;
+                    Error = _unityWebCacheRequestOp.Error;
+                    YooLogger.Error(Error);
+                }
             }
-
-            // 注意：最终释放请求器
-            DisposeWebRequest();
         }
 
         // 重新尝试下载
         if (_steps == ESteps.TryAgain)
         {
-            if (FailedTryAgain <= 0)
-            {
-                Status = EOperationStatus.Failed;
-                _steps = ESteps.Done;
-                YooLogger.Error(Error);
-                return;
-            }
-
             _tryAgainTimer += Time.unscaledDeltaTime;
             if (_tryAgainTimer > 1f)
             {
-                FailedTryAgain--;
+                _tryAgainTimer = 0f;
+                _failedTryAgain--;
+                Progress = 0f;
+                DownloadProgress = 0f;
+                DownloadedBytes = 0;
                 _steps = ESteps.CreateRequest;
-                YooLogger.Warning(Error);
             }
         }
     }
 
-    private void CreateWebRequest()
+    /// <summary>
+    /// 获取网络请求地址
+    /// </summary>
+    private string GetRequestURL()
     {
-        //TODO : 抖音小游戏没有找到预下载方法
-        _webRequest = UnityWebRequest.Get(_requestURL);
-        _webRequest.disposeDownloadHandlerOnDispose = true;
-        _webRequest.SendWebRequest();
-    }
-    private void DisposeWebRequest()
-    {
-        if (_webRequest != null)
-        {
-            //注意：引擎底层会自动调用Abort方法
-            _webRequest.Dispose();
-            _webRequest = null;
-        }
+        // 轮流返回请求地址
+        _requestCount++;
+        if (_requestCount % 2 == 0)
+            return _options.FallbackURL;
+        else
+            return _options.MainURL;
     }
 }
 #endif

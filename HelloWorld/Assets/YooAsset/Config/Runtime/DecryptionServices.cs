@@ -51,11 +51,9 @@ public class WebDecryptionServices : IWebDecryptionServices
 {
     public WebDecryptResult LoadAssetBundle(WebDecryptFileInfo fileInfo)
     {
-        byte[] copy = new byte[fileInfo.FileData.Length];
-        Buffer.BlockCopy(fileInfo.FileData, 0, copy, 0, fileInfo.FileData.Length);
-        for (int i = 0; i < copy.Length; i++) copy[i] ^= 64;
+        for (int i = 0; i < fileInfo.FileData.Length; i++) fileInfo.FileData[i] ^= 64;
         WebDecryptResult decryptResult = new WebDecryptResult();
-        decryptResult.Result = AssetBundle.LoadFromMemory(copy);
+        decryptResult.Result = AssetBundle.LoadFromMemory(fileInfo.FileData);
         return decryptResult;
     }
 }

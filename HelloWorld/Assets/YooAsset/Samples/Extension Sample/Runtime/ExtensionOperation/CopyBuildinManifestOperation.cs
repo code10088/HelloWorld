@@ -58,7 +58,7 @@ public class CopyBuildinManifestOperation : GameAsyncOperation
                 string sourcePath = GetBuildinHashFilePath();
                 string destPath = GetCacheHashFilePath();
                 string url = DownloadSystemHelper.ConvertToWWWPath(sourcePath);
-                _hashFileRequestOp = new UnityWebFileRequestOperation(url, destPath);
+                _hashFileRequestOp = new UnityWebFileRequestOperation(url, destPath, 60);
                 OperationSystem.StartOperation(_packageName, _hashFileRequestOp);
             }
 
@@ -97,7 +97,7 @@ public class CopyBuildinManifestOperation : GameAsyncOperation
                 string sourcePath = GetBuildinManifestFilePath();
                 string destPath = GetCacheManifestFilePath();
                 string url = DownloadSystemHelper.ConvertToWWWPath(sourcePath);
-                _manifestFileRequestOp = new UnityWebFileRequestOperation(url, destPath);
+                _manifestFileRequestOp = new UnityWebFileRequestOperation(url, destPath, 60);
                 OperationSystem.StartOperation(_packageName, _manifestFileRequestOp);
             }
 

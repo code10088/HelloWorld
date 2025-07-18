@@ -136,8 +136,9 @@ internal class TiktokFileSystem : IFileSystem
     }
     public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
     {
-        options.MainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
-        options.FallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+        string mainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
+        string fallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+        options.SetURL(mainURL, fallbackURL);
         var operation = new TTFSDownloadFileOperation(this, bundle, options);
         return operation;
     }

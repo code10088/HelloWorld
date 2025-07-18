@@ -166,12 +166,23 @@ namespace YooAsset
         }
         public virtual FSDownloadFileOperation DownloadFileAsync(PackageBundle bundle, DownloadFileOptions options)
         {
-            var downloader = DownloadCenter.DownloadFileAsync(bundle, options);
-            downloader.Reference(); //增加下载器的引用计数
+            // 获取下载地址
+            if (string.IsNullOrEmpty(options.ImportFilePath))
+            {
+                // 注意：如果是解压文件系统类，这里会返回本地内置文件的下载路径
+                string mainURL = RemoteServices.GetRemoteMainURL(bundle.FileName);
+                string fallbackURL = RemoteServices.GetRemoteFallbackURL(bundle.FileName);
+                options.SetURL(mainURL, fallbackURL);
+            }
+            else
+            {
+                // 注意：把本地导入文件路径转换为下载器请求地址
+                string mainURL = DownloadSystemHelper.ConvertToWWWPath(options.ImportFilePath);
+                options.SetURL(mainURL, mainURL);
+            }
 
-            // 注意：将下载器进行包裹，可以避免父类任务终止的时候，连带子任务里的下载器也一起被终止！
-            var wrapper = new DownloadFileWrapper(downloader);
-            return wrapper;
+            var downloader = new DownloadPackageBundleOperation(this, bundle, options);
+            return downloader;
         }
         public virtual FSLoadBundleOperation LoadBundleFile(PackageBundle bundle)
         {
