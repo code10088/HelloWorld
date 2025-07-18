@@ -221,6 +221,7 @@ public class AssetManager : Singletion<AssetManager>
                 {
                     if (loaders.TryGetValue(item, out var temp) && temp != null)
                     {
+                        //先置空再回调，否则回调时Unload然后loaders[item] = null又会加到loaders中
                         loaders[item] = null;
                         temp.Invoke(item, ah.AssetObject);
                     }
