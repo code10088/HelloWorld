@@ -12,8 +12,8 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
 
     private int loadId = -1;
     private AudioSource music;
-    private Dictionary<string, AssetPool<SoundItem>> audioPool = new();
-    private Queue<AudioSource> sourceCache = new();
+    private Dictionary<int, SoundItem> audioItems = new();
+    private Queue<SoundItem> itemCache = new();
 
     public void Init()
     {
@@ -62,107 +62,57 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
     public int PlaySound(string path, bool loop = false)
     {
         if (soundMute) return -1;
-        AssetPool<SoundItem> pool;
-        path = $"{ResSoundPath}{path}";
-        if (!audioPool.TryGetValue(path, out pool))
-        {
-            pool = new AssetPool<SoundItem>();
-            pool.Init(path);
-            audioPool.Add(path, pool);
-        }
-        var item = pool.Dequeue<AudioClip>();
-        item.Set(loop);
-        return item.ItemID;
+        var item = itemCache.Count > 0 ? itemCache.Dequeue() : new SoundItem();
+        var itemId = item.Play($"{ResSoundPath}{path}", loop);
+        audioItems.Add(itemId, item);
+        return itemId;
     }
     public void StopAllSoud()
     {
-        foreach (var item in audioPool)
-        {
-            var use = item.Value.Use;
-            for (int i = 0; i < use.Count; i++)
-            {
-                item.Value.Enqueue(use[i].ItemID);
-            }
-        }
+        foreach (var item in audioItems) item.Value.Stop();
     }
     public void StopSound(int id)
     {
-        foreach (var item in audioPool)
-        {
-            if (item.Value.Use.Exists(a => a.ItemID == id))
-            {
-                item.Value.Enqueue(id);
-                return;
-            }
-        }
+        if (audioItems.TryGetValue(id, out var item)) item.Stop();
     }
     #endregion
 
-    private AudioSource GetEmptyAudioSource()
+    public class SoundItem
     {
-        AudioSource src;
-        if (sourceCache.Count > 0) src = sourceCache.Dequeue();
-        else src = root.AddComponent<AudioSource>();
-        src.playOnAwake = false;
-        src.loop = false;
-        return src;
-    }
-    private void ReleaseAudioSource(AudioSource source)
-    {
-        if (source) sourceCache.Enqueue(source);
-    }
-
-    public class SoundItem : AssetPoolItem
-    {
-        private AudioSource source;
+        private int itemId = -1;
+        private AudioSource src;
         private bool loop = false;
         private int timerId = -1;
 
-        public void Set(bool loop)
+        public SoundItem()
+        {
+            src = Instance.root.AddComponent<AudioSource>();
+            src.playOnAwake = false;
+            src.loop = false;
+        }
+        public int Play(string path, bool loop)
         {
             this.loop = loop;
-            if (source) source.loop = loop;
+            src.loop = loop;
+            AssetManager.Instance.Load<AudioClip>(ref itemId, path, LoadFinish);
+            return itemId;
         }
-        public override void Disable()
+        private void LoadFinish(int loadId, Object asset)
         {
-            if (source)
-            {
-                source.Stop();
-                Instance.ReleaseAudioSource(source);
-            }
-            if (timerId > 0)
-            {
-                TimeManager.Instance.StopTimer(timerId);
-                timerId = -1;
-            }
-            base.Disable();
-        }
-        public override void Destroy()
-        {
-            if (source)
-            {
-                source.Stop();
-                Instance.ReleaseAudioSource(source);
-            }
-            if (timerId > 0)
-            {
-                TimeManager.Instance.StopTimer(timerId);
-                timerId = -1;
-            }
-            base.Destroy();
-        }
-        protected override void Finish(Object asset)
-        {
-            source = Instance.GetEmptyAudioSource();
-            source.loop = loop;
             var clip = asset as AudioClip;
-            source.clip = clip;
-            source.Play();
+            src.clip = clip;
+            src.Play();
             if (!loop && timerId < 0) timerId = TimeManager.Instance.StartTimer(clip.length, finish: Stop);
         }
-        private void Stop()
+        public void Stop()
         {
-            Instance.StopSound(ItemID);
+            Instance.audioItems.Remove(itemId);
+            AssetManager.Instance.Unload(ref itemId, CacheTime.Short);
+            src.Stop();
+            src.clip = null;
+            if (timerId > 0) TimeManager.Instance.StopTimer(timerId);
+            timerId = -1;
+            Instance.itemCache.Enqueue(this);
         }
     }
 }

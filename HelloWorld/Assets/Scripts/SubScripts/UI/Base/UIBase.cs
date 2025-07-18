@@ -13,7 +13,6 @@ public class UIBase
     protected int[] layerRecord2;
     protected UIParticle[] layerRecord3;
     private List<int> loadId1 = new List<int>();
-    private AssetPool loader1 = new AssetPool();
     private AssetObjectPool loader2 = new AssetObjectPool();
     public void Init(GameObject UIObj, UIType from, UIConfig config, params object[] param)
     {
@@ -90,9 +89,12 @@ public class UIBase
         layerRecord1 = null;
         layerRecord2 = null;
         layerRecord3 = null;
+        for (int i = 0; i < loadId1.Count; i++)
+        {
+            var temp = loadId1[i];
+            AssetManager.Instance.Unload(ref temp);
+        }
         loadId1 = null;
-        loader1?.Destroy();
-        loader1 = null;
         loader2?.Destroy();
         loader2 = null;
     }
@@ -104,14 +106,9 @@ public class UIBase
     #region 扩展方法
     protected void SetSprite(UIImage image, string atlas, string name)
     {
-        string path = $"{atlas}{name}.png";
-        if (image.loadId > 0)
-        {
-            loadId1.Remove(image.loadId);
-            loader1.Enqueue(path, image.loadId);
-        }
-        image.loadId = loader1.Dequeue<Sprite>(path, (a, b, c) => image.sprite = (Sprite)b);
-        loadId1.Add(image.loadId);
+        loadId1.Remove(image.LoadId);
+        image.SetImage($"{atlas}{name}.png");
+        loadId1.Add(image.LoadId);
     }
     /// <summary>
     /// 背景图
@@ -119,14 +116,9 @@ public class UIBase
     /// <param name="path">相对于Assets/ZRes/UI/Texture的相对路径</param>
     protected void SetSprite(UIRawImage image, string path)
     {
-        path = $"{ZResConst.ResUITexturePath}{path}.png";
-        if (image.loadId > 0)
-        {
-            loadId1.Remove(image.loadId);
-            loader1.Enqueue(path, image.loadId);
-        }
-        image.loadId = loader1.Dequeue<Texture>(path, (a, b, c) => image.texture = (Texture)b);
-        loadId1.Add(image.loadId);
+        loadId1.Remove(image.LoadId);
+        image.SetImage($"{ZResConst.ResUITexturePath}{path}.png");
+        loadId1.Add(image.LoadId);
     }
     /// <summary>
     /// 加载Prefab

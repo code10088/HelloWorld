@@ -102,8 +102,7 @@ public class AssetObjectPool
         if (!pool.TryGetValue(path, out temp))
         {
             temp = new AssetObjectPool<ObjectPoolItem>();
-            temp.Init(path);
-            temp.Init(cacheCount);
+            temp.Init(path, cacheCount);
             pool.Add(path, temp);
         }
         return temp.Dequeue(action, param).ItemID;
@@ -114,8 +113,11 @@ public class AssetObjectPool
         pool.Clear();
     }
 }
-public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
+public class AssetObjectPool<T> where T : ObjectPoolItem, new()
 {
+    private string path;
+    private int loadId = -1;
+    private Object asset;
     private List<T> use = new();
     private List<T> wait = new();
     private List<T> cache = new();
@@ -123,9 +125,24 @@ public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
 
     public List<T> Use => use;
 
-    public void Init(int cacheCount = 10)
+    public void Init(string path, int cacheCount = 10)
     {
+        this.path = path;
         this.cacheCount = cacheCount;
+        AssetManager.Instance.Load<GameObject>(ref loadId, path, LoadFinish);
+    }
+    private void LoadFinish(int loadId, Object asset)
+    {
+        if (asset == null)
+        {
+            AssetManager.Instance.Load<GameObject>(ref this.loadId, path, LoadFinish);
+        }
+        else
+        {
+            this.asset = asset;
+            for (int i = 0; i < wait.Count; i++) wait[i].Enable(asset);
+            wait.Clear();
+        }
     }
 
     public void Enqueue(int itemId)
@@ -145,18 +162,18 @@ public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
         else temp = new T();
         temp.Init(Delete, action, param);
         use.Add(temp);
-        wait.Add(temp);
-        Enable<GameObject>();
+        if (asset == null) wait.Add(temp);
+        else temp.Enable(asset);
         return temp;
     }
-    public override void Destroy()
+    public void Destroy()
     {
+        AssetManager.Instance.Unload(ref loadId);
         for (int i = use.Count - 1; i >= 0; i--) use[i].Destroy();
         for (int i = cache.Count - 1; i >= 0; i--) cache[i].Destroy();
         use.Clear();
         wait.Clear();
         cache.Clear();
-        base.Destroy();
     }
     private void Delete(int itemId)
     {
@@ -164,21 +181,16 @@ public class AssetObjectPool<T> : LoadAssetItem where T : ObjectPoolItem, new()
         if (index >= 0)
         {
             use.RemoveAt(index);
-            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Disable();
+            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) AssetManager.Instance.Unload(ref loadId, CacheTime.Short);
             return;
         }
         index = cache.FindIndex(a => a.ItemID == itemId);
         if (index >= 0)
         {
             cache.RemoveAt(index);
-            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Disable();
+            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) AssetManager.Instance.Unload(ref loadId, CacheTime.Short);
             return;
         }
-    }
-    protected override void Finish(Object asset)
-    {
-        for (int i = 0; i < wait.Count; i++) wait[i].Enable(asset);
-        wait.Clear();
     }
 }
 public class ObjectPoolItem
@@ -287,172 +299,6 @@ public class ObjectPoolItem
     private void Recycle()
     {
         state &= LoadState.InstantiateFinish | LoadState.Instantiating;
-        TimeManager.Instance.StopTimer(timerId);
-        timerId = -1;
-    }
-}
-
-
-public class AssetPool
-{
-    private Dictionary<string, AssetPool<AssetPoolItem>> pool = new();
-    public void Enqueue(string path, int itemId)
-    {
-        if (string.IsNullOrEmpty(path)) return;
-        if (pool.TryGetValue(path, out var temp)) temp.Enqueue(itemId);
-    }
-    public int Dequeue<T>(string path, Action<int, Object, object[]> action = null, int cacheCount = 10, params object[] param) where T : Object
-    {
-        if (string.IsNullOrEmpty(path)) return -1;
-        AssetPool<AssetPoolItem> temp = null;
-        if (!pool.TryGetValue(path, out temp))
-        {
-            temp = new AssetPool<AssetPoolItem>();
-            temp.Init(path);
-            temp.Init(cacheCount);
-            pool.Add(path, temp);
-        }
-        return temp.Dequeue<T>(action, param).ItemID;
-    }
-    public void Destroy()
-    {
-        foreach (var item in pool) item.Value.Destroy();
-        pool.Clear();
-    }
-}
-public class AssetPool<T> : LoadAssetItem where T : AssetPoolItem, new()
-{
-    private List<T> use = new();
-    private List<T> wait = new();
-    private List<T> cache = new();
-    private int cacheCount = 10;
-
-    public List<T> Use => use;
-
-    public void Init(int cacheCount = 10)
-    {
-        this.cacheCount = cacheCount;
-    }
-
-    public void Enqueue(int itemId)
-    {
-        T temp = use.Find(a => a.ItemID == itemId);
-        if (temp == null) return;
-        use.Remove(temp);
-        wait.Remove(temp);
-        if (cache.Count >= cacheCount) temp.Destroy();
-        else { temp.Disable(); cache.Add(temp); }
-    }
-    public T Dequeue<K>(Action<int, Object, object[]> action = null, params object[] param) where K : Object
-    {
-        T temp = null;
-        if (cache.Count > 0) temp = cache[0];
-        if (temp != null) cache.RemoveAt(0);
-        else temp = new T();
-        temp.Init(Delete, action, param);
-        use.Add(temp);
-        wait.Add(temp);
-        Enable<K>();
-        return temp;
-    }
-    public override void Destroy()
-    {
-        for (int i = use.Count - 1; i >= 0; i--) use[i].Destroy();
-        for (int i = cache.Count - 1; i >= 0; i--) cache[i].Destroy();
-        use.Clear();
-        wait.Clear();
-        cache.Clear();
-        base.Destroy();
-    }
-    private void Delete(int itemId)
-    {
-        int index = use.FindIndex(a => a.ItemID == itemId);
-        if (index >= 0)
-        {
-            use.RemoveAt(index);
-            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Disable();
-            return;
-        }
-        index = cache.FindIndex(a => a.ItemID == itemId);
-        if (index >= 0)
-        {
-            cache.RemoveAt(index);
-            if (use.Count == 0 && wait.Count == 0 && cache.Count == 0) Disable();
-            return;
-        }
-    }
-    protected override void Finish(Object asset)
-    {
-        for (int i = 0; i < wait.Count; i++) wait[i].Enable(asset);
-        wait.Clear();
-    }
-}
-public class AssetPoolItem
-{
-    private static int uniqueId = 0;
-    private int itemId = -1;
-    protected Object asset;
-    private LoadState state = LoadState.None;
-    private int timerId = -1;
-
-    private Action<int> release;
-    private Action<int, Object, object[]> action;
-    protected object[] param;
-
-    public int ItemID => itemId;
-
-    [Obsolete("请使用AssetPool")]
-    public void Init(Action<int> release, Action<int, Object, object[]> action, params object[] param)
-    {
-        itemId = ++uniqueId;
-        this.release = release;
-        this.action = action;
-        this.param = param;
-    }
-    [Obsolete("请使用AssetPool")]
-    public void Enable(Object _asset)
-    {
-        if (state == LoadState.Release)
-        {
-            Recycle();
-        }
-        if (_asset == null)
-        {
-            Destroy();
-            Finish(null);
-        }
-        else
-        {
-            asset = _asset;
-            Finish(asset);
-        }
-    }
-    protected virtual void Finish(Object asset)
-    {
-        action?.Invoke(itemId, asset, param);
-    }
-    [Obsolete("请使用GameObjectPool")]
-    public virtual void Disable()
-    {
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Destroy);
-        state = LoadState.Release;
-        action = null;
-        param = null;
-    }
-    [Obsolete("请使用AssetPool")]
-    public virtual void Destroy()
-    {
-        asset = null;
-        state = LoadState.None;
-        TimeManager.Instance.StopTimer(timerId);
-        timerId = -1;
-        release?.Invoke(itemId);
-        release = null;
-        itemId = -1;
-    }
-    private void Recycle()
-    {
-        state = LoadState.None;
         TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
     }

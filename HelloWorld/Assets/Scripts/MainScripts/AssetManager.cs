@@ -1,13 +1,30 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using YooAsset;
 using Object = UnityEngine.Object;
 
+public enum LoadState
+{
+    None = 0,
+    Loading = 1,
+    LoadFinish = 2,
+    Instantiating = 4,
+    InstantiateFinish = 8,
+    Release = 16,
+}
+public enum CacheTime
+{
+    None,
+    Short,
+    Long,
+}
 public class AssetManager : Singletion<AssetManager>
 {
     private static Dictionary<int, AssetItemGroup> group = new();
-    private static Dictionary<int, AssetItem> total = new();
+    private static Dictionary<int, string> totalKey = new();
+    private static Dictionary<string, AssetItem> totalValue = new();
     private static Queue<AssetItem> cache = new();
     private static int uniqueId = 0;
 
@@ -68,39 +85,41 @@ public class AssetManager : Singletion<AssetManager>
     public void Load<T>(ref int loadId, string path, Action<int, Object> action = null) where T : Object
     {
         if (loadId > 0) Unload(ref loadId);
-        AssetItem temp = cache.Count > 0 ? cache.Dequeue() : new();
-        temp.Init<T>(path, action);
-        total[temp.ItemID] = temp;
-        loadId = temp.ItemID;
+        if (totalValue.TryGetValue(path, out AssetItem temp))
+        {
+            temp.Load<T>(ref loadId, action);
+        }
+        else
+        {
+            temp = cache.Count > 0 ? cache.Dequeue() : new();
+            temp.Init(++uniqueId, path);
+            totalKey.Add(uniqueId, path);
+            totalValue.Add(path, temp);
+            temp.Load<T>(ref loadId, action);
+        }
     }
     public void Load(ref int loadId, string[] path, Action<string[], Object[]> action = null)
     {
         if (loadId > 0) Unload(ref loadId);
         AssetItemGroup temp = new();
-        temp.Init(path, action);
-        group[temp.ItemID] = temp;
-        loadId = temp.ItemID;
+        temp.Init(++uniqueId, path);
+        group.Add(uniqueId, temp);
+        temp.Load(ref loadId, action);
     }
-    public void Unload(ref int id)
+    public void Unload(ref int id, CacheTime time = CacheTime.None)
     {
         if (id < 0) return;
-        if (group.TryGetValue(id, out AssetItemGroup a))
-        {
-            a.Unload();
-            group.Remove(id);
-        }
-        else if (total.TryGetValue(id, out AssetItem b))
-        {
-            b.Unload();
-            total.Remove(id);
-        }
+        var temp = id >> 8;
+        if (group.TryGetValue(temp, out AssetItemGroup a)) a.Unload(temp, time);
+        else if (totalKey.TryGetValue(temp, out string b)) totalValue[b].Unload(id, time);
         id = -1;
     }
     public float GetProgerss(int id)
     {
         float progress = 0;
-        if (group.TryGetValue(id, out AssetItemGroup a)) progress = a.Progress;
-        else if (total.TryGetValue(id, out AssetItem b)) progress = b.Progress;
+        var temp = id >> 8;
+        if (group.TryGetValue(temp, out AssetItemGroup a)) progress = a.Progress;
+        else if (totalKey.TryGetValue(temp, out string b)) progress = totalValue[b].Progress;
         return progress;
     }
 
@@ -113,13 +132,16 @@ public class AssetManager : Singletion<AssetManager>
         private int[] ids;
         private Object[] assets;
         private int complete;
-        public int ItemID => itemId;
         public float Progress => (float)complete / ids.Length;
 
-        public void Init(string[] path, Action<string[], Object[]> action)
+        public void Init(int itemId, string[] path)
         {
-            itemId = ++uniqueId;
             this.path = path;
+            this.itemId = itemId << 8;
+        }
+        public void Load(ref int loadId, Action<string[], Object[]> action)
+        {
+            loadId = itemId;
             this.action = action;
             ids = new int[path.Length];
             assets = new Object[path.Length];
@@ -131,9 +153,10 @@ public class AssetManager : Singletion<AssetManager>
             assets[index] = asset;
             if (++complete == ids.Length) action?.Invoke(path, assets);
         }
-        public void Unload()
+        public void Unload(int id, CacheTime time)
         {
-            for (int i = 0; i < ids.Length; i++) Instance.Unload(ref ids[i]);
+            group.Remove(id);
+            for (int i = 0; i < ids.Length; i++) Instance.Unload(ref ids[i], time);
             action = null;
             path = null;
             ids = null;
@@ -142,43 +165,113 @@ public class AssetManager : Singletion<AssetManager>
     }
     private class AssetItem
     {
+        private string path;
         private int itemId = -1;
-        private Action<int, Object> action;
+        private int loadId = 0;
+        private LoadState state = LoadState.None;
         private AssetHandle ah;
-        public int ItemID => itemId;
+        private Dictionary<int, Action<int, Object>> loaders = new();
+        private CacheTime timer = CacheTime.None;
+        private int timerId = -1;
         public float Progress => ah == null ? 0 : ah.Progress;
 
-        public void Init<T>(string path, Action<int, Object> action) where T : Object
+        public void Init(int itemId, string path)
         {
-            itemId = ++uniqueId;
-            this.action = action;
-            ah = package.LoadAssetAsync<T>(path);
-            ah.Completed += Finish;
+            this.path = path;
+            this.itemId = itemId << 8;
         }
-        private void Finish(AssetHandle _ah)
+        public void Load<T>(ref int loadId, Action<int, Object> action) where T : Object
         {
-            ah.Completed -= Finish;
-            action?.Invoke(itemId, ah.AssetObject);
+            this.loadId = this.loadId + 1 & 0xFF;
+            loadId = itemId | this.loadId;
+            if (state.HasFlag(LoadState.Release))
+            {
+                state &= LoadState.LoadFinish | LoadState.Loading;
+                TimeManager.Instance.StopTimer(timerId);
+                timerId = -1;
+            }
+            switch (state)
+            {
+                case LoadState.None:
+                    state = LoadState.Loading;
+                    loaders.Add(loadId, action);
+                    ah = package.LoadAssetAsync<T>(path);
+                    ah.Completed += LoadFinish;
+                    break;
+                case LoadState.Loading:
+                    loaders.Add(loadId, action);
+                    break;
+                case LoadState.LoadFinish:
+                    action?.Invoke(loadId, ah.AssetObject);
+                    break;
+            }
         }
-        public void Unload()
+        private void LoadFinish(AssetHandle _ah)
         {
-            cache.Enqueue(this);
+            ah.Completed -= LoadFinish;
+            if (ah.AssetObject == null)
+            {
+                //防止回调时加载卸载
+                totalKey.Remove(itemId);
+                totalValue.Remove(path);
+                foreach (var item in loaders) item.Value?.Invoke(item.Key, null);
+                Unload();
+            }
+            else
+            {
+                if (state.HasFlag(LoadState.Release)) state = LoadState.LoadFinish | LoadState.Release;
+                else state = LoadState.LoadFinish;
+
+                //注意：A的回调中卸载B，可能导致B的回调无法执行
+                var list = loaders.Keys.ToList();
+                foreach (var item in list)
+                {
+                    if (loaders.TryGetValue(item, out var temp))
+                    {
+                        loaders[item] = null;
+                        temp?.Invoke(item, ah.AssetObject);
+                    }
+                }
+            }
+        }
+        public void Unload(int id, CacheTime time)
+        {
+            var b = loaders.Remove(id);
+            if (b && timer < time) timer = time;
+            if (loaders.Count > 0) return;
+            switch (timer)
+            {
+                case CacheTime.None:
+                    Unload();
+                    break;
+                case CacheTime.Short:
+                    if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Unload);
+                    state |= LoadState.Release;
+                    break;
+                case CacheTime.Long:
+                    if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeMaxS, finish: Unload);
+                    state |= LoadState.Release;
+                    break;
+            }
+        }
+        private void Unload()
+        {
+            totalKey.Remove(itemId);
+            totalValue.Remove(path);
+            itemId = -1;
+            loadId = 0;
+            state = LoadState.None;
             ah.Release();
             var asset = ah.GetAssetInfo();
             package.TryUnloadUnusedAsset(asset);
             ah = null;
-            action = null;
+            loaders.Clear();
+            timer = CacheTime.None;
+            TimeManager.Instance.StopTimer(timerId);
+            timerId = -1;
+            cache.Enqueue(this);
         }
     }
-}
-public enum LoadState
-{
-    None = 0,
-    Loading = 1,
-    LoadFinish = 2,
-    Instantiating = 4,
-    InstantiateFinish = 8,
-    Release = 16,
 }
 /// <summary>
 /// 父节点删除时必须Release，否则加载状态会错乱(虽有办法避免，但不卸载导致的资源常驻无法避免)
@@ -190,7 +283,7 @@ public class LoadGameObjectItem
     private AsyncInstantiateOperation<Object> aio;
     protected GameObject obj;
     private int loadId;
-    private LoadState state = LoadState.Release;
+    private LoadState state = LoadState.None;
     private float timer = 0;
     private int timerId = -1;
 
@@ -289,7 +382,7 @@ public class LoadGameObjectItem
         if (obj != null) GameObject.Destroy(obj);
         obj = null;
         AssetManager.Instance.Unload(ref loadId);
-        state = LoadState.Release;
+        state = LoadState.None;
         timer = 0;
         TimeManager.Instance.StopTimer(timerId);
         timerId = -1;
@@ -297,92 +390,6 @@ public class LoadGameObjectItem
     private void Recycle()
     {
         state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
-        timer += GameSetting.recycleTimeS;
-        timer = Math.Min(timer, GameSetting.recycleTimeMaxS);
-        TimeManager.Instance.StopTimer(timerId);
-        timerId = -1;
-    }
-}
-public class LoadAssetItem
-{
-    protected string path;
-    protected Object asset;
-    private int loadId;
-    private LoadState state = LoadState.Release;
-    private float timer = 0;
-    private int timerId = -1;
-
-    private Action<Object, object[]> action;
-    protected object[] param;
-
-    public void Init(string path, Action<Object, object[]> action = null, params object[] param)
-    {
-        this.path = path;
-        this.action = action;
-        this.param = param;
-    }
-    public void Enable<T>() where T : Object
-    {
-        if (state.HasFlag(LoadState.Release))
-        {
-            Recycle();
-        }
-        switch (state)
-        {
-            case LoadState.None:
-                state = LoadState.Loading;
-                AssetManager.Instance.Load<T>(ref loadId, path, LoadFinish);
-                break;
-            case LoadState.Loading:
-                break;
-            case LoadState.LoadFinish:
-                Finish(asset);
-                break;
-        }
-    }
-    private void LoadFinish(int id, Object _asset)
-    {
-        if (_asset == null)
-        {
-            Destroy();
-            Finish(null);
-        }
-        else if (state.HasFlag(LoadState.Release))
-        {
-            asset = _asset;
-            state = LoadState.LoadFinish | LoadState.Release;
-            Finish(null);
-        }
-        else
-        {
-            asset = _asset;
-            state = LoadState.LoadFinish;
-            Finish(asset);
-        }
-    }
-    protected virtual void Finish(Object asset)
-    {
-        action?.Invoke(asset, param);
-    }
-    public void Disable()
-    {
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Destroy);
-        state |= LoadState.Release;
-        action = null;
-        param = null;
-    }
-    public virtual void Destroy()
-    {
-        asset = null;
-        AssetManager.Instance.Unload(ref loadId);
-        state = LoadState.Release;
-        timer = 0;
-        TimeManager.Instance.StopTimer(timerId);
-        timerId = -1;
-    }
-    private void Recycle()
-    {
-        state &= LoadState.LoadFinish | LoadState.Loading;
         timer += GameSetting.recycleTimeS;
         timer = Math.Min(timer, GameSetting.recycleTimeMaxS);
         TimeManager.Instance.StopTimer(timerId);
