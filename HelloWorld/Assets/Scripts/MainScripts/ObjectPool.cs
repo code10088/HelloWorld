@@ -98,8 +98,7 @@ public class AssetObjectPool
     public int Dequeue(string path, Action<int, GameObject, object[]> action = null, int cacheCount = 10, params object[] param)
     {
         if (string.IsNullOrEmpty(path)) return -1;
-        AssetObjectPool<ObjectPoolItem> temp = null;
-        if (!pool.TryGetValue(path, out temp))
+        if (!pool.TryGetValue(path, out var temp))
         {
             temp = new AssetObjectPool<ObjectPoolItem>();
             temp.Init(path, cacheCount);
@@ -135,6 +134,7 @@ public class AssetObjectPool<T> where T : ObjectPoolItem, new()
     {
         if (asset == null)
         {
+            //加载失败一直加载不回调，理论上不应该出现加载失败
             AssetManager.Instance.Load<GameObject>(ref this.loadId, path, LoadFinish);
         }
         else
@@ -168,6 +168,7 @@ public class AssetObjectPool<T> where T : ObjectPoolItem, new()
     }
     public void Destroy()
     {
+        //先卸载，使Delete调用时Unload(-1)
         AssetManager.Instance.Unload(ref loadId);
         for (int i = use.Count - 1; i >= 0; i--) use[i].Destroy();
         for (int i = cache.Count - 1; i >= 0; i--) cache[i].Destroy();
@@ -295,6 +296,8 @@ public class ObjectPoolItem
         release?.Invoke(itemId);
         release = null;
         itemId = -1;
+        action = null;
+        param = null;
     }
     private void Recycle()
     {

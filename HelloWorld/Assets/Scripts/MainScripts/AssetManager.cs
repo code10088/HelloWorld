@@ -85,18 +85,14 @@ public class AssetManager : Singletion<AssetManager>
     public void Load<T>(ref int loadId, string path, Action<int, Object> action = null) where T : Object
     {
         if (loadId > 0) Unload(ref loadId);
-        if (totalValue.TryGetValue(path, out AssetItem temp))
-        {
-            temp.Load<T>(ref loadId, action);
-        }
-        else
+        if (!totalValue.TryGetValue(path, out AssetItem temp))
         {
             temp = cache.Count > 0 ? cache.Dequeue() : new();
-            temp.Init(++uniqueId, path);
+            temp.Init<T>(++uniqueId, path);
             totalKey.Add(uniqueId, path);
             totalValue.Add(path, temp);
-            temp.Load<T>(ref loadId, action);
         }
+        temp.Load(ref loadId, action);
     }
     public void Load(ref int loadId, string[] path, Action<string[], Object[]> action = null)
     {
@@ -175,12 +171,15 @@ public class AssetManager : Singletion<AssetManager>
         private int timerId = -1;
         public float Progress => ah == null ? 0 : ah.Progress;
 
-        public void Init(int itemId, string path)
+        public void Init<T>(int itemId, string path) where T : Object
         {
             this.path = path;
             this.itemId = itemId << 8;
+            state = LoadState.Loading;
+            ah = package.LoadAssetAsync<T>(path);
+            ah.Completed += LoadFinish;
         }
-        public void Load<T>(ref int loadId, Action<int, Object> action) where T : Object
+        public void Load(ref int loadId, Action<int, Object> action)
         {
             this.loadId = this.loadId + 1 & 0xFF;
             loadId = itemId | this.loadId;
@@ -192,12 +191,6 @@ public class AssetManager : Singletion<AssetManager>
             }
             switch (state)
             {
-                case LoadState.None:
-                    state = LoadState.Loading;
-                    loaders.Add(loadId, action);
-                    ah = package.LoadAssetAsync<T>(path);
-                    ah.Completed += LoadFinish;
-                    break;
                 case LoadState.Loading:
                     loaders.Add(loadId, action);
                     break;
@@ -226,10 +219,10 @@ public class AssetManager : Singletion<AssetManager>
                 var list = loaders.Keys.ToList();
                 foreach (var item in list)
                 {
-                    if (loaders.TryGetValue(item, out var temp))
+                    if (loaders.TryGetValue(item, out var temp) && temp != null)
                     {
                         loaders[item] = null;
-                        temp?.Invoke(item, ah.AssetObject);
+                        temp.Invoke(item, ah.AssetObject);
                     }
                 }
             }
@@ -238,7 +231,7 @@ public class AssetManager : Singletion<AssetManager>
         {
             var b = loaders.Remove(id);
             if (b && timer < time) timer = time;
-            if (loaders.Count > 0) return;
+            if (!b || loaders.Count > 0) return;
             switch (timer)
             {
                 case CacheTime.None:
