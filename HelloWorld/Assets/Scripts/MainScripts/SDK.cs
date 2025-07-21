@@ -1,11 +1,11 @@
 using System;
-using UnityEngine;
 using System.Collections.Generic;
 
 #if WEIXINMINIGAME
 using WeChatWASM;
 #elif DOUYINMINIGAME
 using TTSDK;
+using TTSDK.UNBridgeLib.LitJson;
 #endif
 
 public enum ShowAdResult
@@ -235,6 +235,12 @@ public class SDK : MonoSingletion<SDK>
             loginState = false;
             callback?.Invoke(false);
         });
+    }
+
+    public void TTNavigateToScene()
+    {
+        var data = JsonMapper.ToObject("{\"scene\":\"sidebar\"}");
+        TT.NavigateToScene(data, null, null, null);
     }
 
     public int TTCreateRewardedVideoAd(string adUnitId)

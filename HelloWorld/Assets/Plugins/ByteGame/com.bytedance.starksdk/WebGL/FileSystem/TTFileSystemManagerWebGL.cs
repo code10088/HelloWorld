@@ -1250,7 +1250,7 @@ namespace TTSDK
             if (int.TryParse(result, out int bytesRead))
             {
                 bytesRead = Math.Max(bytesRead, 0);//根据平台不同，有的会返回-1有的是0
-                var sharedBuffer = new byte[bytesRead];
+                var sharedBuffer = param.arrayBuffer;
                 StarkShareFileBuffer(sharedBuffer, param.fd);
                 return new()
                 {

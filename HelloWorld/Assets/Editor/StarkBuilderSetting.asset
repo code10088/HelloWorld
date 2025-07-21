@@ -21,11 +21,17 @@ MonoBehaviour:
   needCompress: 1
   symbolMode: 1
   profiling: 0
+  clearStreamingAssets: 0
   buildOptions: 0
+  wasmSubFramework: 0
   optimizeWebGLMemoryInBackground: 1
   assetBundleFSEnabled: 1
   assetBundleBufferCapacity: 128
   assetBundleBufferTTL: 5
+  preloadFiles: 
+  CDN: 
+  preloadDataListUrl: 
+  iOSDevicePixelRatio: 0
   urlCacheList: []
   dontCacheFileNames: []
   isDevBuild: 0
@@ -47,6 +53,7 @@ MonoBehaviour:
   autoVersion: 0
   _webglPackagePath: D:\DotRush\Build\WebGL\webgl_package-20250212_190815.zip
   _orientation: 0
+  _iOSPerformancePlus: 0
   _menuButtonStyle: 0
   _publishType: 2
   publishDesc: 

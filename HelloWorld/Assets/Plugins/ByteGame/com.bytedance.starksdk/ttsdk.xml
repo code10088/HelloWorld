@@ -978,6 +978,18 @@
             对应接口：tt.addPhoneCalendar
             </summary>
         </member>
+        <member name="F:TTSDK.AuthorizeScope.GameClubData">
+            <summary>
+            是否授权小游戏站数据
+            对应接口：tt.getGameClubData
+            </summary>
+        </member>
+        <member name="F:TTSDK.AuthorizeScope.GroupTag">
+            <summary>
+            是否授权群铭牌
+            对应接口：
+            </summary>
+        </member>
         <member name="T:TTSDK.AuthSetting">
              <summary>
              用户权限授权结果
@@ -1055,6 +1067,18 @@
             <summary>
             是否授权添加日历事件
             对应接口：tt.addPhoneCalendar
+            </summary>
+        </member>
+        <member name="P:TTSDK.AuthSetting.GameClubData">
+            <summary>
+            是否授权小游戏站数据
+            对应接口：tt.getGameClubData
+            </summary>
+        </member>
+        <member name="P:TTSDK.AuthSetting.GroupTag">
+            <summary>
+            是否授权群铭牌
+            对应接口：
             </summary>
         </member>
         <member name="T:TTSDK.DouyinPermissionScopeStatus">
@@ -1686,6 +1710,71 @@
             当游戏Activity#OnResume的方法被调用时调用该C#方法
             </summary>
         </member>
+        <member name="T:TTSDK.TTGetGameClubData">
+            <summary>
+            小游戏站数据
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubData.followDate">
+            <summary>
+            关注小游戏站时间，格式为 yyyymmdd
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubData.todayLikeCount">
+            <summary>
+            当日点赞数（帖子数+点赞评论数）
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubData.todayLikePostCount">
+            <summary>
+            当日点赞官方贴数
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubData.todayCommentCount">
+            <summary>
+            当日发布评论数
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubData.todaySharePostCount">
+            <summary>
+            当日成功转发帖子数
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubData.todayLikePostId">
+            <summary>
+            当日点赞帖子id列表
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubDataParam.success">
+            <summary>
+            接口调用成功的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubDataParam.fail">
+            <summary>
+            接口调用失败的回调函数
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubDataParam.complete">
+            <summary>
+            接口调用结束的回调函数（调用成功、失败都会执行）
+            </summary>
+        </member>
+        <member name="T:TTSDK.TTGetGameClubDataSuccessCallbackResult">
+            <summary>
+            回调传参
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubDataSuccessCallbackResult.errMsg">
+            <summary>
+            错误信息
+            </summary>
+        </member>
+        <member name="F:TTSDK.TTGetGameClubDataSuccessCallbackResult.data">
+            <summary>
+            返回数据
+            </summary>
+        </member>
         <member name="T:TTSDK.HostEnum">
             <summary>
             宿主枚举
@@ -2165,6 +2254,12 @@
         <member name="M:TTSDK.ITTAPI.OpenFeedback(TTSDK.TTBaseParam)">
             <summary>
             跳转反馈页
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="M:TTSDK.ITTAPI.GetGameClubData(TTSDK.TTGetGameClubDataParam)">
+            <summary>
+            小游戏站活跃信息获取
             </summary>
             <param name="param"></param>
         </member>
@@ -5822,6 +5917,12 @@
         <member name="M:TTSDK.TT.OpenFeedback(TTSDK.TTBaseParam)">
             <summary>
             跳转反馈页面
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="M:TTSDK.TT.GetGameClubData(TTSDK.TTGetGameClubDataParam)">
+            <summary>
+            小游戏站活跃信息获取
             </summary>
             <param name="param"></param>
         </member>
