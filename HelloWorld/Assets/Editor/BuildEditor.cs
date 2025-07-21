@@ -9,11 +9,15 @@ using COSXML.Auth;
 using COSXML.Model.Object;
 using YooAsset.Editor;
 using System.Text;
-using WeChatWASM;
 using YooAsset;
+using Obfuz4HybridCLR;
+
+#if WEIXINMINIGAME
+using WeChatWASM;
+#elif DOUYINMINIGAME
 using TTSDK.Tool;
 using TTSDK.Tool.API;
-using Obfuz4HybridCLR;
+#endif
 
 public class BuildEditor
 {
@@ -257,6 +261,7 @@ public class BuildEditor
             throw e;
         }
     }
+#if WEIXINMINIGAME
     [MenuItem("Tools/WeChatBuild", false, (int)ToolsMenuSort.WeChatBuild)]
     public static void WeChatBuild()
     {
@@ -291,6 +296,8 @@ public class BuildEditor
             throw e;
         }
     }
+#endif
+#if DOUYINMINIGAME
     [MenuItem("Tools/TTBuild", false, (int)ToolsMenuSort.TTBuild)]
     public static async void TTBuild()
     {
@@ -307,4 +314,5 @@ public class BuildEditor
             throw e;
         }
     }
+#endif
 }
