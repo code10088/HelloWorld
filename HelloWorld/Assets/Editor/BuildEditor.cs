@@ -304,8 +304,8 @@ public class BuildEditor
         try
         {
             await BuildManager.Build(Framework.Wasm);
-            string fileName = Path.GetFileNameWithoutExtension(StarkBuilderSettings.Instance.webglPackagePath);
-            string fullName = Path.GetFileName(StarkBuilderSettings.Instance.webglPackagePath);
+            string fullName = StarkBuilderSettings.Instance.webglPackagePath;
+            string fileName = Path.GetFileName(fullName);
             UploadFile2CDN($"{EditorUserBuildSettings.activeBuildTarget}/{fileName}", fullName);
         }
         catch (Exception e)
