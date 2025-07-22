@@ -214,7 +214,8 @@ public class BuildEditor
         }
     }
 
-    private static void BuildPlayer()
+    [MenuItem("Tools/BuildProject", false, (int)ToolsMenuSort.ExportProject)]
+    public static void BuildPlayer()
     {
 #if UNITY_ANDROID
         AndroidBuild();
@@ -226,6 +227,7 @@ public class BuildEditor
         TTBuild();
 #endif
     }
+#if UNITY_ANDROID
     private static void AndroidBuild()
     {
         string time = DateTime.Now.ToString("yyyyMMdd_HHmmss");
@@ -244,6 +246,8 @@ public class BuildEditor
             throw e;
         }
     }
+#endif
+#if UNITY_IOS
     private static void IOSBuild()
     {
         string time = DateTime.Now.ToString("yyyyMMdd_HHmmss");
@@ -261,9 +265,9 @@ public class BuildEditor
             throw e;
         }
     }
+#endif
 #if WEIXINMINIGAME
-    [MenuItem("Tools/WeChatBuild", false, (int)ToolsMenuSort.WeChatBuild)]
-    public static void WeChatBuild()
+    private static void WeChatBuild()
     {
         CheckAppVersion();
         WXConvertCore.config.ProjectConf.CDN = GameSetting.CDNPlatform;
@@ -298,8 +302,7 @@ public class BuildEditor
     }
 #endif
 #if DOUYINMINIGAME
-    [MenuItem("Tools/TTBuild", false, (int)ToolsMenuSort.TTBuild)]
-    public static async void TTBuild()
+    private static async void TTBuild()
     {
         try
         {

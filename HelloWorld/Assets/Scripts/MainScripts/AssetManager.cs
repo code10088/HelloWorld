@@ -56,7 +56,8 @@ public class AssetManager : Singletion<AssetManager>
         string packageRoot = WeChatWASM.WX.PluginCachePath + "/" + Application.version;
         parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteServices, decryptionServices);
 #elif DOUYINMINIGAME
-        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateFileSystemParameters(Application.version, remoteServices, decryptionServices);
+        string packageRoot = Application.version;
+        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteServices, decryptionServices);
 #else
         parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(decryptionServices);
         parameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, decryptionServices);
