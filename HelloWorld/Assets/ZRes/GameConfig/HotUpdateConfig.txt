@@ -9,8 +9,8 @@
 	"HotUpdateRes":
 	[
 		"Assets/ZRes/DataConfig/tbuiconfig.bytes",
-		"Assets/ZRes/UI/Prefab/UIHotUpdateRes.prefab",
-		"Assets/ZRes/UI/Prefab/UICommonBox.prefab",
-		"Assets/ZRes/UI/Prefab/UICommonTips.prefab"
+		"Assets/ZRes/UI/Prefab/UIHotUpdateRes/UIHotUpdateRes.prefab",
+		"Assets/ZRes/UI/Prefab/UICommonBox/UICommonBox.prefab",
+		"Assets/ZRes/UI/Prefab/UICommonTips/UICommonTips.prefab"
 	]
 }
