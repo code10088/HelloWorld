@@ -57,13 +57,16 @@ public class WebDecryptionServices : IWebDecryptionServices
         return decryptResult;
     }
 }
-public class ManifestServices : IManifestServices
+public class ManifestProcessServices : IManifestProcessServices
 {
     public byte[] ProcessManifest(byte[] fileData)
     {
         for (int i = 0; i < fileData.Length; i++) fileData[i] ^= 64;
         return fileData;
     }
+}
+public class ManifestRestoreServices : IManifestRestoreServices
+{
     public byte[] RestoreManifest(byte[] fileData)
     {
         for (int i = 0; i < fileData.Length; i++) fileData[i] ^= 64;

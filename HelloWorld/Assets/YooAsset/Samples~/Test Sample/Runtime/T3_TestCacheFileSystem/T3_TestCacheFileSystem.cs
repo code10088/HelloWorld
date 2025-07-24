@@ -46,13 +46,13 @@ public class T3_TestCacheFileSystem : IPrebuildSetup, IPostBuildCleanup
             // 初始化资源包
             var initParams = new HostPlayModeParameters();
             var fileDecryption = new TestFileStreamDecryption();
-            var manifestProcess = new TestProcessManifest();
+            var manifestServices = new TestRestoreManifest();
 
             string hostServerIP = "http://127.0.0.1/CDN/Android/Test/";
             var remoteServices = new TestRemoteServices(hostServerIP);
             initParams.BuildinFileSystemParameters = null;
             initParams.CacheFileSystemParameters = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, fileDecryption);
-            initParams.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestProcess);
+            initParams.CacheFileSystemParameters.AddParameter(FileSystemParametersDefine.MANIFEST_SERVICES, manifestServices);
             var initializeOp = package.InitializeAsync(initParams);
             yield return initializeOp;
             if (initializeOp.Status != EOperationStatus.Succeed)
@@ -93,21 +93,21 @@ public class T3_TestCacheFileSystem : IPrebuildSetup, IPostBuildCleanup
     }
 
     [UnityTest]
-    public IEnumerator B1_TestBundlePlaying()
+    public IEnumerator C1_TestBundlePlaying()
     {
         var tester = new TestBundlePlaying();
         yield return tester.RuntimeTester();
     }
 
     [UnityTest]
-    public IEnumerator B2_TestBundleImporter()
+    public IEnumerator C2_TestBundleImporter()
     {
         var tester = new TestBundleImporter();
         yield return tester.RuntimeTester();
     }
 
     [UnityTest]
-    public IEnumerator B3_TestBundleDownloader()
+    public IEnumerator C3_TestBundleDownloader()
     {
         var tester = new TestBundleDownloader();
         yield return tester.RuntimeTester();

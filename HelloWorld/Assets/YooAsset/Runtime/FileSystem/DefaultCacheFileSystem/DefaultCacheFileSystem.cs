@@ -76,6 +76,11 @@ namespace YooAsset
         public bool AppendFileExtension { private set; get; } = false;
 
         /// <summary>
+        /// 自定义参数：禁用边玩边下机制
+        /// </summary>
+        public bool DisableOnDemandDownload { private set; get; } = false;
+
+        /// <summary>
         /// 自定义参数：最大并发连接数
         /// </summary>
         public int DownloadMaxConcurrency { private set; get; } = int.MaxValue;
@@ -103,7 +108,7 @@ namespace YooAsset
         /// <summary>
         /// 自定义参数：资源清单服务类
         /// </summary>
-        public IManifestServices ManifestServices { private set; get; }
+        public IManifestRestoreServices ManifestServices { private set; get; }
 
         /// <summary>
         /// 自定义参数：拷贝内置文件服务类
@@ -222,6 +227,10 @@ namespace YooAsset
             {
                 AppendFileExtension = Convert.ToBoolean(value);
             }
+            else if (name == FileSystemParametersDefine.DISABLE_ONDEMAND_DOWNLOAD)
+            {
+                DisableOnDemandDownload = Convert.ToBoolean(value);
+            }
             else if (name == FileSystemParametersDefine.DOWNLOAD_MAX_CONCURRENCY)
             {
                 DownloadMaxConcurrency = Convert.ToInt32(value);
@@ -244,7 +253,7 @@ namespace YooAsset
             }
             else if (name == FileSystemParametersDefine.MANIFEST_SERVICES)
             {
-                ManifestServices = (IManifestServices)value;
+                ManifestServices = (IManifestRestoreServices)value;
             }
             else if (name == FileSystemParametersDefine.COPY_LOCAL_FILE_SERVICES)
             {

@@ -1,10 +1,9 @@
 ﻿#if UNITY_WEBGL && DOUYINMINIGAME
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
 using TTSDK;
-using System.Linq;
-using System;
 
 public static class TiktokFileSystemCreater
 {
@@ -107,7 +106,7 @@ internal class TiktokFileSystem : IFileSystem
     /// <summary>
     /// 自定义参数：资源清单服务类
     /// </summary>
-    public IManifestServices ManifestServices { private set; get; }
+    public IManifestRestoreServices ManifestServices { private set; get; }
     #endregion
 
 
@@ -169,17 +168,17 @@ internal class TiktokFileSystem : IFileSystem
         }
         else if (name == FileSystemParametersDefine.MANIFEST_SERVICES)
         {
-            ManifestServices = (IManifestServices)value;
+            ManifestServices = (IManifestRestoreServices)value;
         }
         else
         {
             YooLogger.Warning($"Invalid parameter : {name}");
         }
     }
-    public virtual void OnCreate(string packageName, string rootDirectory)
+    public virtual void OnCreate(string packageName, string packageRoot)
     {
         PackageName = packageName;
-        _ttCacheRoot = rootDirectory;
+        _ttCacheRoot = packageRoot;
 
         if (string.IsNullOrEmpty(_ttCacheRoot))
         {
