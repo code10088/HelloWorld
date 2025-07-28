@@ -75,7 +75,11 @@ public class GameStart : MonoSingletion<GameStart>
         MethodInfo m = t.GetMethod("Init");
         m.Invoke(o, null);
 #else
+#if Obfuz
+        var hotAssembly = Assembly.Load(dll);
+#else
         var hotAssembly = Assembly.Load(dll, pdb);
+#endif
         Type t = hotAssembly.GetType("GameStart");
         PropertyInfo p = t.BaseType.GetProperty("Instance");
         object o = p.GetMethod.Invoke(null, null);

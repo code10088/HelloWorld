@@ -82,4 +82,4 @@ MonoBehaviour:
   polymorphicDllSettings:
     enable: 1
     codeGenerationSecretKey: EFGHIJKLMN
-    disableLoadStandardDll: 1
+    disableLoadStandardDll: 0
