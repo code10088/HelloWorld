@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "ee7af5c5926c12402b3ccd121408646f1cf3128f"
+      "hash": "73654e76d28386dbc7766f803e2cb7a243e331e6"
     },
     "com.code-philosophy.luban": {
       "version": "https://github.com/focus-creative-games/luban_unity.git",
@@ -19,14 +19,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "3bcf204f6909822a89d9f6d01c41d085a5570383"
+      "hash": "38ad0de746979c2df8adad0f1f442d9e4478c522"
     },
     "com.code-philosophy.obfuz4hybridclr": {
       "version": "https://github.com/focus-creative-games/obfuz4hybridclr.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "064af2872e7d2eff586b28a16505705766a56bb0"
+      "hash": "59804e17a0d1562ca0f847db986ed93b25825b6d"
     },
     "com.gurbu.gpui-pro": {
       "version": "file:com.gurbu.gpui-pro",

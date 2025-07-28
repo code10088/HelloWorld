@@ -79,3 +79,7 @@ MonoBehaviour:
       garbageCodeType: 1
       outputPath: Assets/Scripts/MainScripts/Obfuz/GarbageCode
     additionalTasks: []
+  polymorphicDllSettings:
+    enable: 1
+    codeGenerationSecretKey: EFGHIJKLMN
+    disableLoadStandardDll: 1
