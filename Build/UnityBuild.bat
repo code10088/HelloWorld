@@ -17,5 +17,4 @@ taskkill /f /im Unity.exe
 -executeMethod %2 ^
 --appversion:%3 ^
 --development:%4 ^
---debug:%5 ^
---obfuz:%6
+--debug:%5

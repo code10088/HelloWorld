@@ -71,13 +71,7 @@ public class BuildEditor
                 bool b = bool.Parse(args[i].Replace("--debug:", string.Empty));
                 if (b) GameEditorTools.AddScriptingDefineSymbols("Debug");
                 else GameEditorTools.RemoveScriptingDefineSymbols("Debug");
-            }
-            else if (args[i].StartsWith("--obfuz:"))
-            {
-                bool b = bool.Parse(args[i].Replace("--obfuz:", string.Empty));
-                if (b) GameEditorTools.AddScriptingDefineSymbols("Obfuz");
-                else GameEditorTools.RemoveScriptingDefineSymbols("Obfuz");
-                ObfuzSettings.Instance.buildPipelineSettings.enable = b;
+                ObfuzSettings.Instance.buildPipelineSettings.enable = !b;
                 ObfuzSettings.Save();
             }
         }
