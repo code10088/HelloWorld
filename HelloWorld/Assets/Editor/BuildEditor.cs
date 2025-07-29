@@ -46,7 +46,26 @@ public class BuildEditor
         string[] args = Environment.GetCommandLineArgs();
         for (int i = 0; i < args.Length; i++)
         {
-            if (args[i].StartsWith("--appversion:"))
+            if (args[i].StartsWith("--platform:"))
+            {
+                string platform = args[i].Replace("--platform:", string.Empty);
+                switch (platform)
+                {
+                    case "Android":
+                        break;
+                    case "iOS":
+                        break;
+                    case "WX":
+                        GameEditorTools.AddScriptingDefineSymbols("WEIXINMINIGAME");
+                        GameEditorTools.RemoveScriptingDefineSymbols("DOUYINMINIGAME");
+                        break;
+                    case "TT":
+                        GameEditorTools.RemoveScriptingDefineSymbols("WEIXINMINIGAME");
+                        GameEditorTools.AddScriptingDefineSymbols("DOUYINMINIGAME");
+                        break;
+                }
+            }
+            else if (args[i].StartsWith("--appversion:"))
             {
                 appversion = args[i].Replace("--appversion:", string.Empty);
                 string path = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.BuildPlayerPath);
@@ -75,6 +94,7 @@ public class BuildEditor
                 ObfuzSettings.Save();
             }
         }
+        AssetDatabase.Refresh();
     }
 
     [MenuItem("Tools/HybridCLRGenerate", false, (int)ToolsMenuSort.HybridCLRGenerate)]
