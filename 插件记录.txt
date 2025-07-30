@@ -80,3 +80,9 @@ obfuz
 	MainAssembly加密会出现hotAssembly.GetType()报错，且无法再编辑器下测试热更
 	MainAssembly只有开源的框架代码，所以不用加密
 
+MemoryPack
+	根据官网提示，安装NuGetForUnity
+	安装MemoryPack
+	只保留MemoryPack.Core MemoryPack.Generator其他全部删除
+	MemoryPack.Core anyplatform
+	MemoryPack.Generator noplatform

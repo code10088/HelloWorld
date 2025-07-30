@@ -12,16 +12,17 @@
 	手动上传到其他
 		目录结构
 		WebGL
-			VersionConfig.txt
+			VersionConfig.txt(Build目录中)
 			1.2.0
 				.bundle
 		Android
-			VersionConfig.txt
+			VersionConfig.txt(Build目录中)
 			1.2.0
 				.bundle
 配置导出：Tools/CopyConfig，需要配置Preferences/Customer Luban路径
 Proto消息导出：Tools/CopyMsg，需要配置Preferences/Customer Msg路径
 导出工程：
+	修改Assets\Scripts\MainScripts\GameSetting.cs中的CDN
 	配置Preferences/Customer BuildPlayer路径
 	执行Tools/BuildProject
 Jenkins部署：配置文件Build/JenkinsConfig/Game.xml

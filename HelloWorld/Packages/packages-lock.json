@@ -28,6 +28,13 @@
       "dependencies": {},
       "hash": "59804e17a0d1562ca0f847db986ed93b25825b6d"
     },
+    "com.cysharp.memorypack": {
+      "version": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/MemoryPack.Unity",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "dfbcedc078c5da938443d23c9f6b5738af42ba7d"
+    },
     "com.gurbu.gpui-pro": {
       "version": "file:com.gurbu.gpui-pro",
       "depth": 0,

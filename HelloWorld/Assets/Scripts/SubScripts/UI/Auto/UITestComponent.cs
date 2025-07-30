@@ -37,6 +37,8 @@ public partial class UITestComponent
     public UIButton addTriggerBtnUIButton = null;
     public UIButton excuteTriggerBtnUIButton = null;
     public UIButton guideUIButton = null;
+    public UIButton serializeUIButton = null;
+    public UIButton deserializeUIButton = null;
     public GameObject miniGameObj = null;
     public UIButton createAdBtnUIButton = null;
     public UIButton showAdBtnUIButton = null;
@@ -86,16 +88,18 @@ public partial class UITestComponent
         addTriggerBtnUIButton = allData[33].exportComponent[0] as UIButton;
         excuteTriggerBtnUIButton = allData[34].exportComponent[0] as UIButton;
         guideUIButton = allData[35].exportComponent[0] as UIButton;
-        miniGameObj = allData[36].gameObject;
-        createAdBtnUIButton = allData[37].exportComponent[0] as UIButton;
-        showAdBtnUIButton = allData[38].exportComponent[0] as UIButton;
-        showAdVideoBtnUIButton = allData[39].exportComponent[0] as UIButton;
-        uploadRankDataBtnUIButton = allData[40].exportComponent[0] as UIButton;
-        openRankBtnUIButton = allData[41].exportComponent[0] as UIButton;
-        openMenuBtnUIButton = allData[42].exportComponent[0] as UIButton;
-        rankObj = allData[43].gameObject;
-        rankRawImage = allData[43].exportComponent[1] as UnityEngine.UI.RawImage;
-        rankRectTransform = allData[43].exportComponent[2] as UnityEngine.RectTransform;
+        serializeUIButton = allData[36].exportComponent[0] as UIButton;
+        deserializeUIButton = allData[37].exportComponent[0] as UIButton;
+        miniGameObj = allData[38].gameObject;
+        createAdBtnUIButton = allData[39].exportComponent[0] as UIButton;
+        showAdBtnUIButton = allData[40].exportComponent[0] as UIButton;
+        showAdVideoBtnUIButton = allData[41].exportComponent[0] as UIButton;
+        uploadRankDataBtnUIButton = allData[42].exportComponent[0] as UIButton;
+        openRankBtnUIButton = allData[43].exportComponent[0] as UIButton;
+        openMenuBtnUIButton = allData[44].exportComponent[0] as UIButton;
+        rankObj = allData[45].gameObject;
+        rankRawImage = allData[45].exportComponent[1] as UnityEngine.UI.RawImage;
+        rankRectTransform = allData[45].exportComponent[2] as UnityEngine.RectTransform;
     }
 }
 public partial class UITestItem : LoopItemData
