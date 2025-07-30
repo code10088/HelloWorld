@@ -17,43 +17,21 @@ public static class GameSetting
     public static int timeoutS = 10;//Ãë
     public static string HotUpdateConfigPath = "Assets/ZRes/GameConfig/HotUpdateConfig.txt";
 
-    private static string CDN
-    {
-        get
-        {
-#if DEBUG
-            return "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
+    private static string CDN =>
+#if Debug
+        "http://192.168.7.136";
 #else
-            return "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
+        "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
 #endif
-        }
-    }
-    public static string CDNPlatform
-    {
-        get
-        {
+    public static string CDNPlatform =>
 #if UNITY_WEBGL
-            return $"{CDN}/WebGL";
+        $"{CDN}/WebGL";
 #elif UNITY_ANDROID
-            return $"{CDN}/Android";
+        $"{CDN}/Android";
 #elif UNITY_IOS
-            return $"{CDN}/iOS";
+        $"{CDN}/iOS";
 #endif
-        }
-    }
-    public static string CDNVersion
-    {
-        get
-        {
-#if UNITY_WEBGL
-            return $"{CDNPlatform}/{Application.version}/";
-#elif UNITY_ANDROID
-            return $"{CDNPlatform}/{Application.version}/";
-#elif UNITY_IOS
-            return $"{CDNPlatform}/{Application.version}/";
-#endif
-        }
-    }
+    public static string CDNVersion => $"{CDNPlatform}/{Application.version}/";
 
     public static string AppName =>
 #if UNITY_ANDROID
