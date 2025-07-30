@@ -1,0 +1,82 @@
+
+代码裁剪问题
+	Could not produce class with ID
+	http://docs.unity3d.com/Manual/ClassIDReference.html 找到ID对应的class，加到link.xml中
+	
+Luban
+	必要文件 Tools(example中luban不是最新版本直接下载luban/release最新版) MiniTemplate/Datas MiniTemplate/Defines MiniTemplate/luban.conf Projects/Csharp_Unity_bin/gen.bat
+	修改gen.bat路径问题
+	仿照.bat添加.sh
+	修改Tools/Luban/Templates/cs_bin模板(使用对比工具、查看log)
+	对比projects/Csharp_Unity_bin/Packages包中的luban对应条目
+
+Bundle冗余
+	Material和Sprite分别打包会存在一个Sprite一个Texture，Material和Texture只会有一个Texture
+YooAsset
+	使用对比工具
+	TaskPrepare_SBP检测输出目录是否存在，存在的情况下也可以打包，避免频繁修改VersionConfig文件
+	屏蔽YooAssetsDriver中的Update，修改YooAssets中的Update
+WebGL
+	System.Net无法使用
+	socket库使用 https://github.com/sta/websocket-sharp 编译dll
+微信小游戏
+	使用webgl2.0(beta)+gamma 或者 webgl2.0(beta)+线性空间(鸿蒙黑屏)
+	QualitySettings.SetQualityLevel(lv);导致崩溃（minigame最新版已修复）
+	使用cdn下载资源，无需上传StreamingAssets文件夹
+	缓存策略：https://wechat-miniprogram.github.io/minigame-unity-webgl-transform/Design/FileCache.html
+	bundleExcludeExtensions对缓存十分重要
+	bundlePathIdentifier对缓存十分重要
+	yooasset
+		Samples~中Extension Sample文件直接使用
+		BuildEditor打包需要EFileNameStyle.BundleName_HashName格式
+		bundleExcludeExtension缓存需要.version;.bytes;.hash;.json;
+		bundlePathIdentifier缓存需要1.2.0
+	
+ECS
+	ECS中Component
+		都是数据，方便数据回滚，逻辑都在System中
+		都是值类型，内存连续提高缓存命中率(List、Array引用连续内存分散，Array<值类型>内存连续)
+		热插拔减少耦合
+	ecs实践
+		没有数据回滚需求
+		不需要值类型增加代码复杂度
+		只保留ec热插拔结构，s中的逻辑分散到ec中
+		采用注册方式:cs无耦合、es注册耦合、ec强耦合(e依赖c、特殊c依赖e)
+
+protobuf-net
+	github下载最新版，使用vs2022编译(如果编译失败尝试更新vs)
+	修改global.json为当前使用的.net sdk版本
+	网络消息体积优先所以使用ProtoBuf，客户端本地保存速度所以使用MemoryBuffer
+    ProtoBuf:       序列化速度=2，反序列化=10，体积小1
+    FlatBuffers:    序列化速度=4，反序列化=0，体积大2
+    MemoryPack:   序列化速度=1，反序列化=0，体积大1.5
+	
+newtonjson
+	release13.0.3 bin/.net45/dll
+	直接使用git工程android端出现不兼容问题，unity(.net48)和newtonjson(.net45) .net版本不一致导致
+	使用packagemanager add packet by name方式添加
+	name:com.unity.nuget.newtonsoft-json
+	version:3.2.1
+	
+SuperScrollView调整
+	LoopListViewItem2中添加LoopItemData
+	修改mDistanceForRecycle0、mDistanceForNew0、mDistanceForRecycle1、mDistanceForNew1默认值
+
+SpriteAtlas
+	无法使用自动导入设置，common是已调好的设置参数，新建SpriteAtlas时copy后修改文件夹即可
+	
+RVO
+	没有删除功能，添加删除功能，涉及到的修改:
+		Worker中strat、end改为private List<Agent> agents = new List<Agent>();
+		Simulator agents_改成dic不通过下标索引通过uniqueId查找
+		Simulator中添加待加入列表waitAdd、waitRemove
+		Simulator中添加DeleteAgent
+		Simulator中doStep先进行添加删除操作，兼容webgl无法多线程
+		Simulator中SetNumWorkers进行workers_初始化
+		KdTree中buildAgentTree修改
+		初始位置必须添加随机，保证两个Agent不同，否则会出现NaN报错
+		
+obfuz
+	MainAssembly加密会出现hotAssembly.GetType()报错，且无法再编辑器下测试热更
+	MainAssembly只有开源的框架代码，所以不用加密
+
