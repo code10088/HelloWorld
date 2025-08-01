@@ -78,6 +78,5 @@ public sealed partial class Guide : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

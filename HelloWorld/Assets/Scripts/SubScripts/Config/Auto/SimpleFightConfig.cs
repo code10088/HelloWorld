@@ -17,7 +17,7 @@ public sealed partial class SimpleFightConfig : Luban.BeanBase
     public SimpleFightConfig(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        FightConfig = FightConfig.DeserializeFightConfig(_buf);
+        FightConfig = global::cfg.FightConfig.DeserializeFightConfig(_buf);
     }
 
     public static SimpleFightConfig DeserializeSimpleFightConfig(ByteBuf _buf)
@@ -42,6 +42,5 @@ public sealed partial class SimpleFightConfig : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

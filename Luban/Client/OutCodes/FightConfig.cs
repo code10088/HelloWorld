@@ -18,8 +18,8 @@ public sealed partial class FightConfig : Luban.BeanBase
     {
         FightType = (FightType)_buf.ReadInt();
         ModelPath = _buf.ReadString();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Skills = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Skills.Add(_e0);}}
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Attrs = new System.Collections.Generic.Dictionary<int, float>(n0 * 3 / 2);for(var i0 = 0 ; i0 < n0 ; i0++) { int _k0;  _k0 = _buf.ReadInt(); float _v0;  _v0 = _buf.ReadFloat();     Attrs.Add(_k0, _v0);}}
+        {int n0 = _buf.ReadSize(); Skills = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Skills.Add(_e0);}}
+        {int n0 = _buf.ReadSize(); Attrs = new System.Collections.Generic.Dictionary<int, float>(n0 * 3 / 2);for(var i0 = 0 ; i0 < n0 ; i0++) { int _k0;  _k0 = _buf.ReadInt(); float _v0;  _v0 = _buf.ReadFloat();     Attrs.Add(_k0, _v0);}}
         Speed = _buf.ReadFloat();
         AngleSpeed = _buf.ReadFloat();
     }
@@ -51,6 +51,5 @@ public sealed partial class FightConfig : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

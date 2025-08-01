@@ -17,7 +17,7 @@ public sealed partial class MonsterConfig : Luban.BeanBase
     public MonsterConfig(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        FightConfig = FightConfig.DeserializeFightConfig(_buf);
+        FightConfig = global::cfg.FightConfig.DeserializeFightConfig(_buf);
         MonsterType = (MonsterType)_buf.ReadInt();
     }
 
@@ -42,6 +42,5 @@ public sealed partial class MonsterConfig : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

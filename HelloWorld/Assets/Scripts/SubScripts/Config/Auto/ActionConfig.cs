@@ -18,9 +18,9 @@ public sealed partial class ActionConfig : Luban.BeanBase
     {
         ID = _buf.ReadInt();
         ActionType = (ActionType)_buf.ReadInt();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);IntParam = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); IntParam.Add(_e0);}}
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);FloatParam = new System.Collections.Generic.List<float>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { float _e0;  _e0 = _buf.ReadFloat(); FloatParam.Add(_e0);}}
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);StrParam = new System.Collections.Generic.List<string>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { string _e0;  _e0 = _buf.ReadString(); StrParam.Add(_e0);}}
+        {int n0 = _buf.ReadSize(); IntParam = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); IntParam.Add(_e0);}}
+        {int n0 = _buf.ReadSize(); FloatParam = new System.Collections.Generic.List<float>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { float _e0;  _e0 = _buf.ReadFloat(); FloatParam.Add(_e0);}}
+        {int n0 = _buf.ReadSize(); StrParam = new System.Collections.Generic.List<string>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { string _e0;  _e0 = _buf.ReadString(); StrParam.Add(_e0);}}
     }
 
     public static ActionConfig DeserializeActionConfig(ByteBuf _buf)
@@ -60,6 +60,5 @@ public sealed partial class ActionConfig : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

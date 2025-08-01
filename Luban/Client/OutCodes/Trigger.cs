@@ -27,8 +27,8 @@ public sealed partial class Trigger : Luban.BeanBase
         TotalTime = _buf.ReadFloat();
         CDTime = _buf.ReadFloat();
         Condition = _buf.ReadString();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Action1 = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Action1.Add(_e0);}}
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Action2 = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Action2.Add(_e0);}}
+        {int n0 = _buf.ReadSize(); Action1 = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Action1.Add(_e0);}}
+        {int n0 = _buf.ReadSize(); Action2 = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Action2.Add(_e0);}}
     }
 
     public static Trigger DeserializeTrigger(ByteBuf _buf)
@@ -108,6 +108,5 @@ public sealed partial class Trigger : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

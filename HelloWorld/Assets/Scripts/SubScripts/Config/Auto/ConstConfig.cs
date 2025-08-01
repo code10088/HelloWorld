@@ -17,7 +17,7 @@ public sealed partial class ConstConfig : Luban.BeanBase
     public ConstConfig(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        BattleConst = BattleConst.DeserializeBattleConst(_buf);
+        BattleConst = global::cfg.BattleConst.DeserializeBattleConst(_buf);
     }
 
     public static ConstConfig DeserializeConstConfig(ByteBuf _buf)
@@ -39,6 +39,5 @@ public sealed partial class ConstConfig : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

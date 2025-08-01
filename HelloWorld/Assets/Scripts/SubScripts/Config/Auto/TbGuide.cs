@@ -19,13 +19,14 @@ public partial class TbGuide : TbBase
     
     public void Deserialize(byte[] bytes)
     {
-		_dataMap.Clear();
-		_dataList.Clear();
+        _dataMap.Clear();
+        _dataList.Clear();
         ByteBuf _buf = new ByteBuf(bytes);
-        for(int n = _buf.ReadSize() ; n > 0 ; --n)
+        int n = _buf.ReadSize();
+        for(int i = n ; i > 0 ; --i)
         {
             Guide _v;
-            _v = Guide.DeserializeGuide(_buf);
+            _v = global::cfg.Guide.DeserializeGuide(_buf);
             _dataList.Add(_v);
             _dataMap.Add(_v.ID, _v);
         }

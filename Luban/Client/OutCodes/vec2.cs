@@ -37,6 +37,5 @@ public partial struct vec2
         + "}";
     }
 }
-
 }
 

@@ -36,6 +36,5 @@ public sealed partial class BattleConst : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

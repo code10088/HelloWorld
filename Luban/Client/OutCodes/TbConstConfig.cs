@@ -19,13 +19,14 @@ public partial class TbConstConfig : TbBase
     
     public void Deserialize(byte[] bytes)
     {
-		_dataMap.Clear();
-		_dataList.Clear();
+        _dataMap.Clear();
+        _dataList.Clear();
         ByteBuf _buf = new ByteBuf(bytes);
-        for(int n = _buf.ReadSize() ; n > 0 ; --n)
+        int n = _buf.ReadSize();
+        for(int i = n ; i > 0 ; --i)
         {
             ConstConfig _v;
-            _v = ConstConfig.DeserializeConstConfig(_buf);
+            _v = global::cfg.ConstConfig.DeserializeConstConfig(_buf);
             _dataList.Add(_v);
             _dataMap.Add(_v.ID, _v);
         }

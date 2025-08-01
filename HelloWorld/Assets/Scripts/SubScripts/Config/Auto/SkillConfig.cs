@@ -17,7 +17,7 @@ public sealed partial class SkillConfig : Luban.BeanBase
     public SkillConfig(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        FightConfig = FightConfig.DeserializeFightConfig(_buf);
+        FightConfig = global::cfg.FightConfig.DeserializeFightConfig(_buf);
         SkillType = (SkillType)_buf.ReadInt();
         NeedTarget = _buf.ReadBool();
         Cooldown = _buf.ReadFloat();
@@ -120,6 +120,5 @@ public sealed partial class SkillConfig : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

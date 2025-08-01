@@ -43,6 +43,5 @@ public partial struct color32
         + "}";
     }
 }
-
 }
 

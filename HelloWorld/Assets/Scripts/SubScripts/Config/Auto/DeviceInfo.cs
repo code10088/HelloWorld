@@ -51,6 +51,5 @@ public sealed partial class DeviceInfo : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

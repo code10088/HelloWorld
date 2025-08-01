@@ -17,7 +17,7 @@ public sealed partial class PlayerAvatarPart : Luban.BeanBase
     public PlayerAvatarPart(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);OccupyPart = new System.Collections.Generic.List<PlayerAvatarPartType>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { PlayerAvatarPartType _e0;  _e0 = (PlayerAvatarPartType)_buf.ReadInt(); OccupyPart.Add(_e0);}}
+        {int n0 = _buf.ReadSize(); OccupyPart = new System.Collections.Generic.List<PlayerAvatarPartType>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { PlayerAvatarPartType _e0;  _e0 = (PlayerAvatarPartType)_buf.ReadInt(); OccupyPart.Add(_e0);}}
         PrefabPath = _buf.ReadString();
     }
 
@@ -45,6 +45,5 @@ public sealed partial class PlayerAvatarPart : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

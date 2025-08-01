@@ -24,7 +24,7 @@ public sealed partial class Buff : Luban.BeanBase
         TotalTime = _buf.ReadFloat();
         CDTime = _buf.ReadFloat();
         Condition = _buf.ReadString();
-        {int n0 = System.Math.Min(_buf.ReadSize(), _buf.Size);Action = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Action.Add(_e0);}}
+        {int n0 = _buf.ReadSize(); Action = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Action.Add(_e0);}}
     }
 
     public static Buff DeserializeBuff(ByteBuf _buf)
@@ -84,6 +84,5 @@ public sealed partial class Buff : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

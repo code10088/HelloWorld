@@ -72,6 +72,5 @@ public sealed partial class ActivityConfig : Luban.BeanBase
         + "}";
     }
 }
-
 }
 

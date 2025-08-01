@@ -42,6 +42,5 @@ public sealed partial class DamageNumConfig : Luban.BeanBase
         + "}";
     }
 }
-
 }
 
