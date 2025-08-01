@@ -1,7 +1,6 @@
 fileFormatVersion: 2
 guid: 0ac31c4b597984648ac498d2c58115bd
 labels:
-- NuGetForUnity
 - RoslynAnalyzer
 PluginImporter:
   externalObjects: {}

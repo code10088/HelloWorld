@@ -84,4 +84,9 @@ MemoryPack
 	安装MemoryPack
 	只保留MemoryPack.Core MemoryPack.Generator其他全部删除
 	MemoryPack.Core anyplatform
-	MemoryPack.Generator noplatform
+	MemoryPack.Generator noplatform 添加RoslynAnalyzer标签
+	
+Nino
+	https://github.com/JasonXuDeveloper/Nino/tree/main/src/Nino.Unity packages中获取Nino.Core.dll Nino.Generator.dll
+	Nino.Core anyplatform
+	Nino.Generator noplatform 添加RoslynAnalyzer标签
