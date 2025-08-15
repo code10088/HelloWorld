@@ -24,12 +24,14 @@ public static class GameSetting
         "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
 #endif
     public static string CDNPlatform =>
-#if UNITY_WEBGL
-        $"{CDN}/WebGL";
-#elif UNITY_ANDROID
+#if UNITY_ANDROID
         $"{CDN}/Android";
 #elif UNITY_IOS
         $"{CDN}/iOS";
+#elif UNITY_WEBGL
+        $"{CDN}/WebGL";
+#else
+        string.Empty;
 #endif
     public static string CDNVersion => $"{CDNPlatform}/{Application.version}/";
 
