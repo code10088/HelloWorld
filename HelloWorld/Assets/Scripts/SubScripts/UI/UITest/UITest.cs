@@ -48,6 +48,7 @@ public class UITest : UIBase
         component.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);
         component.openTipsBtnUIButton.onClick.AddListener(OnOpenTips);
         component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
+        component.uIProcessBtnUIButton.onClick.AddListener(OpenUIProcess);
 
         //Function
         component.openSDKBtnUIButton.onClick.AddListener(SDKInit);
@@ -73,6 +74,8 @@ public class UITest : UIBase
     public override void OnEnable(params object[] param)
     {
         base.OnEnable(param);
+        EventManager.Instance.RegisterEvent(EventType.CloseUI, NextUIProcess);
+
         updateId = Updater.Instance.StartUpdate(UpdateTrigger);
         GameDebug.Log("UITest OnEnable");
     }
@@ -89,6 +92,8 @@ public class UITest : UIBase
     public override void OnDisable()
     {
         base.OnDisable();
+        EventManager.Instance.UnRegisterEvent(EventType.CloseUI, NextUIProcess);
+
         subUI.Close();
         Updater.Instance.StopUpdate(updateId);
         GameDebug.Log("UITest OnDisable");
@@ -218,6 +223,18 @@ public class UITest : UIBase
         SetSprite(component.imageUIImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
         SetSprite(component.imageUIImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
         GameDebug.Log("SetSprite");
+    }
+    private ProcessControl<UIProcessItem> UIProcess = new ProcessControl<UIProcessItem>();
+    private void OpenUIProcess()
+    {
+        UIProcess = new ProcessControl<UIProcessItem>();
+        UIProcess.Add((int)UIType.UISetting, single: false);
+        UIProcess.Add((int)UIType.UISetting, single: false);
+        UIProcess.Start();
+    }
+    private void NextUIProcess(object o)
+    {
+        if ((int)((object[])o)[0] == UIProcess.CurId) UIProcess.Next();
     }
     #endregion
 

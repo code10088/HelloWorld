@@ -83,7 +83,9 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         while (loadUI.Count > 0 && loadUI[0].State)
         {
             loadUI[0].Init();
+            var t = loadUI[0].Type;
             loadUI.RemoveAt(0);
+            EventManager.Instance.FireEvent(EventType.OpenUI, t);
         }
     }
     public void CloseUI(UIType type)
@@ -106,6 +108,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
             item.Disable();
             curUI.RemoveAt(tempIndex);
             cacheUI.Add(item);
+            EventManager.Instance.FireEvent(EventType.CloseUI, item.Type);
             return;
         }
     }

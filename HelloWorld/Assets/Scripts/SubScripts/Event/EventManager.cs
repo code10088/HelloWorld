@@ -25,10 +25,6 @@ public class EventManager : Singletion<EventManager>
             EventItem item = eventDic[eventType];
             item.Remove(function);
         }
-        else
-        {
-            GameDebug.LogError("卸载不存在事件类型");
-        }
     }
     public void FireEvent(EventType eventType, params object[] obj)
     {
@@ -36,10 +32,6 @@ public class EventManager : Singletion<EventManager>
         {
             eventDic[eventType].Parameter = obj;
             eventDic[eventType].Handle();
-        }
-        else
-        {
-            GameDebug.LogError("执行不存在事件类型");
         }
     }
     private class EventItem

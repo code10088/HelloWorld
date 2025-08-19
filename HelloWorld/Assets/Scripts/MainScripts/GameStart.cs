@@ -15,7 +15,16 @@ using TTSDK;
 
 public class GameStart : MonoSingletion<GameStart>
 {
-    private int loadId = -1;
+    private enum StartProcess
+    {
+        Init,
+        HotUpdate,
+        LoadConfig,
+        StartHotAssembly,
+    }
+
+    private ProcessControl<ProcessItem> Process = new ProcessControl<ProcessItem>();
+    private HotUpdateConfig config;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void _()
@@ -25,8 +34,18 @@ public class GameStart : MonoSingletion<GameStart>
     }
     private void __()
     {
+        Process.Add((int)StartProcess.Init, Init);
+        Process.Add((int)StartProcess.HotUpdate, HotUpdate);
+        Process.Add((int)StartProcess.LoadConfig, LoadConfig);
+        Process.Add((int)StartProcess.StartHotAssembly, StartHotAssembly);
+        Process.Start();
+    }
+
+    private void Init(int id)
+    {
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        StandaloneInputModule.SimulateMouseWithTouches();
 #if WEIXINMINIGAME
         var callback = new SetKeepScreenOnOption();
         callback.keepScreenOn = true;
@@ -36,34 +55,41 @@ public class GameStart : MonoSingletion<GameStart>
         TT.SetKeepScreenOn(true);
 #endif
         if (GameDebug.GDebug == false) GameObject.DestroyImmediate(GameObject.FindWithTag("Debug"));
-        AssetManager.Instance.Init(HotUpdate);
+        AssetManager.Instance.Init(Process.Next);
     }
-    private void HotUpdate()
+    private void HotUpdate(int id)
     {
-        HotUpdateCode.Instance.StartUpdate(LoadHotUpdateConfig);
+        HotUpdateCode.Instance.StartUpdate(Process.Next);
     }
-    private void LoadHotUpdateConfig()
+    private void LoadConfig(int id)
     {
-        AssetManager.Instance.Load<TextAsset>(ref loadId, GameSetting.HotUpdateConfigPath, LoadMetadataRes);
-    }
-    private void LoadMetadataRes(int id, Object asset)
-    {
-        TextAsset ta = asset as TextAsset;
-        var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
-        AssetManager.Instance.Unload(ref loadId);
-        AssetManager.Instance.Load(ref loadId, config.HotAssembly, LoadMetadataForAOTAssembly);
-    }
-    private void LoadMetadataForAOTAssembly(string[] path, Object[] assets)
-    {
-        for (int i = 2; i < assets.Length; i++)
+        int loadId = -1;
+        AssetManager.Instance.Load<TextAsset>(ref loadId, GameSetting.HotUpdateConfigPath, (a, b) =>
         {
-            var ta = assets[i] as TextAsset;
-            RuntimeApi.LoadMetadataForAOTAssembly(ta.bytes, HomologousImageMode.SuperSet);
-        }
-        var dll = assets[0] as TextAsset;
-        var pdb = assets[1] as TextAsset;
-        StartHotAssembly(dll.bytes, pdb.bytes);
-        AssetManager.Instance.Unload(ref loadId);
+            TextAsset ta = b as TextAsset;
+            config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
+            AssetManager.Instance.Unload(ref loadId);
+            Process.Next();
+        });
+    }
+    private void StartHotAssembly(int id)
+    {
+        int loadId = -1;
+        AssetManager.Instance.Load(ref loadId, config.HotAssembly, (a, b) =>
+        {
+            config = null;
+            for (int i = 2; i < b.Length; i++)
+            {
+                var ta = b[i] as TextAsset;
+                RuntimeApi.LoadMetadataForAOTAssembly(ta.bytes, HomologousImageMode.SuperSet);
+            }
+            var dll = b[0] as TextAsset;
+            var pdb = b[1] as TextAsset;
+            StartHotAssembly(dll.bytes, pdb.bytes);
+            AssetManager.Instance.Unload(ref loadId);
+            Process.Next();
+            Process = null;
+        });
     }
     private void StartHotAssembly(byte[] dll, byte[] pdb)
     {

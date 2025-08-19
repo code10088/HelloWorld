@@ -3,49 +3,77 @@ using UnityEngine;
 
 public class GameStart : Singletion<GameStart>
 {
+    private enum StartProcess
+    {
+        InitUIConfig,
+        OpenUIHotUpdateRes,
+        HotUpdate,
+        OpenUILoading,
+        InitConfig,
+        WarmUpShader,
+        InitSetting,
+        EnterMainScene,
+    }
+
+    private ProcessControl<ProcessItem> Process = new ProcessControl<ProcessItem>();
+
     public void Init()
     {
-        StandaloneInputModule.SimulateMouseWithTouches();
-        ConfigManager.Instance.InitSpecial("TbUIConfig", OpenUIHotUpdateRes);
+        Process.Add((int)StartProcess.InitUIConfig, InitUIConfig);
+        Process.Add((int)StartProcess.OpenUIHotUpdateRes, OpenUIHotUpdateRes);
+        Process.Add((int)StartProcess.HotUpdate, HotUpdate);
+        Process.Add((int)StartProcess.OpenUILoading, OpenUILoading);
+        Process.Add((int)StartProcess.InitConfig, InitConfig);
+        Process.Add((int)StartProcess.InitSetting, InitSetting);
+        Process.Add((int)StartProcess.WarmUpShader, WarmUpShader);
+        Process.Add((int)StartProcess.EnterMainScene, EnterMainScene);
+        Process.Start();
     }
-    private void OpenUIHotUpdateRes()
+    private void InitUIConfig(int id)
     {
-        UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, StartHotUpdateRes);
+        ConfigManager.Instance.InitSpecial("TbUIConfig", Process.Next);
     }
-    private void StartHotUpdateRes(bool success)
+    private void OpenUIHotUpdateRes(int id)
     {
-        UIHotUpdateCode.Instance.Destroy();
-        DataManager.Instance.HotUpdateResData.StartUpdate(OpenUILoading);
+        UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, a =>
+        {
+            UIHotUpdateCode.Instance.Destroy();
+            Process.Next();
+        });
     }
-    private void OpenUILoading()
+    private void HotUpdate(int id)
     {
-        UIManager.Instance.OpenUI(UIType.UISceneLoading, InitConfig);
+        DataManager.Instance.HotUpdateResData.StartUpdate(Process.Next);
     }
-    private void InitConfig(bool success)
+    private void OpenUILoading(int id)
+    {
+        UIManager.Instance.OpenUI(UIType.UISceneLoading, a => Process.Next());
+    }
+    private void InitConfig(int id)
     {
         UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
-        ConfigManager.Instance.Init(WarmUpShader);
+        ConfigManager.Instance.Init(Process.Next);
     }
-    private void WarmUpShader()
+    private void InitSetting(int id)
+    {
+        DPUtil.Init();
+        Process.Next();
+    }
+    private void WarmUpShader(int id)
     {
         int loadId = -1;
-        AssetManager.Instance.Load<ShaderVariantCollection>(ref loadId, $"{ZResConst.ResShderPath}MyShaderVariants.shadervariants", InitSetting);
+        AssetManager.Instance.Load<ShaderVariantCollection>(ref loadId, $"{ZResConst.ResShderPath}MyShaderVariants.shadervariants", (a, b) =>
+        {
+            var svc = b as ShaderVariantCollection;
+            svc.WarmUp();
+            AssetManager.Instance.Unload(ref loadId);
+            Process.Next();
+        });
     }
-    private void InitSetting(int loadId, Object asset)
+    private void EnterMainScene(int id)
     {
-        var svc = asset as ShaderVariantCollection;
-        svc.WarmUp();
-        AssetManager.Instance.Unload(ref loadId);
-
-        DPUtil.Init();
-        EnterMainScene();
-    }
-    private void EnterMainScene()
-    {
-        UIManager.Instance.OpenUI(UIType.UITest, CloseSceneLoading);
-    }
-    private void CloseSceneLoading(bool open)
-    {
-        UIManager.Instance.CloseUI(UIType.UISceneLoading);
+        UIManager.Instance.OpenUI(UIType.UITest, a => UIManager.Instance.CloseUI(UIType.UISceneLoading));
+        Process.Next();
+        Process = null;
     }
 }
