@@ -1,38 +1,26 @@
 using ProtoBuf;
 using System;
-using System.Collections.Generic;
 
 public class SocketManager : Singletion<SocketManager>
 {
-    private int uniqueId = 0;
-    private Dictionary<int, SInterface> socket = new Dictionary<int, SInterface>();
+    private SInterface socket;
     private Func<byte[], bool> deserialize;
 
     public void SetDeserialize(Func<byte[], bool> deserialize)
     {
         this.deserialize = deserialize;
     }
-    public int Create<T>(string ip, ushort port, uint connectId) where T : SInterface, new()
+    public void Create<T>(string ip, ushort port, uint connectId) where T : SInterface, new()
     {
-        T s = new T();
-        s.Init(ip, port, connectId, deserialize);
-        socket.Add(uniqueId, s);
-        return uniqueId++;
+        socket = new T();
+        socket.Init(ip, port, connectId, deserialize);
     }
-    public void Disconnect(int id)
+    public void Disconnect()
     {
-        if (socket.TryGetValue(id, out SInterface s))
-        {
-            s.Disconnect();
-            socket.Remove(id);
-        }
+        socket.Disconnect();
     }
-    public void Send(ushort id, IExtensible msg, int sid = 0)
+    public void Send(ushort id, IExtensible msg)
     {
-        socket[sid].Send(id, msg);
-    }
-    public bool Deserialize(byte[] bytes)
-    {
-        return deserialize.Invoke(bytes);
+        socket.Send(id, msg);
     }
 }
