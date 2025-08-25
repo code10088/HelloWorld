@@ -22,7 +22,7 @@ public static class TestCMD
             };
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if (!assembly.IsDynamic) parameters.ReferencedAssemblies.Add(assembly.Location);
+                if (!assembly.IsDynamic && !assembly.Location.Contains("mscorlib")) parameters.ReferencedAssemblies.Add(assembly.Location);
             }
         }
 

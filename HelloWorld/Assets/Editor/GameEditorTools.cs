@@ -257,7 +257,6 @@ public class GameEditorTools
     [MenuItem("Tools/CopyTestClass", false, (int)ToolsMenuSort.CopyTestClass)]
     static void CopyTestClass()
     {
-        var str = File.ReadAllText($"{Application.dataPath}/Scripts/SubScripts/Test/TestClass.cs");
-        EditorGUIUtility.systemCopyBuffer = Regex.Replace(str, @"\s+", " ");
+        EditorGUIUtility.systemCopyBuffer = Regex.Replace(EditorGUIUtility.systemCopyBuffer, @"\s+", " ");
     }
 }
