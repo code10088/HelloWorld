@@ -32,7 +32,7 @@ public class BuildEditor
         BuildBundles();
         BuildPlayer();
     }
-    [MenuItem("Tools/BuildBundles", false, (int)ToolsMenuSort.BuildBundles)]
+    [MenuItem("Tools/Build/BuildBundles", false, (int)ToolsMenuSort.BuildBundles)]
     public static void BuildBundles()
     {
         CheckArgs();
@@ -97,7 +97,7 @@ public class BuildEditor
         AssetDatabase.Refresh();
     }
 
-    [MenuItem("Tools/HybridCLRGenerate", false, (int)ToolsMenuSort.HybridCLRGenerate)]
+    [MenuItem("Tools/Build/HybridCLRGenerate", false, (int)ToolsMenuSort.HybridCLRGenerate)]
     public static void HybridCLRGenerate()
     {
         try
@@ -127,7 +127,7 @@ public class BuildEditor
         }
     }
 
-    [MenuItem("Tools/YooAssetBuild", false, (int)ToolsMenuSort.YooAssetBuild)]
+    [MenuItem("Tools/Build/YooAssetBuild", false, (int)ToolsMenuSort.YooAssetBuild)]
     public static void YooAssetBuild()
     {
         CheckAppVersion();
@@ -182,7 +182,7 @@ public class BuildEditor
         }
     }
 
-    [MenuItem("Tools/UploadBundles2CDN", false, (int)ToolsMenuSort.UploadBundles2CDN)]
+    [MenuItem("Tools/Build/UploadBundles2CDN", false, (int)ToolsMenuSort.UploadBundles2CDN)]
     public static void UploadBundles2CDN()
     {
         CheckAppVersion();
@@ -238,7 +238,7 @@ public class BuildEditor
         }
     }
 
-    [MenuItem("Tools/BuildProject", false, (int)ToolsMenuSort.ExportProject)]
+    [MenuItem("Tools/Build/BuildProject", false, (int)ToolsMenuSort.ExportProject)]
     public static void BuildPlayer()
     {
 #if UNITY_ANDROID

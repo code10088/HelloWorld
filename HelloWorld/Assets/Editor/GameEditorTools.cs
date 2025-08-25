@@ -7,6 +7,7 @@ using Unity.Collections;
 using UnityEditor.Build;
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 public class GameEditorTools
 {
@@ -251,5 +252,12 @@ public class GameEditorTools
     static bool ValidateLeakDetectionEnabledWithStackTrace()
     {
         return NativeLeakDetection.Mode != NativeLeakDetectionMode.EnabledWithStackTrace;
+    }
+
+    [MenuItem("Tools/CopyTestClass", false, (int)ToolsMenuSort.CopyTestClass)]
+    static void CopyTestClass()
+    {
+        var str = File.ReadAllText($"{Application.dataPath}/Scripts/SubScripts/Test/TestClass.cs");
+        EditorGUIUtility.systemCopyBuffer = Regex.Replace(str, @"\s+", " ");
     }
 }
