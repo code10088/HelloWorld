@@ -18,6 +18,7 @@ public class SBase
         public ushort id;
         public IExtensible msg;
     }
+    [ProtoContract]
     public class CS_Heart : IExtensible
     {
         private IExtension __pbn__extensionData;
@@ -91,33 +92,42 @@ public class SBase
         SendItem item = new SendItem() { id = id, msg = msg };
         lock (sendQueue) sendQueue.Enqueue(item);
     }
+    protected byte[] Serialize(ushort id, IExtensible msg)
+    {
+        return Serialize(id, msg, false, out int length);
+    }
+    protected byte[] Serialize(ushort id, IExtensible msg, out int length)
+    {
+        return Serialize(id, msg, true, out length);
+    }
     /// <summary>
     /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
     /// </summary>
-    protected byte[] Serialize(ushort id, IExtensible msg)
+    private byte[] Serialize(ushort id, IExtensible msg, bool rent, out int length)
     {
         using (MemoryStream ms = new MemoryStream())
         {
             Serializer.Serialize(ms, msg);
-            int l = (int)ms.Length;
-            byte[] result = bytePool.Rent(6 + l);
+            length = 6 + (int)ms.Length;
+            byte[] result = rent ? bytePool.Rent(length) : new byte[length];
             //消息长度
-            byte[] temp = BitConverter.GetBytes(2 + l);
+            byte[] temp = BitConverter.GetBytes(length - 4);
             Buffer.BlockCopy(temp, 0, result, 0, 4);
             //消息ID
             temp = BitConverter.GetBytes(id);
             Buffer.BlockCopy(temp, 0, result, 4, 2);
             //消息内容
-            ms.Read(result, 6, l);
+            ms.Read(result, 6, length - 6);
             return result;
         }
     }
     #endregion
 
     #region 接收
-    protected bool Deserialize(byte[] bytes)
+    protected bool Deserialize(byte[] bytes, int length = 0)
     {
-        var temp = bytes.AsMemory();
+        if (length == 0) length = bytes.Length;
+        var temp = bytes.AsMemory(0, length);
         var id = BitConverter.ToUInt16(temp.Span.Slice(0, 2));
         var b = deserialize(id, temp.Slice(2));
         RefreshDelay2(id);

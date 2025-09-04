@@ -98,14 +98,12 @@ public class SWeb : SBase
     {
         if (connectMark == false)
         {
-            bytePool.Return(sendBuffer);
             return;
         }
         if (result)
         {
             sendMark = true;
             sendRetry = 0;
-            bytePool.Return(sendBuffer);
             return;
         }
         if (sendRetry++ < 1)
@@ -113,7 +111,6 @@ public class SWeb : SBase
             socket.SendAsync(sendBuffer, SendCallback);
             return;
         }
-        bytePool.Return(sendBuffer);
         Reconnect();
     }
     #endregion

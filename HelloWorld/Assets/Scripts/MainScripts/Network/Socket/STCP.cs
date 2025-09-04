@@ -111,15 +111,16 @@ public class STCP : SBase
         {
             SendItem item;
             lock (sendQueue) item = sendQueue.Dequeue();
-            Send(Serialize(item.id, item.msg));
+            var bytes = Serialize(item.id, item.msg, out int length);
+            Send(bytes, length);
         }
     }
-    private async Task Send(byte[] bytes)
+    private async Task Send(byte[] bytes, int length)
     {
         int count = 0;
         try
         {
-            count = await socket.SendAsync(bytes.AsMemory(), SocketFlags.None);
+            count = await socket.SendAsync(bytes.AsMemory(0, length), SocketFlags.None);
         }
         catch
         {
@@ -130,7 +131,7 @@ public class STCP : SBase
             bytePool.Return(bytes);
             return;
         }
-        if (count == bytes.Length)
+        if (count == length)
         {
             sendRetry = 0;
             bytePool.Return(bytes);
@@ -138,7 +139,7 @@ public class STCP : SBase
         }
         if (sendRetry++ < 1)
         {
-            Send(bytes);
+            Send(bytes, length);
             return;
         }
         bytePool.Return(bytes);
@@ -218,7 +219,7 @@ public class STCP : SBase
                     headPos = 0;
                     bodyPos = 0;
                     bodyLength = 0;
-                    bool b = Deserialize(bodyBuffer);
+                    bool b = Deserialize(bodyBuffer, bodyLength);
                     bytePool.Return(bodyBuffer);
                     bodyBuffer = null;
                     if (!b) return false;

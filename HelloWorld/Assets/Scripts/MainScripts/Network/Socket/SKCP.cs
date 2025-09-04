@@ -118,8 +118,8 @@ public class SKCP : SBase
         {
             SendItem item;
             lock (sendQueue) item = sendQueue.Dequeue();
-            var bytes = Serialize(item.id, item.msg);
-            kcp.Send(bytes);
+            var bytes = Serialize(item.id, item.msg, out int length);
+            kcp.Send(bytes.AsSpan(0, length));
             bytePool.Return(bytes);
         }
         if (connectMark)
@@ -215,7 +215,7 @@ public class SKCP : SBase
             }
             else
             {
-                bool b = Deserialize(temp);
+                bool b = Deserialize(temp, size);
                 bytePool.Return(temp);
                 if (!b) return false;
             }
