@@ -1,6 +1,5 @@
 ﻿using ProtoBuf;
 using System.Collections.Generic;
-using UnityEngine;
 
 public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
 {
@@ -9,7 +8,13 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
         public ushort id;
         public IExtensible msg;
     }
+    class SocketEventItem
+    {
+        public int type;
+        public int param;
+    }
     private Queue<NetMsgItem> msgPool = new Queue<NetMsgItem>();
+    private Queue<SocketEventItem> socketevent = new Queue<SocketEventItem>();
 
     public void Init()
     {
@@ -18,26 +23,37 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
     }
     private void HandleSocketEvent(int type, int param)
     {
-        var temp = (SocketEvent)type;
-        switch (temp)
+        socketevent.Enqueue(new SocketEventItem() { type = type, param = param });
+    }
+    public void Add(ushort id, IExtensible msg)
+    {
+        lock (msgPool) msgPool.Enqueue(new NetMsgItem() { id = id, msg = msg });
+    }
+    private void Update(float t)
+    {
+        while (msgPool.Count > 0)
         {
-            case SocketEvent.NetworkChange:
-                OnNetworkChange();
-                break;
-            case SocketEvent.ConnectError:
-                OnConnectError();
-                break;
-            case SocketEvent.RefreshDelay:
-                OnRefreshDelay(param);
-                break;
+            lock (msgPool)
+            {
+                NetMsgItem msg = msgPool.Dequeue();
+                Dispatch(msg);
+            }
+        }
+        while (socketevent.Count > 0)
+        {
+            var temp = socketevent.Dequeue();
+            switch ((SocketEvent)temp.type)
+            {
+                case SocketEvent.ConnectError:
+                    OnConnectError();
+                    break;
+                case SocketEvent.RefreshDelay:
+                    OnRefreshDelay(temp.param);
+                    break;
+            }
         }
     }
-    private void OnNetworkChange()
-    {
-        var temp = Application.internetReachability;
-        if (temp == NetworkReachability.NotReachable) OnConnectError();
-        else EventManager.Instance.FireEvent(EventType.NetworkChange, temp);
-    }
+
     private void OnConnectError()
     {
         UICommonBoxParam param = new UICommonBoxParam();
@@ -52,27 +68,6 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
         EventManager.Instance.FireEvent(EventType.RefreshDelay, delay);
     }
 
-    public void Add(ushort id, IExtensible msg)
-    {
-        lock (msgPool)
-        {
-            var item = new NetMsgItem();
-            item.id = id;
-            item.msg = msg;
-            msgPool.Enqueue(item);
-        }
-    }
-    private void Update(float t)
-    {
-        while (msgPool.Count > 0)
-        {
-            lock (msgPool)
-            {
-                NetMsgItem msg = msgPool.Dequeue();
-                Dispatch(msg);
-            }
-        }
-    }
     private void Dispatch(NetMsgItem msg)
     {
         switch (msg.id)

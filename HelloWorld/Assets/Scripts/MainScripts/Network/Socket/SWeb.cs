@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using WebSocketSharp;
 
 public class SWeb : SBase
@@ -22,11 +23,12 @@ public class SWeb : SBase
     }
 
     #region 连接
-    public override void Connect()
+    private void Connect()
     {
         connectMark = false;
-        if (CheckNetworkNotReachable())
+        if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
         if (socket == null)
@@ -36,17 +38,20 @@ public class SWeb : SBase
             socket.OnMessage += Receive;
             socket.OnError += Error;
         }
-        else
+        try
         {
-            socket.Close();
+            socket.ConnectAsync();
         }
-        socket.Connect();
+        catch
+        {
+        }
     }
     private void Reconnect()
     {
         connectRetry++;
         if (connectRetry == 1)
         {
+            socket.Close();
             Connect();
             return;
         }
@@ -58,6 +63,7 @@ public class SWeb : SBase
             return;
         }
         socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+        Close();
     }
     private void ConnectCallback(object sender, EventArgs e)
     {

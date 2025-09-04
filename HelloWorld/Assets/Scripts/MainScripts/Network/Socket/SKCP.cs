@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Net.Sockets.Kcp;
 using System.Runtime.InteropServices;
@@ -26,10 +27,10 @@ public class SKCP : SBase
         kcpSend = new KcpSend(Send);
         thread = new Thread(Update);
         thread.Start();
-        Connect();
     }
     private void Update()
     {
+        Connect();
         while (threadMark)
         {
             Send();
@@ -43,11 +44,12 @@ public class SKCP : SBase
     /// <summary>
     /// UDP无连接协议，BeginConnect仅记录目标地址和端口
     /// </summary>
-    public override void Connect()
+    private void Connect()
     {
         connectMark = false;
-        if (CheckNetworkNotReachable())
+        if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
         if (socket == null)
@@ -86,6 +88,7 @@ public class SKCP : SBase
             return;
         }
         socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+        Close();
     }
     public override void Close()
     {

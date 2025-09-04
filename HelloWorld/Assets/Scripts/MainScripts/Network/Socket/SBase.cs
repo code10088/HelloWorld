@@ -7,7 +7,6 @@ using UnityEngine;
 
 public enum SocketEvent
 {
-    NetworkChange,
     ConnectError,
     RefreshDelay,
 }
@@ -48,7 +47,7 @@ public class SBase
     private bool heartMark = true;
     private float heartTimer = 0;
     protected int heartInterval = 10000;
-    private ushort[] record1 = new ushort[10];
+    private int[] record1 = new int[10];
     private long[] record2 = new long[10];
     private int recordIndex = 0;
     private CS_Heart heart = new CS_Heart();
@@ -60,17 +59,6 @@ public class SBase
     }
 
     #region 连接
-    public virtual void Connect()
-    {
-
-    }
-    protected bool CheckNetworkNotReachable()
-    {
-        var temp = Application.internetReachability;
-        if (temp != reach) socketevent.Invoke((int)SocketEvent.NetworkChange, 0);
-        reach = temp;
-        return temp == NetworkReachability.NotReachable;
-    }
     public virtual void Close()
     {
         connectMark = false;
@@ -124,9 +112,9 @@ public class SBase
     #endregion
 
     #region 接收
-    protected bool Deserialize(byte[] bytes, int length = 0)
+    protected bool Deserialize(byte[] bytes, int length = -1)
     {
-        if (length == 0) length = bytes.Length;
+        if (length < 0) length = bytes.Length;
         var temp = bytes.AsMemory(0, length);
         var id = BitConverter.ToUInt16(temp.Span.Slice(0, 2));
         var b = deserialize(id, temp.Slice(2));
@@ -158,7 +146,7 @@ public class SBase
     {
         var index = Array.IndexOf(record1, id - 10000);
         if (index < 0) return;
-        record1[index] = 0;
+        record1[index] = -1;
         var delay = (DateTime.UtcNow.Ticks - record2[index]) / 10000;
         heartTimer = 0;
         heartInterval = delay > 100 ? 2000 : 10000;

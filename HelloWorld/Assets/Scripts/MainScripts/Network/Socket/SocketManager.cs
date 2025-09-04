@@ -3,6 +3,9 @@ using System;
 
 public class SocketManager : Singletion<SocketManager>
 {
+    private string ip;
+    private ushort port;
+    private uint connectId;
     private SBase socket;
     private Func<ushort, Memory<byte>, bool> deserialize;
     private Action<int, int> socketevent;
@@ -17,6 +20,9 @@ public class SocketManager : Singletion<SocketManager>
     /// </summary>
     public void Create<T>(string ip, ushort port, uint connectId) where T : SBase, new()
     {
+        this.ip = ip;
+        this.port = port;
+        this.connectId = connectId;
         socket = new T();
         socket.Init(ip, port, connectId, deserialize, socketevent);
     }
@@ -29,7 +35,7 @@ public class SocketManager : Singletion<SocketManager>
     }
     public void Connect()
     {
-        socket.Connect();
+        socket.Init(ip, port, connectId, deserialize, socketevent);
     }
     public void Send(ushort id, IExtensible msg)
     {

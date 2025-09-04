@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,10 +26,10 @@ public class STCP : SBase
         endPoint = new IPEndPoint(address, port);
         thread = new Thread(Update);
         thread.Start();
-        Connect();
     }
     private void Update()
     {
+        Connect();
         while (threadMark)
         {
             Send();
@@ -39,11 +40,12 @@ public class STCP : SBase
     }
 
     #region 连接
-    public override void Connect()
+    private void Connect()
     {
         connectMark = false;
-        if (CheckNetworkNotReachable())
+        if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
         if (socket == null)
@@ -52,11 +54,13 @@ public class STCP : SBase
             socket.SendTimeout = heartInterval;
             socket.ReceiveTimeout = heartInterval;
         }
-        else
+        try
         {
-            socket.Disconnect(true);
+            socket.Connect(endPoint);
         }
-        socket.Connect(endPoint);
+        catch
+        {
+        }
         if (socket.Connected)
         {
             connectMark = true;
@@ -75,18 +79,20 @@ public class STCP : SBase
         connectRetry++;
         if (connectRetry == 1)
         {
+            try { socket.Disconnect(true); }
+            catch { }
             Connect();
             return;
         }
         if (connectRetry == 2)
         {
-            socket.Disconnect(false);
             socket.Close();
             socket = null;
             Connect();
             return;
         }
         socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+        Close();
     }
     public override void Close()
     {
@@ -218,10 +224,10 @@ public class STCP : SBase
                 {
                     headPos = 0;
                     bodyPos = 0;
-                    bodyLength = 0;
                     bool b = Deserialize(bodyBuffer, bodyLength);
                     bytePool.Return(bodyBuffer);
                     bodyBuffer = null;
+                    bodyLength = 0;
                     if (!b) return false;
                 }
             }
