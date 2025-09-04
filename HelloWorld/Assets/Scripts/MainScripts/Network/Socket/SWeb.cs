@@ -15,13 +15,14 @@ public class SWeb : SBase
     public override void Init(string ip, ushort port, uint connectId, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
     {
         base.Init(ip, port, connectId, deserialize, socketevent);
-        this.ip = $"{ip}:{port}";
+        this.ip = $"{ip}:{port}/{connectId}";
         updateId = Updater.Instance.StartUpdate(Update);
         Connect();
     }
     private void Update(float t)
     {
         Send();
+        UpdateHeart(t * 1000);
     }
 
     #region 连接
@@ -40,13 +41,12 @@ public class SWeb : SBase
             socket.OnMessage += Receive;
             socket.OnError += Error;
         }
-        try
-        {
-            socket.ConnectAsync();
-        }
-        catch
-        {
-        }
+        socket.ConnectAsync();//连接失败不会调用ConnectCallback
+        connectMark = true;
+        sendMark = true;
+        sendRetry = 0;
+        receiveMark = true;
+        receiveRetry = 0;
     }
     private void Reconnect()
     {
@@ -96,10 +96,10 @@ public class SWeb : SBase
     {
         if (sendMark && sendQueue.Count > 0)
         {
+            sendMark = false;
             var item = sendQueue.Dequeue();
             sendBuffer = Serialize(item.id, item.msg);
-            socket.SendAsync(sendBuffer, SendCallback);
-            sendMark = false;
+            Send(sendBuffer);
         }
     }
     /// <summary>
@@ -120,6 +120,17 @@ public class SWeb : SBase
             return result;
         }
     }
+    private void Send(byte[] bytes)
+    {
+        try
+        {
+            socket.SendAsync(sendBuffer, SendCallback);
+        }
+        catch
+        {
+            SendCallback(false);
+        }
+    }
     private void SendCallback(bool result)
     {
         if (connectMark == false)
@@ -134,7 +145,7 @@ public class SWeb : SBase
         }
         if (sendRetry++ < 1)
         {
-            socket.SendAsync(sendBuffer, SendCallback);
+            Send(sendBuffer);
             return;
         }
         Reconnect();
