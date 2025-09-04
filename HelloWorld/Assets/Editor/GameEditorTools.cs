@@ -93,7 +93,7 @@ public class GameEditorTools
             var temps = temp.Split('=', StringSplitOptions.RemoveEmptyEntries);
             temp = temps[1].Replace('.', '_');
             str1 += WriteLine(1, $"public const ushort {temp} = {temps[0]};");
-            if (int.Parse(temps[0]) >= 10000) str2 += WriteLine(4, $"case NetMsgId.{temp}: msg = Serializer.Deserialize<{temps[1]}>(mm); break;");
+            if (int.Parse(temps[0]) >= 10000) str2 += WriteLine(4, $"case NetMsgId.{temp}: msg = Serializer.Deserialize<{temps[1]}>(memory); break;");
         }
         string result = string.Empty;
         result += WriteLine(0, "using ProtoBuf;");
