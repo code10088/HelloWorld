@@ -2,20 +2,20 @@ using ProtoBuf;
 using System;
 public class NetMsgId
 {
-    public const ushort ProtoTest_Person = 10001;
+    public const ushort CSHeart = 0;
+    public const ushort ProtoTest_Person = 1;
+    public const ushort SCHeart = 10000;
 }
 public partial class NetMsgDispatch
 {
-    public bool Deserialize(byte[] bytes)
+    public bool Deserialize(ushort id, Memory<byte> memory)
     {
         try
         {
-            var id = BitConverter.ToUInt16(bytes, 0);
-            var mm = new Memory<byte>(bytes, 2, bytes.Length - 2);
             IExtensible msg = null;
             switch (id)
             {
-                case NetMsgId.ProtoTest_Person: msg = Serializer.Deserialize<ProtoTest.Person>(mm); break;
+                case NetMsgId.SCHeart: msg = Serializer.Deserialize<SCHeart>(memory); break;
             }
             Add(id, msg);
             return true;

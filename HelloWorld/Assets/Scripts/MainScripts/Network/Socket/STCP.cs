@@ -1,23 +1,16 @@
-﻿using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
-public class STCP : SInterface
+public class STCP : SBase
 {
     private EndPoint endPoint;
     private Socket socket;
     private Thread thread;
-    private Func<byte[], bool> deserialize;
-    private Queue<TcpSendItem> sendPool = new Queue<TcpSendItem>();
+    private bool threadMark = true;
 
-    private bool connectMark = false;
-    private bool sendMark = false;
-    private bool receiveMark = false;
-    private byte[] receiveBuffer = new byte[1024];
     private byte[] headBuffer = new byte[4];
     private byte[] bodyBuffer;
     private int headPos = 0;
@@ -25,54 +18,85 @@ public class STCP : SInterface
     private int headLength = 4;
     private int bodyLength = 0;
 
-    public void Init(string ip, ushort port, uint connectId, Func<byte[], bool> deserialize)
+    public override void Init(string ip, ushort port, uint connectId, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
     {
+        base.Init(ip, port, connectId, deserialize, socketevent);
         IPAddress address = IPAddress.Parse(ip);
         endPoint = new IPEndPoint(address, port);
-        this.deserialize = deserialize;
+        thread = new Thread(Update);
+        thread.Start();
         Connect();
+    }
+    private void Update()
+    {
+        while (threadMark)
+        {
+            Send();
+            Receive();
+            UpdateHeart(GameSetting.updateTimeSliceMS);
+            Thread.Sleep(GameSetting.updateTimeSliceMS);
+        }
     }
 
     #region 连接
-    private void Connect()
+    public override void Connect()
     {
-        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        socket.BeginConnect(endPoint, ConnectCallback, null);
-    }
-    private void ConnectCallback(IAsyncResult ar)
-    {
-        socket.EndConnect(ar);
-        if (ar.IsCompleted)
+        connectMark = false;
+        if (CheckNetworkNotReachable())
         {
-            connectMark = true;
-            sendMark = true;
-            receiveMark = true;
-            thread = new Thread(Handle);
-            thread.Start();
+            return;
+        }
+        if (socket == null)
+        {
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.SendTimeout = heartInterval;
+            socket.ReceiveTimeout = heartInterval;
         }
         else
         {
-            Reconect();
+            socket.Disconnect(true);
+        }
+        socket.Connect(endPoint);
+        if (socket.Connected)
+        {
+            connectMark = true;
+            connectRetry = 0;
+            sendRetry = 0;
+            receiveMark = true;
+            receiveRetry = 0;
+        }
+        else
+        {
+            Reconnect();
         }
     }
-    /// <summary>
-    /// 断线重连
-    /// </summary>
-    private void Reconect()
+    private void Reconnect()
     {
-        Disconnect();
-        Connect();
+        connectRetry++;
+        if (connectRetry == 1)
+        {
+            Connect();
+            return;
+        }
+        if (connectRetry == 2)
+        {
+            socket.Disconnect(false);
+            socket.Close();
+            socket = null;
+            Connect();
+            return;
+        }
+        socketevent.Invoke((int)SocketEvent.ConnectError, 0);
     }
-    public void Disconnect()
+    public override void Close()
     {
-        connectMark = false;//会影响线程中断
+        base.Close();
+        threadMark = false;
         thread?.Join();
         socket.Disconnect(false);
         socket.Close();
         socket = null;
-        sendPool.Clear();
-        sendMark = false;
-        receiveMark = false;
+        if (bodyBuffer != null) bytePool.Return(bodyBuffer);
         bodyBuffer = null;
         headPos = 0;
         bodyPos = 0;
@@ -80,79 +104,83 @@ public class STCP : SInterface
     }
     #endregion
 
-    private void Handle()
-    {
-        while (connectMark)
-        {
-            Send();
-            Receive();
-            Thread.Sleep(GameSetting.updateTimeSliceMS);
-        }
-    }
-
     #region 发送
-    class TcpSendItem
-    {
-        public ushort id;
-        public IExtensible msg;
-    }
-    public void Send(ushort id, IExtensible msg)
-    {
-        TcpSendItem tsi = new TcpSendItem() { id = id, msg = msg };
-        lock (sendPool) sendPool.Enqueue(tsi);
-    }
     private void Send()
     {
-        if (!sendMark || sendPool.Count == 0) return;
-        TcpSendItem tsi;
-        lock (sendPool) tsi = sendPool.Dequeue();
-        byte[] bytes = Serialize(tsi.id, tsi.msg);
-        socket.BeginSend(bytes, 0, bytes.Length, SocketFlags.None, SendCallback, null);
-        sendMark = false;
-    }
-    private void SendCallback(IAsyncResult ar)
-    {
-        socket.EndSend(ar);
-        sendMark = true;
-    }
-    /// <summary>
-    /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
-    /// </summary>
-    private byte[] Serialize(ushort id, IExtensible msg)
-    {
-        using (MemoryStream ms = new MemoryStream())
+        while (connectMark && sendQueue.Count > 0)
         {
-            Serializer.Serialize(ms, msg);
-            byte[] source = ms.ToArray();
-            int l = source.Length;
-            byte[] result = new byte[6 + l];
-            //消息长度
-            byte[] temp = BitConverter.GetBytes(2 + l);
-            Buffer.BlockCopy(temp, 0, result, 0, 4);
-            //消息ID
-            temp = BitConverter.GetBytes(id);
-            Buffer.BlockCopy(temp, 0, result, 4, 2);
-            //消息内容
-            Buffer.BlockCopy(source, 0, result, 6, l);
-            return result;
+            SendItem item;
+            lock (sendQueue) item = sendQueue.Dequeue();
+            Send(Serialize(item.id, item.msg));
         }
+    }
+    private async Task Send(byte[] bytes)
+    {
+        int count = 0;
+        try
+        {
+            count = await socket.SendAsync(bytes.AsMemory(), SocketFlags.None);
+        }
+        catch
+        {
+            count = -1;
+        }
+        if (connectMark == false)
+        {
+            bytePool.Return(bytes);
+            return;
+        }
+        if (count == bytes.Length)
+        {
+            sendRetry = 0;
+            bytePool.Return(bytes);
+            return;
+        }
+        if (sendRetry++ < 1)
+        {
+            Send(bytes);
+            return;
+        }
+        bytePool.Return(bytes);
+        Reconnect();
     }
     #endregion
 
     #region 接收
-    private void Receive()
+    private async Task Receive()
     {
-        if (!receiveMark) return;
-        socket.BeginReceive(receiveBuffer, 0, receiveBuffer.Length, SocketFlags.None, ReceiveCallback, null);
+        if (receiveMark == false)
+        {
+            return;
+        }
         receiveMark = false;
+        int count = 0;
+        try
+        {
+            count = await socket.ReceiveAsync(receiveBuffer.AsMemory(), SocketFlags.None);
+        }
+        catch
+        {
+            count = -1;
+        }
+        if (connectMark == false)
+        {
+            return;
+        }
+        if (Deserialize(count))
+        {
+            receiveRetry = 0;
+            receiveMark = true;
+            return;
+        }
+        if (receiveRetry++ < 1)
+        {
+            receiveMark = true;
+            return;
+        }
+        Reconnect();
     }
-    private void ReceiveCallback(IAsyncResult ar)
-    {
-        int receiveLength = socket.EndReceive(ar);
-        if (receiveLength > 0) Parse(receiveLength);
-        receiveMark = true;
-    }
-    private void Parse(int receiveLength)
+    private bool Deserialize(int receiveLength)
     {
         int receivePos = 0;
         while (receivePos < receiveLength)
@@ -166,16 +194,16 @@ public class STCP : SInterface
                 if (headPos == headLength)
                 {
                     bodyLength = BitConverter.ToInt32(headBuffer, 0);
-                    if (bodyLength >= 0 && bodyLength <= 0x100000)
+                    if (bodyLength >= 0 && bodyLength <= 0x2800)
                     {
-                        bodyBuffer = new byte[bodyLength];
+                        bodyBuffer = bytePool.Rent(bodyLength);
                     }
                     else
                     {
                         headPos = 0;
                         bodyPos = 0;
                         bodyLength = 0;
-                        return;
+                        return false;
                     }
                 }
             }
@@ -190,10 +218,14 @@ public class STCP : SInterface
                     headPos = 0;
                     bodyPos = 0;
                     bodyLength = 0;
-                    if (!deserialize(bodyBuffer)) return;
+                    bool b = Deserialize(bodyBuffer);
+                    bytePool.Return(bodyBuffer);
+                    bodyBuffer = null;
+                    if (!b) return false;
                 }
             }
         }
+        return true;
     }
     #endregion
 }

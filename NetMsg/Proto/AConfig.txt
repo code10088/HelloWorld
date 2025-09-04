@@ -1,2 +1,5 @@
 //Id=(Namespace.)CalssName
-10001=ProtoTest.Person
+0=CSHeart
+1=ProtoTest.Person
+
+10000=SCHeart

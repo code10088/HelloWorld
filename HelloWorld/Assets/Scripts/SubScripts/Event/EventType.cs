@@ -3,6 +3,8 @@
     Test,
     OpenUI,
     CloseUI,
+    NetworkChange,
+    RefreshDelay,
     SetSceneLoadingBg,
     SetSceneLoadingProgress,
     RefreshGuide,

@@ -89,11 +89,11 @@ public class GameEditorTools
         for (int i = 0; i < lines.Length; i++)
         {
             string temp = lines[i];
-            if (temp.StartsWith("//")) continue;
+            if (string.IsNullOrEmpty(temp) || temp.StartsWith("//")) continue;
             var temps = temp.Split('=', StringSplitOptions.RemoveEmptyEntries);
             temp = temps[1].Replace('.', '_');
             str1 += WriteLine(1, $"public const ushort {temp} = {temps[0]};");
-            if (int.Parse(temps[0]) > 10000) str2 += WriteLine(4, $"case NetMsgId.{temp}: msg = Serializer.Deserialize<{temps[1]}>(mm); break;");
+            if (int.Parse(temps[0]) >= 10000) str2 += WriteLine(4, $"case NetMsgId.{temp}: msg = Serializer.Deserialize<{temps[1]}>(mm); break;");
         }
         string result = string.Empty;
         result += WriteLine(0, "using ProtoBuf;");
@@ -104,12 +104,10 @@ public class GameEditorTools
         result += WriteLine(0, "}");
         result += WriteLine(0, "public partial class NetMsgDispatch");
         result += WriteLine(0, "{");
-        result += WriteLine(1, "public bool Deserialize(byte[] bytes)");
+        result += WriteLine(1, "public bool Deserialize(ushort id, Memory<byte> memory)");
         result += WriteLine(1, "{");
         result += WriteLine(2, "try");
         result += WriteLine(2, "{");
-        result += WriteLine(3, "var id = BitConverter.ToUInt16(bytes, 0);");
-        result += WriteLine(3, "var mm = new Memory<byte>(bytes, 2, bytes.Length - 2);");
         result += WriteLine(3, "IExtensible msg = null;");
         result += WriteLine(3, "switch (id)");
         result += WriteLine(3, "{");
