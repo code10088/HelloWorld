@@ -2,7 +2,6 @@
 using System;
 using System.Buffers;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public enum SocketEvent
@@ -80,41 +79,11 @@ public class SBase
         SendItem item = new SendItem() { id = id, msg = msg };
         lock (sendQueue) sendQueue.Enqueue(item);
     }
-    protected byte[] Serialize(ushort id, IExtensible msg)
-    {
-        return Serialize(id, msg, false, out int length);
-    }
-    protected byte[] Serialize(ushort id, IExtensible msg, out int length)
-    {
-        return Serialize(id, msg, true, out length);
-    }
-    /// <summary>
-    /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
-    /// </summary>
-    private byte[] Serialize(ushort id, IExtensible msg, bool rent, out int length)
-    {
-        using (MemoryStream ms = new MemoryStream())
-        {
-            Serializer.Serialize(ms, msg);
-            length = 6 + (int)ms.Length;
-            byte[] result = rent ? bytePool.Rent(length) : new byte[length];
-            //消息长度
-            byte[] temp = BitConverter.GetBytes(length - 4);
-            Buffer.BlockCopy(temp, 0, result, 0, 4);
-            //消息ID
-            temp = BitConverter.GetBytes(id);
-            Buffer.BlockCopy(temp, 0, result, 4, 2);
-            //消息内容
-            ms.Read(result, 6, length - 6);
-            return result;
-        }
-    }
     #endregion
 
     #region 接收
-    protected bool Deserialize(byte[] bytes, int length = -1)
+    protected bool Deserialize(byte[] bytes, int length)
     {
-        if (length < 0) length = bytes.Length;
         var temp = bytes.AsMemory(0, length);
         var id = BitConverter.ToUInt16(temp.Span.Slice(0, 2));
         var b = deserialize(id, temp.Slice(2));

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
+using System.IO;
 using System.Net.NetworkInformation;
 using WebSocketSharp;
 
@@ -74,7 +76,7 @@ public class SWeb : SBase
         receiveMark = true;
         receiveRetry = 0;
     }
-    private void Error(object sender, ErrorEventArgs error)
+    private void Error(object sender, WebSocketSharp.ErrorEventArgs error)
     {
         GameDebug.LogError(error.Message);
         Reconnect();
@@ -98,6 +100,24 @@ public class SWeb : SBase
             sendBuffer = Serialize(item.id, item.msg);
             socket.SendAsync(sendBuffer, SendCallback);
             sendMark = false;
+        }
+    }
+    /// <summary>
+    /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
+    /// </summary>
+    private byte[] Serialize(ushort id, IExtensible msg)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            Serializer.Serialize(ms, msg);
+            int length = 2 + (int)ms.Length;
+            byte[] result = new byte[length];
+            //消息ID
+            byte[] temp = BitConverter.GetBytes(id);
+            Buffer.BlockCopy(temp, 0, result, 0, 2);
+            //消息内容
+            ms.Read(result, 2, length - 2);
+            return result;
         }
     }
     private void SendCallback(bool result)
@@ -128,7 +148,7 @@ public class SWeb : SBase
         {
             return;
         }
-        if (Deserialize(message.RawData))
+        if (Deserialize(message.RawData, message.RawData.Length))
         {
             receiveRetry = 0;
             receiveMark = true;

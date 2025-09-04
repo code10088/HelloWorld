@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
+using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -25,6 +27,7 @@ public class STCP : SBase
         IPAddress address = IPAddress.Parse(ip);
         endPoint = new IPEndPoint(address, port);
         thread = new Thread(Update);
+        threadMark = true;
         thread.Start();
     }
     private void Update()
@@ -121,6 +124,27 @@ public class STCP : SBase
             Send(bytes, length);
         }
     }
+    /// <summary>
+    /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
+    /// </summary>
+    private byte[] Serialize(ushort id, IExtensible msg, out int length)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            Serializer.Serialize(ms, msg);
+            length = 6 + (int)ms.Length;
+            byte[] result = bytePool.Rent(length);
+            //消息长度
+            byte[] temp = BitConverter.GetBytes(length - 4);
+            Buffer.BlockCopy(temp, 0, result, 0, 4);
+            //消息ID
+            temp = BitConverter.GetBytes(id);
+            Buffer.BlockCopy(temp, 0, result, 4, 2);
+            //消息内容
+            ms.Read(result, 6, length - 6);
+            return result;
+        }
+    }
     private async Task Send(byte[] bytes, int length)
     {
         int count = 0;
@@ -174,7 +198,7 @@ public class STCP : SBase
         {
             return;
         }
-        if (Deserialize(count))
+        if (count >= 0 && Deserialize(count))
         {
             receiveRetry = 0;
             receiveMark = true;

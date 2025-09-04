@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Buffers;
+using System.IO;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -16,7 +18,7 @@ public class SKCP : SBase
     private bool threadMark = true;
     private uint connectId;
     private KcpSend kcpSend;
-    private Kcp<KcpSegment> kcp;
+    private PoolSegManager.Kcp kcp;
 
     public override void Init(string ip, ushort port, uint connectId, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
     {
@@ -26,6 +28,7 @@ public class SKCP : SBase
         this.connectId = connectId;
         kcpSend = new KcpSend(Send);
         thread = new Thread(Update);
+        threadMark = true;
         thread.Start();
     }
     private void Update()
@@ -54,13 +57,13 @@ public class SKCP : SBase
         }
         if (socket == null)
         {
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             socket.SendTimeout = heartInterval;
             socket.ReceiveTimeout = heartInterval;
         }
         if (kcp == null)
         {
-            kcp = new Kcp<KcpSegment>(connectId, kcpSend);
+            kcp = new PoolSegManager.Kcp(connectId, kcpSend);
             kcp.NoDelay(1, 10, 2, 1);
             kcp.WndSize();
             kcp.SetMtu();
@@ -82,6 +85,8 @@ public class SKCP : SBase
         }
         if (connectRetry == 2)
         {
+            kcp.Dispose();
+            kcp = null;
             socket.Close();
             socket = null;
             Connect();
@@ -128,6 +133,24 @@ public class SKCP : SBase
         if (connectMark)
         {
             kcp.Update(DateTime.UtcNow);
+        }
+    }
+    /// <summary>
+    /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
+    /// </summary>
+    private byte[] Serialize(ushort id, IExtensible msg, out int length)
+    {
+        using (MemoryStream ms = new MemoryStream())
+        {
+            Serializer.Serialize(ms, msg);
+            length = 2 + (int)ms.Length;
+            byte[] result = bytePool.Rent(length);
+            //消息ID
+            byte[] temp = BitConverter.GetBytes(id);
+            Buffer.BlockCopy(temp, 0, result, 0, 2);
+            //消息内容
+            ms.Read(result, 2, length - 2);
+            return result;
         }
     }
     /// <summary>
@@ -188,7 +211,7 @@ public class SKCP : SBase
         {
             return;
         }
-        if (Deserialize(count))
+        if (count >= 0 && Deserialize(count))
         {
             connectRetry = 0;
             receiveRetry = 0;
