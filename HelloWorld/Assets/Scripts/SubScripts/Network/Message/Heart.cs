@@ -6,7 +6,7 @@
 
 #region Designer generated code
 #pragma warning disable CS0612, CS0618, CS1591, CS3021, IDE0079, IDE1006, RCS1036, RCS1057, RCS1085, RCS1192
-[global::ProtoBuf.ProtoContract(Name = @"CS_Heart")]
+[global::ProtoBuf.ProtoContract()]
 public partial class CSHeart : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
@@ -15,7 +15,7 @@ public partial class CSHeart : global::ProtoBuf.IExtensible
 
 }
 
-[global::ProtoBuf.ProtoContract(Name = @"SC_Heart")]
+[global::ProtoBuf.ProtoContract()]
 public partial class SCHeart : global::ProtoBuf.IExtensible
 {
     private global::ProtoBuf.IExtension __pbn__extensionData;
