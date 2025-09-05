@@ -26,9 +26,6 @@ public class SocketManager : Singletion<SocketManager>
         socket = new T();
         socket.Init(ip, port, connectId, deserialize, socketevent);
     }
-    /// <summary>
-    /// 关闭后需要重新创建
-    /// </summary>
     public void Close()
     {
         socket.Close();

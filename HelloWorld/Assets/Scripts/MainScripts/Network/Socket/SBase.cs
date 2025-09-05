@@ -29,7 +29,6 @@ public class SBase
     protected ArrayPool<byte> bytePool = ArrayPool<byte>.Shared;
 
     //连接
-    private NetworkReachability reach;
     protected bool connectMark = false;
     protected int connectRetry = 0;
 
