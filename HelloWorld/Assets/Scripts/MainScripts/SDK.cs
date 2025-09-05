@@ -9,12 +9,6 @@ using TTSDK;
 using TTSDK.UNBridgeLib.LitJson;
 #endif
 
-public enum ShowAdResult
-{
-    Fail,
-    Loading,
-    Success,
-}
 public class SDK : MonoSingletion<SDK>
 {
 #if UNITY_ANDROID
@@ -96,49 +90,18 @@ public class SDK : MonoSingletion<SDK>
             param.multiton = true;
             video = WX.CreateRewardedVideoAd(param);
             video.onErrorAction = OnError;
-            video.onLoadActon = OnLoad;
             video.onCloseAction = OnClose;
         }
-        public override ShowAdResult Show(Action<bool> onClose = null)
+        public override void Show(Action<bool> onClose = null)
         {
-            if (load)
-            {
-                this.onClose = onClose;
-                video.Show(null, OnError);
-                load = false;
-                retry = 0;
-                return ShowAdResult.Success;
-            }
-            else
-            {
-                return ShowAdResult.Loading;
-            }
+            this.onClose = onClose;
+            video.Show(null, OnError);
         }
         private void OnError(WXBaseResponse response)
         {
             GameDebug.LogError($"´íÎó£º{adUnitId} {response.errMsg}");
             OnClose(null);
-            if (retry < 3)
-            {
-                video.Load(null, OnError);
-                retry++;
-            }
-            else
-            {
-                Destroy();
-            }
-        }
-        private void OnLoad(WXADLoadResponse response)
-        {
-            if (string.IsNullOrEmpty(response.errMsg))
-            {
-                load = true;
-                retry = 0;
-            }
-            else
-            {
-                OnError(response);
-            }
+            Destroy();
         }
         private void OnClose(WXRewardedVideoAdOnCloseResponse response)
         {
@@ -165,21 +128,12 @@ public class SDK : MonoSingletion<SDK>
             param.style = new CustomStyle() { left = left, top = top, width = width };
             custom = WX.CreateCustomAd(param);
             custom.onErrorAction = OnError;
-            custom.onLoadActon = OnLoad;
             custom.onCloseAction = OnClose;
         }
-        public override ShowAdResult Show(Action<bool> onClose = null)
+        public override void Show(Action<bool> onClose = null)
         {
-            if (load)
-            {
-                this.onClose = onClose;
-                custom.Show(null, OnError);
-                return ShowAdResult.Success;
-            }
-            else
-            {
-                return ShowAdResult.Loading;
-            }
+            this.onClose = onClose;
+            custom.Show(null, OnError);
         }
         public override void Hide()
         {
@@ -190,17 +144,6 @@ public class SDK : MonoSingletion<SDK>
             GameDebug.LogError($"´íÎó£º{adUnitId} {response.errMsg}");
             OnClose();
             Destroy();
-        }
-        private void OnLoad(WXADLoadResponse response)
-        {
-            if (string.IsNullOrEmpty(response.errMsg))
-            {
-                load = true;
-            }
-            else
-            {
-                OnError(response);
-            }
         }
         private void OnClose()
         {
@@ -273,42 +216,18 @@ public class SDK : MonoSingletion<SDK>
             param.ProgressTip = false;
             video = TT.CreateRewardedVideoAd(param);
             video.OnError += OnError;
-            video.OnLoad += OnLoad;
             video.OnClose += OnClose;
         }
-        public override ShowAdResult Show(Action<bool> onClose = null)
+        public override void Show(Action<bool> onClose = null)
         {
-            if (load)
-            {
-                this.onClose = onClose;
-                video.Show();
-                load = false;
-                retry = 0;
-                return ShowAdResult.Success;
-            }
-            else
-            {
-                return ShowAdResult.Loading;
-            }
+            this.onClose = onClose;
+            video.Show();
         }
         private void OnError(int code, string message)
         {
             GameDebug.LogError($"´íÎó£º{adUnitId} {code} {message}");
             OnClose(false, 0);
-            if (retry < 3)
-            {
-                video.Load();
-                retry++;
-            }
-            else
-            {
-                Destroy();
-            }
-        }
-        private void OnLoad()
-        {
-            load = true;
-            retry = 0;
+            Destroy();
         }
         private void OnClose(bool isEnded, int count)
         {
@@ -335,21 +254,12 @@ public class SDK : MonoSingletion<SDK>
             param.Style = new TTBannerStyle() { left = left, top = top, width = width };
             banner = TT.CreateBannerAd(param);
             banner.OnError += OnError;
-            banner.OnLoad += OnLoad;
             banner.OnClose += OnClose;
         }
-        public override ShowAdResult Show(Action<bool> onClose = null)
+        public override void Show(Action<bool> onClose = null)
         {
-            if (load)
-            {
-                this.onClose = onClose;
-                banner.Show();
-                return ShowAdResult.Success;
-            }
-            else
-            {
-                return ShowAdResult.Loading;
-            }
+            this.onClose = onClose;
+            banner.Show();
         }
         public override void Hide()
         {
@@ -360,10 +270,6 @@ public class SDK : MonoSingletion<SDK>
             GameDebug.LogError($"´íÎó£º{adUnitId} {code} {message}");
             OnClose();
             Destroy();
-        }
-        private void OnLoad()
-        {
-            load = true;
         }
         private void OnClose()
         {
@@ -383,10 +289,9 @@ public class SDK : MonoSingletion<SDK>
     private int uniqueId = 0;
     private Dictionary<int, AdItem> ads = new Dictionary<int, AdItem>();
 
-    public ShowAdResult Show(int id, Action<bool> onClose = null)
+    public void Show(int id, Action<bool> onClose = null)
     {
-        if (ads.TryGetValue(id, out var item)) return item.Show(onClose);
-        else return ShowAdResult.Fail;
+        if (ads.TryGetValue(id, out var item)) item.Show(onClose);
     }
     public void Hide(int id)
     {
@@ -400,13 +305,11 @@ public class SDK : MonoSingletion<SDK>
     {
         protected int id;
         protected string adUnitId;
-        protected bool load = true;
-        protected int retry = 0;
         protected Action<bool> onClose;
 
-        public virtual ShowAdResult Show(Action<bool> onClose = null)
+        public virtual void Show(Action<bool> onClose = null)
         {
-            return ShowAdResult.Success;
+
         }
         public virtual void Hide()
         {

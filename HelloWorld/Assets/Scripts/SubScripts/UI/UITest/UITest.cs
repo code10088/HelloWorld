@@ -313,7 +313,6 @@ public class UITest : UIBase
 
     #region 小游戏
     private int adId = -1;
-    private int retry = 3;
     /// <summary>
     /// banner广告初始化
     /// </summary>
@@ -332,21 +331,21 @@ public class UITest : UIBase
     /// </summary>
     private void ShowAd()
     {
-        var result = SDK.Instance.Show(adId);
-        if (result == ShowAdResult.Fail)
+        SDK.Instance.Show(adId, success =>
         {
-            if (--retry < 0) return;
+            if (success)
+            {
+            }
+            else
+            {
 #if WEIXINMINIGAME
-            adId = SDK.Instance.WXCreateCustomAd(AdConst.WXAdUnitId2, 30, 0, -200, Screen.width);
+                adId = SDK.Instance.WXCreateCustomAd(AdConst.WXAdUnitId2, 30, 0, -200, Screen.width);
 #elif DOUYINMINIGAME
-            adId = SDK.Instance.TTCreateBannerAd(AdConst.TTAdUnitId2, 30, 0, -200, Screen.width);
+                adId = SDK.Instance.TTCreateBannerAd(AdConst.TTAdUnitId2, 30, 0, -200, Screen.width);
 #endif
-            ShowAd();
-        }
-        else if (result == ShowAdResult.Loading)
-        {
-            TimeManager.Instance.StartTimer(30, 0, a => ShowAd());
-        }
+                ShowAd();
+            }
+        });
     }
     /// <summary>
     /// 视频广告
