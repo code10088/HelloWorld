@@ -59,6 +59,7 @@ namespace YooAsset
 
                 // 写入文件头信息
                 buffer.WriteBool(manifest.EnableAddressable);
+                buffer.WriteBool(manifest.SupportExtensionless);
                 buffer.WriteBool(manifest.LocationToLower);
                 buffer.WriteBool(manifest.IncludeAssetGUID);
                 buffer.WriteInt32(manifest.OutputNameStyle);
@@ -89,7 +90,7 @@ namespace YooAsset
                     buffer.WriteUTF8(packageBundle.BundleName);
                     buffer.WriteUInt32(packageBundle.UnityCRC);
                     buffer.WriteUTF8(packageBundle.FileHash);
-                    buffer.WriteUTF8(packageBundle.FileCRC);
+                    buffer.WriteUInt32(packageBundle.FileCRC);
                     buffer.WriteInt64(packageBundle.FileSize);
                     buffer.WriteBool(packageBundle.Encrypted);
                     buffer.WriteUTF8Array(packageBundle.Tags);
@@ -153,6 +154,7 @@ namespace YooAsset
                 // 读取文件头信息
                 manifest.FileVersion = fileVersion;
                 manifest.EnableAddressable = buffer.ReadBool();
+                manifest.SupportExtensionless = buffer.ReadBool();
                 manifest.LocationToLower = buffer.ReadBool();
                 manifest.IncludeAssetGUID = buffer.ReadBool();
                 manifest.OutputNameStyle = buffer.ReadInt32();
@@ -190,7 +192,7 @@ namespace YooAsset
                     packageBundle.BundleName = buffer.ReadUTF8();
                     packageBundle.UnityCRC = buffer.ReadUInt32();
                     packageBundle.FileHash = buffer.ReadUTF8();
-                    packageBundle.FileCRC = buffer.ReadUTF8();
+                    packageBundle.FileCRC = buffer.ReadUInt32();
                     packageBundle.FileSize = buffer.ReadInt64();
                     packageBundle.Encrypted = buffer.ReadBool();
                     packageBundle.Tags = buffer.ReadUTF8Array();
@@ -280,13 +282,16 @@ namespace YooAsset
                     manifest.AssetPathMapping1.Add(location, packageAsset.AssetPath);
 
                 // 添加无后缀名路径的映射
-                string locationWithoutExtension = Path.ChangeExtension(location, null);
-                if (ReferenceEquals(location, locationWithoutExtension) == false)
+                if (manifest.SupportExtensionless)
                 {
-                    if (manifest.AssetPathMapping1.ContainsKey(locationWithoutExtension))
-                        YooLogger.Warning($"Location have existed : {locationWithoutExtension}");
-                    else
-                        manifest.AssetPathMapping1.Add(locationWithoutExtension, packageAsset.AssetPath);
+                    string locationWithoutExtension = Path.ChangeExtension(location, null);
+                    if (ReferenceEquals(location, locationWithoutExtension) == false)
+                    {
+                        if (manifest.AssetPathMapping1.ContainsKey(locationWithoutExtension))
+                            YooLogger.Warning($"Location have existed : {locationWithoutExtension}");
+                        else
+                            manifest.AssetPathMapping1.Add(locationWithoutExtension, packageAsset.AssetPath);
+                    }
                 }
             }
 
