@@ -34,5 +34,5 @@
 2. Proto消息导出：Tools/CopyMsg，需要配置Preferences/Customer Msg路径
 3. Jenkins部署：配置文件Build/JenkinsConfig/Game.xml
 
-### 其他
+### 小游戏
 小游戏建议使用：unity2022 https://gitee.com/code10088/game
