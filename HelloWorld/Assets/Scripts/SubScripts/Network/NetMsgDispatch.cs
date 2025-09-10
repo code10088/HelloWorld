@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 
 public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
@@ -14,6 +15,7 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
         public int param;
     }
     private Queue<NetMsgItem> msgPool = new Queue<NetMsgItem>();
+    private Dictionary<ushort, Action<IExtensible>> msgAction = new Dictionary<ushort, Action<IExtensible>>();
     private Queue<SocketEventItem> socketevent = new Queue<SocketEventItem>();
 
     public void Init()
@@ -21,11 +23,15 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
         SocketManager.Instance.SetFunc(Deserialize, HandleSocketEvent);
         Updater.Instance.StartUpdate(Update);
     }
+    public void Register(ushort id, Action<IExtensible> action)
+    {
+        msgAction[id] = action;
+    }
     private void HandleSocketEvent(int type, int param)
     {
         socketevent.Enqueue(new SocketEventItem() { type = type, param = param });
     }
-    public void Add(ushort id, IExtensible msg)
+    private void Add(ushort id, IExtensible msg)
     {
         lock (msgPool) msgPool.Enqueue(new NetMsgItem() { id = id, msg = msg });
     }
@@ -36,7 +42,7 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
             lock (msgPool)
             {
                 NetMsgItem msg = msgPool.Dequeue();
-                Dispatch(msg);
+                if (msgAction.TryGetValue(msg.id, out var action)) action?.Invoke(msg.msg);
             }
         }
         while (socketevent.Count > 0)
@@ -66,13 +72,5 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
     private void OnRefreshDelay(int delay)
     {
         EventManager.Instance.FireEvent(EventType.RefreshDelay, delay);
-    }
-
-    private void Dispatch(NetMsgItem msg)
-    {
-        switch (msg.id)
-        {
-            case NetMsgId.ProtoTest_Person:; break;
-        }
     }
 }

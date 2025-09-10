@@ -8,7 +8,7 @@ public class NetMsgId
 }
 public partial class NetMsgDispatch
 {
-    public bool Deserialize(ushort id, Memory<byte> memory)
+    private bool Deserialize(ushort id, Memory<byte> memory)
     {
         try
         {

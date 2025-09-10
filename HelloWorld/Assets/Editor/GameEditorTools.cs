@@ -104,7 +104,7 @@ public class GameEditorTools
         result += WriteLine(0, "}");
         result += WriteLine(0, "public partial class NetMsgDispatch");
         result += WriteLine(0, "{");
-        result += WriteLine(1, "public bool Deserialize(ushort id, Memory<byte> memory)");
+        result += WriteLine(1, "private bool Deserialize(ushort id, Memory<byte> memory)");
         result += WriteLine(1, "{");
         result += WriteLine(2, "try");
         result += WriteLine(2, "{");
