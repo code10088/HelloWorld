@@ -19,6 +19,7 @@ MonoBehaviour:
   - PackageName: All
     PackageDesc: 
     EnableAddressable: 1
+    SupportExtensionless: 0
     LocationToLower: 0
     IncludeAssetGUID: 0
     AutoCollectShaders: 1
