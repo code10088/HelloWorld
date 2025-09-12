@@ -57,10 +57,10 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
         switch ((SocketEvent)item.type)
         {
             case SocketEvent.Reconect:
-
+                UICommonTips.ShowTips("尝试连接服务器");
                 break;
             case SocketEvent.Connected:
-
+                UICommonTips.ShowTips("连接服务器成功");
                 break;
             case SocketEvent.ConnectError:
                 UICommonBoxParam param = new UICommonBoxParam();
