@@ -31,7 +31,7 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
     {
         socketevent.Enqueue(new SocketEventItem() { type = type, param = param });
     }
-    private void Add(ushort id, IExtensible msg)
+    private void HandleMsg(ushort id, IExtensible msg)
     {
         lock (msgPool) msgPool.Enqueue(new NetMsgItem() { id = id, msg = msg });
     }
@@ -47,30 +47,32 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
         }
         while (socketevent.Count > 0)
         {
-            var temp = socketevent.Dequeue();
-            switch ((SocketEvent)temp.type)
-            {
-                case SocketEvent.ConnectError:
-                    OnConnectError();
-                    break;
-                case SocketEvent.RefreshDelay:
-                    OnRefreshDelay(temp.param);
-                    break;
-            }
+            var item = socketevent.Dequeue();
+            HandleSocketEvent(item);
         }
     }
 
-    private void OnConnectError()
+    private void HandleSocketEvent(SocketEventItem item)
     {
-        UICommonBoxParam param = new UICommonBoxParam();
-        param.type = UICommonBoxType.Sure;
-        param.title = "网络异常";
-        param.content = "网络连接已断开，请检查网络设置";
-        param.sure = a => SocketManager.Instance.Connect();
-        UICommonBox.OpenCommonBox(param);
-    }
-    private void OnRefreshDelay(int delay)
-    {
-        EventManager.Instance.FireEvent(EventType.RefreshDelay, delay);
+        switch ((SocketEvent)item.type)
+        {
+            case SocketEvent.Reconect:
+
+                break;
+            case SocketEvent.Connected:
+
+                break;
+            case SocketEvent.ConnectError:
+                UICommonBoxParam param = new UICommonBoxParam();
+                param.type = UICommonBoxType.Sure;
+                param.title = "网络异常";
+                param.content = "网络连接已断开，请检查网络设置";
+                param.sure = a => SocketManager.Instance.Connect();
+                UICommonBox.OpenCommonBox(param);
+                break;
+            case SocketEvent.RefreshDelay:
+                EventManager.Instance.FireEvent(EventType.RefreshDelay, item.param);
+                break;
+        }
     }
 }

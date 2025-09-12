@@ -29,6 +29,7 @@ public class SWeb : SBase
     private void Connect()
     {
         connectMark = false;
+        socketevent.Invoke((int)SocketEvent.Reconect, 0);
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
@@ -75,6 +76,7 @@ public class SWeb : SBase
         sendRetry = 0;
         receiveMark = true;
         receiveRetry = 0;
+        socketevent.Invoke((int)SocketEvent.Connected, 0);
     }
     private void Error(object sender, WebSocketSharp.ErrorEventArgs error)
     {

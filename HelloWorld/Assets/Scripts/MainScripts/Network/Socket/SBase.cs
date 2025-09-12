@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public enum SocketEvent
 {
+    Reconect,
+    Connected,
     ConnectError,
     RefreshDelay,
 }

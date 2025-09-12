@@ -17,7 +17,7 @@ public partial class NetMsgDispatch
             {
                 case NetMsgId.SCHeart: msg = Serializer.Deserialize<SCHeart>(memory); break;
             }
-            Add(id, msg);
+            HandleMsg(id, msg);
             return true;
         }
         catch (Exception e)

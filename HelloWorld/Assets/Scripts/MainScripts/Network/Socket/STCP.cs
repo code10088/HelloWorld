@@ -46,6 +46,7 @@ public class STCP : SBase
     private void Connect()
     {
         connectMark = false;
+        socketevent.Invoke((int)SocketEvent.Reconect, 0);
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
@@ -71,6 +72,7 @@ public class STCP : SBase
             sendRetry = 0;
             receiveMark = true;
             receiveRetry = 0;
+            socketevent.Invoke((int)SocketEvent.Connected, 0);
         }
         else
         {
