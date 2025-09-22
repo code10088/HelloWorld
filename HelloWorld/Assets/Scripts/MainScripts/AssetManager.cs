@@ -71,6 +71,7 @@ public class AssetManager : Singletion<AssetManager>
         DecryptionServices decryptionServices = new DecryptionServices();
         var buildinFileSystem = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices);   
         var cacheFileSystem = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, decryptionServices);
+        cacheFileSystem.AddParameter(FileSystemParametersDefine.DOWNLOAD_WATCH_DOG_TIME, GameSetting.timeoutS);
         var parameters = new HostPlayModeParameters();
         parameters.BuildinFileSystemParameters = buildinFileSystem;
         parameters.CacheFileSystemParameters = cacheFileSystem;

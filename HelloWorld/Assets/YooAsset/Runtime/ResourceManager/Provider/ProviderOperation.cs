@@ -67,6 +67,16 @@ namespace YooAsset
         /// </summary>
         public bool IsDestroyed { private set; get; } = false;
 
+        /// <summary>
+        /// 加载任务是否进行中
+        /// </summary>
+        private bool IsLoading
+        {
+            get
+            {
+                return _steps == ESteps.WaitBundleLoader || _steps == ESteps.ProcessBundleResult;
+            }
+        }
 
         private ESteps _steps = ESteps.None;
         protected readonly ResourceManager _resManager;
@@ -108,6 +118,13 @@ namespace YooAsset
         {
             if (_steps == ESteps.None || _steps == ESteps.Done)
                 return;
+
+            // 注意：未在加载中的任务可以挂起！
+            if (IsLoading == false)
+            {
+                if (RefCount <= 0)
+                    return;
+            }
 
             if (_steps == ESteps.StartBundleLoader)
             {
@@ -192,8 +209,9 @@ namespace YooAsset
             // 检测是否为正常销毁
             if (IsDone == false)
             {
-                Error = "User abort !";
+                _steps = ESteps.Done;
                 Status = EOperationStatus.Failed;
+                Error = "User abort !";
             }
 
             // 减少引用计数
@@ -208,8 +226,8 @@ namespace YooAsset
         /// </summary>
         public bool CanDestroyProvider()
         {
-            // 注意：在进行资源加载过程时不可以销毁
-            if (_steps == ESteps.ProcessBundleResult)
+            // 注意：正在加载中的任务不可以销毁
+            if (IsLoading)
                 return false;
 
             if (_resManager.UseWeakReferenceHandle)

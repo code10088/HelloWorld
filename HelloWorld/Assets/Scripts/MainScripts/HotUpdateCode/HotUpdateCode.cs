@@ -96,7 +96,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     #region Config
     private void CheckDownloadHotUpdateConfig()
     {
-        downloaderOperation = AssetManager.Package.CreateBundleDownloader(GameSetting.HotUpdateConfigPath, 1, GameSetting.retryTime, GameSetting.timeoutS);
+        downloaderOperation = AssetManager.Package.CreateBundleDownloader(GameSetting.HotUpdateConfigPath, 1, GameSetting.retryTime);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
             downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateConfig;
@@ -138,7 +138,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         string[] paths = new string[config.HotAssembly.Length + config.HotUpdateRes.Length];
         Array.Copy(config.HotAssembly, 0, paths, 0, config.HotAssembly.Length);
         Array.Copy(config.HotUpdateRes, 0, paths, config.HotAssembly.Length, config.HotUpdateRes.Length);
-        downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime, GameSetting.timeoutS);
+        downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
             downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateRes;
