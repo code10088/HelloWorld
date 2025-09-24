@@ -39,8 +39,6 @@ public class UITest : UIBase
         component.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
         component.openRvoSceneUIButton.onClick.AddListener(OpenRvoScene);
         component.closeRvoSceneUIButton.onClick.AddListener(CloseRvoScene);
-        component.openInfiniteTerrainSceneUIButton.onClick.AddListener(OpenInfiniteTerrainScene);
-        component.closeInfiniteTerrainSceneUIButton.onClick.AddListener(CloseInfiniteTerrainScene);
 
         //UI
         component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
@@ -169,14 +167,6 @@ public class UITest : UIBase
     private void CloseRvoScene()
     {
         BattleManager.Instance.Exit();
-    }
-    private void OpenInfiniteTerrainScene()
-    {
-        SceneManager.Instance.OpenScene(SceneType.InfiniteTerrainScene);
-    }
-    private void CloseInfiniteTerrainScene()
-    {
-        SceneManager.Instance.CloseScene(SceneType.InfiniteTerrainScene);
     }
     #endregion
 

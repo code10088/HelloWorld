@@ -35,32 +35,6 @@
       "dependencies": {},
       "hash": "dfbcedc078c5da938443d23c9f6b5738af42ba7d"
     },
-    "com.gurbu.gpui-pro": {
-      "version": "file:com.gurbu.gpui-pro",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.burst": "1.6.0",
-        "com.unity.collections": "1.2.0",
-        "com.unity.mathematics": "1.2.0"
-      }
-    },
-    "com.gurbu.gpui-pro.prefab": {
-      "version": "file:com.gurbu.gpui-pro.prefab",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.gurbu.gpui-pro": "0.11.0"
-      }
-    },
-    "com.gurbu.gpui-pro.terrain": {
-      "version": "file:com.gurbu.gpui-pro.terrain",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.gurbu.gpui-pro": "0.11.0"
-      }
-    },
     "com.monitor1394.xcharts": {
       "version": "https://github.com/XCharts-Team/XCharts.git",
       "depth": 0,
