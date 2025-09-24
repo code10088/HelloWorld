@@ -22,6 +22,6 @@ MonoBehaviour:
     replacementShaderName: GPUInstancerPro/Universal Render Pipeline/Lit
     extensionCode: 
     isUseOriginal: 0
-    modifiedDate: 06/26/2025 22:40:36.548
+    modifiedDate: 09/24/2025 13:09:33.580
   stripObjectMotionVectorVariants: 0
   stripPerInstanceLightProbeVariants: 0
