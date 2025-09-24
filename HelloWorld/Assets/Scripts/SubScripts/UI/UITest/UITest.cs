@@ -1,7 +1,6 @@
 using cfg;
 using MemoryPack;
 using Newtonsoft.Json;
-using Nino.Core;
 using SuperScrollView;
 using System.Collections.Generic;
 using UnityEngine;
@@ -58,8 +57,6 @@ public class UITest : UIBase
         component.guideUIButton.onClick.AddListener(StartGuide);
         component.serializeUIButton.onClick.AddListener(MemoryPackSerialize);
         component.deserializeUIButton.onClick.AddListener(MemoryPackDeserialize);
-        component.ninoSerializeUIButton.onClick.AddListener(NinoSerialize);
-        component.ninoDeserializeUIButton.onClick.AddListener(NinoDeserialize);
 
         //小游戏
         component.createAdBtnUIButton.onClick.AddListener(CreateAd);
@@ -295,20 +292,6 @@ public class UITest : UIBase
         MemoryPackSerializer.Deserialize(testBytes, ref memoryPackTest);
         GameDebug.Log(memoryPackTest.c);
     }
-    private NinoTest ninoTest = new NinoTest();
-    private void NinoSerialize()
-    {
-        ninoTest.a = 123;
-        ninoTest.b = "Hello, Nino!";
-        ninoTest.c = 1.0f;
-        testBytes = NinoSerializer.Serialize(ninoTest);
-        GameDebug.Log(testBytes.Length);
-    }
-    private void NinoDeserialize()
-    {
-        NinoDeserializer.Deserialize(testBytes, ref ninoTest);
-        GameDebug.Log(ninoTest.c);
-    }
     #endregion
 
     #region 小游戏
@@ -444,13 +427,6 @@ public partial class UITestItem
 }
 [MemoryPackable]
 public partial class MemoryPackTest
-{
-    public int a;
-    public string b;
-    public float c;
-}
-[NinoType]
-public partial class NinoTest
 {
     public int a;
     public string b;
