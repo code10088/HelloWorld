@@ -43,6 +43,7 @@ public class AssetManager : Singletion<AssetManager>
         var simulate = EditorSimulateModeHelper.SimulateBuild(PackageName);
         var editorFileSystem = FileSystemParameters.CreateDefaultEditorFileSystemParameters(simulate.PackageRootDirectory);
         var parameters = new EditorSimulateModeParameters();
+        parameters.AutoUnloadBundleWhenUnused = true;
         parameters.EditorFileSystemParameters = editorFileSystem;
         var operation = package.InitializeAsync(parameters);
         operation.Completed += InitFinish;
@@ -52,6 +53,7 @@ public class AssetManager : Singletion<AssetManager>
         IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
         WebDecryptionServices decryptionServices = new WebDecryptionServices();
         var parameters = new WebPlayModeParameters();
+        parameters.AutoUnloadBundleWhenUnused = true;
 #if WEIXINMINIGAME
         string packageRoot = WeChatWASM.WX.PluginCachePath + "/" + Application.version;
         parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteServices, decryptionServices);
@@ -73,6 +75,7 @@ public class AssetManager : Singletion<AssetManager>
         var cacheFileSystem = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, decryptionServices);
         cacheFileSystem.AddParameter(FileSystemParametersDefine.DOWNLOAD_WATCH_DOG_TIME, GameSetting.timeoutS);
         var parameters = new HostPlayModeParameters();
+        parameters.AutoUnloadBundleWhenUnused = true;
         parameters.BuildinFileSystemParameters = buildinFileSystem;
         parameters.CacheFileSystemParameters = cacheFileSystem;
         var operation = package.InitializeAsync(parameters);
