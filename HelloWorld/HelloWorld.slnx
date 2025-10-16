@@ -1,0 +1,23 @@
+﻿<Solution>
+  <Project Path="UITween.csproj" />
+  <Project Path="HotAssembly.csproj" />
+  <Project Path="YooAsset.Editor.csproj" />
+  <Project Path="com.bytedance.ttsdk-editor.csproj" />
+  <Project Path="YooAsset.RuntimeExtension.csproj" />
+  <Project Path="RVO.csproj" />
+  <Project Path="YooAsset.csproj" />
+  <Project Path="MainAssembly.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="YooAsset.MiniGame.csproj" />
+  <Project Path="SuperScrollView_Runtime.csproj" />
+  <Project Path="TTLitJson.csproj" />
+  <Project Path="TTWebGL.csproj" />
+  <Project Path="CodeStage.AFPSCounter.Runtime.csproj" />
+  <Project Path="Kcp.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="YooAsset.Config.csproj" />
+  <Project Path="CodeStage.AFPSCounter.Editor.csproj" />
+  <Project Path="com.bytedance.ttsdk.ref.csproj" />
+  <Project Path="Assembly-CSharp-Editor-firstpass.csproj" />
+  <Project Path="Sirenix.OdinInspector.Modules.UnityMathematics.csproj" />
+</Solution>

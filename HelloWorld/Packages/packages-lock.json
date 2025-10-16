@@ -5,21 +5,21 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "73654e76d28386dbc7766f803e2cb7a243e331e6"
+      "hash": "01754c8fb47bd49697b3428993109e7a972a7968"
     },
     "com.code-philosophy.luban": {
       "version": "https://github.com/focus-creative-games/luban_unity.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "57e577126c4bac9abef927babb848a457ad5d563"
+      "hash": "005c365bac0b245048050d48d27df098739a6f8f"
     },
     "com.code-philosophy.obfuz": {
       "version": "https://github.com/focus-creative-games/obfuz.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "9b6e6375f642816161724f4e74f478c3410ea621"
+      "hash": "b582c1f24bda5676c54dc66529e9b1d6f9aead47"
     },
     "com.code-philosophy.obfuz4hybridclr": {
       "version": "https://github.com/focus-creative-games/obfuz4hybridclr.git",
@@ -33,21 +33,21 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "dfbcedc078c5da938443d23c9f6b5738af42ba7d"
+      "hash": "59f48c2aaaaecd6906e6b514d567074708fa4a31"
     },
     "com.monitor1394.xcharts": {
       "version": "https://github.com/XCharts-Team/XCharts.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "efbe16b8048d691d6e077bcc1f1a6d9b82546554"
+      "hash": "c83fe89a31ea173fd369cc9ac8d0c1afda089df3"
     },
     "com.qq.weixin.minigame": {
       "version": "https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "bd9443720f4f72c47142174baf8b4bbb9b94622a"
+      "hash": "25827f8ab9bb8f01b28466f0865c1c9db56cddd8"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -107,11 +107,11 @@
       "dependencies": {}
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.23",
+      "version": "2.0.25",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.test-framework": "1.1.9"
+        "com.unity.test-framework": "1.1.31"
       },
       "url": "https://packages.unity.com"
     },
@@ -158,7 +158,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.performance.profile-analyzer": {
-      "version": "1.2.3",
+      "version": "1.2.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -215,7 +215,7 @@
       }
     },
     "com.unity.scriptablebuildpipeline": {
-      "version": "2.4.2",
+      "version": "2.4.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
