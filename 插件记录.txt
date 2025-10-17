@@ -76,8 +76,7 @@ RVO
 		初始位置必须添加随机，保证两个Agent不同，否则会出现NaN报错
 		
 obfuz
-	MainAssembly加密会出现hotAssembly.GetType()报错，且无法再编辑器下测试热更
-	MainAssembly只有开源的框架代码，所以不用加密
+	DisableLoadStandardDll 需要其他dll生成多台dll，暂不使用
 
 MemoryPack
 	根据官网提示，安装NuGetForUnity

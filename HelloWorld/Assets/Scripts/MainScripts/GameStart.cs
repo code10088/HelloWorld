@@ -74,6 +74,12 @@ public class GameStart : MonoSingletion<GameStart>
     }
     private void StartHotAssembly(int id)
     {
+#if UNITY_EDITOR && !HotUpdateDebug
+        var hotAssembly = AppDomain.CurrentDomain.GetAssemblies().First(a => a.FullName.Contains("HotAssembly"));
+        var obj = hotAssembly.CreateInstance("GameStart");
+        var t = hotAssembly.GetType("GameStart");
+        t.GetMethod("Init").Invoke(obj, null);
+#else
         int loadId = -1;
         AssetManager.Instance.Load(ref loadId, config.HotAssembly, (a, b) =>
         {
@@ -83,30 +89,18 @@ public class GameStart : MonoSingletion<GameStart>
                 var ta = b[i] as TextAsset;
                 RuntimeApi.LoadMetadataForAOTAssembly(ta.bytes, HomologousImageMode.SuperSet);
             }
-            var dll = b[0] as TextAsset;
-            var pdb = b[1] as TextAsset;
-            StartHotAssembly(dll.bytes, pdb.bytes);
+            var dll = (b[0] as TextAsset).bytes;
+            var pdb = (b[1] as TextAsset).bytes;
             AssetManager.Instance.Unload(ref loadId);
+
+            var hotAssembly = GameDebug.GDebug ? Assembly.Load(dll, pdb) : Assembly.Load(dll);
+            var obj = hotAssembly.CreateInstance("GameStart");
+            var t = hotAssembly.GetType("GameStart");
+            t.GetMethod("Init").Invoke(obj, null);
+
             Process.Next();
             Process = null;
         });
-    }
-    private void StartHotAssembly(byte[] dll, byte[] pdb)
-    {
-#if UNITY_EDITOR && !HotUpdateDebug
-        var hotAssembly = AppDomain.CurrentDomain.GetAssemblies().First(a => a.FullName.Contains("HotAssembly"));
-        Type t = hotAssembly.GetType("GameStart");
-        PropertyInfo p = t.BaseType.GetProperty("Instance");
-        object o = p.GetMethod.Invoke(null, null);
-        MethodInfo m = t.GetMethod("Init");
-        m.Invoke(o, null);
-#else
-        var hotAssembly = GameDebug.GDebug ? Assembly.Load(dll, pdb) : Assembly.Load(dll);
-        Type t = hotAssembly.GetType("GameStart");
-        PropertyInfo p = t.BaseType.GetProperty("Instance");
-        object o = p.GetMethod.Invoke(null, null);
-        MethodInfo m = t.GetMethod("Init");
-        m.Invoke(o, null);
 #endif
     }
     private void Update()

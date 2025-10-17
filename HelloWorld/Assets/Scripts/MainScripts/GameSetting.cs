@@ -19,7 +19,7 @@ public static class GameSetting
 
     private static string CDN =>
 #if Debug
-        "http://192.168.7.136";
+        "http://192.168.7.148";
 #else
         "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
 #endif
@@ -51,9 +51,13 @@ public static class GameSetting
         SplashScreen.Stop(SplashScreen.StopBehavior.StopImmediate);
     }
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
-    private static void SetUpStaticSecret()
+    private static void InitObfuzSecret()
     {
-        var key = Resources.Load<TextAsset>("StaticSecretKey").bytes;
-        Obfuz.EncryptionService<Obfuz.DefaultStaticEncryptionScope>.Encryptor = new Obfuz.EncryptionVM.GeneratedEncryptionVirtualMachine(key);
+        var ta = Resources.Load<TextAsset>("StaticSecretKey");
+        Obfuz.EncryptionService<Obfuz.DefaultStaticEncryptionScope>.Encryptor = new Obfuz.EncryptionVM.GeneratedEncryptionVirtualMachine(ta.bytes);
+        Resources.UnloadAsset(ta);
+        ta = Resources.Load<TextAsset>("DynamicSecretKey");
+        Obfuz.EncryptionService<Obfuz.DefaultDynamicEncryptionScope>.Encryptor = new Obfuz.EncryptionVM.GeneratedEncryptionVirtualMachine(ta.bytes);
+        Resources.UnloadAsset(ta);
     }
 }

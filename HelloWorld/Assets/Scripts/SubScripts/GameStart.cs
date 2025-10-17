@@ -1,7 +1,7 @@
 ﻿using cfg;
 using UnityEngine;
 
-public class GameStart : Singletion<GameStart>
+public class GameStart
 {
     private enum StartProcess
     {

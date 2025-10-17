@@ -155,7 +155,7 @@ public class BuildEditor
         buildParameters.StripUnityVersion = false;
         buildParameters.DisableWriteTypeTree = false;
         buildParameters.IgnoreTypeTreeChanges = true;
-        buildParameters.ReplaceAssetPathWithAddress = true;
+        buildParameters.ReplaceAssetPathWithAddress = false;
         buildParameters.TrackSpriteAtlasDependencies = true;
         buildParameters.WriteLinkXML = true;
 

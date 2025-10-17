@@ -16,11 +16,13 @@ MonoBehaviour:
     enable: 1
     linkXmlProcessCallbackOrder: 10000
     obfuscationProcessCallbackOrder: 10000
+  compatibilitySettings:
+    targetRuntime: 0
   assemblySettings:
     assembliesToObfuscate:
-    - HotAssembly
-    nonObfuscatedButReferencingObfuscatedAssemblies:
     - MainAssembly
+    - HotAssembly
+    nonObfuscatedButReferencingObfuscatedAssemblies: []
     additionalAssemblySearchPaths: []
     obfuscateObfuzRuntime: 1
   obfuscationPassSettings:
@@ -32,7 +34,8 @@ MonoBehaviour:
     staticSecretKeyOutputPath: Assets/Obfuz/Resources/StaticSecretKey.bytes
     dynamicSecretKeyOutputPath: Assets/Obfuz/Resources/DynamicSecretKey.bytes
     randomSeed: 0
-    assembliesUsingDynamicSecretKeys: []
+    assembliesUsingDynamicSecretKeys:
+    - HotAssembly
   encryptionVMSettings:
     codeGenerationSecretKey: C
     encryptionOpCodeCount: 256
@@ -50,6 +53,8 @@ MonoBehaviour:
     customRenamePolicyTypes: []
   constEncryptSettings:
     encryptionLevel: 1
+    ruleFiles: []
+  removeConstFieldSettings:
     ruleFiles: []
   evalStackObfusSettings:
     ruleFiles: []
@@ -79,7 +84,10 @@ MonoBehaviour:
       garbageCodeType: 1
       outputPath: Assets/Scripts/MainScripts/Obfuz/GarbageCode
     additionalTasks: []
+  watermarkSettings:
+    text: E
+    signatureLength: 256
   polymorphicDllSettings:
     enable: 1
-    codeGenerationSecretKey: EFGHIJKLMN
+    codeGenerationSecretKey: FGHIJKLMNO
     disableLoadStandardDll: 0
