@@ -37,8 +37,6 @@ public class UITest : UIBase
         component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
         component.openBattleSceneUIButton.onClick.AddListener(OpenBattleScene);
         component.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
-        component.openRvoSceneUIButton.onClick.AddListener(OpenRvoScene);
-        component.closeRvoSceneUIButton.onClick.AddListener(CloseRvoScene);
 
         //UI
         component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
@@ -157,14 +155,6 @@ public class UITest : UIBase
         BattleManager.Instance.Init(SceneType.BattleScene_Test);
     }
     private void CloseBattleScene()
-    {
-        BattleManager.Instance.Exit();
-    }
-    private void OpenRvoScene()
-    {
-        BattleManager.Instance.Init(SceneType.BattleScene_Rvo);
-    }
-    private void CloseRvoScene()
     {
         BattleManager.Instance.Exit();
     }

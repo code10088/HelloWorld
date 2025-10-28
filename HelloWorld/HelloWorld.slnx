@@ -4,7 +4,6 @@
   <Project Path="YooAsset.Editor.csproj" />
   <Project Path="com.bytedance.ttsdk-editor.csproj" />
   <Project Path="YooAsset.RuntimeExtension.csproj" />
-  <Project Path="RVO.csproj" />
   <Project Path="YooAsset.csproj" />
   <Project Path="MainAssembly.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />

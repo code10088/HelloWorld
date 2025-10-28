@@ -21,9 +21,6 @@ public class BattleManager : Singletion<BattleManager>
     }
     public void Exit()
     {
-        SystemManager.Instance.Clear();
-        EntityCacheManager.Instance.Clear();
-
         Pool.Destroy();
         Updater.Instance.StopUpdate(updateId);
         SceneManager.Instance.CloseScene(sceneId);
@@ -32,6 +29,6 @@ public class BattleManager : Singletion<BattleManager>
     }
     private void Update(float t)
     {
-        SystemManager.Instance.Update(t);
+
     }
 }
