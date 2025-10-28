@@ -28,7 +28,7 @@ public class ProcessControl<T> where T : ProcessItem, new()
     {
         index++;
         if (index < list.Count) list[index].Excute();
-        else list = null;
+        else list.Clear();
     }
     public void Goto(int id)
     {
