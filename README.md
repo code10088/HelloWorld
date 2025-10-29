@@ -12,6 +12,11 @@
 　配置Preferences/Customer BuildPlayer路径<br>
 　执行Tools/BuildProject<br><br><br>
 
+
+# 最终目标
+　周边功能都有一个能用的基础版本，给游戏前端一个参考，让项目从0.5开始<br><br><br>
+
+
 # 使用文档
 ## 工程目录结构
 　![image](./Readme/1.png)<br>
@@ -276,6 +281,4 @@
 　道具<br>
 　任务<br>
 　天赋<br>
-　活动：首充、七天签到<br><br>
-# 最终目标
-　周边功能都有一个能用的基础版本，给游戏前端一个参考，让项目从0.5开始<br>
+　活动：首充、七天签到<br>
