@@ -269,7 +269,7 @@
 　BuffManager：Buff管理<br>
 　TriggerManager：触发器管理<br><br><br>
 
-# 后续开发目标
+# 后续开发内容
 　背包<br>
 　邮件<br>
 　聊天<br>
