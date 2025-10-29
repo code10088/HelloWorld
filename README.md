@@ -31,7 +31,7 @@
 　WebGLTemplates：微信导出工具<br>
 　WX-WASM-SDK-V2：微信导出工具<br>
 　YooAsset<br>
-　ZRes：所有资（Z没有意义，为了使文件夹在最后，便于查找）<br><br>
+　ZRes：所有资源（Z没有意义，为了使文件夹在最后，便于查找）<br><br>
 　![image](./Readme/3.png)<br>
 　Assembly：热更程序集<br>
 　Audio：音效<br>
@@ -97,15 +97,15 @@
 　HybridCLRGenerate：执行Hybrid GenerateAll并copy热更代码<br>
 　YooAssetBuild：bundle打包<br>
 　UnloadBundles2CDN：上传bundle到cdn（当前使用腾讯储存桶，需要配置Preferences/Customer腾讯储存桶）<br>
-　cdn目录结构<br>
-　　　WebGL<br>
-　　　　　VersionConfig.txt(Build目录中)<br>
-　　　　　1.2.0<br>
-　　　　　　　xxx.bundle<br>
-　　　Android<br>
-　　　　　VersionConfig.txt(Build目录中)<br>
-　　　　　1.2.0<br>
-　　　　　　　xxx.bundle<br>
+　　　cdn目录结构<br>
+　　　　WebGL<br>
+　　　　　　VersionConfig.txt(Build目录中)<br>
+　　　　　　1.2.0<br>
+　　　　　　　　xxx.bundle<br>
+　　　　Android<br>
+　　　　　　VersionConfig.txt(Build目录中)<br>
+　　　　　　1.2.0<br>
+　　　　　　　　xxx.bundle<br>
 　BuildBundles = HybridCLRGenerate + YooAssetBuild + UnloadBundles2CDN<br>
 　BuildProject：导出apk、ipa、微信小游戏工程、抖音小游戏工程<br><br>
 
