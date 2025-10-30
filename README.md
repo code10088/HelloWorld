@@ -1,5 +1,4 @@
 # 快速开始
-
 1. 切换到对应平台<br>
 　小游戏建议使用：[unity2022工程地址](https://gitee.com/code10088/game)<br>
 　微信小游戏需要在Player中添加宏：WEIXINMINIGAME<br>
@@ -10,7 +9,8 @@
 4. 导出工程：<br>
 　修改Assets/Scripts/MainScripts/GameSetting.cs中的CDN<br>
 　配置Preferences/Customer BuildPlayer路径<br>
-　执行Tools/BuildProject<br><br><br>
+　执行Tools/BuildProject<br><br>
+有问题可联系QQ:1396916098<br><br><br>
 
 
 # 最终目标
