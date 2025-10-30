@@ -9,12 +9,12 @@
 4. 导出工程：<br>
 　修改Assets/Scripts/MainScripts/GameSetting.cs中的CDN<br>
 　配置Preferences/Customer BuildPlayer路径<br>
-　执行Tools/BuildProject<br><br>
-有问题可联系QQ:1396916098<br><br><br>
+　执行Tools/BuildProject<br><br><br>
 
 
 # 最终目标
-　周边功能都有一个能用的基础版本，给游戏前端一个参考，让项目从0.5开始<br><br><br>
+　周边功都有一个能用的基础版本，给游戏前端一个参考，让项目从0.5开始<br>
+　有问题可联系QQ:1396916098<br><br><br>
 
 
 # 使用文档
