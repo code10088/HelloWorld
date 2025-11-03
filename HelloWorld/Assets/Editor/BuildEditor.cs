@@ -115,7 +115,7 @@ public class BuildEditor
                 var dest = config.HotAssembly[i];
                 var name = Path.GetFileNameWithoutExtension(dest);
                 var source = string.Empty;
-                if (File.Exists($"{obfuscatedHotUpdateDir}/{name}")) source = $"{obfuscatedHotUpdateDir}/{name}";
+                if (GameDebug.GDebug == false && File.Exists($"{obfuscatedHotUpdateDir}/{name}")) source = $"{obfuscatedHotUpdateDir}/{name}";
                 else if (File.Exists($"{stripDir}/{name}")) source = $"{stripDir}/{name}";
                 else source = $"{hotUpdateDir}/{name}";
                 File.Copy(source, $"{Environment.CurrentDirectory}/{dest}", true);
