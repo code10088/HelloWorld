@@ -12,21 +12,21 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "005c365bac0b245048050d48d27df098739a6f8f"
+      "hash": "d870def77ce13ea942786a6f9e6e55112b46c331"
     },
     "com.code-philosophy.obfuz": {
       "version": "https://github.com/focus-creative-games/obfuz.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "b582c1f24bda5676c54dc66529e9b1d6f9aead47"
+      "hash": "5932a6f9a6ecf3739f6bdfffae1d56f632a31fc5"
     },
     "com.code-philosophy.obfuz4hybridclr": {
       "version": "https://github.com/focus-creative-games/obfuz4hybridclr.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "59804e17a0d1562ca0f847db986ed93b25825b6d"
+      "hash": "c9214b2cf9869cf93e060442ec12b9fa828d98d5"
     },
     "com.cysharp.memorypack": {
       "version": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/MemoryPack.Unity",
@@ -40,7 +40,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "c83fe89a31ea173fd369cc9ac8d0c1afda089df3"
+      "hash": "39cee1bd52c05e98708026de245e44df640848c0"
     },
     "com.qq.weixin.minigame": {
       "version": "https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.git",
@@ -151,7 +151,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "3.2.1",
+      "version": "3.2.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -274,7 +274,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "80c0c42131d4824f9ff6439eda11c2378251fe6d"
+      "hash": "192208bb4e01d0fcae194fa9bfa603c3d108d050"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
