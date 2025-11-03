@@ -12,6 +12,7 @@ using System.Text;
 using YooAsset;
 using Obfuz4HybridCLR;
 using Obfuz.Settings;
+using HybridCLR.Editor.Commands;
 
 #if WEIXINMINIGAME
 using WeChatWASM;
@@ -102,7 +103,8 @@ public class BuildEditor
     {
         try
         {
-            PrebuildCommandExt.GenerateAll();
+            if (ObfuzSettings.Instance.buildPipelineSettings.enable) PrebuildCommandExt.GenerateAll();
+            else PrebuildCommand.GenerateAll();
             TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(GameSetting.HotUpdateConfigPath);
             var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
             var obfuscatedHotUpdateDir = PrebuildCommandExt.GetObfuscatedHotUpdateAssemblyOutputPath(EditorUserBuildSettings.activeBuildTarget);
