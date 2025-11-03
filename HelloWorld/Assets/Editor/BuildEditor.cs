@@ -103,8 +103,8 @@ public class BuildEditor
     {
         try
         {
-            if (ObfuzSettings.Instance.buildPipelineSettings.enable) PrebuildCommandExt.GenerateAll();
-            else PrebuildCommand.GenerateAll();
+            if (GameDebug.GDebug) PrebuildCommand.GenerateAll();
+            else PrebuildCommandExt.GenerateAll();
             TextAsset ta = AssetDatabase.LoadAssetAtPath<TextAsset>(GameSetting.HotUpdateConfigPath);
             var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
             var obfuscatedHotUpdateDir = PrebuildCommandExt.GetObfuscatedHotUpdateAssemblyOutputPath(EditorUserBuildSettings.activeBuildTarget);
