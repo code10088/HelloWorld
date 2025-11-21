@@ -40,14 +40,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "39cee1bd52c05e98708026de245e44df640848c0"
+      "hash": "880a6b188572644d731de15f4bfd3da8538b849a"
     },
     "com.qq.weixin.minigame": {
       "version": "https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "25827f8ab9bb8f01b28466f0865c1c9db56cddd8"
+      "hash": "a5bd83afde3f69618f230719f30095def07aa456"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
