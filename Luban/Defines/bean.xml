@@ -1,10 +1,6 @@
 <module name="">
-    <bean name="FightConfig">
-		<var name="FightType" type="FightType"/>
-        <var name="ModelPath" type="string"/>
+    <bean name="TestBean">
         <var name="Skills" type="(list#sep=|),int"/>
 		<var name="Attrs" type="(map#sep=:|),int,float"/>
-		<var name="Speed" type="float"/>
-		<var name="AngleSpeed" type="float"/>
     </bean>
 </module>

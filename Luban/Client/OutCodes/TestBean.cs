@@ -12,42 +12,30 @@ using Luban;
 
 namespace cfg
 {
-public sealed partial class FightConfig : Luban.BeanBase
+public sealed partial class TestBean : Luban.BeanBase
 {
-    public FightConfig(ByteBuf _buf) 
+    public TestBean(ByteBuf _buf) 
     {
-        FightType = (FightType)_buf.ReadInt();
-        ModelPath = _buf.ReadString();
         {int n0 = _buf.ReadSize(); Skills = new System.Collections.Generic.List<int>(n0);for(var i0 = 0 ; i0 < n0 ; i0++) { int _e0;  _e0 = _buf.ReadInt(); Skills.Add(_e0);}}
         {int n0 = _buf.ReadSize(); Attrs = new System.Collections.Generic.Dictionary<int, float>(n0 * 3 / 2);for(var i0 = 0 ; i0 < n0 ; i0++) { int _k0;  _k0 = _buf.ReadInt(); float _v0;  _v0 = _buf.ReadFloat();     Attrs.Add(_k0, _v0);}}
-        Speed = _buf.ReadFloat();
-        AngleSpeed = _buf.ReadFloat();
     }
 
-    public static FightConfig DeserializeFightConfig(ByteBuf _buf)
+    public static TestBean DeserializeTestBean(ByteBuf _buf)
     {
-        return new FightConfig(_buf);
+        return new TestBean(_buf);
     }
 
-    public readonly FightType FightType;
-    public readonly string ModelPath;
     public readonly System.Collections.Generic.List<int> Skills;
     public readonly System.Collections.Generic.Dictionary<int, float> Attrs;
-    public readonly float Speed;
-    public readonly float AngleSpeed;
    
-    public const int __ID__ = 883061586;
+    public const int __ID__ = -1082681470;
     public override int GetTypeId() => __ID__;
 
     public override string ToString()
     {
         return "{ "
-        + "FightType:" + FightType + ","
-        + "ModelPath:" + ModelPath + ","
         + "Skills:" + Luban.StringUtil.CollectionToString(Skills) + ","
         + "Attrs:" + Luban.StringUtil.CollectionToString(Attrs) + ","
-        + "Speed:" + Speed + ","
-        + "AngleSpeed:" + AngleSpeed + ","
         + "}";
     }
 }
