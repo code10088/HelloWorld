@@ -60,4 +60,24 @@
 	<enum name="FunctionUnlockType">
         <var name="Turntable" value="1"/>
     </enum>
+	<enum name="ItemType">
+        <var name="Normal" value="1"/>
+        <var name="Equip" value="2"/>
+        <var name="Weapon" value="3"/>
+        <var name="Box" value="4"/>
+    </enum>
+	<enum name="ItemQualityType">
+        <var name="White" value="1"/>
+        <var name="Green" value="2"/>
+        <var name="Blue" value="3"/>
+        <var name="Purple" value="4"/>
+        <var name="Orange" value="5"/>
+        <var name="Gold" value="6"/>
+    </enum>
+	<enum name="ItemBindType">
+        <var name="None" value="1"/>
+        <var name="BindOnPickup" value="2"/>
+        <var name="BindOnEquip" value="3"/>
+        <var name="BindOnUse" value="4"/>
+    </enum>
 </module>

@@ -26,6 +26,7 @@ public partial class Tables
     public TbGuide TbGuide = new TbGuide();
     public TbActivityConfig TbActivityConfig = new TbActivityConfig();
     public TbFunctionUnlockConfig TbFunctionUnlockConfig = new TbFunctionUnlockConfig();
+    public TbItems TbItems = new TbItems();
 }
 
 }

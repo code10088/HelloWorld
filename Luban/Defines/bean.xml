@@ -3,4 +3,10 @@
         <var name="Skills" type="(list#sep=|),int"/>
 		<var name="Attrs" type="(map#sep=:|),int,float"/>
     </bean>
+	<bean name="ItemAttr">
+    </bean>
+	<bean name="EquipItemAttr" parent="ItemAttr">
+		<var name="Hp" type="int"/>
+		<var name="Attack" type="int"/>
+    </bean>
 </module>
