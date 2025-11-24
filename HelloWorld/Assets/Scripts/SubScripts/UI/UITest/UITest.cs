@@ -44,6 +44,7 @@ public class UITest : UIBase
         component.openTipsBtnUIButton.onClick.AddListener(OnOpenTips);
         component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
         component.uIProcessBtnUIButton.onClick.AddListener(OpenUIProcess);
+        component.commonItemBtnUIButton.onClick.AddListener(ShowCommonItem);
 
         //Function
         component.openSDKBtnUIButton.onClick.AddListener(SDKInit);
@@ -212,6 +213,14 @@ public class UITest : UIBase
     private void NextUIProcess(object o)
     {
         if ((int)((object[])o)[0] == UIProcess.CurId) UIProcess.Next();
+    }
+    private void ShowCommonItem()
+    {
+        var item = CommonItem.Instance.Get(1);
+        item.SetData(component.itemRootObj.transform, 10);
+        CommonItem.Instance.Recycle(item);
+        item = CommonItem.Instance.Get(1);
+        item.SetData(component.itemRootObj.transform, 10);
     }
     #endregion
 

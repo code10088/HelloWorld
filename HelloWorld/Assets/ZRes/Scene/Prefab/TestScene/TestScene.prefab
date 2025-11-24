@@ -46,60 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exportComponent:
   - {fileID: 2356218167812486905}
---- !u!1 &6380115661352025240
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3114043173759578266}
-  - component: {fileID: 1060511081048792447}
-  m_Layer: 0
-  m_Name: BRG
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3114043173759578266
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6380115661352025240}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 392475982783516489}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1060511081048792447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6380115661352025240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3ecf2a1b2fa26634ba667ee5052be355, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  m_material: {fileID: 2100000, guid: e0a675a74c624254789c8d9b649e26b6, type: 2}
-  m_castShadows: 1
-  m_motionSpeed: 0
-  m_motionAmplitude: 2
-  m_spacingFactor: 1
-  m_debrisDebugTest: 0
-  m_phaseSpeed1: 6
-  m_backgroundW: 60
-  m_backgroundH: 150
 --- !u!1 &6729683569169287116
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,7 +77,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2356218167812486905}
-  - {fileID: 3114043173759578266}
   - {fileID: 1095370141054479018}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -147,7 +92,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/Scene/Auto/
+  path: Assets/Scripts/SubScripts/Scene/TestScene/
   className: TestSceneComponent
 --- !u!1 &8711415407256112940
 GameObject:
@@ -208,6 +153,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

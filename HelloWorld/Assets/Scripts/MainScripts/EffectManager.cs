@@ -2,91 +2,80 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EffectManager : Singletion<EffectManager>
+public class EffectManager : MonoSingletion<EffectManager>, SingletionInterface
 {
-    private static Dictionary<string, AssetObjectPool<ObjectPoolItem>> effectDic = new();
-    private List<EffectItem> list = new();
-    private Queue<EffectItem> cache = new();
+    private static Dictionary<string, AssetObjectPool<EffectItem>> effectDic = new();
 
-    public int AddEffect(string path, Transform parent = null, Action<GameObject> action = null, float time = -1)
+    public void Init()
+    {
+        gameObject.SetActive(false);
+    }
+
+    public int Get(string path, Transform parent, Action<GameObject> action = null, float time = 0)
     {
         if (string.IsNullOrEmpty(path)) return -1;
-        EffectItem temp = cache.Count > 0 ? cache.Dequeue() : new();
-        temp.Init(path, parent, action, time);
-        list.Add(temp);
+        AssetObjectPool<EffectItem> pool;
+        if (!effectDic.TryGetValue(path, out pool))
+        {
+            pool = new AssetObjectPool<EffectItem>();
+            pool.Init(path);
+            effectDic.Add(path, pool);
+        }
+        var temp = pool.Dequeue();
+        temp.Init(parent, action, time);
         return temp.ItemID;
     }
-    public void Remove(int id)
+    public void Recycle(int id)
     {
         if (id < 0) return;
-        for (int i = 0; i < list.Count; i++)
+        foreach (var item in effectDic)
         {
-            if (list[i].ItemID == id)
+            if (item.Value.Use.Exists(a => a.ItemID == id))
             {
-                list[i].Reset();
-                cache.Enqueue(list[i]);
-                list.RemoveAt(i);
+                item.Value.Enqueue(id);
                 return;
             }
         }
     }
     public void Clear()
     {
-        foreach (var item in list) item.Reset();
         foreach (var item in effectDic) item.Value.Destroy();
-        list.Clear();
         effectDic.Clear();
     }
 
 
-    private class EffectItem : AsyncItem
+    private class EffectItem : ObjectPoolItem
     {
-        private string path;
         private Transform parent;
         private Action<GameObject> action;
-        private int poolItemId;
         private int timerId = -1;
 
-        public void Init(string path, Transform parent = null, Action<GameObject> action = null, float time = 0)
+        public void Init(Transform parent, Action<GameObject> action = null, float time = 0)
         {
-            base.Init(finish);
-            this.path = path;
             this.parent = parent;
             this.action = action;
-            AssetObjectPool<ObjectPoolItem> pool;
-            if (!effectDic.TryGetValue(path, out pool))
-            {
-                pool = new AssetObjectPool<ObjectPoolItem>();
-                pool.Init(path);
-                effectDic.Add(path, pool);
-            }
-            poolItemId = pool.Dequeue(LoadFinish).ItemID;
-            if (time > 0) timerId = TimeManager.Instance.StartTimer(time, finish: Remove);
+            if (time > 0) timerId = TimeManager.Instance.StartTimer(time, finish: Recycle);
         }
-        private void LoadFinish(int itemId, GameObject obj, object[] param)
+        protected override void Finish(GameObject obj)
         {
-            if (parent != null)
-            {
-                obj.transform.SetParent(parent);
-                obj.transform.localPosition = Vector3.zero;
-                obj.transform.localRotation = Quaternion.identity;
-                obj.transform.localScale = Vector3.one;
-            }
-            if (action != null)
-            {
-                action.Invoke(obj);
-            }
+            base.Finish(obj);
+            if (obj == null) return;
+            obj.transform.parent = parent;
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
+            obj.transform.localScale = Vector3.one;
+            action?.Invoke(obj);
         }
-        private void Remove()
+        public override void Disable()
         {
-            Instance.Remove(ItemID);
-        }
-        public override void Reset()
-        {
-            base.Reset();
-            if (effectDic.TryGetValue(path, out AssetObjectPool<ObjectPoolItem> pool)) pool.Enqueue(poolItemId);
+            base.Disable();
+            if (obj) obj.transform.parent = Instance.transform;
             TimeManager.Instance.StopTimer(timerId);
             timerId = -1;
+        }
+        private void Recycle()
+        {
+            Instance.Recycle(ItemID);
         }
     }
 }

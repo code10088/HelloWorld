@@ -19,5 +19,6 @@ public class ZResConst
     //UIAtlas
     public static readonly string ResUIAtlasTestPath = "Assets/ZRes/UI/Atlas/Test/";
     public static readonly string ResUIAtlasCommonPath = "Assets/ZRes/UI/Atlas/Common/";
+    public static readonly string ResUIAtlasItemPath = "Assets/ZRes/UI/Atlas/Item/";
 
 }

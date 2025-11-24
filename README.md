@@ -244,6 +244,10 @@
 　快进快退快捷键<br><br>
 
 ## 具体功能模块
+#### 通用道具
+　Luban/Datas/Items.xls：道具配置<br>
+　CommonItem：道具GameObject缓存<br>
+
 #### 活动
 　ActivityData：所有活动数据管理<br>
 　ActivityDataBase：活动基类，包含开始、刷新、结束、红点<br>
@@ -278,7 +282,6 @@
 　选择服务器<br>
 　英雄展示<br>
 　战队<br>
-　道具<br>
 　任务<br>
 　天赋<br>
 　活动：首充、七天签到<br>

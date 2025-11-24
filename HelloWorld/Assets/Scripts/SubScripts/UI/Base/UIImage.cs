@@ -13,4 +13,9 @@ public class UIImage : Image
     {
         if (asset) sprite = (Sprite)asset;
     }
+    public void Clear()
+    {
+        AssetManager.Instance.Unload(ref loadId);
+        sprite = null;
+    }
 }

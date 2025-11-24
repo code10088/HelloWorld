@@ -13,4 +13,9 @@ public class UIRawImage : RawImage
     {
         if (asset) texture = (Texture)asset;
     }
+    public void Clear()
+    {
+        AssetManager.Instance.Unload(ref loadId);
+        texture = null;
+    }
 }

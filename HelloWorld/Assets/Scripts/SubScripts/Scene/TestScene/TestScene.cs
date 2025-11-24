@@ -18,14 +18,14 @@ public class TestScene : SceneBase
         base.OnEnable(param);
         GameDebug.Log("TestScene OnEnable");
 
-        testEffectId = EffectManager.Instance.AddEffect($"{ZResConst.ResSceneEffectPath}Fire/Fire.prefab", component.fireRootTransform);
+        testEffectId = EffectManager.Instance.Get($"{ZResConst.ResSceneEffectPath}Fire/Fire.prefab", component.fireRootTransform);
     }
     public override void OnDisable()
     {
         base.OnDisable();
         GameDebug.Log("TestScene OnDisable");
 
-        EffectManager.Instance.Remove(testEffectId);
+        EffectManager.Instance.Recycle(testEffectId);
     }
     public override void OnDestroy()
     {

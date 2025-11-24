@@ -7565,7 +7565,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/Auto/
+  path: Assets/Scripts/SubScripts/UI/UISetting/
   className: UISettingComponent
 --- !u!1 &8785119867214501394
 GameObject:
