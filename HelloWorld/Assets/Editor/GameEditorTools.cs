@@ -135,15 +135,6 @@ public class GameEditorTools
         public string type;
     }
 
-    public static string WriteLine(int tabCount, string str)
-    {
-        string result = string.Empty;
-        for (int i = 0; i < tabCount; i++) result += "    ";
-        result += str;
-        result += "\n";
-        return result;
-    }
-
     [MenuItem("Tools/Editor/CopyAutoIndex &d")]
     public static void CopyAutoIndex()
     {
