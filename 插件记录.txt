@@ -89,3 +89,7 @@ Nino
 	https://github.com/JasonXuDeveloper/Nino/tree/main/src/Nino.Unity packages中获取Nino.Core.dll Nino.Generator.dll
 	Nino.Core anyplatform
 	Nino.Generator noplatform 添加RoslynAnalyzer标签
+	
+Scriban
+	https://github.com/scriban/scriban/releases
+	编译 release dll

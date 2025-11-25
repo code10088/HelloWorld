@@ -1,13 +1,14 @@
-﻿using UnityEngine;
-using UnityEditor;
-using System.IO;
+﻿using Scriban;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Unity.Collections;
-using UnityEditor.Build;
-using System;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Unity.Collections;
+using UnityEditor;
+using UnityEditor.Build;
+using UnityEngine;
 
 public class GameEditorTools
 {
@@ -85,46 +86,53 @@ public class GameEditorTools
 
         string str1 = string.Empty;
         string str2 = string.Empty;
+        var messages = new List<NetMessage>();
         string[] lines = File.ReadAllLines($"{path}/Proto/AConfig.txt");
         for (int i = 0; i < lines.Length; i++)
         {
-            string temp = lines[i];
+            string temp = lines[i].Trim();
             if (string.IsNullOrEmpty(temp) || temp.StartsWith("//")) continue;
-            var temps = temp.Split('=', StringSplitOptions.RemoveEmptyEntries);
-            temp = temps[1].Replace('.', '_');
-            str1 += WriteLine(1, $"public const ushort {temp} = {temps[0]};");
-            if (int.Parse(temps[0]) >= 10000) str2 += WriteLine(4, $"case NetMsgId.{temp}: msg = Serializer.Deserialize<{temps[1]}>(memory); break;");
+            var parts = temp.Split('=', StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length < 2) continue;
+            if (!int.TryParse(parts[0].Trim(), out int msgId)) continue;
+            string msgType = parts[1].Trim();
+            string msgName = msgType.Replace('.', '_');
+            messages.Add(new NetMessage
+            {
+                id = msgId,
+                name = msgName,
+                type = msgType
+            });
         }
-        string result = string.Empty;
-        result += WriteLine(0, "using ProtoBuf;");
-        result += WriteLine(0, "using System;");
-        result += WriteLine(0, "public class NetMsgId");
-        result += WriteLine(0, "{");
-        result += str1;
-        result += WriteLine(0, "}");
-        result += WriteLine(0, "public partial class NetMsgDispatch");
-        result += WriteLine(0, "{");
-        result += WriteLine(1, "private bool Deserialize(ushort id, Memory<byte> memory)");
-        result += WriteLine(1, "{");
-        result += WriteLine(2, "try");
-        result += WriteLine(2, "{");
-        result += WriteLine(3, "IExtensible msg = null;");
-        result += WriteLine(3, "switch (id)");
-        result += WriteLine(3, "{");
-        result += str2;
-        result += WriteLine(3, "}");
-        result += WriteLine(3, "Add(id, msg);");
-        result += WriteLine(3, "return true;");
-        result += WriteLine(2, "}");
-        result += WriteLine(2, "catch (Exception e)");
-        result += WriteLine(2, "{");
-        result += WriteLine(3, "GameDebug.LogError(e.Message);");
-        result += WriteLine(3, "return false;");
-        result += WriteLine(2, "}");
-        result += WriteLine(1, "}");
-        result += WriteLine(0, "}");
+        string result = File.ReadAllText($"{Application.dataPath}/Editor/Template/NetMsgDeserializeTemplate.txt");
+        if (string.IsNullOrEmpty(result))
+        {
+            UnityEngine.Debug.LogError("模板不存在");
+            return;
+        }
+        try
+        {
+            var template = Template.Parse(result);
+            if (template.HasErrors)
+            {
+                UnityEngine.Debug.LogError("模板解析错误：" + template.Messages);
+                return;
+            }
+            result = template.Render(new { messages });
+        }
+        catch (Exception ex)
+        {
+            UnityEngine.Debug.LogError("模板渲染异常：" + ex.Message);
+            return;
+        }
         File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Network/NetMsgDeserialize.cs", result);
         AssetDatabase.Refresh();
+    }
+    private class NetMessage
+    {
+        public int id;
+        public string name;
+        public string type;
     }
 
     public static string WriteLine(int tabCount, string str)

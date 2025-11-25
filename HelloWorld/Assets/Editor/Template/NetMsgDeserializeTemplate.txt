@@ -2,9 +2,9 @@ using ProtoBuf;
 using System;
 public class NetMsgId
 {
-    public const ushort CSHeart = 0;
-    public const ushort ProtoTest_Person = 1;
-    public const ushort SCHeart = 10000;
+{{~ for msg in messages ~}}
+    public const ushort {{ msg.name }} = {{ msg.id }};
+{{~ end ~}}
 }
 public partial class NetMsgDispatch
 {
@@ -15,7 +15,11 @@ public partial class NetMsgDispatch
             IExtensible msg = null;
             switch (id)
             {
-                case NetMsgId.SCHeart: msg = Serializer.Deserialize<SCHeart>(memory); break;
+{{~ for msg in messages ~}}
+    {{~ if msg.id >= 10000 ~}}
+                case NetMsgId.{{ msg.name }}: msg = Serializer.Deserialize<{{ msg.type }}>(memory); break;
+    {{~ end ~}}
+{{~ end ~}}
             }
             HandleMsg(id, msg);
             return true;

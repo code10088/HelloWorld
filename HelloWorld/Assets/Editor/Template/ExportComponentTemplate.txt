@@ -1,0 +1,26 @@
+using UnityEngine;
+{{~ for class_info in class_info_list ~}}
+public partial class {{ class_info.class_name }}
+{
+    public GameObject obj;
+    {{~ for component in class_info.components ~}}
+    {{~ for export_component in component.export_components ~}}
+    public {{ export_component.component_type }} {{ export_component.field_name }} = null;
+    {{~ end ~}}
+    {{~ end ~}}
+    public void Init(GameObject obj)
+    {
+        this.obj = obj;
+        ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);
+        {{~ for component in class_info.components ~}}
+        {{~ for export_component in component.export_components ~}}
+            {{~ if export_component.component_type == "GameObject" ~}}
+        {{ export_component.field_name }} = allData[{{ component.index }}].gameObject;
+            {{~ else ~}}
+        {{ export_component.field_name }} = allData[{{ component.index }}].exportComponent[{{ export_component.export_index }}] as {{ export_component.component_type }};
+            {{~ end ~}}
+        {{~ end ~}}
+        {{~ end ~}}
+    }
+}
+{{~ end ~}}

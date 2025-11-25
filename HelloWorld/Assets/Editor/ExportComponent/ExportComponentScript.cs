@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+﻿using Scriban;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
+using UnityEngine;
 
 public class ExportComponentScript
 {
     private static Texture2D texture;
 
-    [ExecuteInEditMode,InitializeOnLoadMethod]
+    [ExecuteInEditMode, InitializeOnLoadMethod]
     public static void Init()
     {
         if (texture == null) texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Editor/ExportComponent/1.png");
@@ -51,159 +53,126 @@ public class ExportComponentScript
         }
     }
 
-    private class ClassInfo
-    {
-        public string path;
-        public string className;
-        public List<int> componentIndex;
-        public List<ExportComponent> component;
-    }
-
     private static string BeginExportScript()
     {
         GameObject tempObj = Selection.activeGameObject;
         ExportClass[] allClass = tempObj.GetComponentsInChildren<ExportClass>(true);
         if (allClass.Length <= 0) return "没有挂载ExportClass的物体";
 
-        //筛选
-        List<ClassInfo> classInfoList = new List<ClassInfo>();
-        for (int i = 0; i < allClass.Length; i++)
+        var classInfoList = new List<ClassInfo>();
+        foreach (var tempClass in allClass)
         {
-            ExportClass tempClass = allClass[i];
-            int tempIndex = classInfoList.FindIndex(a => a.className == tempClass.className);
-            if (tempIndex >= 0) return "类名重复" + tempClass.className;
-            ExportComponent[] tempComponentArray = tempClass.GetComponentsInChildren<ExportComponent>(true);
-            List<ExportComponent> tempComponentList = new List<ExportComponent>();
-            List<int> tempComponentIdList = new List<int>();
-            for (int j = 0; j < tempComponentArray.Length; j++)
+            if (classInfoList.Any(a => a.class_name == tempClass.className)) return "类名重复: " + tempClass.className;
+            var classInfo = new ClassInfo
             {
-                ExportComponent tempComponent = tempComponentArray[j];
-                ExportClass selfClass = tempComponent.GetComponent<ExportClass>();
-                ExportClass tempParentClass = tempComponent.transform.parent.GetComponentInParent<ExportClass>(true);
-                if (selfClass == tempClass || tempParentClass == tempClass)
+                path = tempClass.path,
+                class_name = tempClass.className
+            };
+            var componentArray = tempClass.GetComponentsInChildren<ExportComponent>(true);
+            var componentList = new List<ExportComponent>();
+            var componentIndex = new List<int>();
+            for (int i = 0; i < componentArray.Length; i++)
+            {
+                var component = componentArray[i];
+                var selfClass = component.GetComponent<ExportClass>();
+                var parentClass = component.transform.parent.GetComponentInParent<ExportClass>(true);
+                if (selfClass == tempClass || parentClass == tempClass)
                 {
-                    ExportComponent b = tempComponentList.Find(a => a.name == tempComponent.name);
-                    if (b == null)
+                    if (componentList.Any(a => a.name == component.name))
                     {
-                        tempComponentList.Add(tempComponent);
-                        tempComponentIdList.Add(j);
+                        return tempClass.className + "类中变量名重复" + component.name;
                     }
                     else
                     {
-                        return tempClass.className + "类中变量名重复" + tempComponent.name;
+                        componentList.Add(component);
+                        componentIndex.Add(i);
                     }
                 }
             }
-            ClassInfo classInfo = new ClassInfo();
-            classInfo.path = tempClass.path;
-            classInfo.className = tempClass.className;
-            classInfo.componentIndex = tempComponentIdList;
-            classInfo.component = tempComponentList;
+            for (int i = 0; i < componentList.Count; i++)
+            {
+                var component = componentList[i];
+                var componentInfo = new ComponentInfo
+                {
+                    index = componentIndex[i],
+                    name = component.name
+                };
+                for (int j = 0; j < component.exportComponent.Length; j++)
+                {
+                    var export = component.exportComponent[j];
+                    string fieldType, fieldName, baseName;
+                    if (export == null)
+                    {
+                        fieldType = "GameObject";
+                        baseName = component.name + "Obj";
+                    }
+                    else
+                    {
+                        fieldType = export.GetType().ToString();
+                        baseName = component.name + fieldType.Substring(fieldType.LastIndexOf('.') + 1);
+                    }
+                    fieldName = baseName;
+                    int counter = 1;
+                    while (componentInfo.export_components.Any(a => a.field_name == fieldName))
+                    {
+                        fieldName = baseName + counter;
+                        counter++;
+                    }
+                    fieldName = char.ToLower(fieldName[0]) + fieldName.Substring(1);
+                    componentInfo.export_components.Add(new ExportComponentInfo
+                    {
+                        component = export,
+                        component_type = fieldType,
+                        field_name = fieldName,
+                        export_index = j
+                    });
+                }
+                classInfo.components.Add(componentInfo);
+            }
             classInfoList.Add(classInfo);
         }
-        if (classInfoList.Count == 0) return "沒有可用的变量名";
 
-        //导出
-        string result = string.Empty;
-        if (!Directory.Exists(classInfoList[0].path)) Directory.CreateDirectory(classInfoList[0].path);
-        string scriptName = classInfoList[0].path + classInfoList[0].className + ".cs";
-        result += GameEditorTools.WriteLine(0, "using UnityEngine;");
-        for (int i = 0; i < classInfoList.Count; i++)
+        string result = File.ReadAllText($"{Application.dataPath}/Editor/Template/ExportComponentTemplate.txt");
+        if (string.IsNullOrEmpty(result)) return "模板不存在";
+        try
         {
-            ClassInfo ci = classInfoList[i];
-            result += GameEditorTools.WriteLine(0, "public partial class " + ci.className);
-            result += GameEditorTools.WriteLine(0, "{");
-            result += GameEditorTools.WriteLine(1, "public GameObject obj;");
-            for (int j = 0; j < ci.component.Count; j++)
-            {
-                ExportComponent tempComponent = ci.component[j];
-                Dictionary<string, int> tempNameDic = new Dictionary<string, int>();
-                for (int k = 0; k < tempComponent.exportComponent.Length; k++)
-                {
-                    Component temp = tempComponent.exportComponent[k];
-                    if (temp == null)
-                    {
-                        string tempName = tempComponent.name + "Obj";
-                        if (tempNameDic.ContainsKey(tempName))
-                        {
-                            tempNameDic[tempName]++;
-                            tempName += tempNameDic[tempName];
-                        }
-                        else
-                        {
-                            tempNameDic.Add(tempName, 0);
-                        }
-                        tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        result += GameEditorTools.WriteLine(1, "public GameObject " + tempName + " = null;");
-                    }
-                    else
-                    {
-                        string tempStr = temp.GetType().ToString();
-                        string tempName = tempStr.Substring(tempStr.LastIndexOf(".") + 1);
-                        tempName = tempComponent.name + tempName;
-                        if (tempNameDic.ContainsKey(tempName))
-                        {
-                            tempNameDic[tempName]++;
-                            tempName += tempNameDic[tempName];
-                        }
-                        else
-                        {
-                            tempNameDic.Add(tempName, 0);
-                        }
-                        tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        result += GameEditorTools.WriteLine(1, "public " + tempStr + " " + tempName + " = null;");
-                    }
-                }
-            }
-            result += GameEditorTools.WriteLine(1, "public void Init(GameObject obj)");
-            result += GameEditorTools.WriteLine(1, "{");
-            result += GameEditorTools.WriteLine(2, "this.obj = obj;");
-            result += GameEditorTools.WriteLine(2, "ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);");
-            for (int j = 0; j < ci.component.Count; j++)
-            {
-                ExportComponent tempComponent = ci.component[j];
-                Dictionary<string, int> tempNameDic = new Dictionary<string, int>();
-                for (int k = 0; k < tempComponent.exportComponent.Length; k++)
-                {
-                    Component temp = tempComponent.exportComponent[k];
-                    if (temp == null)
-                    {
-                        string tempName = tempComponent.name + "Obj";
-                        if (tempNameDic.ContainsKey(tempName))
-                        {
-                            tempNameDic[tempName]++;
-                            tempName += tempNameDic[tempName];
-                        }
-                        else
-                        {
-                            tempNameDic.Add(tempName, 0);
-                        }
-                        tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        result += GameEditorTools.WriteLine(2, tempName + " = allData[" + ci.componentIndex[j] + "].gameObject;");
-                    }
-                    else
-                    {
-                        string tempStr = temp.GetType().ToString();
-                        string tempName = tempStr.Substring(tempStr.LastIndexOf(".") + 1);
-                        tempName = tempComponent.name + tempName;
-                        if (tempNameDic.ContainsKey(tempName))
-                        {
-                            tempNameDic[tempName]++;
-                            tempName += tempNameDic[tempName];
-                        }
-                        else
-                        {
-                            tempNameDic.Add(tempName, 0);
-                        }
-                        tempName = tempName.Substring(0, 1).ToLower() + tempName.Substring(1);
-                        result += GameEditorTools.WriteLine(2, tempName + " = allData[" + ci.componentIndex[j] + "].exportComponent[" + k + "] as " + tempStr + ";");
-                    }
-                }
-            }
-            result += GameEditorTools.WriteLine(1, "}");
-            result += GameEditorTools.WriteLine(0, "}");
+            var template = Template.Parse(result);
+            if (template.HasErrors) return "模板解析错误：" + template.Messages;
+            result = template.Render(new { class_info_list = classInfoList });
         }
-        File.WriteAllText(scriptName, result);
-        return string.Empty;
+        catch (System.Exception ex)
+        {
+            return "模板渲染异常：" + ex.Message;
+        }
+
+        if (Directory.Exists(classInfoList[0].path))
+        {
+            string filePath = Path.Combine(classInfoList[0].path, classInfoList[0].class_name + ".cs");
+            File.WriteAllText(filePath, result);
+            return string.Empty;
+        }
+        else
+        {
+            return "目标文件夹不存在";
+        }
+    }
+    private class ClassInfo
+    {
+        public string path;
+        public string class_name;
+        public List<ComponentInfo> components = new List<ComponentInfo>();
+    }
+    private class ComponentInfo
+    {
+        public int index;
+        public string name;
+        public List<ExportComponentInfo> export_components = new List<ExportComponentInfo>();
+    }
+    private class ExportComponentInfo
+    {
+        public Component component;
+        public string component_type;
+        public string field_name;
+        public int export_index;
     }
 }
