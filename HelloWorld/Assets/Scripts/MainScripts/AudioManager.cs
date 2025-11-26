@@ -102,7 +102,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             var clip = asset as AudioClip;
             src.clip = clip;
             src.Play();
-            if (!loop && timerId < 0) timerId = TimeManager.Instance.StartTimer(clip.length, finish: Stop);
+            if (!loop && timerId < 0) timerId = Driver.Instance.StartTimer(clip.length, finish: Stop);
         }
         public void Stop()
         {
@@ -110,7 +110,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             AssetManager.Instance.Unload(ref itemId, CacheTime.Short);
             src.Stop();
             src.clip = null;
-            if (timerId > 0) TimeManager.Instance.StopTimer(timerId);
+            if (timerId > 0) Driver.Instance.StopTimer(timerId);
             timerId = -1;
             Instance.itemCache.Enqueue(this);
         }

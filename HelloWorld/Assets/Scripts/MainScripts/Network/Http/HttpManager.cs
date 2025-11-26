@@ -47,7 +47,7 @@ public class HttpManager : Singletion<HttpManager>
 #if UNITY_WEBGL
             CoroutineManager.Instance.StartCoroutine(Request());
 #else
-            ThreadManager.Instance.StartThread(Request, Finish, priority: 0);
+            Driver.Instance.StartThread(Request, Finish, priority: 0);
 #endif
         }
         private void Request(object o)

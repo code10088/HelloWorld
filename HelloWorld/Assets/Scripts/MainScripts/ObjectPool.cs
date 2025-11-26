@@ -278,7 +278,7 @@ public class ObjectPoolItem
     public virtual void Disable()
     {
         obj?.SetActive(false);
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Destroy);
+        if (timerId < 0) timerId = Driver.Instance.StartTimer(GameSetting.recycleTimeS, finish: Destroy);
         state |= LoadState.Release;
         action = null;
         param = null;
@@ -291,7 +291,7 @@ public class ObjectPoolItem
         if (obj != null) GameObject.Destroy(obj);
         obj = null;
         state = LoadState.None;
-        TimeManager.Instance.StopTimer(timerId);
+        Driver.Instance.StopTimer(timerId);
         timerId = -1;
         release?.Invoke(itemId);
         release = null;
@@ -302,7 +302,7 @@ public class ObjectPoolItem
     private void Recycle()
     {
         state &= LoadState.InstantiateFinish | LoadState.Instantiating;
-        TimeManager.Instance.StopTimer(timerId);
+        Driver.Instance.StopTimer(timerId);
         timerId = -1;
     }
 }

@@ -29,7 +29,7 @@ public class ConfigManager : Singletion<ConfigManager>
         {
             finish?.Invoke();
             constConfig = gameConfigs.TbConstConfig[0];
-            AsyncManager.Instance.GCCollect();
+            Driver.Instance.GCCollect();
         }
         else
         {
@@ -62,7 +62,7 @@ public class ConfigManager : Singletion<ConfigManager>
             if (asset == null) return;
             byte[] bytes = ((TextAsset)asset).bytes;
             if (bytes == null) return;
-            ThreadManager.Instance.StartThread(a => tb.Deserialize(bytes), Finish);
+            Driver.Instance.StartThread(a => tb.Deserialize(bytes), Finish);
         }
         private void Finish()
         {

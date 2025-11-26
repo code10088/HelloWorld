@@ -8,14 +8,14 @@ public class ActivityData : DataBase
     public void Clear()
     {
         datas.Clear();
-        TimeManager.Instance.StopTimer(timerId);
+        Driver.Instance.StopTimer(timerId);
     }
 
     public void Init(List<TempActivityItem> data)
     {
         datas.Clear();
         for (int i = 0; i < data.Count; i++) Refresh(data[i]);
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(0, 1, CheckActivity);
+        if (timerId < 0) timerId = Driver.Instance.StartTimer(0, 1, CheckActivity);
     }
     public void Refresh(TempActivityItem data)
     {

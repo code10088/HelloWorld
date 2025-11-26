@@ -119,7 +119,7 @@ public class UISubItem : UIBase
     private void Disable()
     {
         if (state.HasFlag(LoadState.InstantiateFinish)) OnDisable();
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: Destroy);
+        if (timerId < 0) timerId = Driver.Instance.StartTimer(releaseTime, finish: Destroy);
         state |= LoadState.Release;
     }
     private void Destroy()
@@ -133,7 +133,7 @@ public class UISubItem : UIBase
         AssetManager.Instance.Unload(ref loadId);
         state = LoadState.Release;
         releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMinS, 0.2f);
-        TimeManager.Instance.StopTimer(timerId);
+        Driver.Instance.StopTimer(timerId);
         timerId = -1;
         open = null;
         param = null;
@@ -142,7 +142,7 @@ public class UISubItem : UIBase
     {
         state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
         releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.2f);
-        TimeManager.Instance.StopTimer(timerId);
+        Driver.Instance.StopTimer(timerId);
         timerId = -1;
     }
     #endregion

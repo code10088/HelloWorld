@@ -191,7 +191,7 @@ public class AssetManager : Singletion<AssetManager>
             if (state.HasFlag(LoadState.Release))
             {
                 state &= LoadState.LoadFinish | LoadState.Loading;
-                TimeManager.Instance.StopTimer(timerId);
+                Driver.Instance.StopTimer(timerId);
                 timerId = -1;
             }
             switch (state)
@@ -244,11 +244,11 @@ public class AssetManager : Singletion<AssetManager>
                     Unload();
                     break;
                 case CacheTime.Short:
-                    if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeS, finish: Unload);
+                    if (timerId < 0) timerId = Driver.Instance.StartTimer(GameSetting.recycleTimeS, finish: Unload);
                     state |= LoadState.Release;
                     break;
                 case CacheTime.Long:
-                    if (timerId < 0) timerId = TimeManager.Instance.StartTimer(GameSetting.recycleTimeMaxS, finish: Unload);
+                    if (timerId < 0) timerId = Driver.Instance.StartTimer(GameSetting.recycleTimeMaxS, finish: Unload);
                     state |= LoadState.Release;
                     break;
             }
@@ -266,7 +266,7 @@ public class AssetManager : Singletion<AssetManager>
             ah = null;
             loaders.Clear();
             timer = CacheTime.None;
-            TimeManager.Instance.StopTimer(timerId);
+            Driver.Instance.StopTimer(timerId);
             timerId = -1;
             cache.Enqueue(this);
         }
@@ -369,7 +369,7 @@ public class LoadGameObjectItem
     public void Disable()
     {
         obj?.SetActive(false);
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(timer, finish: Destroy);
+        if (timerId < 0) timerId = Driver.Instance.StartTimer(timer, finish: Destroy);
         state |= LoadState.Release;
         action = null;
         param = null;
@@ -383,7 +383,7 @@ public class LoadGameObjectItem
         AssetManager.Instance.Unload(ref loadId);
         state = LoadState.None;
         timer = 0;
-        TimeManager.Instance.StopTimer(timerId);
+        Driver.Instance.StopTimer(timerId);
         timerId = -1;
     }
     private void Recycle()
@@ -391,7 +391,7 @@ public class LoadGameObjectItem
         state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
         timer += GameSetting.recycleTimeS;
         timer = Math.Min(timer, GameSetting.recycleTimeMaxS);
-        TimeManager.Instance.StopTimer(timerId);
+        Driver.Instance.StopTimer(timerId);
         timerId = -1;
     }
 }

@@ -30,7 +30,7 @@ public class UIGuide : UIBase
         base.OnEnable(param);
         EventManager.Instance.RegisterEvent(EventType.RefreshGuide, Refresh);
 
-        updateId = Updater.Instance.StartUpdate(Update);
+        updateId = Driver.Instance.StartUpdate(Update);
         Refresh(null);
     }
     public override void OnDisable()
@@ -38,7 +38,7 @@ public class UIGuide : UIBase
         base.OnDisable();
         EventManager.Instance.UnRegisterEvent(EventType.RefreshGuide, Refresh);
 
-        Updater.Instance.StopUpdate(updateId);
+        Driver.Instance.StopUpdate(updateId);
     }
 
     private void Refresh(object param)

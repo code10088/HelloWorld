@@ -19,13 +19,13 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
     public void Download(string url, string path, Action<string, byte[]> finish, Action<string, float, float> update = null, int timeout = 10)
     {
         all.Add(new HttpItem(url, path, finish, update, timeout));
-        if (updateId < 0) updateId = Updater.Instance.StartUpdate(UpdateProgress);
+        if (updateId < 0) updateId = Driver.Instance.StartUpdate(UpdateProgress);
         CheckHttpQueue();
     }
     public void Download(string[] url, string[] path, Action<string[]> finish, Action<int, int> update = null)
     {
         group.Add(new HttpItemGroup(url, path, finish, update));
-        if (updateId < 0) updateId = Updater.Instance.StartUpdate(UpdateProgress);
+        if (updateId < 0) updateId = Driver.Instance.StartUpdate(UpdateProgress);
     }
     public void CheckHttpQueue()
     {
@@ -49,7 +49,7 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
         }
         if (all.Count == 0 && group.Count == 0)
         {
-            Updater.Instance.StopUpdate(updateId);
+            Driver.Instance.StopUpdate(updateId);
         }
     }
 
@@ -117,7 +117,7 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
 #if UNITY_WEBGL
             CoroutineManager.Instance.StartCoroutine(Request());
 #else
-            ThreadManager.Instance.StartThread(Request, Finish, priority: 0);
+            Driver.Instance.StartThread(Request, Finish, priority: 0);
 #endif
         }
         private void Request(object o)

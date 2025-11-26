@@ -64,7 +64,7 @@ public partial class UICommonTipsItem
         obj.transform.SetAsLastSibling();
         contentTextMeshProUGUI.SetText(str);
         itemTweenPlayer.SetForwardDirectionAndEnabled();
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(1, finish: Finish);
+        if (timerId < 0) timerId = Driver.Instance.StartTimer(1, finish: Finish);
     }
     private void Finish()
     {

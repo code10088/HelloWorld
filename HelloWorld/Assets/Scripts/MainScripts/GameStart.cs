@@ -105,6 +105,6 @@ public class GameStart : MonoSingletion<GameStart>
     }
     private void Update()
     {
-        AsyncManager.Instance.Update();
+        Driver.Instance.Update();
     }
 }

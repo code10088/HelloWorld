@@ -41,7 +41,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         if (tempIndex >= 0) cacheScene.RemoveAt(tempIndex);
         loadScene.Add(item);
         item.Enable();
-        if (timerId < 0) timerId = TimeManager.Instance.StartTimer(-1, 1, UpdateProgress);
+        if (timerId < 0) timerId = Driver.Instance.StartTimer(-1, 1, UpdateProgress);
         return item.ID;
     }
     private void InitScene()
@@ -128,7 +128,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
     public void UpdateProgress(float f)
     {
         if (loadScene.Count > 0) for (int i = 0; i < loadScene.Count; i++) loadScene[i].ProgressActionInvoke();
-        else TimeManager.Instance.StopTimer(timerId);
+        else Driver.Instance.StopTimer(timerId);
     }
 
     private class SceneItem
@@ -271,7 +271,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         {
             baseObj?.SetActive(false);
             baseScene?.OnDisable();
-            if (timerId < 0) timerId = TimeManager.Instance.StartTimer(releaseTime, finish: Destroy);
+            if (timerId < 0) timerId = Driver.Instance.StartTimer(releaseTime, finish: Destroy);
             state |= LoadState.Release;
         }
         public void Destroy()
@@ -286,7 +286,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
             AssetManager.Instance.Unload(ref loadId);
             state = LoadState.Release;
             releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMinS, 0.1f);
-            TimeManager.Instance.StopTimer(timerId);
+            Driver.Instance.StopTimer(timerId);
             timerId = -1;
             open = null;
             progress = null;
@@ -296,7 +296,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         {
             state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
             releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.1f);
-            TimeManager.Instance.StopTimer(timerId);
+            Driver.Instance.StopTimer(timerId);
             timerId = -1;
         }
     }

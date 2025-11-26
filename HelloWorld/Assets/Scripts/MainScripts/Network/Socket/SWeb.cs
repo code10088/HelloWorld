@@ -16,7 +16,7 @@ public class SWeb : SBase
     {
         base.Init(ip, port, connectId, deserialize, socketevent);
         this.ip = $"{ip}:{port}/{connectId}";
-        updateId = Updater.Instance.StartUpdate(Update);
+        updateId = Driver.Instance.StartUpdate(Update);
         Connect();
     }
     private void Update(float t)
@@ -86,7 +86,7 @@ public class SWeb : SBase
     public override void Close()
     {
         base.Close();
-        Updater.Instance.StopUpdate(updateId);
+        Driver.Instance.StopUpdate(updateId);
         socket.Close();
         socket = null;
         sendMark = false;

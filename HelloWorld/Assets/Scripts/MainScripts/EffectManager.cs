@@ -54,7 +54,7 @@ public class EffectManager : MonoSingletion<EffectManager>, SingletionInterface
         {
             this.parent = parent;
             this.action = action;
-            if (time > 0) timerId = TimeManager.Instance.StartTimer(time, finish: Recycle);
+            if (time > 0) timerId = Driver.Instance.StartTimer(time, finish: Recycle);
         }
         protected override void Finish(GameObject obj)
         {
@@ -70,7 +70,7 @@ public class EffectManager : MonoSingletion<EffectManager>, SingletionInterface
         {
             base.Disable();
             if (obj) obj.transform.parent = Instance.transform;
-            TimeManager.Instance.StopTimer(timerId);
+            Driver.Instance.StopTimer(timerId);
             timerId = -1;
         }
         private void Recycle()

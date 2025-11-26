@@ -70,7 +70,7 @@ public class UITest : UIBase
         base.OnEnable(param);
         EventManager.Instance.RegisterEvent(EventType.CloseUI, NextUIProcess);
 
-        updateId = Updater.Instance.StartUpdate(UpdateTrigger);
+        updateId = Driver.Instance.StartUpdate(UpdateTrigger);
         GameDebug.Log("UITest OnEnable");
     }
     protected override void PlayEnableAni()
@@ -89,7 +89,7 @@ public class UITest : UIBase
         EventManager.Instance.UnRegisterEvent(EventType.CloseUI, NextUIProcess);
 
         subUI.Close();
-        Updater.Instance.StopUpdate(updateId);
+        Driver.Instance.StopUpdate(updateId);
         GameDebug.Log("UITest OnDisable");
     }
     public override void OnDestroy()
@@ -234,7 +234,7 @@ public class UITest : UIBase
     private void TestCoroutine()
     {
         var a = _TestCoroutine();
-        CoroutineManager.Instance.StartCoroutine(a);
+        Driver.Instance.StartCoroutine(a);
         GameDebug.Log(1);
     }
     private IEnumerator<Coroutine> _TestCoroutine()

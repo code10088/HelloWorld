@@ -17,12 +17,12 @@ public class BattleManager : Singletion<BattleManager>
     private void Init(int id, bool success)
     {
         BattleScene = SceneManager.Instance.GetScene(id) as BattleScene;
-        updateId = Updater.Instance.StartUpdate(Update);
+        updateId = Driver.Instance.StartUpdate(Update);
     }
     public void Exit()
     {
         Pool.Destroy();
-        Updater.Instance.StopUpdate(updateId);
+        Driver.Instance.StopUpdate(updateId);
         SceneManager.Instance.CloseScene(sceneId);
         BattleScene = null;
         sceneId = -1;

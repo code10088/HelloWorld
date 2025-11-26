@@ -21,7 +21,7 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
     public void Init()
     {
         SocketManager.Instance.SetFunc(Deserialize, HandleSocketEvent);
-        Updater.Instance.StartUpdate(Update);
+        Driver.Instance.StartUpdate(Update);
     }
     public void Register(ushort id, Action<IExtensible> action)
     {

@@ -186,48 +186,26 @@
 　[Fps插件](https://assetstore.unity.com/packages/tools/utilities/advanced-fps-counter-14656?locale=zh-CN&srsltid=AfmBOoome1MyqPBPz_3B2gop6bJsQ75K7b2CwgyLH9adguEeLANzZv1g#description)<br>
 　[Debug插件](https://github.com/yasirkula/UnityIngameDebugConsole)<br><br>
 
-## Update管理
-　所有每帧刷新逻辑都通过AsyncManager统一管理<br>
+## Driver
+　所有每帧刷新逻辑都通过Driver统一管理<br>
 　其中分为不切片列表和切片列表，不切片列表每帧刷新，切片列表在cpu负载的时候间隔刷新<br>
-　Yooasset中的分帧操作也被归纳到AsyncManager统一管理<br>
-　目前所有的代码设计没有依赖Mono，需要每帧刷新的使用Updater管理类<br><br>
+　StartUpdate：每帧刷新<br>
+　StartTimer：定时器<br>
+　StartFrame：间隔帧<br>
+　StartThread：线程池<br>
+　StartCoroutine：协程<br><br>
 
-## 事件
-　EventManager：用于解耦<br><br>
-
-## 多线程
-　ThreadManager：结束回调在主线程中运行，避免子线程无法使用GameObject等<br>
-　webgl平台为了代码统一，可以使用ThreadManager，只是在主线程中立即执行<br><br>
-
-## 定时器
-　TimeManager<br><br>
-
-## 间隔帧
-　FrameManager<br><br>
-
-## 特效
-　EffectManager：管理场景特效，自带缓存AssetObjectPool<ObjectPoolItem><br><br>
-
-## 音效
-　AudioManager：音效、背景音乐，使用AssetManager CacheTime.Short缓存<br><br>
-
-## 协程
-　CoroutineManager：c#迭代器取代Unity协程，由于继承于Mono所以也可以调用Unity协程<br><br>
-
-## 数据
+## 常用管理类
+　EventManager：事件<br>
+　AudioManager：音效、背景音乐<br>
+　EffectManager：场景特效<br>
 　ConfigManager：所有配置数据读取接口<br>
 　DataManager：所有网络数据读取接口<br><br>
+　GamePlayerPrefs：兼容微信和抖音的PlayerPrefs统一接口<br>
+　ProcessControl：执行队列，用于流程控制，使逻辑更清晰，参考GameStart；也可以用于进游戏的各种弹窗控制，参考UITest中UIProcess<br><br>
 
-## PlayerPrefs
-　GamePlayerPrefs 兼容微信和抖音的PlayerPrefs统一接口<br><br>
-
-## 执行队列
-　ProcessControl 用于流程控制，使逻辑更清晰，参考GameStart；也可以用于进游戏的各种弹窗控制，参考UITest中UIProcess<br><br>
-
-## 微信小游戏
-　在ProjectSetting/Player中加入宏WEIXINMINIGAME切换到微信小游戏模式<br><br>
-
-## 抖音小游戏
+## 小游戏
+　在ProjectSetting/Player中加入宏WEIXINMINIGAME切换到微信小游戏模式<br>
 　在ProjectSetting/Player中加入宏DOUYINMINIGAME切换到抖音小游戏模式<br><br>
 
 ## Sdk

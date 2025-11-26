@@ -18,12 +18,12 @@ public class BattleScene_Test : BattleScene
 
         //此时调用SceneManager.Instance.GetScene取不到当前scene的解决办法
         var enumerator = Start();
-        coroutineId = CoroutineManager.Instance.StartCoroutine(enumerator);
+        coroutineId = Driver.Instance.StartCoroutine(enumerator);
     }
     public override void OnDisable()
     {
         base.OnDisable();
-        CoroutineManager.Instance.Stop(coroutineId);
+        Driver.Instance.Stop(coroutineId);
     }
 
     private IEnumerator<Coroutine> Start()
