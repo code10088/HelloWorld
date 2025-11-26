@@ -70,7 +70,7 @@ public class EffectManager : MonoSingletion<EffectManager>, SingletionInterface
         {
             base.Disable();
             if (obj) obj.transform.parent = Instance.transform;
-            Driver.Instance.StopTimer(timerId);
+            Driver.Instance.Remove(timerId);
             timerId = -1;
         }
         private void Recycle()

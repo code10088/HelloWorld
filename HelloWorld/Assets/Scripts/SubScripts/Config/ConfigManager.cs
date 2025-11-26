@@ -62,7 +62,7 @@ public class ConfigManager : Singletion<ConfigManager>
             if (asset == null) return;
             byte[] bytes = ((TextAsset)asset).bytes;
             if (bytes == null) return;
-            Driver.Instance.StartThread(a => tb.Deserialize(bytes), Finish);
+            Driver.Instance.StartTask(a => tb.Deserialize(bytes), Finish);
         }
         private void Finish()
         {

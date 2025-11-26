@@ -192,7 +192,7 @@
 　StartUpdate：每帧刷新<br>
 　StartTimer：定时器<br>
 　StartFrame：间隔帧<br>
-　StartThread：线程池<br>
+　StartTask：线程池<br>
 　StartCoroutine：协程<br><br>
 
 ## 常用管理类

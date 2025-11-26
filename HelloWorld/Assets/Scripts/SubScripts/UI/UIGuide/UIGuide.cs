@@ -38,7 +38,7 @@ public class UIGuide : UIBase
         base.OnDisable();
         EventManager.Instance.UnRegisterEvent(EventType.RefreshGuide, Refresh);
 
-        Driver.Instance.StopUpdate(updateId);
+        Driver.Instance.Remove(updateId);
     }
 
     private void Refresh(object param)

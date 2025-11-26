@@ -57,8 +57,8 @@ public static class FileUtils
         }
         public void Start()
         {
-            if (fa == FileAccess.Read) Driver.Instance.StartThread(Read, Finish);
-            else Driver.Instance.StartThread(Write, Finish);
+            if (fa == FileAccess.Read) Driver.Instance.StartTask(Read, Finish);
+            else Driver.Instance.StartTask(Write, Finish);
         }
         private void Read(object o)
         {

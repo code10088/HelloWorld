@@ -23,7 +23,7 @@ public class BattleScene_Test : BattleScene
     public override void OnDisable()
     {
         base.OnDisable();
-        Driver.Instance.Stop(coroutineId);
+        Driver.Instance.Remove(coroutineId);
     }
 
     private IEnumerator<Coroutine> Start()

@@ -86,7 +86,7 @@ public class SWeb : SBase
     public override void Close()
     {
         base.Close();
-        Driver.Instance.StopUpdate(updateId);
+        Driver.Instance.Remove(updateId);
         socket.Close();
         socket = null;
         sendMark = false;

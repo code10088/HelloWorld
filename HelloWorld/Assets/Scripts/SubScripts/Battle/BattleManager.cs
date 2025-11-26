@@ -22,7 +22,7 @@ public class BattleManager : Singletion<BattleManager>
     public void Exit()
     {
         Pool.Destroy();
-        Driver.Instance.StopUpdate(updateId);
+        Driver.Instance.Remove(updateId);
         SceneManager.Instance.CloseScene(sceneId);
         BattleScene = null;
         sceneId = -1;

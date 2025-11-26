@@ -191,7 +191,7 @@ public class AssetManager : Singletion<AssetManager>
             if (state.HasFlag(LoadState.Release))
             {
                 state &= LoadState.LoadFinish | LoadState.Loading;
-                Driver.Instance.StopTimer(timerId);
+                Driver.Instance.Remove(timerId);
                 timerId = -1;
             }
             switch (state)
@@ -266,7 +266,7 @@ public class AssetManager : Singletion<AssetManager>
             ah = null;
             loaders.Clear();
             timer = CacheTime.None;
-            Driver.Instance.StopTimer(timerId);
+            Driver.Instance.Remove(timerId);
             timerId = -1;
             cache.Enqueue(this);
         }
@@ -383,7 +383,7 @@ public class LoadGameObjectItem
         AssetManager.Instance.Unload(ref loadId);
         state = LoadState.None;
         timer = 0;
-        Driver.Instance.StopTimer(timerId);
+        Driver.Instance.Remove(timerId);
         timerId = -1;
     }
     private void Recycle()
@@ -391,7 +391,7 @@ public class LoadGameObjectItem
         state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
         timer += GameSetting.recycleTimeS;
         timer = Math.Min(timer, GameSetting.recycleTimeMaxS);
-        Driver.Instance.StopTimer(timerId);
+        Driver.Instance.Remove(timerId);
         timerId = -1;
     }
 }

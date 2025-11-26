@@ -45,11 +45,33 @@ public class HttpManager : Singletion<HttpManager>
         public void Start()
         {
 #if UNITY_WEBGL
-            CoroutineManager.Instance.StartCoroutine(Request());
+            GameStart.Instance.StartCoroutine(Request());
 #else
-            Driver.Instance.StartThread(Request, Finish, priority: 0);
+            Driver.Instance.StartTask(Request, Finish, priority: 0);
 #endif
         }
+#if UNITY_WEBGL
+        private IEnumerator Request()
+        {
+            var uwr = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST);
+            uwr.timeout = timeout * 1000;
+            uwr.uploadHandler = new UploadHandlerRaw(send);
+            yield return uwr.SendWebRequest();
+            if (uwr.result == UnityWebRequest.Result.Success)
+            {
+                result = uwr.downloadHandler.data;
+                uwr.Dispose();
+                Finish();
+            }
+            else
+            {
+                uwr.Dispose();
+                result = null;
+                if (++retry > GameSetting.retryTime) yield break;
+                Start();
+            }
+        }
+#else
         private void Request(object o)
         {
             var hwr = WebRequest.Create(url) as HttpWebRequest;
@@ -75,26 +97,7 @@ public class HttpManager : Singletion<HttpManager>
                 Request(null);
             }
         }
-        private IEnumerator Request()
-        {
-            var uwr = new UnityWebRequest(url, UnityWebRequest.kHttpVerbPOST);
-            uwr.timeout = timeout * 1000;
-            uwr.uploadHandler = new UploadHandlerRaw(send);
-            yield return uwr.SendWebRequest();
-            if (uwr.result == UnityWebRequest.Result.Success)
-            {
-                result = uwr.downloadHandler.data;
-                uwr.Dispose();
-                Finish();
-            }
-            else
-            {
-                uwr.Dispose();
-                result = null;
-                if (++retry > GameSetting.retryTime) yield break;
-                Request(null);
-            }
-        }
+#endif
         private void Finish()
         {
             send = null;

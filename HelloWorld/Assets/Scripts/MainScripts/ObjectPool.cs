@@ -291,7 +291,7 @@ public class ObjectPoolItem
         if (obj != null) GameObject.Destroy(obj);
         obj = null;
         state = LoadState.None;
-        Driver.Instance.StopTimer(timerId);
+        Driver.Instance.Remove(timerId);
         timerId = -1;
         release?.Invoke(itemId);
         release = null;
@@ -302,7 +302,7 @@ public class ObjectPoolItem
     private void Recycle()
     {
         state &= LoadState.InstantiateFinish | LoadState.Instantiating;
-        Driver.Instance.StopTimer(timerId);
+        Driver.Instance.Remove(timerId);
         timerId = -1;
     }
 }

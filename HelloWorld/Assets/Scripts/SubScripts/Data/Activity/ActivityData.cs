@@ -8,7 +8,7 @@ public class ActivityData : DataBase
     public void Clear()
     {
         datas.Clear();
-        Driver.Instance.StopTimer(timerId);
+        Driver.Instance.Remove(timerId);
     }
 
     public void Init(List<TempActivityItem> data)

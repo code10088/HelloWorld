@@ -110,7 +110,7 @@ public class AudioManager : Singletion<AudioManager>, SingletionInterface
             AssetManager.Instance.Unload(ref itemId, CacheTime.Short);
             src.Stop();
             src.clip = null;
-            if (timerId > 0) Driver.Instance.StopTimer(timerId);
+            if (timerId > 0) Driver.Instance.Remove(timerId);
             timerId = -1;
             Instance.itemCache.Enqueue(this);
         }

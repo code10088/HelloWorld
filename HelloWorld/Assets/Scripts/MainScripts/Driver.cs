@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using YooAsset;
 
@@ -18,9 +19,10 @@ public class Driver : Singletion<Driver>
     {
         (ignoreFrameTime ? array1 : array2).Add(item);
     }
-    private void Remove(int id, bool execMark)
+    public void Remove(int id, bool execMark = false)
     {
-        DriverItem temp;
+        if (id < 0) return;
+        DriverItem temp = null;
         for (int i = 0; i < array1.Count; i++)
         {
             temp = array1[i];
@@ -139,11 +141,6 @@ public class Driver : Singletion<Driver>
         Add(temp, ignoreFrameTime);
         return temp.ItemID;
     }
-    public void StopUpdate(int id)
-    {
-        if (id < 0) return;
-        Remove(id, false);
-    }
 
     private class UpdateItem : DriverItem
     {
@@ -190,11 +187,6 @@ public class Driver : Singletion<Driver>
         temp.Init(time, loop, action, immediately, finish);
         Add(temp, ignoreFrameTime);
         return temp.ItemID;
-    }
-    public void StopTimer(int id, bool execMark = false)
-    {
-        if (id < 0) return;
-        Remove(id, execMark);
     }
 
     private class TimerItem : DriverItem
@@ -259,11 +251,6 @@ public class Driver : Singletion<Driver>
         Add(temp, ignoreFrameTime);
         return temp.ItemID;
     }
-    public void StopFrame(int id, bool execMark = false)
-    {
-        if (id < 0) return;
-        Remove(id, execMark);
-    }
 
     private class FrameItem : DriverItem
     {
@@ -307,59 +294,53 @@ public class Driver : Singletion<Driver>
     #endregion
 
 
-    #region Thread
-    private int threadCount = 0;
-    private List<ThreadItem> threadWait = new();
-    private Queue<ThreadItem> ThreadCache = new();
+    #region Task
+    private int taskCount = 0;
+    private List<TaskItem> taskWait = new();
     /// <summary>
     /// priority=0/1，值越小优先级越高，更高优先级单独开线程
     /// 这里线程不保证立刻执行
     /// </summary>
-    public int StartThread(Action<object> action, Action finish, object param = null, float time = 0, int priority = 1, bool ignoreFrameTime = false)
+    public int StartTask(Action<object> action, Action finish, object param = null, float time = 0, int priority = 1, bool ignoreFrameTime = false)
     {
 #if UNITY_WEBGL
         action?.Invoke(param);
         finish();
         return -1;
 #else
-        ThreadItem temp = ThreadCache.Count > 0 ? ThreadCache.Dequeue() : new();
+        var temp = new TaskItem();
         temp.Init(action, finish, param, time, priority, ignoreFrameTime);
-        int index = threadWait.FindIndex(a => a.priority > priority);
-        if (index >= 0) threadWait.Insert(index, temp);
-        else threadWait.Add(temp);
-        CheckThreadQueue();
+        int index = taskWait.FindIndex(a => a.priority > priority);
+        if (index >= 0) taskWait.Insert(index, temp);
+        else taskWait.Add(temp);
+        CheckTaskQueue();
         return temp.ItemID;
 #endif
     }
-    private void StartThread()
+    private void StartTask()
     {
-        threadCount--;
-        CheckThreadQueue();
+        taskCount--;
+        CheckTaskQueue();
     }
-    private void CheckThreadQueue()
+    private void CheckTaskQueue()
     {
-        if (threadCount < GameSetting.threadLimit && threadWait.Count > 0)
+        if (taskCount < GameSetting.taskLimit && taskWait.Count > 0)
         {
-            ThreadItem temp = threadWait[0];
-            threadWait.RemoveAt(0);
+            TaskItem temp = taskWait[0];
+            taskWait.RemoveAt(0);
             temp.Start();
-            threadCount++;
+            taskCount++;
             Add(temp, temp.ignoreFrameTime);
         }
     }
-    public void StopThread(int id, bool execMark = true)
-    {
-        if (id < 0) return;
-        Remove(id, execMark);
-    }
 
-    private class ThreadItem : DriverItem
+    private class TaskItem : DriverItem
     {
-        private Thread thread;
+        private CancellationTokenSource cts;
         private Action<object> action;
         private object param;
-        private int timerId = -1;
         private float time;
+        private float timer = 0;
         public int priority;
         public bool ignoreFrameTime;
 
@@ -372,40 +353,38 @@ public class Driver : Singletion<Driver>
             this.priority = priority;
             this.ignoreFrameTime = ignoreFrameTime;
         }
-        public void Start()
-        {
-            thread = new(Run);
-            thread.IsBackground = true;
-            thread.Start();
-            if (time > 0 && timerId < 0) timerId = Instance.StartTimer(time, finish: Timeout);
-        }
-        private void Run()
+        public async Task Start()
         {
             try
             {
-                action?.Invoke(param);
+                cts = new CancellationTokenSource();
+                await Task.Run(() => action.Invoke(param), cts.Token);
             }
             catch (Exception ex)
             {
                 GameDebug.LogError(ex.Message);
             }
-            Instance.StopTimer(timerId);
-            endMark = true;
+            finally
+            {
+                endMark = true;
+            }
         }
-        private void Timeout()
+        public override void Update(float t)
         {
-            endMark = true;
+            if (endMark) return;
+            timer += t;
+            endMark = time > 0 && timer > time;
         }
         public override void Reset()
         {
             base.Reset();
-            if (thread.ThreadState != ThreadState.Stopped) thread.Abort();
-            thread = null;
+            cts?.Cancel();
+            cts?.Dispose();
+            cts = null;
             action = null;
-            param = null;
+            timer = 0;
 
-            Instance.ThreadCache.Enqueue(this);
-            Instance.StartThread();
+            Instance.StartTask();
         }
     }
     #endregion
@@ -418,11 +397,6 @@ public class Driver : Singletion<Driver>
         temp.Init(enumerator);
         Add(temp, ignoreFrameTime);
         return temp.ItemID;
-    }
-    public void Stop(int id, bool execMark = false)
-    {
-        if (id < 0) return;
-        Remove(id, execMark);
     }
 
     private class CoroutineItem<T> : DriverItem where T : IEnumerator

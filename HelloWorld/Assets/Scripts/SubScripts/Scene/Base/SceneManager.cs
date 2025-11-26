@@ -128,7 +128,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
     public void UpdateProgress(float f)
     {
         if (loadScene.Count > 0) for (int i = 0; i < loadScene.Count; i++) loadScene[i].ProgressActionInvoke();
-        else Driver.Instance.StopTimer(timerId);
+        else Driver.Instance.Remove(timerId);
     }
 
     private class SceneItem
@@ -286,7 +286,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
             AssetManager.Instance.Unload(ref loadId);
             state = LoadState.Release;
             releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMinS, 0.1f);
-            Driver.Instance.StopTimer(timerId);
+            Driver.Instance.Remove(timerId);
             timerId = -1;
             open = null;
             progress = null;
@@ -296,7 +296,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         {
             state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
             releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.1f);
-            Driver.Instance.StopTimer(timerId);
+            Driver.Instance.Remove(timerId);
             timerId = -1;
         }
     }

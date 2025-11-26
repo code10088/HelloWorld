@@ -133,7 +133,7 @@ public class UISubItem : UIBase
         AssetManager.Instance.Unload(ref loadId);
         state = LoadState.Release;
         releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMinS, 0.2f);
-        Driver.Instance.StopTimer(timerId);
+        Driver.Instance.Remove(timerId);
         timerId = -1;
         open = null;
         param = null;
@@ -142,7 +142,7 @@ public class UISubItem : UIBase
     {
         state &= LoadState.InstantiateFinish | LoadState.Instantiating | LoadState.LoadFinish | LoadState.Loading;
         releaseTime = Mathf.Lerp(releaseTime, GameSetting.recycleTimeMaxS, 0.2f);
-        Driver.Instance.StopTimer(timerId);
+        Driver.Instance.Remove(timerId);
         timerId = -1;
     }
     #endregion

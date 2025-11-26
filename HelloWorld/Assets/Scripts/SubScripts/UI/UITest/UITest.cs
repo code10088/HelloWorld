@@ -89,7 +89,7 @@ public class UITest : UIBase
         EventManager.Instance.UnRegisterEvent(EventType.CloseUI, NextUIProcess);
 
         subUI.Close();
-        Driver.Instance.StopUpdate(updateId);
+        Driver.Instance.Remove(updateId);
         GameDebug.Log("UITest OnDisable");
     }
     public override void OnDestroy()
