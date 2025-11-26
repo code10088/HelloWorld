@@ -200,7 +200,7 @@
 　AudioManager：音效、背景音乐<br>
 　EffectManager：场景特效<br>
 　ConfigManager：所有配置数据读取接口<br>
-　DataManager：所有网络数据读取接口<br><br>
+　DataManager：所有网络数据读取接口<br>
 　GamePlayerPrefs：兼容微信和抖音的PlayerPrefs统一接口<br>
 　ProcessControl：执行队列，用于流程控制，使逻辑更清晰，参考GameStart；也可以用于进游戏的各种弹窗控制，参考UITest中UIProcess<br><br>
 
