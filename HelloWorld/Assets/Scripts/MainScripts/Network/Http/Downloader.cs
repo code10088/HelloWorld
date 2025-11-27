@@ -115,7 +115,7 @@ public class Downloader : Singletion<Downloader>, SingletionInterface
         public void Start()
         {
 #if UNITY_WEBGL
-            GameStart.Instance.StartCoroutine(Request());
+            Driver.Instance.StartCoroutine(Request());
 #else
             Driver.Instance.StartTask(Request, Finish, priority: 0);
 #endif

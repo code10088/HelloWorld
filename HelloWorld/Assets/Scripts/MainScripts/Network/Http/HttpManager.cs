@@ -45,7 +45,7 @@ public class HttpManager : Singletion<HttpManager>
         public void Start()
         {
 #if UNITY_WEBGL
-            GameStart.Instance.StartCoroutine(Request());
+            Driver.Instance.StartCoroutine(Request());
 #else
             Driver.Instance.StartTask(Request, Finish, priority: 0);
 #endif

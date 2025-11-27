@@ -13,7 +13,7 @@ using WeChatWASM;
 using TTSDK;
 #endif
 
-public class GameStart : MonoSingletion<GameStart>
+public class GameStart : Singletion<GameStart>
 {
     private enum StartProcess
     {
@@ -43,6 +43,7 @@ public class GameStart : MonoSingletion<GameStart>
 
     private void Init(int id)
     {
+        Driver.Instance.Update();
         Application.runInBackground = true;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         StandaloneInputModule.SimulateMouseWithTouches();
@@ -102,9 +103,5 @@ public class GameStart : MonoSingletion<GameStart>
             Process = null;
         });
 #endif
-    }
-    private void Update()
-    {
-        Driver.Instance.Update();
     }
 }

@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 using UnityEngine;
 using YooAsset;
 
-public class Driver : Singletion<Driver>
+public class Driver : MonoSingletion<Driver>
 {
     #region Driver
     private ArrayEx<DriverItem> array1 = new ArrayEx<DriverItem>(100);//不切片列表
     private ArrayEx<DriverItem> array2 = new ArrayEx<DriverItem>(10000);//切片列表
+    private int uniqueId = 0;
     private float gcTimer = 0;
     private int idxMark = 0;
     private float timeMark = 0;
+
+    public int UniqueId => ++uniqueId;
 
     private void Add(DriverItem item, bool ignoreFrameTime)
     {
@@ -59,7 +62,6 @@ public class Driver : Singletion<Driver>
                 if (temp.endMark)
                 {
                     temp.Finish();
-                    temp.Reset();
                     array1[i] = null;
                 }
             }
@@ -74,7 +76,6 @@ public class Driver : Singletion<Driver>
                 if (temp.endMark)
                 {
                     temp.Finish();
-                    temp.Reset();
                     array2[idx] = null;
                 }
             }
@@ -98,36 +99,22 @@ public class Driver : Singletion<Driver>
         gcTimer = -GameSetting.gcTimeIntervalS;
     }
 
-    private class DriverItem
+    private abstract class DriverItem
     {
-        private static int uniqueId = 0;
         private int itemId = -1;
         public bool endMark = false;
         public bool execMark = true;
-        protected Action finish;
 
         public int ItemID => itemId;
 
-        public virtual void Init(Action finish)
+        public void Init()
         {
-            itemId = ++uniqueId;
-            this.finish = finish;
-        }
-        public virtual void Update(float t)
-        {
-
-        }
-        public virtual void Finish()
-        {
-            endMark = true;
-            if (execMark) finish?.Invoke();
-        }
-        public virtual void Reset()
-        {
+            itemId = Instance.UniqueId;
             endMark = false;
             execMark = true;
-            finish = null;
         }
+        public abstract void Update(float t);
+        public abstract void Finish();
     }
     #endregion
 
@@ -147,7 +134,7 @@ public class Driver : Singletion<Driver>
         private Action<float> action;
         public void Init(Action<float> action)
         {
-            base.Init(null);
+            Init();
             this.action = action;
         }
         public override void Update(float t)
@@ -155,11 +142,9 @@ public class Driver : Singletion<Driver>
             if (endMark) return;
             action?.Invoke(t);
         }
-        public override void Reset()
+        public override void Finish()
         {
-            base.Reset();
             action = null;
-
             Instance.UpdateCache.Enqueue(this);
         }
     }
@@ -194,15 +179,17 @@ public class Driver : Singletion<Driver>
         private float time;
         private float loop;
         private Action<float> action;
+        private Action finish;
         private float _time = 0;
         private float _loop = 0;
 
         public void Init(float time, float loop = 0f, Action<float> action = null, bool immediately = true, Action finish = null)
         {
-            base.Init(finish);
+            Init();
             this.time = time;
             this.loop = loop;
             this.action = action;
+            this.finish = finish;
             _time = 0;
             _loop = immediately ? 0 : loop;
         }
@@ -218,11 +205,11 @@ public class Driver : Singletion<Driver>
             if (endMark) return;
             endMark = time > 0 && _time > time;
         }
-        public override void Reset()
+        public override void Finish()
         {
-            base.Reset();
+            if (execMark) finish?.Invoke();
             action = null;
-
+            finish = null;
             Instance.TimerCache.Enqueue(this);
         }
     }
@@ -257,15 +244,17 @@ public class Driver : Singletion<Driver>
         private int frame;
         private int loop;
         private Action<int> action;
+        private Action finish;
         private int _frame = 0;
         private int _loop = 0;
 
         public void Init(int frame, int loop = 0, Action<int> action = null, Action finish = null)
         {
-            base.Init(finish);
+            Init();
             this.frame = frame;
             this.loop = loop;
             this.action = action;
+            this.finish = finish;
         }
         public override void Update(float t)
         {
@@ -279,15 +268,15 @@ public class Driver : Singletion<Driver>
             if (endMark) return;
             endMark = frame > 0 && _frame > frame;
         }
-        public override void Reset()
+        public override void Finish()
         {
-            base.Reset();
+            if (execMark) finish?.Invoke();
             frame = 0;
             loop = 0;
             action = null;
+            finish = null;
             _frame = 0;
             _loop = 0;
-
             Instance.FrameCache.Enqueue(this);
         }
     }
@@ -338,6 +327,7 @@ public class Driver : Singletion<Driver>
     {
         private CancellationTokenSource cts;
         private Action<object> action;
+        private Action finish;
         private object param;
         private float time;
         private float timer = 0;
@@ -346,8 +336,9 @@ public class Driver : Singletion<Driver>
 
         public void Init(Action<object> action, Action finish, object param, float time, int priority, bool ignoreFrameTime)
         {
-            base.Init(finish);
+            Init();
             this.action = action;
+            this.finish = finish;
             this.param = param;
             this.time = time;
             this.priority = priority;
@@ -375,15 +366,15 @@ public class Driver : Singletion<Driver>
             timer += t;
             endMark = time > 0 && timer > time;
         }
-        public override void Reset()
+        public override void Finish()
         {
-            base.Reset();
+            if (execMark) finish?.Invoke();
             cts?.Cancel();
             cts?.Dispose();
             cts = null;
             action = null;
+            finish = null;
             timer = 0;
-
             Instance.StartTask();
         }
     }
@@ -406,7 +397,7 @@ public class Driver : Singletion<Driver>
 
         public void Init(IEnumerator<T> action)
         {
-            base.Init(finish);
+            Init();
             this.action = action;
             nextMark = action.MoveNext();
         }
@@ -417,9 +408,8 @@ public class Driver : Singletion<Driver>
             if (!nextMark) nextMark = action.MoveNext();
             endMark = !nextMark;
         }
-        public override void Reset()
+        public override void Finish()
         {
-            base.Reset();
             action = null;
         }
     }
