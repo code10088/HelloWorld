@@ -29,6 +29,7 @@ namespace SuperScrollView
         int mUserIntData2 = 0;
         string mUserStringData1 = null;
         string mUserStringData2 = null;
+        LoopItemData mItemData = null;
 
         public object UserObjectData
         {
@@ -246,5 +247,10 @@ namespace SuperScrollView
             }
         }
 
+        public LoopItemData ItemData
+        {
+            get { return mItemData; }
+            set { mItemData = value; }
+        }
     }
 }

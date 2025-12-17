@@ -168,13 +168,7 @@ public class UITest : UIBase
         {
             return null;
         }
-        LoopListViewItem2 item = listView.NewListViewItem("Item");
-        if (item.IsInitHandlerCalled == false)
-        {
-            item.IsInitHandlerCalled = true;
-            item.ItemData = new UITestItem();
-            item.ItemData.Init(item.gameObject);
-        }
+        LoopListViewItem2 item = listView.NewListViewItem<UITestItem>("Item");
         item.ItemData.SetData(index);
         return item;
     }

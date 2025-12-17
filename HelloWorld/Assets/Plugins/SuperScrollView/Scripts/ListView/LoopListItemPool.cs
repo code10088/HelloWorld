@@ -28,13 +28,13 @@ namespace SuperScrollView
             mStartPosOffset = startPosOffset;
             mItemParent = parent;
             mPrefabObj.SetActive(false);
-            for (int i = 0; i < mInitCreateCount; ++i)
-            {
-                LoopListViewItem2 tViewItem = CreateItem();
-                RecycleItemReal(tViewItem);
-            }
+            //for (int i = 0; i < mInitCreateCount; ++i)
+            //{
+            //    LoopListViewItem2 tViewItem = CreateItem();
+            //    RecycleItemReal(tViewItem);
+            //}
         }
-        public LoopListViewItem2 GetItem(int itemIndexForSearch)
+        public LoopListViewItem2 GetItem<T>(int itemIndexForSearch) where T : LoopItemData, new()
         {
             mCurItemIdCount++;
             LoopListViewItem2 tItem = null;
@@ -62,7 +62,7 @@ namespace SuperScrollView
                 int count = mPooledItemList.Count;
                 if (count == 0)
                 {
-                    tItem = CreateItem();
+                    tItem = CreateItem<T>();
                 }
                 else
                 {
@@ -106,7 +106,7 @@ namespace SuperScrollView
             }
             mPooledItemList.Clear();
         }
-        public LoopListViewItem2 CreateItem()
+        public LoopListViewItem2 CreateItem<T>() where T : LoopItemData, new()
         {
 
             GameObject go = GameObject.Instantiate<GameObject>(mPrefabObj, Vector3.zero, Quaternion.identity, mItemParent);
@@ -118,6 +118,8 @@ namespace SuperScrollView
             LoopListViewItem2 tViewItem = go.GetComponent<LoopListViewItem2>();
             tViewItem.ItemPrefabName = mPrefabName;
             tViewItem.StartPosOffset = mStartPosOffset;
+            tViewItem.ItemData = new T();
+            tViewItem.ItemData.Init(go);
             return tViewItem;
         }
         public void RecycleItemReal(LoopListViewItem2 item)

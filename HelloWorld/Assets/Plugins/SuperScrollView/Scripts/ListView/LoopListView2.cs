@@ -107,10 +107,10 @@ namespace SuperScrollView
         bool mNeedCheckNextMinItem = true;
         bool mNeedCheckNextMaxItem = true;
         ItemPosMgr mItemPosMgr = null;
-        float mDistanceForRecycle0 = 300;
-        float mDistanceForNew0 = 200;
-        float mDistanceForRecycle1 = 300;
-        float mDistanceForNew1 = 200;
+        float mDistanceForRecycle0 = 100;
+        float mDistanceForNew0 = 50;
+        float mDistanceForRecycle1 = 100;
+        float mDistanceForNew1 = 50;
         [SerializeField]
         bool mSupportScrollBar = true;
         bool mIsDraging = false;
@@ -708,14 +708,14 @@ namespace SuperScrollView
         }
 
 
-        public LoopListViewItem2 NewListViewItem(string itemPrefabName)
+        public LoopListViewItem2 NewListViewItem<T>(string itemPrefabName) where T : LoopItemData, new()
         {
             ItemPool pool = null;
             if (mItemPoolDict.TryGetValue(itemPrefabName, out pool) == false)
             {
                 return null;
             }
-            LoopListViewItem2 item = pool.GetItem(mCurCreatingItemIndex);
+            LoopListViewItem2 item = pool.GetItem<T>(mCurCreatingItemIndex);
             RectTransform rf = item.GetComponent<RectTransform>();
             rf.SetParent(mContainerTrans);
             rf.localScale = Vector3.one;
