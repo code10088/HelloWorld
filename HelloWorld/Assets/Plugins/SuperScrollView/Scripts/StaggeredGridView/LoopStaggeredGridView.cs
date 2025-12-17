@@ -37,6 +37,15 @@ namespace SuperScrollView
         public int mIndexInGroup;
     }
 
+    public class SGVAutoMoveToItemData
+    {
+        public int mTargetItemIndex;
+        public float mBeginPos;
+        public float mTargetPos;
+        public float mStartMoveTime;
+        public float mDuration;
+    }
+
 
     /*
     For an vertical GridView, mColumnOrRowCount is the column count, 
@@ -122,6 +131,8 @@ namespace SuperScrollView
         bool mNeedReplaceScrollbarEventHandler = true;
         ClickEventListener mScrollBarClickEventListener = null;
         int mCurCreatingItemIndex = -1;
+
+        SGVAutoMoveToItemData mSGVAutoMoveToItemData = null;
 
         public List<StaggeredGridItemPrefabConfData> ItemPrefabDataList
         {
@@ -408,6 +419,7 @@ namespace SuperScrollView
         {
             if (mIsPointerDownInScrollBar)
             {
+                ClearAutoMoveToItemData();
                 if (mIsVertList)
                 {
                     mScrollRect.verticalNormalizedPosition = value;
@@ -416,7 +428,6 @@ namespace SuperScrollView
                 {
                     mScrollRect.horizontalNormalizedPosition = value;
                 }
-
             }
         }
 
@@ -557,10 +568,11 @@ namespace SuperScrollView
         }
 
 
-        //This method will move the scrollrect content’s position
-        //to ( the positon of itemIndex-th item + offset )
-        public void MovePanelToItemIndex(int itemIndex, float offset)
+        //This method will move the scrollrect content’s position 
+        //to ( the positon of itemIndex-th item + offset ) immediately
+        public void MovePanelToItemIndexImmediately(int itemIndex, float offset)
         {
+            ClearAutoMoveToItemData();
             mScrollRect.StopMovement();
             if (mItemTotalCount == 0 || itemIndex < 0)
             {
@@ -651,6 +663,120 @@ namespace SuperScrollView
                 }
             }
 
+        }
+
+
+
+        //This method will move the scrollrect content’s position 
+        //to ( the positon of itemIndex-th item + offset ) in duration seconds.
+
+        public void MovePanelToItemIndex(int itemIndex, float offset,float duration = 0)
+        {
+            ClearAutoMoveToItemData();
+            if (duration <= 0.1f)
+            {
+                MovePanelToItemIndexImmediately(itemIndex, offset);
+                return;
+            }
+            mScrollRect.StopMovement();
+            if (mItemTotalCount == 0 || itemIndex < 0)
+            {
+                return;
+            }
+            CheckAllGroupIfNeedUpdateItemPos();
+            UpdateContentSize();
+            float viewPortSize = ViewPortSize;
+            float contentSize = GetContentSize();
+            if (contentSize <= viewPortSize)
+            {
+                if (IsVertList)
+                {
+                    SetAnchoredPositionY(mContainerTrans, 0f);
+                }
+                else
+                {
+                    SetAnchoredPositionX(mContainerTrans, 0f);
+                }
+                return;
+            }
+            if (itemIndex >= mItemTotalCount)
+            {
+                itemIndex = mItemTotalCount - 1;
+            }
+            float itemAbsPos = GetItemAbsPosByItemIndex(itemIndex);
+            if (itemAbsPos < 0)
+            {
+                return;
+            }
+            mSGVAutoMoveToItemData = new SGVAutoMoveToItemData();
+            mSGVAutoMoveToItemData.mTargetItemIndex = itemIndex;
+            mSGVAutoMoveToItemData.mStartMoveTime = Time.time;
+            mSGVAutoMoveToItemData.mDuration = duration;
+            if (IsVertList)
+            {
+                float CurPosY = mContainerTrans.anchoredPosition3D.y;
+                mSGVAutoMoveToItemData.mBeginPos = CurPosY;
+                float sign = (mArrangeType == ListItemArrangeType.TopToBottom) ? 1 : -1;
+                float newYAbs = itemAbsPos + offset;
+                if (newYAbs < 0)
+                {
+                    newYAbs = 0;
+                }
+                if (contentSize - newYAbs >= viewPortSize)
+                {
+                    mSGVAutoMoveToItemData.mTargetPos = sign * newYAbs;
+                }
+                else
+                {
+                    SetAnchoredPositionY(mContainerTrans, sign * (contentSize - viewPortSize));
+                    UpdateListView(viewPortSize + 100, viewPortSize + 100, viewPortSize, viewPortSize);
+                    ClearAllTmpRecycledItem();
+                    UpdateContentSize();
+                    contentSize = GetContentSize();
+                    if (contentSize - newYAbs >= viewPortSize)
+                    {
+                        mSGVAutoMoveToItemData.mTargetPos = sign * newYAbs;
+                    }
+                    else
+                    {
+                        mSGVAutoMoveToItemData.mTargetPos = sign * (contentSize - viewPortSize);
+                    }
+                    SetAnchoredPositionY(mContainerTrans, CurPosY);
+                }
+
+            }
+            else
+            {
+                float CurPosX = mContainerTrans.anchoredPosition3D.x;
+                mSGVAutoMoveToItemData.mBeginPos = CurPosX;
+                float sign = (mArrangeType == ListItemArrangeType.RightToLeft) ? 1 : -1;
+                float newXAbs = itemAbsPos + offset;
+                if (newXAbs < 0)
+                {
+                    newXAbs = 0;
+                }
+                if (contentSize - newXAbs >= viewPortSize)
+                {
+                    mSGVAutoMoveToItemData.mTargetPos = sign * newXAbs;
+                }
+                else
+                {
+                    SetAnchoredPositionX(mContainerTrans, sign * (contentSize - viewPortSize));
+                    UpdateListView(viewPortSize + 100, viewPortSize + 100, viewPortSize, viewPortSize);
+                    ClearAllTmpRecycledItem();
+                    UpdateContentSize();
+                    contentSize = GetContentSize();
+                    if (contentSize - newXAbs >= viewPortSize)
+                    {
+                        mSGVAutoMoveToItemData.mTargetPos = sign * newXAbs;
+                    }
+                    else
+                    {
+                        mSGVAutoMoveToItemData.mTargetPos = sign * (contentSize - viewPortSize);
+                    }
+                    SetAnchoredPositionX(mContainerTrans, CurPosX);
+                }
+            }
         }
 
 
@@ -784,6 +910,36 @@ namespace SuperScrollView
                 mItemGroupList[groupIndex].SetItemSize(indexData.mIndexInGroup, itemSize, itemPadding);
             }
             UpdateContentSize();
+        }
+
+
+        public void ClearAutoMoveToItemData()
+        {
+            mSGVAutoMoveToItemData = null;
+        }
+
+
+        public void UpdateAutoMoveToItem()
+        {
+            if (mSGVAutoMoveToItemData == null)
+            {
+                return;
+            }
+            float movedTime = Time.time - mSGVAutoMoveToItemData.mStartMoveTime;
+            float p = movedTime / mSGVAutoMoveToItemData.mDuration;
+            float pos = Mathf.Lerp(mSGVAutoMoveToItemData.mBeginPos, mSGVAutoMoveToItemData.mTargetPos, p);
+            if (IsVertList)
+            {
+                SetAnchoredPositionY(mContainerTrans, pos);
+            }
+            else
+            {
+                SetAnchoredPositionX(mContainerTrans, pos);
+            }
+            if (p >= 1)
+            {
+                mSGVAutoMoveToItemData = null;
+            }
         }
 
 
@@ -1194,6 +1350,7 @@ namespace SuperScrollView
             {
                 return;
             }
+            UpdateAutoMoveToItem();
             UpdateListViewWithDefault();
             ClearAllTmpRecycledItem();
             mLastFrameContainerPos = mContainerTrans.anchoredPosition3D;

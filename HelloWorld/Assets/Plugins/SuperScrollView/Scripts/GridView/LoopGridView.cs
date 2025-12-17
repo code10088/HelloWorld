@@ -133,6 +133,17 @@ namespace SuperScrollView
         bool mNeedReplaceScrollbarEventHandler = true;
         int mCurCreatingItemIndex = -1;
 
+
+
+        public bool IsListViewInited
+        {
+            get
+            {
+                return mListViewInited;
+            }
+        }
+
+
         public List<GridViewItemPrefabConfData> ItemPrefabDataList
         {
             get
@@ -582,6 +593,19 @@ namespace SuperScrollView
             ForceToCheckContentPos();
             RecycleAllItem();
             UpdateGridViewContent();
+        }
+
+        //update the gridview content at once. You can call this method to let the LoopGridView to create all the items within the ScrollRect viewport immediately.
+        public void ForceUpdateGridViewAtOnce()
+        {
+            if (mListViewInited == false)
+            {
+                return;
+            }
+            UpdateSnapMove();
+            ForceToCheckContentPos();
+            UpdateGridViewContent();
+            ClearAllTmpRecycledItem();
         }
 
         public virtual void OnBeginDrag(PointerEventData eventData)

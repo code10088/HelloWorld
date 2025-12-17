@@ -76,6 +76,26 @@ namespace SuperScrollView
 
         }
 
+        public LoopListViewItem2 GetItemFromTmpPool(int itemIndex)
+        {
+            if (mTmpPooledItemList.Count == 0)
+            {
+                return null;
+            }
+            LoopListViewItem2 tItem = null;
+            int count = mTmpPooledItemList.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                if (mTmpPooledItemList[i].ItemIndex == itemIndex)
+                {
+                    tItem = mTmpPooledItemList[i];
+                    mTmpPooledItemList.RemoveAt(i);
+                    break;
+                }
+            }
+            return tItem;
+        }
+
         public void DestroyAllItem()
         {
             ClearTmpRecycledItem();
