@@ -59,6 +59,7 @@ newtonjson
 	
 SuperScrollView调整
 	LoopListViewItem2中添加LoopItemData
+	LoopListItemPool中CreateItem增加泛型，Init不支持mInitCreateCount
 	修改mDistanceForRecycle0、mDistanceForNew0、mDistanceForRecycle1、mDistanceForNew1默认值
 
 SpriteAtlas

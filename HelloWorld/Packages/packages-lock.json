@@ -19,7 +19,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "5932a6f9a6ecf3739f6bdfffae1d56f632a31fc5"
+      "hash": "1ff3b5c3249fa600af49a6328a4b7e531ea56243"
     },
     "com.code-philosophy.obfuz4hybridclr": {
       "version": "https://github.com/focus-creative-games/obfuz4hybridclr.git",
@@ -33,7 +33,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "59f48c2aaaaecd6906e6b514d567074708fa4a31"
+      "hash": "e807380631237f73848dbad6c4465bb88618f512"
     },
     "com.monitor1394.xcharts": {
       "version": "https://github.com/XCharts-Team/XCharts.git",
@@ -47,7 +47,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "a5bd83afde3f69618f230719f30095def07aa456"
+      "hash": "98c94c1219b8ddf48d2836e946c5d5d16bfd2cca"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
