@@ -24,7 +24,7 @@ public class ConfigManager : Singletion<ConfigManager>
         for (int i = 0; i < fis.Length; i++)
         {
             if (fis[i].Name.StartsWith("Language")) continue;
-            new ConfigItem().Load(fis[i], Finish);
+            new ConfigItem(fis[i], Finish);
         }
     }
     private void Finish()
@@ -46,7 +46,7 @@ public class ConfigManager : Singletion<ConfigManager>
     {
         if (gameConfigs == null) gameConfigs = new Tables();
         var fi = typeof(Tables).GetField(name);
-        new ConfigItem().Load(fi, finish);
+        new ConfigItem(fi, finish);
     }
 
     class ConfigItem
@@ -54,7 +54,7 @@ public class ConfigManager : Singletion<ConfigManager>
         private Action finish;
         private TbBase tb;
         private int loadId;
-        public void Load(FieldInfo fi, Action _finish)
+        public ConfigItem(FieldInfo fi, Action _finish)
         {
             finish = _finish;
             tb = fi.GetValue(Instance.GameConfigs) as TbBase;
