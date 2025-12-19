@@ -219,7 +219,7 @@ public class UITest : UIBase
     }
     private void SetText()
     {
-        component.languageUIText.text = LanguageManager.Instance.Get(10001, "World!!");
+        component.languageUIText.SetText(10001, "World!!");
     }
     #endregion
 
