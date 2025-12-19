@@ -5,6 +5,7 @@ public class GameStart
 {
     private enum StartProcess
     {
+        InitLanguage,
         InitUIConfig,
         OpenUIHotUpdateRes,
         HotUpdate,
@@ -19,6 +20,7 @@ public class GameStart
 
     public void Init()
     {
+        Process.Add((int)StartProcess.InitLanguage, InitLanguage);
         Process.Add((int)StartProcess.InitUIConfig, InitUIConfig);
         Process.Add((int)StartProcess.OpenUIHotUpdateRes, OpenUIHotUpdateRes);
         Process.Add((int)StartProcess.HotUpdate, HotUpdate);
@@ -28,6 +30,10 @@ public class GameStart
         Process.Add((int)StartProcess.WarmUpShader, WarmUpShader);
         Process.Add((int)StartProcess.EnterMainScene, EnterMainScene);
         Process.Start();
+    }
+    private void InitLanguage(int id)
+    {
+        LanguageManager.Instance.Init(Process.Next);
     }
     private void InitUIConfig(int id)
     {

@@ -213,6 +213,12 @@
 　微信：开放域数据、排行榜、各种广告<br>
 　抖音：TT初始化、登录、跳转导航栏、排行榜、各种广告<br><br>
 
+## 多语言
+　Luban/Datas/Language.xls：多语言配置<br>
+　使用UIText组件，i18nKey为配置中的Key<br>
+　Runtime只加载一种语言配置<br>
+　Editor切换多语言：Tools/Language/CN<br><br>
+
 ## 常用工具
 　Alt+D：代替ctrl+d自动按下标命名<br>
 　选中GameObject右键Tools/CopyPath复制路径到粘贴板<br>
@@ -264,4 +270,3 @@
 　天赋<br>
 　活动：首充、七天签到<br>
 　镜头控制<br>
-　多语言<br>

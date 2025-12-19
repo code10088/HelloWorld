@@ -256,4 +256,29 @@ public class GameEditorTools
     {
         EditorGUIUtility.systemCopyBuffer = Regex.Replace(EditorGUIUtility.systemCopyBuffer, @"\s+", " ");
     }
+
+    #region 多语言
+    [MenuItem("Tools/Language/CN", false, (int)ToolsMenuSort.Language)]
+    static void LanguageCN()
+    {
+        UITextEditor.ChangeLanguage(LanguageType.CN);
+        EditorPrefs.SetInt(PlayerPrefsConst.Language, (int)LanguageType.CN);
+    }
+    [MenuItem("Tools/Language/CN", true, (int)ToolsMenuSort.Language)]
+    static bool ValidateLanguageCN()
+    {
+        return EditorPrefs.GetInt(PlayerPrefsConst.Language, (int)LanguageType.CN) != (int)LanguageType.CN;
+    }
+    [MenuItem("Tools/Language/EN", false, (int)ToolsMenuSort.Language)]
+    static void LanguageEN()
+    {
+        UITextEditor.ChangeLanguage(LanguageType.EN);
+        EditorPrefs.SetInt(PlayerPrefsConst.Language, (int)LanguageType.EN);
+    }
+    [MenuItem("Tools/Language/EN", true, (int)ToolsMenuSort.Language)]
+    static bool ValidateLanguageEN()
+    {
+        return EditorPrefs.GetInt(PlayerPrefsConst.Language, (int)LanguageType.CN) != (int)LanguageType.EN;
+    }
+    #endregion
 }

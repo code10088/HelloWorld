@@ -27,6 +27,8 @@ public partial class Tables
     public TbActivityConfig TbActivityConfig = new TbActivityConfig();
     public TbFunctionUnlockConfig TbFunctionUnlockConfig = new TbFunctionUnlockConfig();
     public TbItems TbItems = new TbItems();
+    public TbLanguageCN TbLanguageCN = new TbLanguageCN();
+    public TbLanguageEN TbLanguageEN = new TbLanguageEN();
 }
 
 }

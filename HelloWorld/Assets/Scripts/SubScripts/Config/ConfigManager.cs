@@ -20,8 +20,12 @@ public class ConfigManager : Singletion<ConfigManager>
         if (gameConfigs == null) gameConfigs = new Tables();
         this.finish = finish;
         var fis = typeof(Tables).GetFields();
-        total = fis.Length;
-        for (int i = 0; i < total; i++) new ConfigItem().Load(fis[i], Finish);
+        total = fis.Length - (int)LanguageType.Max;
+        for (int i = 0; i < fis.Length; i++)
+        {
+            if (fis[i].Name.StartsWith("Language")) continue;
+            new ConfigItem().Load(fis[i], Finish);
+        }
     }
     private void Finish()
     {

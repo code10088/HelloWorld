@@ -45,6 +45,7 @@ public class UITest : UIBase
         component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
         component.uIProcessBtnUIButton.onClick.AddListener(OpenUIProcess);
         component.commonItemBtnUIButton.onClick.AddListener(ShowCommonItem);
+        component.languageBtnUIButton.onClick.AddListener(SetText);
 
         //Function
         component.openSDKBtnUIButton.onClick.AddListener(SDKInit);
@@ -215,6 +216,10 @@ public class UITest : UIBase
         CommonItem.Instance.Recycle(item);
         item = CommonItem.Instance.Get(1);
         item.SetData(component.itemRootObj.transform, 10);
+    }
+    private void SetText()
+    {
+        component.languageUIText.text = LanguageManager.Instance.Get(10001, "World!!");
     }
     #endregion
 
