@@ -9,6 +9,6 @@ public class BattleScene : SceneBase
     public Vector3 ScreenToWorldPoint(Vector2 p)
     {
         float dis = Mathf.Abs(config.CameraPos.z);
-        return camera.ScreenToWorldPoint(new Vector3(p.x, p.y, dis));
+        return Camera.main.ScreenToWorldPoint(new Vector3(p.x, p.y, dis));
     }
 }

@@ -6,20 +6,20 @@ using Object = UnityEngine.Object;
 
 public partial class SceneManager : Singletion<SceneManager>, SingletionInterface
 {
-    public GameObject SceneRoot;
-    public Transform tSceneRoot;
-    public Camera SceneCamera;
+    private Transform sceneRoot;
+    private CameraController cameraController;
     private List<SceneItem> loadScene = new List<SceneItem>();
     private List<SceneItem> curScene = new List<SceneItem>();
     private List<SceneItem> cacheScene = new List<SceneItem>();
     private int timerId = -1;
 
+    public CameraController CameraController => cameraController;
+
     public void Init()
     {
-        SceneRoot = GameObject.FindWithTag("SceneRoot");
-        tSceneRoot = SceneRoot.transform;
-        var temp = GameObject.FindWithTag("MainCamera");
-        SceneCamera = temp.GetComponent<Camera>();
+        sceneRoot = GameObject.FindWithTag("SceneRoot").transform;
+        var temp = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        cameraController = new CameraController(temp);
     }
     /// <summary>
     /// 
@@ -225,7 +225,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
                 bool release = state.HasFlag(LoadState.Release);
                 state = LoadState.InstantiateFinish;
                 if (release) state |= LoadState.Release;
-                baseObj.transform.SetParent(Instance.tSceneRoot);
+                baseObj.transform.SetParent(Instance.sceneRoot);
                 baseObj.transform.localPosition = Vector3.zero;
                 baseObj.transform.localRotation = Quaternion.identity;
                 baseObj.transform.localScale = Vector3.one;

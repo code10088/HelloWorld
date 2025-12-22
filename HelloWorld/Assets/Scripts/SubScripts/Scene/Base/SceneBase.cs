@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class SceneBase
 {
-    protected Camera camera;
     protected GameObject SceneObj;
     protected int id;
     protected SceneType from;
@@ -27,9 +26,8 @@ public class SceneBase
     }
     public virtual void OnEnable(params object[] param)
     {
-        camera = SceneManager.Instance.SceneCamera;
-        camera.transform.position = config.CameraPos;
-        camera.transform.eulerAngles = config.CameraEuler;
+        SceneManager.Instance.CameraController.SetPos(config.CameraPos);
+        SceneManager.Instance.CameraController.SetEuler(config.CameraEuler);
 
         int skyboxLoadId = -1;
         AssetManager.Instance.Load<Material>(ref skyboxLoadId, config.SkyBoxPath, (a, b) => RenderSettings.skybox = (Material)b);
