@@ -265,17 +265,18 @@ namespace YooAsset
         public void ReleaseHandle(HandleBase handle)
         {
             if (RefCount <= 0)
-                throw new System.Exception("Should never get here !");
+                throw new YooInternalException($"Attempting to release handle when RefCount is already zero. Asset : {MainAssetInfo.AssetPath}");
 
             if (_resManager.UseWeakReferenceHandle)
             {
+                // TODO 高危风险：如果移除弱引用失败，会导致资源永远无法释放。
                 if (RemoveWeakReference(handle) == false)
-                    throw new System.Exception("Should never get here !");
+                    throw new YooInternalException($"Handle not found in weak reference list. Asset: {MainAssetInfo.AssetPath}");
             }
             else
             {
                 if (_handles.Remove(handle) == false)
-                    throw new System.Exception("Should never get here !");
+                    throw new YooInternalException($"Handle not found in cache list. Asset: {MainAssetInfo.AssetPath}");
             }
 
             // 引用计数减少
@@ -335,11 +336,18 @@ namespace YooAsset
                 List<WeakReference<HandleBase>> tempers = _weakReferences.ToList();
                 foreach (var weakRef in tempers)
                 {
-                    if (weakRef.TryGetTarget(out HandleBase target))
+                    if (weakRef.TryGetTarget(out HandleBase handle))
                     {
-                        if (target.IsValid)
+                        if (handle.IsValid)
                         {
-                            target.InvokeCallback();
+                            try
+                            {
+                                handle.InvokeCallback();
+                            }
+                            catch (Exception ex)
+                            {
+                                YooLogger.Error($"Exception in completion callback: {ex}");
+                            }
                         }
                     }
                 }
@@ -351,7 +359,14 @@ namespace YooAsset
                 {
                     if (handle.IsValid)
                     {
-                        handle.InvokeCallback();
+                        try
+                        {
+                            handle.InvokeCallback();
+                        }
+                        catch (Exception ex)
+                        {
+                            YooLogger.Error($"Exception in completion callback: {ex}");
+                        }
                     }
                 }
             }
@@ -370,7 +385,7 @@ namespace YooAsset
             }
 
             if (status.TotalBytes == 0)
-                throw new System.Exception("Should never get here !");
+                throw new YooInternalException("Download total size can not be zero.");
 
             status.IsDone = status.DownloadedBytes == status.TotalBytes;
             status.Progress = (float)status.DownloadedBytes / status.TotalBytes;

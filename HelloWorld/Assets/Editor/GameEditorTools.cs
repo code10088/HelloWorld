@@ -69,7 +69,6 @@ public class GameEditorTools
                 field = field
             });
         }
-
         string result = File.ReadAllText($"{Application.dataPath}/Editor/Template/ConfigTemplate.txt");
         if (string.IsNullOrEmpty(result))
         {
