@@ -62,7 +62,8 @@ public class GameEditorTools
             string type = m.Groups[1].Value.Trim();
             string name = m.Groups[2].Value.Trim();
             string field = name.ToLower();
-            tables.Add(new TableField(){
+            tables.Add(new TableField
+            {
                 type = type,
                 name = name,
                 field = field

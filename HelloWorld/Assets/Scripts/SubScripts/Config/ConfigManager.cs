@@ -42,6 +42,7 @@ public partial class ConfigManager : Singletion<ConfigManager>
         if (++count == total)
         {
             finish?.Invoke();
+            finish = null;
             fis = null;
             loaders = null;
             Driver.Instance.GCCollect();
