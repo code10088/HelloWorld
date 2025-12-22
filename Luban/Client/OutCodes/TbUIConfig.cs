@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbUIConfig : TbBase
+public partial class TbUIConfig
 {
-    private readonly System.Collections.Generic.Dictionary<UIType, UIConfig> _dataMap = new System.Collections.Generic.Dictionary<UIType, UIConfig>();
-    private readonly System.Collections.Generic.List<UIConfig> _dataList = new System.Collections.Generic.List<UIConfig>();
+    private readonly System.Collections.Generic.Dictionary<UIType, UIConfig> _dataMap;
+    private readonly System.Collections.Generic.List<UIConfig> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbUIConfig(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<UIType, UIConfig>(n);
+        _dataList = new System.Collections.Generic.List<UIConfig>(n);
         for(int i = n ; i > 0 ; --i)
         {
             UIConfig _v;
@@ -35,10 +34,17 @@ public partial class TbUIConfig : TbBase
     public System.Collections.Generic.Dictionary<UIType, UIConfig> DataMap => _dataMap;
     public System.Collections.Generic.List<UIConfig> DataList => _dataList;
 
-    public UIConfig GetOrDefault(UIType key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public UIConfig GetOrDefault(UIType key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public UIConfig Get(UIType key) => _dataMap[key];
     public UIConfig this[UIType key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

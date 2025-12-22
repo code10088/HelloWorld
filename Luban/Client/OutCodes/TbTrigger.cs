@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbTrigger : TbBase
+public partial class TbTrigger
 {
-    private readonly System.Collections.Generic.Dictionary<int, Trigger> _dataMap = new System.Collections.Generic.Dictionary<int, Trigger>();
-    private readonly System.Collections.Generic.List<Trigger> _dataList = new System.Collections.Generic.List<Trigger>();
+    private readonly System.Collections.Generic.Dictionary<int, Trigger> _dataMap;
+    private readonly System.Collections.Generic.List<Trigger> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbTrigger(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<int, Trigger>(n);
+        _dataList = new System.Collections.Generic.List<Trigger>(n);
         for(int i = n ; i > 0 ; --i)
         {
             Trigger _v;
@@ -35,10 +34,17 @@ public partial class TbTrigger : TbBase
     public System.Collections.Generic.Dictionary<int, Trigger> DataMap => _dataMap;
     public System.Collections.Generic.List<Trigger> DataList => _dataList;
 
-    public Trigger GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public Trigger GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public Trigger Get(int key) => _dataMap[key];
     public Trigger this[int key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

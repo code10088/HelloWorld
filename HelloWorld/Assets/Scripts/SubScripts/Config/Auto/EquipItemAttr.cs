@@ -31,6 +31,11 @@ public sealed partial class EquipItemAttr : ItemAttr
     public const int __ID__ = 357684180;
     public override int GetTypeId() => __ID__;
 
+    public override void ResolveRef(Tables tables)
+    {
+        base.ResolveRef(tables);
+    }
+
     public override string ToString()
     {
         return "{ "

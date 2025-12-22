@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbLanguageCN : TbBase
+public partial class TbLanguageCN
 {
-    private readonly System.Collections.Generic.Dictionary<int, LanguageCN> _dataMap = new System.Collections.Generic.Dictionary<int, LanguageCN>();
-    private readonly System.Collections.Generic.List<LanguageCN> _dataList = new System.Collections.Generic.List<LanguageCN>();
+    private readonly System.Collections.Generic.Dictionary<int, LanguageCN> _dataMap;
+    private readonly System.Collections.Generic.List<LanguageCN> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbLanguageCN(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<int, LanguageCN>(n);
+        _dataList = new System.Collections.Generic.List<LanguageCN>(n);
         for(int i = n ; i > 0 ; --i)
         {
             LanguageCN _v;
@@ -35,10 +34,17 @@ public partial class TbLanguageCN : TbBase
     public System.Collections.Generic.Dictionary<int, LanguageCN> DataMap => _dataMap;
     public System.Collections.Generic.List<LanguageCN> DataList => _dataList;
 
-    public LanguageCN GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public LanguageCN GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public LanguageCN Get(int key) => _dataMap[key];
     public LanguageCN this[int key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

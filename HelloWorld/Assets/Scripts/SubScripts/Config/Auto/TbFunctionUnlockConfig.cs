@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbFunctionUnlockConfig : TbBase
+public partial class TbFunctionUnlockConfig
 {
-    private readonly System.Collections.Generic.Dictionary<FunctionUnlockType, FunctionUnlockConfig> _dataMap = new System.Collections.Generic.Dictionary<FunctionUnlockType, FunctionUnlockConfig>();
-    private readonly System.Collections.Generic.List<FunctionUnlockConfig> _dataList = new System.Collections.Generic.List<FunctionUnlockConfig>();
+    private readonly System.Collections.Generic.Dictionary<FunctionUnlockType, FunctionUnlockConfig> _dataMap;
+    private readonly System.Collections.Generic.List<FunctionUnlockConfig> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbFunctionUnlockConfig(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<FunctionUnlockType, FunctionUnlockConfig>(n);
+        _dataList = new System.Collections.Generic.List<FunctionUnlockConfig>(n);
         for(int i = n ; i > 0 ; --i)
         {
             FunctionUnlockConfig _v;
@@ -35,10 +34,17 @@ public partial class TbFunctionUnlockConfig : TbBase
     public System.Collections.Generic.Dictionary<FunctionUnlockType, FunctionUnlockConfig> DataMap => _dataMap;
     public System.Collections.Generic.List<FunctionUnlockConfig> DataList => _dataList;
 
-    public FunctionUnlockConfig GetOrDefault(FunctionUnlockType key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public FunctionUnlockConfig GetOrDefault(FunctionUnlockType key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public FunctionUnlockConfig Get(FunctionUnlockType key) => _dataMap[key];
     public FunctionUnlockConfig this[FunctionUnlockType key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

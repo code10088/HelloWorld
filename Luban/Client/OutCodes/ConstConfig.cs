@@ -31,6 +31,11 @@ public sealed partial class ConstConfig : Luban.BeanBase
     public const int __ID__ = -1271334811;
     public override int GetTypeId() => __ID__;
 
+    public  void ResolveRef(Tables tables)
+    {
+        BattleConst?.ResolveRef(tables);
+    }
+
     public override string ToString()
     {
         return "{ "

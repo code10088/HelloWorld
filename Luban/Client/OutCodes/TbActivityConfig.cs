@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbActivityConfig : TbBase
+public partial class TbActivityConfig
 {
-    private readonly System.Collections.Generic.Dictionary<int, ActivityConfig> _dataMap = new System.Collections.Generic.Dictionary<int, ActivityConfig>();
-    private readonly System.Collections.Generic.List<ActivityConfig> _dataList = new System.Collections.Generic.List<ActivityConfig>();
+    private readonly System.Collections.Generic.Dictionary<int, ActivityConfig> _dataMap;
+    private readonly System.Collections.Generic.List<ActivityConfig> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbActivityConfig(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<int, ActivityConfig>(n);
+        _dataList = new System.Collections.Generic.List<ActivityConfig>(n);
         for(int i = n ; i > 0 ; --i)
         {
             ActivityConfig _v;
@@ -35,10 +34,17 @@ public partial class TbActivityConfig : TbBase
     public System.Collections.Generic.Dictionary<int, ActivityConfig> DataMap => _dataMap;
     public System.Collections.Generic.List<ActivityConfig> DataList => _dataList;
 
-    public ActivityConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public ActivityConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public ActivityConfig Get(int key) => _dataMap[key];
     public ActivityConfig this[int key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

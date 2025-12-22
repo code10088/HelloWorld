@@ -1,38 +1,49 @@
+using cfg;
+using Luban;
 using System;
+using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
-using System.Reflection;
-using cfg;
 
-public class ConfigManager : Singletion<ConfigManager>
+public partial class ConfigManager : Singletion<ConfigManager>
 {
-    private Tables gameConfigs;
-    private ConstConfig constConfig;
+    private FieldInfo[] fis;
+    private int[] loaders;
     private int count = 0;
     private int total = 0;
     private Action finish;
 
-    public Tables GameConfigs => gameConfigs;
-    public ConstConfig ConstConfig => constConfig;
-
     public void Init(Action finish)
     {
-        if (gameConfigs == null) gameConfigs = new Tables();
         this.finish = finish;
-        var fis = typeof(Tables).GetFields();
-        total = fis.Length - (int)LanguageType.Max;
+        fis = typeof(ConfigManager).GetFields(BindingFlags.NonPublic | BindingFlags.Instance);
+        loaders = new int[fis.Length];
         for (int i = 0; i < fis.Length; i++)
         {
-            if (fis[i].Name.StartsWith("Language")) continue;
-            new ConfigItem(fis[i], Finish);
+            if (fis[i].FieldType.Namespace != "cfg") continue;
+            if (fis[i].Name.StartsWith("tblanguage")) continue;
+
+            total++;
+            string tempPath = $"{ZResConst.ResDataConfigPath}{fis[i].Name}.bytes";
+            AssetManager.Instance.Load<TextAsset>(ref loaders[i], tempPath, Deserialize);
         }
+    }
+    private void Deserialize(int loadId, Object asset)
+    {
+        byte[] bytes = ((TextAsset)asset).bytes;
+        int index = Array.IndexOf(loaders, loadId);
+        var fi = fis[index];
+        var byteBuf = new ByteBuf(bytes);
+        Driver.Instance.StartTask(a => fi.SetValue(Instance, Activator.CreateInstance(fi.FieldType, byteBuf)), Finish);
+        AssetManager.Instance.Unload(ref loadId);
     }
     private void Finish()
     {
         if (++count == total)
         {
             finish?.Invoke();
-            constConfig = gameConfigs.TbConstConfig[0];
+            fis = null;
+            loaders = null;
             Driver.Instance.GCCollect();
         }
         else
@@ -42,37 +53,16 @@ public class ConfigManager : Singletion<ConfigManager>
             EventManager.Instance.FireEvent(EventType.SetSceneLoadingProgress, str, progress);
         }
     }
-    public void InitSpecial(string name, Action finish)
+    public void InitUIConfig(Action finish)
     {
-        if (gameConfigs == null) gameConfigs = new Tables();
-        var fi = typeof(Tables).GetField(name);
-        new ConfigItem(fi, finish);
-    }
-
-    class ConfigItem
-    {
-        private Action finish;
-        private TbBase tb;
-        private int loadId;
-        public ConfigItem(FieldInfo fi, Action _finish)
+        int loadId = -1;
+        string tempPath = $"{ZResConst.ResDataConfigPath}tbuiconfig.bytes";
+        AssetManager.Instance.Load<TextAsset>(ref loadId, tempPath, (a, b) =>
         {
-            finish = _finish;
-            tb = fi.GetValue(Instance.GameConfigs) as TbBase;
-            string tempPath = $"{ZResConst.ResDataConfigPath}{fi.Name.ToLower()}.bytes";
-            AssetManager.Instance.Load<TextAsset>(ref loadId, tempPath, Deserialize);
-        }
-        private void Deserialize(int id, Object asset)
-        {
-            if (asset == null) return;
-            byte[] bytes = ((TextAsset)asset).bytes;
-            if (bytes == null) return;
-            Driver.Instance.StartTask(a => tb.Deserialize(bytes), Finish);
-        }
-        private void Finish()
-        {
-            tb = null;
+            var bytes = ((TextAsset)b).bytes;
+            var byteBuf = new ByteBuf(bytes);
+            Driver.Instance.StartTask(a => tbuiconfig = new TbUIConfig(byteBuf), finish);
             AssetManager.Instance.Unload(ref loadId);
-            finish?.Invoke();
-        }
+        });
     }
 }

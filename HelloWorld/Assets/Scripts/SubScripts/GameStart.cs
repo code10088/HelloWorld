@@ -37,7 +37,7 @@ public class GameStart
     }
     private void InitUIConfig(int id)
     {
-        ConfigManager.Instance.InitSpecial("TbUIConfig", Process.Next);
+        ConfigManager.Instance.InitUIConfig(Process.Next);
     }
     private void OpenUIHotUpdateRes(int id)
     {

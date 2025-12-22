@@ -109,7 +109,7 @@ public class DPUtil
 #if UNITY_EDITOR
         tempLv = DPLevel.High;
 #else
-        var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
+        var deviceInfo = ConfigManager.Instance.TbDeviceInfo.DataList;
         var graphicsDevice = SystemInfo.graphicsDeviceName.ToLower();
         for (int i = 0; i < deviceInfo.Count; i++)
         {
@@ -133,7 +133,7 @@ public class DPUtil
 #if UNITY_EDITOR
         tempLv = DPLevel.High;
 #else
-        var deviceInfo = ConfigManager.Instance.GameConfigs.TbDeviceInfo.DataList;
+        var deviceInfo = ConfigManager.Instance.TbDeviceInfo.DataList;
         var deviceModel = SystemInfo.deviceModel.ToLower();
         for (int i = 0; i < deviceInfo.Count; i++)
         {

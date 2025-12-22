@@ -34,6 +34,10 @@ public sealed partial class LanguageEN : Luban.BeanBase
     public const int __ID__ = 1816986145;
     public override int GetTypeId() => __ID__;
 
+    public  void ResolveRef(Tables tables)
+    {
+    }
+
     public override string ToString()
     {
         return "{ "

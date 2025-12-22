@@ -29,6 +29,10 @@ public partial struct vec2int
     public readonly int Y;
    
 
+    public  void ResolveRef(Tables tables)
+    {
+    }
+
     public override string ToString()
     {
         return "{ "

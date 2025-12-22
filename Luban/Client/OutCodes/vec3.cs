@@ -31,6 +31,10 @@ public partial struct vec3
     public readonly float Z;
    
 
+    public  void ResolveRef(Tables tables)
+    {
+    }
+
     public override string ToString()
     {
         return "{ "

@@ -79,6 +79,11 @@ public sealed partial class Items : Luban.BeanBase
     public const int __ID__ = 70973344;
     public override int GetTypeId() => __ID__;
 
+    public  void ResolveRef(Tables tables)
+    {
+        Attr?.ResolveRef(tables);
+    }
+
     public override string ToString()
     {
         return "{ "

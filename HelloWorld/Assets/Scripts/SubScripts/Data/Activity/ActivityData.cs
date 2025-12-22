@@ -22,7 +22,7 @@ public class ActivityData : DataBase
         var temp = datas.Find(a => a.ActivityId == data.activityId);
         if (temp == null)
         {
-            var config = ConfigManager.Instance.GameConfigs.TbActivityConfig[data.configId];
+            var config = ConfigManager.Instance.TbActivityConfig[data.configId];
             switch (config.ActivityType)
             {
                 case cfg.ActivityType.Turntable:

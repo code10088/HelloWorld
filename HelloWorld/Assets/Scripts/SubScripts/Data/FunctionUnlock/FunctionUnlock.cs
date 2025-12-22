@@ -8,7 +8,7 @@ public class FunctionUnlock : Singletion<FunctionUnlock>
 	/// </summary>
 	public bool CheckUnlock(FunctionUnlockType type)
 	{
-		var config = ConfigManager.Instance.GameConfigs.TbFunctionUnlockConfig[type];
+		var config = ConfigManager.Instance.TbFunctionUnlockConfig[type];
 		string str = config.Condition;
 		var conditionKeys = Utils.SplitBoolStr(str);
 		var conditions = InitCondition(conditionKeys);
@@ -28,7 +28,7 @@ public class FunctionUnlock : Singletion<FunctionUnlock>
 			int a = conditionKeys[i];
 			if (conditions.ContainsKey(a)) continue;
 			ConditionBase temp = null;
-			var conditionConfig = ConfigManager.Instance.GameConfigs.TbConditionConfig[a];
+			var conditionConfig = ConfigManager.Instance.TbConditionConfig[a];
 			switch (conditionConfig.ConditionType)
 			{
 				case ConditionType.FunctionUnlockCondition_Lv:

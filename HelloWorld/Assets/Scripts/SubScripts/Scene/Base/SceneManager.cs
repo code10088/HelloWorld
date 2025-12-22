@@ -158,7 +158,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         public SceneItem(SceneType type)
         {
             id = ++uniqueId;
-            config = ConfigManager.Instance.GameConfigs.TbSceneConfig[type];
+            config = ConfigManager.Instance.TbSceneConfig[type];
         }
         public void SetParam(SceneType _from, Action<int, bool> _open = null, Action<float> _progress = null, params object[] _param)
         {

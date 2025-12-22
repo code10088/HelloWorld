@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbConstConfig : TbBase
+public partial class TbConstConfig
 {
-    private readonly System.Collections.Generic.Dictionary<int, ConstConfig> _dataMap = new System.Collections.Generic.Dictionary<int, ConstConfig>();
-    private readonly System.Collections.Generic.List<ConstConfig> _dataList = new System.Collections.Generic.List<ConstConfig>();
+    private readonly System.Collections.Generic.Dictionary<int, ConstConfig> _dataMap;
+    private readonly System.Collections.Generic.List<ConstConfig> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbConstConfig(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<int, ConstConfig>(n);
+        _dataList = new System.Collections.Generic.List<ConstConfig>(n);
         for(int i = n ; i > 0 ; --i)
         {
             ConstConfig _v;
@@ -35,10 +34,17 @@ public partial class TbConstConfig : TbBase
     public System.Collections.Generic.Dictionary<int, ConstConfig> DataMap => _dataMap;
     public System.Collections.Generic.List<ConstConfig> DataList => _dataList;
 
-    public ConstConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public ConstConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public ConstConfig Get(int key) => _dataMap[key];
     public ConstConfig this[int key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

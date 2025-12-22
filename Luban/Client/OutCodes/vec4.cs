@@ -33,6 +33,10 @@ public partial struct vec4
     public readonly float W;
    
 
+    public  void ResolveRef(Tables tables)
+    {
+    }
+
     public override string ToString()
     {
         return "{ "

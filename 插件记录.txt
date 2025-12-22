@@ -4,10 +4,15 @@
 	http://docs.unity3d.com/Manual/ClassIDReference.html 找到ID对应的class，加到link.xml中
 	
 Luban
-	必要文件 Tools(example中luban不是最新版本直接下载luban/release最新版) MiniTemplate/Datas MiniTemplate/Defines MiniTemplate/luban.conf Projects/Csharp_Unity_bin/gen.bat
+	必要文件 Tools(example中luban不是最新版本直接下载luban/release最新版) 
+		DataTables/Datas/__beans__.xlsx
+		DataTables/Datas/__enums__.xlsx
+		DataTables/Datas/__tables__.xlsx
+		DataTables/Defines/builtin.xml
+		MiniTemplate/luban.conf
+		Projects/Csharp_Unity_bin/gen.bat
 	修改gen.bat路径问题
 	仿照.bat添加.sh
-	修改Tools/Luban/Templates/cs_bin模板(使用对比工具、查看log)
 
 Bundle冗余
 	Material和Sprite分别打包会存在一个Sprite一个Texture，Material和Texture只会有一个Texture

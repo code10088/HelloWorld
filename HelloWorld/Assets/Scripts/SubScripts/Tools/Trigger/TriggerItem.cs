@@ -112,7 +112,7 @@ public class TriggerItem
 			int a = conditionKeys[i];
 			if (conditions.ContainsKey(a)) continue;
 			ConditionBase temp = null;
-			var conditionConfig = ConfigManager.Instance.GameConfigs.TbConditionConfig[a];
+			var conditionConfig = ConfigManager.Instance.TbConditionConfig[a];
 			switch (conditionConfig.ConditionType)
 			{
 				case ConditionType.Condition_Action:
@@ -142,7 +142,7 @@ public class TriggerItem
 			ActionBase temp = null;
 			int index = i - config.Action1.Count;
 			int actionId = index < 0 ? config.Action1[i] : config.Action2[index];
-			var actionConfig = ConfigManager.Instance.GameConfigs.TbActionConfig[actionId];
+			var actionConfig = ConfigManager.Instance.TbActionConfig[actionId];
 			switch (actionConfig.ActionType)
 			{
 				case ActionType.Action_Action:

@@ -7,7 +7,7 @@ public class BuffManager
 
 	public void AddBuff(int configId, Func<bool> condition = null, Action action = null)
 	{
-		var config = ConfigManager.Instance.GameConfigs.TbBuff[configId];
+		var config = ConfigManager.Instance.TbBuff[configId];
 		var list = buffs.FindAll(a => a.ConfigId == configId);
 		if (config.Limit > 0 && list.Count >= config.Limit) return;
 

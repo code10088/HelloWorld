@@ -28,7 +28,7 @@ public class GuideData : DataBase
     {
         guideId = id;
         if (guideId <= 0) return;
-        guideCfg = ConfigManager.Instance.GameConfigs.TbGuide[id];
+        guideCfg = ConfigManager.Instance.TbGuide[id];
         if (guideCfg == null) return;
         UIManager.Instance.OpenUI(UIType.UIGuide);
     }
@@ -40,7 +40,7 @@ public class GuideData : DataBase
             End();
             return;
         }
-        guideCfg = ConfigManager.Instance.GameConfigs.TbGuide[guideId];
+        guideCfg = ConfigManager.Instance.TbGuide[guideId];
         if (guideCfg == null)
         {
             End();

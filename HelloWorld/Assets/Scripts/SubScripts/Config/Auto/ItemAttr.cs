@@ -29,6 +29,10 @@ public abstract partial class ItemAttr : Luban.BeanBase
 
    
 
+    public virtual void ResolveRef(Tables tables)
+    {
+    }
+
     public override string ToString()
     {
         return "{ "

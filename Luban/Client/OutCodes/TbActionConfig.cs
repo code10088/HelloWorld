@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbActionConfig : TbBase
+public partial class TbActionConfig
 {
-    private readonly System.Collections.Generic.Dictionary<int, ActionConfig> _dataMap = new System.Collections.Generic.Dictionary<int, ActionConfig>();
-    private readonly System.Collections.Generic.List<ActionConfig> _dataList = new System.Collections.Generic.List<ActionConfig>();
+    private readonly System.Collections.Generic.Dictionary<int, ActionConfig> _dataMap;
+    private readonly System.Collections.Generic.List<ActionConfig> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbActionConfig(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<int, ActionConfig>(n);
+        _dataList = new System.Collections.Generic.List<ActionConfig>(n);
         for(int i = n ; i > 0 ; --i)
         {
             ActionConfig _v;
@@ -35,10 +34,17 @@ public partial class TbActionConfig : TbBase
     public System.Collections.Generic.Dictionary<int, ActionConfig> DataMap => _dataMap;
     public System.Collections.Generic.List<ActionConfig> DataList => _dataList;
 
-    public ActionConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public ActionConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public ActionConfig Get(int key) => _dataMap[key];
     public ActionConfig this[int key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

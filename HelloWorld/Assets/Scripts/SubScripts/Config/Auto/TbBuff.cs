@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbBuff : TbBase
+public partial class TbBuff
 {
-    private readonly System.Collections.Generic.Dictionary<int, Buff> _dataMap = new System.Collections.Generic.Dictionary<int, Buff>();
-    private readonly System.Collections.Generic.List<Buff> _dataList = new System.Collections.Generic.List<Buff>();
+    private readonly System.Collections.Generic.Dictionary<int, Buff> _dataMap;
+    private readonly System.Collections.Generic.List<Buff> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbBuff(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<int, Buff>(n);
+        _dataList = new System.Collections.Generic.List<Buff>(n);
         for(int i = n ; i > 0 ; --i)
         {
             Buff _v;
@@ -35,10 +34,17 @@ public partial class TbBuff : TbBase
     public System.Collections.Generic.Dictionary<int, Buff> DataMap => _dataMap;
     public System.Collections.Generic.List<Buff> DataList => _dataList;
 
-    public Buff GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public Buff GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public Buff Get(int key) => _dataMap[key];
     public Buff this[int key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

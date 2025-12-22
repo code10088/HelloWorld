@@ -42,9 +42,7 @@ public class LanguageManager : Singletion<LanguageManager>
     }
     private void Deserialize(int loadId, Object asset)
     {
-        if (asset == null) return;
         byte[] bytes = ((TextAsset)asset).bytes;
-        if (bytes == null) return;
         Driver.Instance.StartTask(Deserialize, finish, bytes);
         AssetManager.Instance.Unload(ref loadId);
     }

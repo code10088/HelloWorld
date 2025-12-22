@@ -37,7 +37,7 @@ public class PlayerAvatar
     private void ChangeFinish(int partId)
     {
         if (partId < 0) return;
-        var partCfg = ConfigManager.Instance.GameConfigs.TbPlayerAvatarPart.Get(partId);
+        var partCfg = ConfigManager.Instance.TbPlayerAvatarPart.Get(partId);
         for (int i = 0; i < partCfg.OccupyPart.Count; i++)
         {
             var tempItem = dress.Find(a => a.PartCfg.ID != partId && a.PartCfg.OccupyPart.Contains(partCfg.OccupyPart[i]));
@@ -71,7 +71,7 @@ public class PlayerAvatar
         {
             this.avatar = avatar;
             this.finish = finish;
-            partCfg = ConfigManager.Instance.GameConfigs.TbPlayerAvatarPart.Get(partId);
+            partCfg = ConfigManager.Instance.TbPlayerAvatarPart.Get(partId);
             Init(partCfg.PrefabPath);
         }
         protected override void Finish(GameObject obj)

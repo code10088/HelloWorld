@@ -1,0 +1,12 @@
+using cfg;
+
+public partial class ConfigManager
+{
+{{~ for t in tables ~}}
+    private {{ t.type }} {{ t.field }};
+{{~ end ~}}
+
+{{~ for t in tables ~}}
+    public {{ t.type }} {{ t.name }} => {{ t.field }};
+{{~ end ~}}
+}

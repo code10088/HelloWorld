@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbLink : TbBase
+public partial class TbLink
 {
-    private readonly System.Collections.Generic.Dictionary<int, Link> _dataMap = new System.Collections.Generic.Dictionary<int, Link>();
-    private readonly System.Collections.Generic.List<Link> _dataList = new System.Collections.Generic.List<Link>();
+    private readonly System.Collections.Generic.Dictionary<int, Link> _dataMap;
+    private readonly System.Collections.Generic.List<Link> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbLink(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<int, Link>(n);
+        _dataList = new System.Collections.Generic.List<Link>(n);
         for(int i = n ; i > 0 ; --i)
         {
             Link _v;
@@ -35,10 +34,17 @@ public partial class TbLink : TbBase
     public System.Collections.Generic.Dictionary<int, Link> DataMap => _dataMap;
     public System.Collections.Generic.List<Link> DataList => _dataList;
 
-    public Link GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public Link GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public Link Get(int key) => _dataMap[key];
     public Link this[int key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

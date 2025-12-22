@@ -8,7 +8,7 @@ public class TriggerManager
 
 	public void AddTrigger(int configId, Func<bool> condition = null, Action action1 = null, Action action2 = null)
 	{
-		var config = ConfigManager.Instance.GameConfigs.TbTrigger[configId];
+		var config = ConfigManager.Instance.TbTrigger[configId];
 		if (triggers.TryGetValue(config.TriggerMode, out List<TriggerItem> list))
 		{
 			if (config.Limit > 0)

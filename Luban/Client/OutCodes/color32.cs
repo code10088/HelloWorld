@@ -33,6 +33,10 @@ public partial struct color32
     public readonly byte A;
    
 
+    public  void ResolveRef(Tables tables)
+    {
+    }
+
     public override string ToString()
     {
         return "{ "

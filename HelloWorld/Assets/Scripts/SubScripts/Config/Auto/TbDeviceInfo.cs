@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbDeviceInfo : TbBase
+public partial class TbDeviceInfo
 {
-    private readonly System.Collections.Generic.Dictionary<string, DeviceInfo> _dataMap = new System.Collections.Generic.Dictionary<string, DeviceInfo>();
-    private readonly System.Collections.Generic.List<DeviceInfo> _dataList = new System.Collections.Generic.List<DeviceInfo>();
+    private readonly System.Collections.Generic.Dictionary<string, DeviceInfo> _dataMap;
+    private readonly System.Collections.Generic.List<DeviceInfo> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbDeviceInfo(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<string, DeviceInfo>(n);
+        _dataList = new System.Collections.Generic.List<DeviceInfo>(n);
         for(int i = n ; i > 0 ; --i)
         {
             DeviceInfo _v;
@@ -35,10 +34,17 @@ public partial class TbDeviceInfo : TbBase
     public System.Collections.Generic.Dictionary<string, DeviceInfo> DataMap => _dataMap;
     public System.Collections.Generic.List<DeviceInfo> DataList => _dataList;
 
-    public DeviceInfo GetOrDefault(string key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public DeviceInfo GetOrDefault(string key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public DeviceInfo Get(string key) => _dataMap[key];
     public DeviceInfo this[string key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

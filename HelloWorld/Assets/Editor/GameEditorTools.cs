@@ -52,8 +52,54 @@ public class GameEditorTools
             string target = $"{Application.dataPath}/ZRes/DataConfig/{list[i].Name}";
             File.Copy(list[i].FullName, target, true);
         }
+
+        string tablesText = File.ReadAllText($"{Application.dataPath}/Scripts/SubScripts/Config/Auto/Tables.cs");
+        var regex = new Regex(@"public\s+([A-Za-z0-9_]+)\s+([A-Za-z0-9_]+)\s*{get; }", RegexOptions.Compiled);
+        var matches = regex.Matches(tablesText);
+        var tables = new List<TableField>();
+        foreach (Match m in matches)
+        {
+            string type = m.Groups[1].Value.Trim();
+            string name = m.Groups[2].Value.Trim();
+            string field = name.ToLower();
+            tables.Add(new TableField(){
+                type = type,
+                name = name,
+                field = field
+            });
+        }
+
+        string result = File.ReadAllText($"{Application.dataPath}/Editor/Template/ConfigTemplate.txt");
+        if (string.IsNullOrEmpty(result))
+        {
+            UnityEngine.Debug.LogError("模板不存在");
+            return;
+        }
+        try
+        {
+            var template = Template.Parse(result);
+            if (template.HasErrors)
+            {
+                UnityEngine.Debug.LogError("模板解析错误：" + template.Messages);
+                return;
+            }
+            result = template.Render(new { tables });
+        }
+        catch (Exception ex)
+        {
+            UnityEngine.Debug.LogError("模板渲染异常：" + ex.Message);
+            return;
+        }
+        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Config/Config.cs", result, Encoding.UTF8);
         AssetDatabase.Refresh();
     }
+    private class TableField
+    {
+        public string type;
+        public string name;
+        public string field;
+    }
+
     [MenuItem("Tools/CopyMsg", false, (int)ToolsMenuSort.CopyMsg)]
     public static void CopyMsg()
     {

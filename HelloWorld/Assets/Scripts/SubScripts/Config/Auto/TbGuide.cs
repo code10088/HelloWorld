@@ -12,17 +12,16 @@ using Luban;
 
 namespace cfg
 {
-public partial class TbGuide : TbBase
+public partial class TbGuide
 {
-    private readonly System.Collections.Generic.Dictionary<int, Guide> _dataMap = new System.Collections.Generic.Dictionary<int, Guide>();
-    private readonly System.Collections.Generic.List<Guide> _dataList = new System.Collections.Generic.List<Guide>();
+    private readonly System.Collections.Generic.Dictionary<int, Guide> _dataMap;
+    private readonly System.Collections.Generic.List<Guide> _dataList;
     
-    public void Deserialize(byte[] bytes)
+    public TbGuide(ByteBuf _buf)
     {
-        _dataMap.Clear();
-        _dataList.Clear();
-        ByteBuf _buf = new ByteBuf(bytes);
         int n = _buf.ReadSize();
+        _dataMap = new System.Collections.Generic.Dictionary<int, Guide>(n);
+        _dataList = new System.Collections.Generic.List<Guide>(n);
         for(int i = n ; i > 0 ; --i)
         {
             Guide _v;
@@ -35,10 +34,17 @@ public partial class TbGuide : TbBase
     public System.Collections.Generic.Dictionary<int, Guide> DataMap => _dataMap;
     public System.Collections.Generic.List<Guide> DataList => _dataList;
 
-    public Guide GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+    public Guide GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public Guide Get(int key) => _dataMap[key];
     public Guide this[int key] => _dataMap[key];
 
+    public void ResolveRef(Tables tables)
+    {
+        foreach(var _v in _dataList)
+        {
+            _v.ResolveRef(tables);
+        }
+    }
 
 }
 

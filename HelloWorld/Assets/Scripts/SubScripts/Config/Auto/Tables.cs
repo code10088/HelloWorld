@@ -13,22 +13,63 @@ namespace cfg
 {
 public partial class Tables
 {
-    public TbConstConfig TbConstConfig = new TbConstConfig();
-    public TbLink TbLink = new TbLink();
-    public TbUIConfig TbUIConfig = new TbUIConfig();
-    public TbDeviceInfo TbDeviceInfo = new TbDeviceInfo();
-    public TbSceneConfig TbSceneConfig = new TbSceneConfig();
-    public TbPlayerAvatarPart TbPlayerAvatarPart = new TbPlayerAvatarPart();
-    public TbTrigger TbTrigger = new TbTrigger();
-    public TbConditionConfig TbConditionConfig = new TbConditionConfig();
-    public TbActionConfig TbActionConfig = new TbActionConfig();
-    public TbBuff TbBuff = new TbBuff();
-    public TbGuide TbGuide = new TbGuide();
-    public TbActivityConfig TbActivityConfig = new TbActivityConfig();
-    public TbFunctionUnlockConfig TbFunctionUnlockConfig = new TbFunctionUnlockConfig();
-    public TbItems TbItems = new TbItems();
-    public TbLanguageCN TbLanguageCN = new TbLanguageCN();
-    public TbLanguageEN TbLanguageEN = new TbLanguageEN();
+    public TbConstConfig TbConstConfig {get; }
+    public TbLink TbLink {get; }
+    public TbUIConfig TbUIConfig {get; }
+    public TbDeviceInfo TbDeviceInfo {get; }
+    public TbSceneConfig TbSceneConfig {get; }
+    public TbPlayerAvatarPart TbPlayerAvatarPart {get; }
+    public TbTrigger TbTrigger {get; }
+    public TbConditionConfig TbConditionConfig {get; }
+    public TbActionConfig TbActionConfig {get; }
+    public TbBuff TbBuff {get; }
+    public TbGuide TbGuide {get; }
+    public TbActivityConfig TbActivityConfig {get; }
+    public TbFunctionUnlockConfig TbFunctionUnlockConfig {get; }
+    public TbItems TbItems {get; }
+    public TbLanguageCN TbLanguageCN {get; }
+    public TbLanguageEN TbLanguageEN {get; }
+
+    public Tables(System.Func<string, ByteBuf> loader)
+    {
+        TbConstConfig = new TbConstConfig(loader("tbconstconfig"));
+        TbLink = new TbLink(loader("tblink"));
+        TbUIConfig = new TbUIConfig(loader("tbuiconfig"));
+        TbDeviceInfo = new TbDeviceInfo(loader("tbdeviceinfo"));
+        TbSceneConfig = new TbSceneConfig(loader("tbsceneconfig"));
+        TbPlayerAvatarPart = new TbPlayerAvatarPart(loader("tbplayeravatarpart"));
+        TbTrigger = new TbTrigger(loader("tbtrigger"));
+        TbConditionConfig = new TbConditionConfig(loader("tbconditionconfig"));
+        TbActionConfig = new TbActionConfig(loader("tbactionconfig"));
+        TbBuff = new TbBuff(loader("tbbuff"));
+        TbGuide = new TbGuide(loader("tbguide"));
+        TbActivityConfig = new TbActivityConfig(loader("tbactivityconfig"));
+        TbFunctionUnlockConfig = new TbFunctionUnlockConfig(loader("tbfunctionunlockconfig"));
+        TbItems = new TbItems(loader("tbitems"));
+        TbLanguageCN = new TbLanguageCN(loader("tblanguagecn"));
+        TbLanguageEN = new TbLanguageEN(loader("tblanguageen"));
+        ResolveRef();
+    }
+    
+    private void ResolveRef()
+    {
+        TbConstConfig.ResolveRef(this);
+        TbLink.ResolveRef(this);
+        TbUIConfig.ResolveRef(this);
+        TbDeviceInfo.ResolveRef(this);
+        TbSceneConfig.ResolveRef(this);
+        TbPlayerAvatarPart.ResolveRef(this);
+        TbTrigger.ResolveRef(this);
+        TbConditionConfig.ResolveRef(this);
+        TbActionConfig.ResolveRef(this);
+        TbBuff.ResolveRef(this);
+        TbGuide.ResolveRef(this);
+        TbActivityConfig.ResolveRef(this);
+        TbFunctionUnlockConfig.ResolveRef(this);
+        TbItems.ResolveRef(this);
+        TbLanguageCN.ResolveRef(this);
+        TbLanguageEN.ResolveRef(this);
+    }
 }
 
 }

@@ -69,6 +69,10 @@ public sealed partial class Buff : Luban.BeanBase
     public const int __ID__ = 2081907;
     public override int GetTypeId() => __ID__;
 
+    public  void ResolveRef(Tables tables)
+    {
+    }
+
     public override string ToString()
     {
         return "{ "

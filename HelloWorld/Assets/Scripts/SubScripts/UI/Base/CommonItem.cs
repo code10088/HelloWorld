@@ -13,7 +13,7 @@ public class CommonItem : MonoSingletion<CommonItem>, SingletionInterface
 
     public CommonItem_Normal Get(int id)
     {
-        var cfg = ConfigManager.Instance.GameConfigs.TbItems[id];
+        var cfg = ConfigManager.Instance.TbItems[id];
         CommonItem_Normal target = null;
         switch (cfg.ItemType)
         {

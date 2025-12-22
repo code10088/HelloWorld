@@ -162,7 +162,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
 
         public UIItem(UIType type)
         {
-            config = ConfigManager.Instance.GameConfigs.TbUIConfig[type];
+            config = ConfigManager.Instance.TbUIConfig[type];
         }
         public void SetParam(UIType from, Action<bool> open = null, params object[] param)
         {
