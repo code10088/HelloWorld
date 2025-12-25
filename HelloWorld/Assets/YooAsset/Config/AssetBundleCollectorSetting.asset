@@ -135,13 +135,21 @@ MonoBehaviour:
         AssetTags: 
         UserData: 
       - CollectPath: Assets/ZRes/UI/Atlas
-        CollectorGUID: 4cf2455786f188a4db6bba82db5c58f3
-        CollectorType: 0
+        CollectorGUID: 8a73dcd03fcc3bd40bf316d677ff3adf
+        CollectorType: 1
         AddressRuleName: AddressDisable
         PackRuleName: PackTopDirectory
         FilterRuleName: CollectUserData
         AssetTags: 
-        UserData: .png;.spriteatlas
+        UserData: .png
+      - CollectPath: Assets/ZRes/UI/Atlas
+        CollectorGUID: 4cf2455786f188a4db6bba82db5c58f3
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectUserData
+        AssetTags: 
+        UserData: .spriteatlas
       - CollectPath: Assets/ZRes/UI/CommonMaterial
         CollectorGUID: 0b2b9d4fe3dffad4eae317a8ac796efe
         CollectorType: 0

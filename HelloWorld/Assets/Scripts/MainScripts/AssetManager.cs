@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.U2D;
 using YooAsset;
 using Object = UnityEngine.Object;
 
@@ -22,17 +23,17 @@ public enum CacheTime
 }
 public class AssetManager : Singletion<AssetManager>
 {
-    private static Dictionary<int, AssetItemGroup> group = new();
-    private static Dictionary<int, string> totalKey = new();
-    private static Dictionary<string, AssetItem> totalValue = new();
-    private static Queue<AssetItem> cache = new();
-    private static int uniqueId = 0;
+    private Dictionary<int, AssetItemGroup> group = new();
+    private Dictionary<int, string> totalKey = new();
+    private Dictionary<string, AssetItem> totalValue = new();
+    private Queue<AssetItem> cache = new();
+    private int uniqueId = 0;
 
     public const string PackageName = "All";
-    private static ResourcePackage package;
+    private ResourcePackage package;
     private Action initFinish;
 
-    public static ResourcePackage Package => package;
+    public ResourcePackage Package => package;
 
     public void Init(Action action)
     {
@@ -156,7 +157,7 @@ public class AssetManager : Singletion<AssetManager>
         }
         public void Unload(int id, CacheTime time)
         {
-            group.Remove(id);
+            Instance.group.Remove(id);
             for (int i = 0; i < ids.Length; i++) Instance.Unload(ref ids[i], time);
             action = null;
             path = null;
@@ -181,7 +182,7 @@ public class AssetManager : Singletion<AssetManager>
             this.path = path;
             this.itemId = itemId;
             state = LoadState.Loading;
-            ah = package.LoadAssetAsync<T>(path);
+            ah = Instance.package.LoadAssetAsync<T>(path);
             ah.Completed += LoadFinish;
         }
         public void Load(ref int loadId, Action<int, Object> action)
@@ -210,8 +211,8 @@ public class AssetManager : Singletion<AssetManager>
             if (ah.AssetObject == null)
             {
                 //防止回调时加载卸载
-                totalKey.Remove(itemId);
-                totalValue.Remove(path);
+                Instance.totalKey.Remove(itemId);
+                Instance.totalValue.Remove(path);
                 foreach (var item in loaders) item.Value?.Invoke(item.Key, null);
                 Unload();
             }
@@ -255,20 +256,146 @@ public class AssetManager : Singletion<AssetManager>
         }
         private void Unload()
         {
-            totalKey.Remove(itemId);
-            totalValue.Remove(path);
+            Instance.totalKey.Remove(itemId);
+            Instance.totalValue.Remove(path);
             itemId = -1;
             loadId = 0;
             state = LoadState.None;
             ah.Release();
             var asset = ah.GetAssetInfo();
-            package.TryUnloadUnusedAsset(asset);
+            Instance.package.TryUnloadUnusedAsset(asset);
             ah = null;
             loaders.Clear();
             timer = CacheTime.None;
             Driver.Instance.Remove(timerId);
             timerId = -1;
-            cache.Enqueue(this);
+            Instance.cache.Enqueue(this);
+        }
+    }
+}
+public class AtlasManager : Singletion<AtlasManager>
+{
+    private Dictionary<string, AtlasInfo> atlasInfos = new();
+    private Dictionary<int, List<string>> atlasRefs = new();
+    private int uniqueId = 0;
+
+    public void LoadSprite(ref int id, string atlas, string name, Action<Sprite> action)
+    {
+        bool addref = true;
+        if (id > 0)
+        {
+            if (atlasRefs[id].Contains(atlas)) addref = false;
+            else atlasRefs[id].Add(atlas);
+        }
+        else
+        {
+            id = ++uniqueId;
+            atlasRefs.Add(id, new List<string> { atlas });
+        }
+        if (atlasInfos.TryGetValue(atlas, out var info))
+        {
+            if (addref) info.AddRef();
+            info.LoadSprite(name, action);
+        }
+        else
+        {
+            info = new AtlasInfo(atlas);
+            atlasInfos.Add(atlas, info);
+            if (addref) info.AddRef();
+            info.LoadSprite(name, action);
+        }
+    }
+    public void UnloadSprite(ref int id)
+    {
+        if (id < 0) return;
+        if (atlasRefs.TryGetValue(id, out var list))
+        {
+            foreach (var atlas in list)
+            {
+                if (atlasInfos[atlas].RemoveRef()) atlasInfos.Remove(atlas);
+            }
+            atlasRefs.Remove(id);
+            id = -1;
+        }
+    }
+
+
+    private class AtlasInfo
+    {
+        private int loadId;
+        private SpriteAtlas atlas;
+        private Dictionary<string, Sprite> sprites;
+        private Dictionary<string, List<Action<Sprite>>> callback;
+        private int refCount = 0;
+
+        public AtlasInfo(string path)
+        {
+            sprites = new Dictionary<string, Sprite>();
+            callback = new Dictionary<string, List<Action<Sprite>>>();
+            AssetManager.Instance.Load<SpriteAtlas>(ref loadId, path, LoadFinish);
+        }
+        private void LoadFinish(int loadId, Object asset)
+        {
+            atlas = asset as SpriteAtlas;
+            foreach (var item in callback)
+            {
+                var sprite = GetSprite(item.Key);
+                foreach (var action in item.Value) action?.Invoke(sprite);
+            }
+            callback = null;
+        }
+        public void LoadSprite(string name, Action<Sprite> action)
+        {
+            if (atlas == null)
+            {
+                if (callback.TryGetValue(name, out var list))
+                {
+                    list.Add(action);
+                }
+                else
+                {
+                    list = new List<Action<Sprite>> { action };
+                    callback.Add(name, list);
+                }
+            }
+            else
+            {
+                var sprite = GetSprite(name);
+                action?.Invoke(sprite);
+            }
+        }
+        private Sprite GetSprite(string name)
+        {
+            if (sprites.TryGetValue(name, out var sprite))
+            {
+                return sprite;
+            }
+            else
+            {
+                sprite = atlas.GetSprite(name);
+                sprites.Add(name, sprite);
+                return sprite;
+            }
+        }
+        public void AddRef()
+        {
+            refCount++;
+        }
+        public bool RemoveRef()
+        {
+            refCount--;
+            if (refCount <= 0)
+            {
+                AssetManager.Instance.Unload(ref loadId, CacheTime.Short);
+                atlas = null;
+                sprites = null;
+                callback = null;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

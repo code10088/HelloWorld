@@ -8,8 +8,8 @@ public class SceneBase
     protected int id;
     protected SceneType from;
     protected SceneConfig config;
-    private List<int> loader1 = new List<int>();
-    private List<LoadGameObjectItem> loader2 = new List<LoadGameObjectItem>();
+    private List<int> loadId1;
+    private AssetObjectPool loader2;
 
     public virtual void InitScene(GameObject _SceneObj, int _id, SceneType _from, SceneConfig _config, params object[] param)
     {
@@ -29,28 +29,34 @@ public class SceneBase
         SceneManager.Instance.CameraController.SetPos(config.CameraPos);
         SceneManager.Instance.CameraController.SetEuler(config.CameraEuler);
 
-        int skyboxLoadId = -1;
-        AssetManager.Instance.Load<Material>(ref skyboxLoadId, config.SkyBoxPath, (a, b) => RenderSettings.skybox = (Material)b);
-        loader1.Add(skyboxLoadId);
+        if(config.SkyBoxPath.Length > 0)
+        {
+            if (loadId1 == null) loadId1 = new();
+            int skyboxLoadId = -1;
+            AssetManager.Instance.Load<Material>(ref skyboxLoadId, config.SkyBoxPath, (a, b) => RenderSettings.skybox = (Material)b);
+            loadId1.Add(skyboxLoadId);
+        }
     }
     public virtual void OnDisable()
     {
-        for (int i = 0; i < loader1.Count; i++)
-        {
-            int loadId = loader1[i];
-            AssetManager.Instance.Unload(ref loadId);
-        }
-        loader1.Clear();
-        for (int i = 0; i < loader2.Count; i++)
-        {
-            loader2[i].Disable();
-        }
+
     }
     public virtual void OnDestroy()
     {
-        for (int i = 0; i < loader2.Count; i++) loader2[i].Destroy();
-        loader1 = null;
-        loader2 = null;
+        if (loadId1 != null)
+        {
+            for (int i = 0; i < loadId1.Count; i++)
+            {
+                var temp = loadId1[i];
+                AssetManager.Instance.Unload(ref temp);
+            }
+            loadId1 = null;
+        }
+        if (loader2 != null)
+        {
+            loader2.Destroy();
+            loader2 = null;
+        }
     }
     protected void OnClose()
     {

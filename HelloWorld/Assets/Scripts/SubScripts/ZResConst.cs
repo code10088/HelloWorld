@@ -17,8 +17,8 @@ public class ZResConst
     public static readonly string ResUIPrefabPath = "Assets/ZRes/UI/Prefab/";
 
     //UIAtlas
-    public static readonly string ResUIAtlasTestPath = "Assets/ZRes/UI/Atlas/Test/";
-    public static readonly string ResUIAtlasCommonPath = "Assets/ZRes/UI/Atlas/Common/";
-    public static readonly string ResUIAtlasItemPath = "Assets/ZRes/UI/Atlas/Item/";
+    public static readonly string ResUIAtlasTestPath = "Assets/ZRes/UI/Atlas/Test.spriteatlasv2";
+    public static readonly string ResUIAtlasCommonPath = "Assets/ZRes/UI/Atlas/Common.spriteatlasv2";
+    public static readonly string ResUIAtlasItemPath = "Assets/ZRes/UI/Atlas/Item.spriteatlasv2";
 
 }

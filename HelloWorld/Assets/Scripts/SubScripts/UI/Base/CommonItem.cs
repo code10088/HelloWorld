@@ -1,5 +1,6 @@
 using cfg;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CommonItem : MonoSingletion<CommonItem>, SingletionInterface
 {
@@ -55,6 +56,7 @@ public class CommonItem_Normal : ObjectPoolItem
     private CommonItem_NormalComponent component;
     protected Transform parent;
 
+    private static int atlasId = -1;
     protected Items cfg;
     private ItemType itemType;
     protected int count;
@@ -87,8 +89,8 @@ public class CommonItem_Normal : ObjectPoolItem
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
         obj.transform.localScale = Vector3.one;
-        component.qualityUIImage.SetImage($"{ZResConst.ResUIAtlasItemPath}{cfg.Quality}.png");
-        component.iconUIImage.SetImage($"{ZResConst.ResUIAtlasItemPath}{cfg.Icon}.png");
+        SetSprite(component.qualityImage, ZResConst.ResUIAtlasItemPath, cfg.Quality.ToString());
+        SetSprite(component.iconImage, ZResConst.ResUIAtlasItemPath, cfg.Icon);
         component.numTextMeshProUGUI.text = count.ToString();
         component.nameTextMeshProUGUI.text = cfg.ItemNameKey;
         if (DataManager.Instance.PlayerData.Lv > cfg.UseLevel)
@@ -109,15 +111,11 @@ public class CommonItem_Normal : ObjectPoolItem
     public override void Disable()
     {
         base.Disable();
-        if (obj != null)
-        {
-            obj.transform.parent = CommonItem.Instance.transform;
-        }
-        if (component != null)
-        {
-            component.qualityUIImage.Clear();
-            component.iconUIImage.Clear();
-        }
+        obj?.transform.SetParent(CommonItem.Instance.transform);
+    }
+    protected void SetSprite(Image image, string atlas, string name)
+    {
+        AtlasManager.Instance.LoadSprite(ref atlasId, atlas, name, sprite => image.sprite = sprite);
     }
 }
 public class CommonItem_Equip : CommonItem_Normal

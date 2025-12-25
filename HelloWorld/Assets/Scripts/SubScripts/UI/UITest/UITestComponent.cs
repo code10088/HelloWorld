@@ -29,7 +29,7 @@ public partial class UITestComponent
     public GameObject subRootObj = null;
     public SuperScrollView.LoopListView2 loopLoopListView2 = null;
     public SuperScrollView.LoopListViewItem2 itemLoopListViewItem2 = null;
-    public UIImage imageUIImage = null;
+    public UnityEngine.UI.Image imageImage = null;
     public GameObject itemRootObj = null;
     public UIText languageUIText = null;
     public GameObject functionObj = null;
@@ -81,7 +81,7 @@ public partial class UITestComponent
         subRootObj = allData[24].gameObject;
         loopLoopListView2 = allData[25].exportComponent[0] as SuperScrollView.LoopListView2;
         itemLoopListViewItem2 = allData[26].exportComponent[0] as SuperScrollView.LoopListViewItem2;
-        imageUIImage = allData[28].exportComponent[0] as UIImage;
+        imageImage = allData[28].exportComponent[0] as UnityEngine.UI.Image;
         itemRootObj = allData[29].gameObject;
         languageUIText = allData[30].exportComponent[0] as UIText;
         functionObj = allData[31].gameObject;

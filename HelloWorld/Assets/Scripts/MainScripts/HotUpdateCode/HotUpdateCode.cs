@@ -34,7 +34,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     #region Editor
     private void EditorSimulate()
     {
-        var operation = AssetManager.Package.UpdatePackageManifestAsync("Simulate");
+        var operation = AssetManager.Instance.Package.UpdatePackageManifestAsync("Simulate");
         operation.Completed += EditorSimulate;
     }
     private void EditorSimulate(AsyncOperationBase o)
@@ -75,7 +75,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     }
     private void CheckPackageManifest()
     {
-        var operation = AssetManager.Package.UpdatePackageManifestAsync(resVersion);
+        var operation = AssetManager.Instance.Package.UpdatePackageManifestAsync(resVersion);
         operation.Completed += CheckPackageManifest;
     }
     private void CheckPackageManifest(AsyncOperationBase o)
@@ -87,8 +87,8 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     }
     private void ClearPackageUnusedCacheFiles()
     {
-        AssetManager.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
-        AssetManager.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
+        AssetManager.Instance.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
+        AssetManager.Instance.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
         CheckDownloadHotUpdateConfig();
     }
     #endregion
@@ -96,7 +96,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
     #region Config
     private void CheckDownloadHotUpdateConfig()
     {
-        downloaderOperation = AssetManager.Package.CreateBundleDownloader(GameSetting.HotUpdateConfigPath, 1, GameSetting.retryTime);
+        downloaderOperation = AssetManager.Instance.Package.CreateBundleDownloader(GameSetting.HotUpdateConfigPath, 1, GameSetting.retryTime);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
             downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateConfig;
@@ -138,7 +138,7 @@ public class HotUpdateCode : Singletion<HotUpdateCode>
         string[] paths = new string[config.HotAssembly.Length + config.HotUpdateRes.Length];
         Array.Copy(config.HotAssembly, 0, paths, 0, config.HotAssembly.Length);
         Array.Copy(config.HotUpdateRes, 0, paths, config.HotAssembly.Length, config.HotUpdateRes.Length);
-        downloaderOperation = AssetManager.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime);
+        downloaderOperation = AssetManager.Instance.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
             downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateRes;

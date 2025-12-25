@@ -1,8 +1,9 @@
 ﻿using cfg;
-using UnityEngine;
-using UnityExtensions.Tween;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityExtensions.Tween;
 
 public class UIBase
 {
@@ -12,8 +13,9 @@ public class UIBase
     protected Canvas[] layerRecord1;
     protected int[] layerRecord2;
     protected UIParticle[] layerRecord3;
-    private List<int> loadId1 = new List<int>();
-    private AssetObjectPool loader2 = new AssetObjectPool();
+    private int atlasId = -1;
+    private List<int> loadId1;
+    private AssetObjectPool loader2;
     public void Init(GameObject UIObj, UIType from, UIConfig config, params object[] param)
     {
         this.UIObj = UIObj;
@@ -89,25 +91,48 @@ public class UIBase
         layerRecord1 = null;
         layerRecord2 = null;
         layerRecord3 = null;
-        for (int i = 0; i < loadId1.Count; i++)
+        AtlasManager.Instance.UnloadSprite(ref atlasId);
+        if (loadId1 != null)
         {
-            var temp = loadId1[i];
-            AssetManager.Instance.Unload(ref temp);
+            for (int i = 0; i < loadId1.Count; i++)
+            {
+                var temp = loadId1[i];
+                AssetManager.Instance.Unload(ref temp);
+            }
+            loadId1 = null;
         }
-        loadId1 = null;
-        loader2?.Destroy();
-        loader2 = null;
+        if (loader2 != null)
+        {
+            loader2.Destroy();
+            loader2 = null;
+        }
     }
     protected virtual void OnClose()
     {
         UIManager.Instance.CloseUI(config.UIType);
     }
+    protected void OnReture()
+    {
+        OnClose();
+        UIManager.Instance.OpenUI(from);
+    }
 
     #region 扩展方法
-    protected void SetSprite(UIImage image, string atlas, string name)
+    /// <summary>
+    /// 图集
+    /// </summary>
+    protected void SetSprite(Image image, string atlas, string name)
     {
-        loadId1.Remove(image.LoadId);
-        image.SetImage($"{atlas}{name}.png");
+        AtlasManager.Instance.LoadSprite(ref atlasId, atlas, name, sprite => image.sprite = sprite);
+    }
+    /// <summary>
+    /// 非图集
+    /// </summary>
+    protected void SetSprite(UIImage image, string path, string name)
+    {
+        if (loadId1 == null) loadId1 = new();
+        else loadId1.Remove(image.LoadId);
+        image.SetImage($"{path}{name}.png");
         loadId1.Add(image.LoadId);
     }
     /// <summary>
@@ -116,7 +141,8 @@ public class UIBase
     /// <param name="path">相对于Assets/ZRes/UI/Texture的相对路径</param>
     protected void SetSprite(UIRawImage image, string path)
     {
-        loadId1.Remove(image.LoadId);
+        if (loadId1 == null) loadId1 = new();
+        else loadId1.Remove(image.LoadId);
         image.SetImage($"{ZResConst.ResUITexturePath}{path}.png");
         loadId1.Add(image.LoadId);
     }
@@ -126,6 +152,7 @@ public class UIBase
     /// <param name="path">相对于Assets/ZRes/UI/Prefab的相对路径</param>
     protected void LoadPrefab(ref int itemId, string path, Action<GameObject> finish)
     {
+        if (loader2 == null) loader2 = new();
         path = $"{ZResConst.ResUIPrefabPath}{path}.prefab";
         if (itemId > 0) loader2.Enqueue(path, itemId);
         itemId = loader2.Dequeue(path, (a, b, c) => finish?.Invoke(b));
@@ -141,6 +168,7 @@ public class UIBase
     }
     protected void AddEffect(ref int itemId, string path, Action<GameObject> finish)
     {
+        if (loader2 == null) loader2 = new();
         path = $"{ZResConst.ResUIEffectPath}{path}.prefab";
         if (itemId > 0) loader2.Enqueue(path, itemId);
         itemId = loader2.Dequeue(path, (a, b, c) => finish?.Invoke(b));

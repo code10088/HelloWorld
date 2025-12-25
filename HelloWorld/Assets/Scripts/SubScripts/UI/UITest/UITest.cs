@@ -193,8 +193,8 @@ public class UITest : UIBase
     }
     private void LoadSprite()
     {
-        SetSprite(component.imageUIImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
-        SetSprite(component.imageUIImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
+        SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
+        SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
         GameDebug.Log("SetSprite");
     }
     private ProcessControl<UIProcessItem> UIProcess = new ProcessControl<UIProcessItem>();

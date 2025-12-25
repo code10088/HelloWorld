@@ -19,7 +19,7 @@ public class HotUpdateResData : DataBase
     }
     private void CheckDownloadHotUpdateRes()
     {
-        downloaderOperation = AssetManager.Package.CreateResourceDownloader(GameSetting.downloadLimit, GameSetting.retryTime);
+        downloaderOperation = AssetManager.Instance.Package.CreateResourceDownloader(GameSetting.downloadLimit, GameSetting.retryTime);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
             string content = $"更新资源大小 {downloaderOperation.TotalDownloadBytes / 1024f} Kb";
