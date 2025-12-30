@@ -26,8 +26,7 @@ public class SceneBase
     }
     public virtual void OnEnable(params object[] param)
     {
-        SceneManager.Instance.CameraController.SetPos(config.CameraPos);
-        SceneManager.Instance.CameraController.SetEuler(config.CameraEuler);
+        SceneManager.Instance.CameraController.SetTRS(config.CameraPos, 0, config.CameraEuler);
 
         if(config.SkyBoxPath.Length > 0)
         {

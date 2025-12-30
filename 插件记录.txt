@@ -99,3 +99,7 @@ Nino
 Scriban
 	https://github.com/scriban/scriban/releases
 	编译 release dll
+
+Touch	
+	LeanTouch、Fingers 结构设计差不多，但是LeanTouch没有GC Fingers每帧1.6KB
+	

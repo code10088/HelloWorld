@@ -37,6 +37,7 @@ public class UITest : UIBase
         component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
         component.openBattleSceneUIButton.onClick.AddListener(OpenBattleScene);
         component.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
+        component.cameraTRSUIButton.onClick.AddListener(SetCameraTRS);
 
         //UI
         component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
@@ -159,6 +160,10 @@ public class UITest : UIBase
     private void CloseBattleScene()
     {
         BattleManager.Instance.Exit();
+    }
+    private void SetCameraTRS()
+    {
+        SceneManager.Instance.CameraController.SetTarget(1, Vector3.right, 50, Vector2.right);
     }
     #endregion
 

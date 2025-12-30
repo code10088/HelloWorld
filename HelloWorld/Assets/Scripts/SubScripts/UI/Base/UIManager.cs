@@ -11,7 +11,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
     public Transform tUIRoot;
     public Camera UICamera;
     private EventSystem eventSystem;
-    private int eventSystemState = 0;
+    private List<int> eventSystemState = new();
     private Vector2 anchorMin = Vector2.zero;
     public Vector2 anchorMinFull = Vector2.zero;
     public Dictionary<UIWindowType, Transform> Layers;
@@ -131,12 +131,25 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         return false;
     }
 
-    public void SetEventSystemState(bool state)
+    public void SetEventSystemState(int id, bool state)
     {
-        eventSystemState = state ? Math.Max(eventSystemState - 1, 0) : eventSystemState + 1;
-        state = eventSystemState == 0;
-        bool cur = eventSystem.enabled;
-        if (cur != state) eventSystem.enabled = state;
+        int index = eventSystemState.IndexOf(id);
+        if (index >= 0)
+        {
+            if (state)
+            {
+                eventSystemState.RemoveAt(index);
+                eventSystem.enabled = eventSystemState.Count == 0;
+            }
+        }
+        else
+        {
+            if (!state)
+            {
+                eventSystemState.Add(id);
+                eventSystem.enabled = false;
+            }
+        }
     }
 
     private class UIItem
@@ -172,7 +185,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         }
         public void Enable()
         {
-            Instance.SetEventSystemState(false);
+            Instance.SetEventSystemState((int)Type, false);
             if (state.HasFlag(LoadState.Release))
             {
                 Recycle();
@@ -243,7 +256,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
         }
         private void Finish()
         {
-            Instance.SetEventSystemState(true);
+            Instance.SetEventSystemState((int)Type, true);
             Instance.InitUI();
         }
         public void Init()
