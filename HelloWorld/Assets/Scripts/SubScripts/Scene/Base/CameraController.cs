@@ -95,8 +95,7 @@ public class CameraController
             var fingers = filter.UpdateAndGetFingers();
             if (fingers.Count == 0)
             {
-                //移动限制xy(-10,10)
-                var pos = camera.transform.position;
+                //移动限制xz(-10,10)
                 if (pos.x < -10) posDelta.x = (pos.x + 10) * 0.5f;
                 else if (pos.x > 10) posDelta.x = (pos.x - 10) * 0.5f;
                 if (pos.z < -10) posDelta.y = (pos.z + 10) * 0.5f;
@@ -104,18 +103,22 @@ public class CameraController
                 //缩放限制(30,60)
                 if (zoom < 30) zoomDelta = (30 - zoom) * 0.5f;
                 else if (zoom > 60) zoomDelta = (60 - zoom) * 0.5f;
+                //旋转俯仰角限制(0,60)
+                if (euler.x < 0) eulerDelta.y = (euler.x - 0) * 0.5f;
+                else if (euler.x > 60) eulerDelta.y = (euler.x - 60) * 0.5f;
             }
             else if (fingers.Count == 1)
             {
                 state &= ~CameraState.Target;
                 //移动
                 var delta = LeanGesture.GetScreenDelta(fingers);
+                delta = delta / zoom * 0.1f;
                 //超过限制添加阻尼
-                var pos = camera.transform.position;
                 float damping = 1;
-                if (pos.x < -10 || pos.x > 10) damping = 1 / ((Mathf.Abs(pos.x) - 10) + 1);
-                if (pos.z < -10 || pos.z > 10) damping = Mathf.Min(damping, 1 / ((Mathf.Abs(pos.z) - 10) + 1));
-                posDelta += delta / zoom * 0.1f * damping;
+                if (pos.x < -10 || pos.x > 10) damping = 1 / ((Mathf.Abs(pos.x) - 10) * 1 + 1);
+                if (pos.z < -10 || pos.z > 10) damping = Mathf.Min(damping, 1 / ((Mathf.Abs(pos.z) - 10) * 1 + 1));
+                delta *= damping;
+                posDelta += delta;
             }
             else
             {
@@ -124,32 +127,29 @@ public class CameraController
                 if (angle > 90)
                 {
                     //缩放
-                    var center = LeanGesture.GetScreenCenter(fingers);
-                    var lastCenter = LeanGesture.GetLastScreenCenter(fingers);
-                    var dis = LeanGesture.GetScreenDistance(fingers, center);
-                    var lastDis = LeanGesture.GetLastScreenDistance(fingers, lastCenter);
+                    var center1 = LeanGesture.GetScreenCenter(fingers);
+                    var center2 = LeanGesture.GetLastScreenCenter(fingers);
+                    var dis1 = LeanGesture.GetScreenDistance(fingers, center1);
+                    var dis2 = LeanGesture.GetLastScreenDistance(fingers, center2);
+                    var delta = (dis2 - dis1) * 0.01f;
                     //超过限制添加阻尼
-                    var delta = Mathf.Clamp((lastDis - dis) * 0.1f, -10, 10);
-                    if (zoom < 30)
-                    {
-                        float damping = 1 / ((30 - zoom) * 10 + 1);
-                        zoomDelta = Mathf.Clamp(zoomDelta + delta * damping, -10, 10);
-                    }
-                    else if (zoom > 60)
-                    {
-                        float damping = 1 / ((zoom - 60) * 10 + 1);
-                        zoomDelta = Mathf.Clamp(zoomDelta + delta * damping, -10, 10);
-                    }
-                    else
-                    {
-                        zoomDelta += delta;
-                    }
+                    float damping = 1;
+                    if (zoom < 30) damping = 1 / ((30 - zoom) * 1 + 1);
+                    else if (zoom > 60) damping = 1 / ((zoom - 60) * 1 + 1);
+                    zoomDelta += delta;
+                    zoomDelta *= damping;
                 }
                 else
                 {
                     //旋转
                     var delta = LeanGesture.GetScreenDelta(fingers);
-                    eulerDelta -= delta / zoom;
+                    delta = delta / zoom * 0.8f;
+                    //超过限制添加阻尼
+                    float damping = 1;
+                    if (euler.x < 0) damping = 1 / ((0 - euler.x) * 1 + 1);
+                    else if (euler.x > 60) damping = 1 / ((euler.x - 60) * 1 + 1);
+                    delta *= damping;
+                    eulerDelta -= delta;
                 }
             }
             //移动
