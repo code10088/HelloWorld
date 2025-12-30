@@ -255,7 +255,10 @@
 
 #### Buff、触发器
 　BuffManager：Buff管理<br>
-　TriggerManager：触发器管理<br><br><br>
+　TriggerManager：触发器管理<br>
+
+#### 镜头控制
+　CameraController：上帝视角镜头，基于LeanTouch实现<br><br><br>
 
 # 后续开发内容
 　背包<br>
@@ -269,4 +272,3 @@
 　任务<br>
 　天赋<br>
 　活动：首充、七天签到<br>
-　镜头控制<br>
