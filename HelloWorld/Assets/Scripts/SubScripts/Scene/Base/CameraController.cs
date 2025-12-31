@@ -109,7 +109,7 @@ public class CameraController
             }
             else if (fingers.Count == 1)
             {
-                state &= ~CameraState.Target;
+                state = CameraState.Touch;
                 //ÒÆ¶¯
                 var delta = LeanGesture.GetScreenDelta(fingers);
                 delta = delta / zoom * 0.1f;
@@ -122,7 +122,7 @@ public class CameraController
             }
             else
             {
-                state &= ~CameraState.Target;
+                state = CameraState.Touch;
                 var angle = Vector2.Angle(fingers[0].ScreenDelta, fingers[1].ScreenDelta);
                 if (angle > 90)
                 {
