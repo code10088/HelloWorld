@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "Message";
+
+message BasePlayerInfo
+{
+  uint32 playerId = 1;
+  string nickName = 2;
+  string avatar = 3;
+  uint32 level = 4;
+}
+message SCPlayerInfo
+{
+    BasePlayerInfo info = 1;
+	int64 registerTime = 2;
+	uint32 mail = 3;
+}

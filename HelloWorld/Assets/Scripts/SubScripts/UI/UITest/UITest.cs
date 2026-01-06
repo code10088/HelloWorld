@@ -127,11 +127,18 @@ public class UITest : UIBase
     }
     private void OnClickClose()
     {
-        component.totalObj.SetActive(true);
-        component.sceneObj.SetActive(false);
-        component.uIObj.SetActive(false);
-        component.functionObj.SetActive(false);
-        component.miniGameObj.SetActive(false);
+        if (component.totalObj.activeSelf)
+        {
+            OnClose();
+        }
+        else
+        {
+            component.totalObj.SetActive(true);
+            component.sceneObj.SetActive(false);
+            component.uIObj.SetActive(false);
+            component.functionObj.SetActive(false);
+            component.miniGameObj.SetActive(false);
+        }
     }
 
     #region Scene

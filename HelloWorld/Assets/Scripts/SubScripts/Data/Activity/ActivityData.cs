@@ -5,6 +5,10 @@ public class ActivityData : DataBase
     private List<ActivityDataBase> datas = new List<ActivityDataBase>();
     private int timerId = -1;
 
+    public void Init()
+    {
+
+    }
     public void Clear()
     {
         datas.Clear();

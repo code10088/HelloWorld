@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option csharp_namespace = "Message";
+
+import "./Reward.proto";
+
+message CSMail
+{
+}
+enum MailType
+{
+  SYSTEM = 0;
+}
+message MailDetail
+{
+	uint32 mailId = 1;
+	MailType type = 2;
+	uint32 status = 3;
+	int64 time = 4;
+	string title = 5;
+	string content = 6;
+	repeated RewardInfo rewards = 7; 
+}
+message SCMail
+{
+	repeated MailDetail details = 1; 
+}

@@ -107,7 +107,7 @@ public class GameEditorTools
         Process process = new Process();
         ProcessStartInfo startInfo = process.StartInfo;
         startInfo.FileName = $"{path}/Net/gen.bat";
-        startInfo.WorkingDirectory = path;
+        startInfo.WorkingDirectory = $"{path}/Net";
         startInfo.CreateNoWindow = true;
         startInfo.UseShellExecute = false;
         startInfo.RedirectStandardOutput = true;
@@ -179,6 +179,53 @@ public class GameEditorTools
         public int id;
         public string name;
         public string type;
+    }
+
+    [UnityEditor.Callbacks.DidReloadScripts]
+    public static void GenerateDataBase()
+    {
+        var types = TypeCache.GetTypesDerivedFrom<DataBase>();
+        var items = new List<DataBaseField>();
+        foreach (var t in types)
+        {
+            var name = char.ToLower(t.Name[0]) + t.Name.Substring(1);
+            items.Add(new DataBaseField
+            {
+                type = t.FullName,
+                field = name,
+                property = t.Name
+            });
+        }
+        items.Sort((a, b) => string.Compare(a.type, b.type, StringComparison.OrdinalIgnoreCase));
+        string result = File.ReadAllText($"{Application.dataPath}/Editor/Template/DataBaseTemplate.txt");
+        if (string.IsNullOrEmpty(result))
+        {
+            UnityEngine.Debug.LogError("模板不存在");
+            return;
+        }
+        try
+        {
+            var template = Template.Parse(result);
+            if (template.HasErrors)
+            {
+                UnityEngine.Debug.LogError("模板解析错误：" + template.Messages);
+                return;
+            }
+            result = template.Render(new { items });
+        }
+        catch (Exception ex)
+        {
+            UnityEngine.Debug.LogError("模板渲染异常：" + ex.Message);
+            return;
+        }
+        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Data/DataManager.cs", result);
+        AssetDatabase.Refresh();
+    }
+    private class DataBaseField
+    {
+        public string type;
+        public string field;
+        public string property;
     }
 
     [MenuItem("Tools/Editor/CopyAutoIndex &d")]

@@ -1,3 +1,4 @@
+using Message;
 using System.Collections.Generic;
 
 public class TestData : DataBase
@@ -26,11 +27,14 @@ public class TestData : DataBase
             new TestItemData(){ id = 20, name="20" },
         };
 
+    public void Init()
+    {
+
+    }
     public void Clear()
     {
 
     }
-
 
     public class TestItemData
     {

@@ -21,6 +21,7 @@ namespace cfg
         UICommonTips = 6,
         UISceneLoading = 7,
         UIGuide = 8,
+        UIMail = 9,
     }
 
 } 

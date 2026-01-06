@@ -1,5 +1,7 @@
 //Id=(Namespace.)CalssName
-0=CSHeart
-1=ProtoTest.Person
+0		= Message.CSHeart
+100		= Message.CSMail
 
-10000=SCHeart
+10000	= Message.SCHeart
+10001	= Message.SCPlayerInfo
+10100	= Message.SCMail

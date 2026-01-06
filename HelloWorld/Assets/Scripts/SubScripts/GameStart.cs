@@ -78,7 +78,7 @@ public class GameStart
     }
     private void EnterMainScene(int id)
     {
-        UIManager.Instance.OpenUI(UIType.UITest, a => UIManager.Instance.CloseUI(UIType.UISceneLoading));
+        UIManager.Instance.OpenUI(UIType.UIMain, a => UIManager.Instance.CloseUI(UIType.UISceneLoading));
         Process.Next();
         Process = null;
     }

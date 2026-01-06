@@ -27,6 +27,10 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
     {
         msgAction[id] = action;
     }
+    public void UnRegister(ushort id)
+    {
+        msgAction.Remove(id);
+    }
     private void HandleSocketEvent(int type, int param)
     {
         socketevent.Enqueue(new SocketEventItem() { type = type, param = param });

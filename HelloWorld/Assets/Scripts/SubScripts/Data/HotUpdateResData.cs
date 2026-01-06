@@ -7,7 +7,15 @@ public class HotUpdateResData : DataBase
     private Action hotUpdateResFinish;
     private ResourceDownloaderOperation downloaderOperation;
 
-    public void Clear() { }
+    public void Init()
+    {
+
+    }
+    public void Clear()
+    {
+
+    }
+
     public void StartUpdate(Action finish)
     {
         hotUpdateResFinish = finish;

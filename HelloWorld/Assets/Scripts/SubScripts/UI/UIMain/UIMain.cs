@@ -1,3 +1,5 @@
+using cfg;
+
 public class UIMain : UIBase
 {
     private UIMainComponent component = new UIMainComponent();
@@ -6,25 +8,17 @@ public class UIMain : UIBase
     {
         base.Init();
         component.Init(UIObj);
+        component.uIMailBtnUIButton.onClick.AddListener(OnClickMail);
+        component.uITestBtnUIButton.onClick.AddListener(OnClickTest);
+
     }
-    public override void OnEnable(params object[] param)
+
+    private void OnClickMail()
     {
-        base.OnEnable(param);
+        UIManager.Instance.OpenUI(UIType.UIMail);
     }
-    protected override void PlayEnableAni()
+    private void OnClickTest()
     {
-        base.PlayEnableAni();
-    }
-    protected override void RefreshUILayer()
-    {
-        base.RefreshUILayer();
-    }
-    public override void OnDisable()
-    {
-        base.OnDisable();
-    }
-    public override void OnDestroy()
-    {
-        base.OnDestroy();
+        UIManager.Instance.OpenUI(UIType.UITest);
     }
 }

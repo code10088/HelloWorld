@@ -2,9 +2,8 @@ syntax = "proto3";
 
 option csharp_namespace = "Message";
 
-message CSHeart
+message RewardInfo
 {
-}
-message SCHeart
-{
+	uint32 itemId = 1;
+	uint32 count = 2;
 }

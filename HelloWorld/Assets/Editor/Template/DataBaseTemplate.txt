@@ -1,0 +1,33 @@
+public interface DataBase
+{
+    void Init();
+    void Clear();
+}
+public class DataManager : Singletion<DataManager>
+{
+{{~ for item in items ~}}
+    private {{ item.type }} {{ item.field }};
+{{~ end ~}}
+
+{{~ for item in items ~}}
+    public {{ item.type }} {{ item.property }}
+    {
+        get
+        {
+            if ({{ item.field }} == null)
+            {
+                {{ item.field }} = new {{ item.type }}();
+                {{ item.field }}.Init();
+            }
+            return {{ item.field }};
+        }
+    }
+{{~ end ~}}
+
+    public void Clear()
+    {
+{{~ for item in items ~}}
+        {{ item.field }}?.Clear();
+{{~ end ~}}
+    }
+}

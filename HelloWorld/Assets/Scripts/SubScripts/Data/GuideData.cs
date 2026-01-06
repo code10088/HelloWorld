@@ -10,6 +10,15 @@ public class GuideData : DataBase
 
     public Guide GuideCfg => guideCfg;
 
+    public void Init()
+    {
+
+    }
+    public void Clear()
+    {
+
+    }
+
     public void AddGuideT(int key, Transform t)
     {
         guideT[key] = t;
@@ -56,10 +65,5 @@ public class GuideData : DataBase
     public void End()
     {
         UIManager.Instance.CloseUI(UIType.UIGuide);
-    }
-
-    public void Clear()
-    {
-
     }
 }
