@@ -90,7 +90,7 @@ public class GameEditorTools
             UnityEngine.Debug.LogError("模板渲染异常：" + ex.Message);
             return;
         }
-        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Config/Config.cs", result, Encoding.UTF8);
+        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Config/ConfigManager_Auto.cs", result, Encoding.UTF8);
         AssetDatabase.Refresh();
     }
     private class TableField
@@ -171,7 +171,7 @@ public class GameEditorTools
             UnityEngine.Debug.LogError("模板渲染异常：" + ex.Message);
             return;
         }
-        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Network/NetMsgDeserialize.cs", result);
+        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Network/NetMsgDispatch_Auto.cs", result);
         AssetDatabase.Refresh();
     }
     private class NetMessage
@@ -218,7 +218,7 @@ public class GameEditorTools
             UnityEngine.Debug.LogError("模板渲染异常：" + ex.Message);
             return;
         }
-        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Data/DataManager.cs", result);
+        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Data/DataManager_Auto.cs", result);
         AssetDatabase.Refresh();
     }
     private class DataBaseField

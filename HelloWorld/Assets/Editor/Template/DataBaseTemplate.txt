@@ -1,9 +1,4 @@
-public interface DataBase
-{
-    void Init();
-    void Clear();
-}
-public class DataManager : Singletion<DataManager>
+public partial class DataManager
 {
 {{~ for item in items ~}}
     private {{ item.type }} {{ item.field }};
