@@ -60,6 +60,8 @@ public class CommonItem_Normal : ObjectPoolItem
     protected Items cfg;
     private ItemType itemType;
     protected int count;
+    private bool active = true;
+    private bool received = false;
 
     public ItemType ItemType => itemType;
 
@@ -68,12 +70,21 @@ public class CommonItem_Normal : ObjectPoolItem
         this.cfg = cfg;
         itemType = cfg.ItemType;
     }
-    public void SetData(Transform parent, int count)
+    protected override void Finish(GameObject obj)
     {
-        this.count = count;
-        this.parent = parent;
-        Refresh();
+        base.Finish(obj);
+        if (obj) Refresh();
     }
+    public override void Disable()
+    {
+        base.Disable();
+        obj?.transform.SetParent(CommonItem.Instance.transform);
+    }
+    protected void SetSprite(Image image, string atlas, string name)
+    {
+        AtlasManager.Instance.LoadSprite(ref atlasId, atlas, name, sprite => image.sprite = sprite);
+    }
+
     public virtual void Refresh()
     {
         if (obj == null)
@@ -85,6 +96,7 @@ public class CommonItem_Normal : ObjectPoolItem
             component = new CommonItem_NormalComponent();
             component.Init(obj);
         }
+        obj.SetActive(active);
         obj.transform.parent = parent ? parent : CommonItem.Instance.transform;
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
@@ -102,20 +114,33 @@ public class CommonItem_Normal : ObjectPoolItem
         {
             component.lockObj.SetActive(false);
         }
+        component.receivedObj.SetActive(received);
     }
-    protected override void Finish(GameObject obj)
+    public void SetParent(Transform parent)
     {
-        base.Finish(obj);
-        if (obj) Refresh();
+        this.parent = parent;
+        if (obj)
+        {
+            obj.transform.parent = parent;
+            obj.transform.localPosition = Vector3.zero;
+            obj.transform.localRotation = Quaternion.identity;
+            obj.transform.localScale = Vector3.one;
+        }
     }
-    public override void Disable()
+    public void SetActive(bool state)
     {
-        base.Disable();
-        obj?.transform.SetParent(CommonItem.Instance.transform);
+        active = state;
+        if (obj) obj.SetActive(state);
     }
-    protected void SetSprite(Image image, string atlas, string name)
+    public void SetCount(int count)
     {
-        AtlasManager.Instance.LoadSprite(ref atlasId, atlas, name, sprite => image.sprite = sprite);
+        this.count = count;
+        if (obj) component.numTextMeshProUGUI.text = count.ToString();
+    }
+    public void SetReceived(bool state)
+    {
+        received = state;
+        if (obj) component.receivedObj.SetActive(state);
     }
 }
 public class CommonItem_Equip : CommonItem_Normal

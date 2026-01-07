@@ -10,4 +10,5 @@
     RefreshGuide,
     RefreshActivity,
     EndActivity,
+    RefreshMail,
 }

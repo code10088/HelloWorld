@@ -15,13 +15,41 @@ message MailDetail
 {
 	uint32 mailId = 1;
 	MailType type = 2;
-	uint32 status = 3;
+	uint32 status = 3;	//0-未读 1-已读 2-已领取
 	int64 time = 4;
 	string title = 5;
 	string content = 6;
-	repeated RewardInfo rewards = 7; 
+	repeated RewardInfo rewards = 7;
 }
 message SCMail
 {
-	repeated MailDetail details = 1; 
+	repeated MailDetail details = 1;
+}
+message CSReadMail
+{
+	repeated uint32 list = 1;
+}
+message CSGetMailReward
+{
+	uint32 mailId = 1;
+}
+message SCGetMailReward
+{
+	int32 status = 1;
+	uint32 mailId = 2;
+}
+message CSGetMailAllReward
+{
+}
+message CSDeleteMail
+{
+	uint32 mailId = 1;
+}
+message SCDeleteMail
+{
+	int32 status = 1;
+	uint32 mailId = 2;
+}
+message CSDeleteAllMail
+{
 }

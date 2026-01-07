@@ -15,6 +15,7 @@ public class UIMain : UIBase
 
     private void OnClickMail()
     {
+        DataManager.Instance.MailData.CSMail();
         UIManager.Instance.OpenUI(UIType.UIMail);
     }
     private void OnClickTest()

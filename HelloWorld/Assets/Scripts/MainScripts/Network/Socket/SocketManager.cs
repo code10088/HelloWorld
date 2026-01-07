@@ -36,10 +36,10 @@ public class SocketManager : Singletion<SocketManager>
     }
     public void Send(ushort id, IExtensible msg)
     {
-        socket.Send(id, msg);
+        socket?.Send(id, msg);
     }
     public void SetHeartState(bool open)
     {
-        socket.SetHeartState(open);
+        socket?.SetHeartState(open);
     }
 }

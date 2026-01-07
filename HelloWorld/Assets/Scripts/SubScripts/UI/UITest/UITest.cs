@@ -182,7 +182,9 @@ public class UITest : UIBase
             return null;
         }
         LoopListViewItem2 item = listView.NewListViewItem<UITestItem>("Item");
-        item.ItemData.SetData(index);
+        var test = item.ItemData as UITestItem;
+        var data = DataManager.Instance.TestData.testItemDatas[index];
+        test.SetData(data);
         return item;
     }
     private void OnOpenMessage()
@@ -224,10 +226,14 @@ public class UITest : UIBase
     private void ShowCommonItem()
     {
         var item = CommonItem.Instance.Get(1);
-        item.SetData(component.itemRootObj.transform, 10);
+        item.SetParent(component.itemRootObj.transform);
+        item.SetActive(true);
+        item.SetCount(10);
         CommonItem.Instance.Recycle(item);
         item = CommonItem.Instance.Get(1);
-        item.SetData(component.itemRootObj.transform, 10);
+        item.SetParent(component.itemRootObj.transform);
+        item.SetActive(true);
+        item.SetCount(10);
     }
     private void SetText()
     {
@@ -419,9 +425,8 @@ public class UITest : UIBase
 }
 public partial class UITestItem
 {
-    public void SetData(int index)
+    public void SetData(TestData.TestItemData data)
     {
-        var data = DataManager.Instance.TestData.testItemDatas[index];
         itemTextTextMeshProUGUI.text = data.name;
     }
 }

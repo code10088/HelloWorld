@@ -30,19 +30,12 @@ public class EventManager : Singletion<EventManager>
     {
         if (eventDic.ContainsKey(eventType))
         {
-            eventDic[eventType].Parameter = obj;
-            eventDic[eventType].Handle();
+            eventDic[eventType].Handle(obj);
         }
     }
     private class EventItem
     {
         private event Action<object> eventBindFunction;
-        private object[] parameter;
-        public object[] Parameter
-        {
-            set { parameter = value; }
-            get { return parameter; }
-        }
         public void Add(Action<object> function)
         {
             eventBindFunction -= function;
@@ -52,9 +45,9 @@ public class EventManager : Singletion<EventManager>
         {
             eventBindFunction -= function;
         }
-        public void Handle()
+        public void Handle(object[] obj)
         {
-            eventBindFunction?.Invoke(parameter);
+            eventBindFunction?.Invoke(obj);
         }
     }
 }

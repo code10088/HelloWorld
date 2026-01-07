@@ -10,6 +10,7 @@ public partial class CommonItem_NormalComponent
     public TMPro.TextMeshProUGUI nameTextMeshProUGUI = null;
     public GameObject lockObj = null;
     public TMPro.TextMeshProUGUI lockLvTextMeshProUGUI = null;
+    public GameObject receivedObj = null;
     public void Init(GameObject obj)
     {
         this.obj = obj;
@@ -22,5 +23,6 @@ public partial class CommonItem_NormalComponent
         nameTextMeshProUGUI = allData[4].exportComponent[0] as TMPro.TextMeshProUGUI;
         lockObj = allData[5].gameObject;
         lockLvTextMeshProUGUI = allData[6].exportComponent[0] as TMPro.TextMeshProUGUI;
+        receivedObj = allData[7].gameObject;
     }
 }

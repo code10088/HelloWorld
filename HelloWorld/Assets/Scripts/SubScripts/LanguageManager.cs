@@ -65,18 +65,20 @@ public class LanguageManager : Singletion<LanguageManager>
     }
     public string Get(int key, params object[] args)
     {
-        string result = languageDic[key];
-        if (args == null || args.Length == 0)
+        if (languageDic.TryGetValue(key, out var result))
         {
-            return result;
+            if (args != null)
+            {
+                try
+                {
+                    result = string.Format(result, args);
+                }
+                catch (FormatException)
+                {
+                    GameDebug.LogError($"∂‡”Ô—‘{key}≤Œ ˝¥ÌŒÛ");
+                }
+            }
         }
-        try
-        {
-            return string.Format(result, args);
-        }
-        catch (FormatException)
-        {
-            return result; 
-        }
+        return result;
     }
 }
