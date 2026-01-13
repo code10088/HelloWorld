@@ -17,12 +17,7 @@ public static class GameSetting
     public static int timeoutS = 10;//Ãë
     public static string HotUpdateConfigPath = "Assets/ZRes/GameConfig/HotUpdateConfig.txt";
 
-    private static string CDN =>
-#if Debug
-        "http://192.168.7.148";
-#else
-        "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
-#endif
+    private static string CDN => "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
     public static string CDNPlatform =>
 #if UNITY_ANDROID
         $"{CDN}/Android";
