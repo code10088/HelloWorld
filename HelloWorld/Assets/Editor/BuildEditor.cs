@@ -258,6 +258,7 @@ public class BuildEditor
 #if UNITY_ANDROID
     private static void AndroidBuild()
     {
+        CheckAppVersion();
         string time = DateTime.Now.ToString("yyyyMMdd_HHmmss");
         string buildPlayerPath = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.BuildPlayerPath);
         buildPlayerPath = $"{buildPlayerPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
@@ -278,6 +279,7 @@ public class BuildEditor
 #if UNITY_IOS
     private static void IOSBuild()
     {
+        CheckAppVersion();
         string time = DateTime.Now.ToString("yyyyMMdd_HHmmss");
         string buildPlayerPath = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.BuildPlayerPath);
         buildPlayerPath = $"{buildPlayerPath}\\{EditorUserBuildSettings.activeBuildTarget}\\{appversion}\\{time}\\{GameSetting.AppName}";
