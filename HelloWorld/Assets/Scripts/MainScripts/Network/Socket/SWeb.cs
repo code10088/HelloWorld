@@ -1,7 +1,8 @@
 ﻿using ProtoBuf;
 using System;
-using System.IO;
+using System.Buffers.Binary;
 using System.Net.NetworkInformation;
+using System.Threading.Tasks;
 using WebSocketSharp;
 
 public class SWeb : SBase
@@ -16,57 +17,38 @@ public class SWeb : SBase
     {
         base.Init(ip, port, connectId, deserialize, socketevent);
         this.ip = $"{ip}:{port}/{connectId}";
-        updateId = Driver.Instance.StartUpdate(Update);
         Connect();
     }
     private void Update(float t)
     {
         Send();
-        UpdateHeart(t * 1000);
     }
 
     #region 连接
     private void Connect()
     {
-        connectMark = false;
+        Close();
+        if (connectRetry++ > 3)
+        {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            return;
+        }
         socketevent.Invoke((int)SocketEvent.Reconect, 0);
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
-        if (socket == null)
-        {
-            socket = new WebSocket(ip);
-            socket.OnOpen += ConnectCallback;
-            socket.OnMessage += Receive;
-            socket.OnError += Error;
-        }
+        socket = new WebSocket(ip);
+        socket.OnOpen += ConnectCallback;
+        socket.OnMessage += Receive;
+        socket.OnError += Error;
         socket.ConnectAsync();//连接失败不会调用ConnectCallback
+        updateId = Driver.Instance.StartUpdate(Update);
         connectMark = true;
         sendMark = true;
         sendRetry = 0;
-        receiveMark = true;
         receiveRetry = 0;
-    }
-    private void Reconnect()
-    {
-        connectRetry++;
-        if (connectRetry == 1)
-        {
-            socket.Close();
-            Connect();
-            return;
-        }
-        if (connectRetry == 2)
-        {
-            socket.Close();
-            socket = null;
-            Connect();
-            return;
-        }
-        socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-        Close();
     }
     private void ConnectCallback(object sender, EventArgs e)
     {
@@ -74,52 +56,40 @@ public class SWeb : SBase
         connectRetry = 0;
         sendMark = true;
         sendRetry = 0;
-        receiveMark = true;
         receiveRetry = 0;
         socketevent.Invoke((int)SocketEvent.Connected, 0);
     }
-    private void Error(object sender, WebSocketSharp.ErrorEventArgs error)
+    private void Error(object sender, ErrorEventArgs error)
     {
         GameDebug.LogError(error.Message);
-        Reconnect();
+        Connect();
     }
-    public override void Close()
+    public override async Task Close()
     {
         base.Close();
         Driver.Instance.Remove(updateId);
         socket.Close();
         socket = null;
         sendMark = false;
+        if (sendBuffer != null) bytePool.Return(sendBuffer);
+        sendBuffer = null;
     }
     #endregion
 
     #region 发送
     private void Send()
     {
-        if (sendMark && sendQueue.Count > 0)
+        if (sendMark && sendQueue.TryDequeue(out var item))
         {
             sendMark = false;
-            var item = sendQueue.Dequeue();
-            sendBuffer = Serialize(item.id, item.msg);
+            var wb = new WriteBuffer(bytePool, 256, 6);
+            Serializer.Serialize(wb, item.msg);
+            BinaryPrimitives.WriteInt32LittleEndian(wb.Buffer.AsSpan(0, 4), wb.Pos - 4);
+            BinaryPrimitives.WriteUInt16LittleEndian(wb.Buffer.AsSpan(4, 2), item.id);
+            sendBuffer = bytePool.Rent(wb.Pos);
+            Buffer.BlockCopy(wb.Buffer, 0, sendBuffer, 0, wb.Pos);
+            wb.Dispose();
             Send(sendBuffer);
-        }
-    }
-    /// <summary>
-    /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
-    /// </summary>
-    private byte[] Serialize(ushort id, IExtensible msg)
-    {
-        using (MemoryStream ms = new MemoryStream())
-        {
-            Serializer.Serialize(ms, msg);
-            int length = 2 + (int)ms.Length;
-            byte[] result = new byte[length];
-            //消息ID
-            byte[] temp = BitConverter.GetBytes(id);
-            Buffer.BlockCopy(temp, 0, result, 0, 2);
-            //消息内容
-            ms.Read(result, 2, length - 2);
-            return result;
         }
     }
     private void Send(byte[] bytes)
@@ -141,16 +111,20 @@ public class SWeb : SBase
         }
         if (result)
         {
+            bytePool.Return(sendBuffer);
+            sendBuffer = null;
             sendMark = true;
             sendRetry = 0;
             return;
         }
-        if (sendRetry++ < 1)
+        if (sendRetry++ > 0)
+        {
+            Connect();
+        }
+        else
         {
             Send(sendBuffer);
-            return;
         }
-        Reconnect();
     }
     #endregion
 
@@ -164,15 +138,12 @@ public class SWeb : SBase
         if (Deserialize(message.RawData, message.RawData.Length))
         {
             receiveRetry = 0;
-            receiveMark = true;
             return;
         }
-        if (receiveRetry++ < 1)
+        if (receiveRetry++ > 0)
         {
-            receiveMark = true;
-            return;
+            Connect();
         }
-        Reconnect();
     }
     #endregion
 }

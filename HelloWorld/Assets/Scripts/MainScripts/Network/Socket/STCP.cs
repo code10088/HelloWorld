@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 using System;
-using System.IO;
+using System.Buffers.Binary;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -11,8 +11,10 @@ public class STCP : SBase
 {
     private EndPoint endPoint;
     private Socket socket;
-    private Thread thread;
-    private bool threadMark = true;
+    private SemaphoreSlim signal;
+    private CancellationTokenSource cts;
+    private Task sendTask;
+    private Task receiveTask;
 
     private byte[] headBuffer = new byte[4];
     private byte[] bodyBuffer;
@@ -26,87 +28,66 @@ public class STCP : SBase
         base.Init(ip, port, connectId, deserialize, socketevent);
         IPAddress address = IPAddress.Parse(ip);
         endPoint = new IPEndPoint(address, port);
-        thread = new Thread(Update);
-        threadMark = true;
-        thread.Start();
-    }
-    private void Update()
-    {
         Connect();
-        while (threadMark)
-        {
-            Send();
-            Receive();
-            UpdateHeart(GameSetting.updateTimeSliceMS);
-            Thread.Sleep(GameSetting.updateTimeSliceMS);
-        }
     }
 
     #region 连接
-    private void Connect()
+    private async Task Connect()
     {
-        connectMark = false;
+        await Close();
+        if (connectRetry++ > 3)
+        {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            return;
+        }
         socketevent.Invoke((int)SocketEvent.Reconect, 0);
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
-        if (socket == null)
-        {
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.SendTimeout = heartInterval;
-            socket.ReceiveTimeout = heartInterval;
-        }
+        socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        socket.SendTimeout = heartInterval;
+        socket.ReceiveTimeout = heartInterval;
         try
         {
-            socket.Connect(endPoint);
+            await socket.ConnectAsync(endPoint);
         }
         catch
         {
+
         }
         if (socket.Connected)
         {
             connectMark = true;
             connectRetry = 0;
             sendRetry = 0;
-            receiveMark = true;
             receiveRetry = 0;
+            signal = new SemaphoreSlim(0);
+            cts = new CancellationTokenSource();
+            sendTask = Send(cts.Token);
+            receiveTask = Receive(cts.Token);
             socketevent.Invoke((int)SocketEvent.Connected, 0);
         }
         else
         {
-            Reconnect();
+            Connect();
         }
     }
-    private void Reconnect()
+    public override async Task Close()
     {
-        connectRetry++;
-        if (connectRetry == 1)
-        {
-            try { socket.Disconnect(true); }
-            catch { }
-            Connect();
-            return;
-        }
-        if (connectRetry == 2)
-        {
-            socket.Close();
-            socket = null;
-            Connect();
-            return;
-        }
-        socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-        Close();
-    }
-    public override void Close()
-    {
-        base.Close();
-        threadMark = false;
-        thread?.Join();
-        socket.Disconnect(false);
-        socket.Close();
+        await base.Close();
+        signal?.Release();
+        signal?.Dispose();
+        signal = null;
+        cts?.Cancel();
+        cts?.Dispose();
+        cts = null;
+        socket?.Shutdown(SocketShutdown.Both);
+        socket?.Close();
         socket = null;
+        await (sendTask ?? Task.CompletedTask);
+        await (receiveTask ?? Task.CompletedTask);
         if (bodyBuffer != null) bytePool.Return(bodyBuffer);
         bodyBuffer = null;
         headPos = 0;
@@ -116,102 +97,105 @@ public class STCP : SBase
     #endregion
 
     #region 发送
-    private void Send()
+    public override void Send(ushort id, IExtensible msg)
     {
-        while (connectMark && sendQueue.Count > 0)
-        {
-            SendItem item;
-            lock (sendQueue) item = sendQueue.Dequeue();
-            var bytes = Serialize(item.id, item.msg, out int length);
-            Send(bytes, length);
-        }
+        base.Send(id, msg);
+        signal?.Release();
     }
-    /// <summary>
-    /// Array.Copy < Buffer.BlockCopy < Buffer.MemoryCopy
-    /// </summary>
-    private byte[] Serialize(ushort id, IExtensible msg, out int length)
+    private async Task Send(CancellationToken token)
     {
-        using (MemoryStream ms = new MemoryStream())
+        while (true)
         {
-            Serializer.Serialize(ms, msg);
-            length = 6 + (int)ms.Length;
-            byte[] result = bytePool.Rent(length);
-            //消息长度
-            byte[] temp = BitConverter.GetBytes(length - 4);
-            Buffer.BlockCopy(temp, 0, result, 0, 4);
-            //消息ID
-            temp = BitConverter.GetBytes(id);
-            Buffer.BlockCopy(temp, 0, result, 4, 2);
-            //消息内容
-            ms.Read(result, 6, length - 6);
-            return result;
+            try
+            {
+                await signal.WaitAsync(token);
+            }
+            catch
+            {
+                return;
+            }
+            if (connectMark == false)
+            {
+                return;
+            }
+            while (sendQueue.TryDequeue(out var item))
+            {
+                var wb = new WriteBuffer(bytePool, 256, 6);
+                Serializer.Serialize(wb, item.msg);
+                BinaryPrimitives.WriteInt32LittleEndian(wb.Buffer.AsSpan(0, 4), wb.Pos - 4);
+                BinaryPrimitives.WriteUInt16LittleEndian(wb.Buffer.AsSpan(4, 2), item.id);
+                while (true)
+                {
+                    int count = 0;
+                    while (count < wb.Pos)
+                    {
+                        int l = 0;
+                        try
+                        {
+                            l = await socket.SendAsync(wb.Buffer.AsMemory(count, wb.Pos - count), SocketFlags.None, token);
+                        }
+                        catch
+                        {
+                            l = -1;
+                        }
+                        if (connectMark == false)
+                        {
+                            wb.Dispose();
+                            return;
+                        }
+                        if (l <= 0)
+                        {
+                            break;
+                        }
+                        count += l;
+                    }
+                    if (count == wb.Pos)
+                    {
+                        wb.Dispose();
+                        sendRetry = 0;
+                        break;
+                    }
+                    if (sendRetry++ > 0)
+                    {
+                        wb.Dispose();
+                        Connect();
+                        return;
+                    }
+                }
+            }
         }
-    }
-    private async Task Send(byte[] bytes, int length)
-    {
-        int count = 0;
-        try
-        {
-            count = await socket.SendAsync(bytes.AsMemory(0, length), SocketFlags.None);
-        }
-        catch
-        {
-            count = -1;
-        }
-        if (connectMark == false)
-        {
-            bytePool.Return(bytes);
-            return;
-        }
-        if (count == length)
-        {
-            sendRetry = 0;
-            bytePool.Return(bytes);
-            return;
-        }
-        if (sendRetry++ < 1)
-        {
-            Send(bytes, length);
-            return;
-        }
-        bytePool.Return(bytes);
-        Reconnect();
     }
     #endregion
 
     #region 接收
-    private async Task Receive()
+    private async Task Receive(CancellationToken token)
     {
-        if (receiveMark == false)
+        while (true)
         {
-            return;
+            int count = 0;
+            try
+            {
+                count = await socket.ReceiveAsync(receiveBuffer.AsMemory(), SocketFlags.None, token);
+            }
+            catch
+            {
+                count = -1;
+            }
+            if (connectMark == false)
+            {
+                return;
+            }
+            if (count >= 0 && Deserialize(count))
+            {
+                receiveRetry = 0;
+                continue;
+            }
+            if (receiveRetry++ > 0)
+            {
+                Connect();
+                return;
+            }
         }
-        receiveMark = false;
-        int count = 0;
-        try
-        {
-            count = await socket.ReceiveAsync(receiveBuffer.AsMemory(), SocketFlags.None);
-        }
-        catch
-        {
-            count = -1;
-        }
-        if (connectMark == false)
-        {
-            return;
-        }
-        if (count >= 0 && Deserialize(count))
-        {
-            receiveRetry = 0;
-            receiveMark = true;
-            return;
-        }
-        if (receiveRetry++ < 1)
-        {
-            receiveMark = true;
-            return;
-        }
-        Reconnect();
     }
     private bool Deserialize(int receiveLength)
     {

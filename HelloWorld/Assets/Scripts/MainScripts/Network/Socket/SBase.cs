@@ -1,7 +1,10 @@
 ﻿using ProtoBuf;
 using System;
 using System.Buffers;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 public enum SocketEvent
 {
@@ -30,20 +33,25 @@ public class SBase
     protected ArrayPool<byte> bytePool = ArrayPool<byte>.Shared;
 
     //连接
-    protected bool connectMark = false;
+    private int connectFlag = 0;
+    protected bool connectMark
+    {
+        get => Interlocked.CompareExchange(ref connectFlag, 0, 0) == 1;
+        set => Interlocked.Exchange(ref connectFlag, value ? 1 : 0);
+    }
     protected int connectRetry = 0;
 
     //发送
-    protected Queue<SendItem> sendQueue = new Queue<SendItem>(10);
+    protected ConcurrentQueue<SendItem> sendQueue = new ConcurrentQueue<SendItem>();
     protected int sendRetry = 0;
 
     //接收
-    protected bool receiveMark = false;
+    protected byte[] receiveBuffer = new byte[2048];
     protected int receiveRetry = 0;
-    protected byte[] receiveBuffer = new byte[1024];
 
     //心跳
     private bool heartMark = true;
+    private int heartTimerId = 0;
     private float heartTimer = 0;
     protected int heartInterval = 10000;
     private int[] record1 = new int[10];
@@ -58,13 +66,12 @@ public class SBase
     }
 
     #region 连接
-    public virtual void Close()
+    public virtual async Task Close()
     {
         connectMark = false;
         connectRetry = 0;
         sendQueue.Clear();
         sendRetry = 0;
-        receiveMark = false;
         receiveRetry = 0;
         heartTimer = 0;
         heartInterval = 10000;
@@ -76,8 +83,7 @@ public class SBase
     public virtual void Send(ushort id, IExtensible msg)
     {
         RefreshDelay1(id);
-        SendItem item = new SendItem() { id = id, msg = msg };
-        lock (sendQueue) sendQueue.Enqueue(item);
+        sendQueue.Enqueue(new SendItem { id = id, msg = msg });
     }
     #endregion
 
@@ -96,11 +102,13 @@ public class SBase
     public void SetHeartState(bool open)
     {
         heartMark = open;
+        if (open) heartTimerId = Driver.Instance.StartTimer(0, 1, UpdateHeart);
+        else Driver.Instance.Remove(heartTimerId);
     }
-    protected void UpdateHeart(float t)
+    private void UpdateHeart(float t)
     {
         if (!heartMark || !connectMark) return;
-        heartTimer += t;
+        heartTimer++;
         if (heartTimer < heartInterval) return;
         Send(0, heart);
         heartTimer = 0;
@@ -122,4 +130,53 @@ public class SBase
         socketevent.Invoke((int)SocketEvent.RefreshDelay, (int)delay);
     }
     #endregion
+}
+public class WriteBuffer : Stream
+{
+    private ArrayPool<byte> pool;
+    private byte[] buffer;
+    private int pos;
+
+    public byte[] Buffer => buffer;
+    public int Pos => pos;
+
+    public WriteBuffer(ArrayPool<byte> pool, int size = 256, int offset = 0)
+    {
+        this.pool = pool;
+        buffer = pool.Rent(size);
+        pos = offset;
+    }
+    public override void Write(byte[] bytes, int offset, int count)
+    {
+        if (count == 0) return;
+        if (pos + count > buffer.Length)
+        {
+            var _buffer = pool.Rent(Math.Max(pos + count, buffer.Length * 2));
+            System.Buffer.BlockCopy(buffer, 0, _buffer, 0, pos);
+            pool.Return(buffer);
+            buffer = _buffer;
+        }
+        System.Buffer.BlockCopy(bytes, offset, buffer, pos, count);
+        pos += count;
+    }
+    protected override void Dispose(bool disposing)
+    {
+        if (buffer != null)
+        {
+            pool.Return(buffer);
+            buffer = null;
+        }
+        base.Dispose(disposing);
+    }
+
+    public override bool CanRead => false;
+    public override bool CanSeek => false;
+    public override bool CanWrite => true;
+    public override long Length => pos;
+    public override long Position { get => pos; set => throw new NotSupportedException(); }
+    public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+    public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+    public override void SetLength(long value) => throw new NotSupportedException();
+    public override int ReadByte() => throw new NotSupportedException();
+    public override void Flush() { }
 }
