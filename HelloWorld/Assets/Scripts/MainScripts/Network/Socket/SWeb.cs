@@ -19,10 +19,6 @@ public class SWeb : SBase
         this.ip = $"{ip}:{port}/{connectId}";
         Connect();
     }
-    private void Update(float t)
-    {
-        Send();
-    }
 
     #region 连接
     private void Connect()
@@ -44,7 +40,7 @@ public class SWeb : SBase
         socket.OnMessage += Receive;
         socket.OnError += Error;
         socket.ConnectAsync();//连接失败不会调用ConnectCallback
-        updateId = Driver.Instance.StartUpdate(Update);
+        updateId = Driver.Instance.StartUpdate(Send);
         connectMark = true;
         sendMark = true;
         sendRetry = 0;
@@ -77,7 +73,7 @@ public class SWeb : SBase
     #endregion
 
     #region 发送
-    private void Send()
+    private void Send(float t)
     {
         if (sendMark && sendQueue.TryDequeue(out var item))
         {
