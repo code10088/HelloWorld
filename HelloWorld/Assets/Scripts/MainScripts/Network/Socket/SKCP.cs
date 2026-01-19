@@ -4,10 +4,8 @@ using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Net.Sockets.Kcp;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -40,20 +38,9 @@ public class SKCP : SBase
     /// <summary>
     /// UDP无连接协议，BeginConnect仅记录目标地址和端口
     /// </summary>
-    private async Task Connect()
+    protected override async Task<bool> Connect()
     {
-        await Close();
-        if (connectRetry++ > 3)
-        {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return;
-        }
-        socketevent.Invoke((int)SocketEvent.Reconect, 0);
-        if (NetworkInterface.GetIsNetworkAvailable() == false)
-        {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return;
-        }
+        if (await base.Connect() == false) return false;
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         socket.SendTimeout = heartInterval;
         socket.ReceiveTimeout = heartInterval;
@@ -69,22 +56,16 @@ public class SKCP : SBase
         {
 
         }
-        if (socket.Connected)
-        {
-            connectMark = true;
-            sendRetry = 0;
-            receiveRetry = 0;
-            signal = new SemaphoreSlim(0);
-            cts = new CancellationTokenSource();
-            sendTask = Send(cts.Token);
-            updateTask = Update(cts.Token);
-            receiveTask = Receive(cts.Token);
-            socketevent.Invoke((int)SocketEvent.Connected, 0);
-        }
-        else
-        {
-            Connect();
-        }
+        connectMark = true;
+        sendRetry = 0;
+        receiveRetry = 0;
+        signal = new SemaphoreSlim(0);
+        cts = new CancellationTokenSource();
+        sendTask = Send(cts.Token);
+        updateTask = Update(cts.Token);
+        receiveTask = Receive(cts.Token);
+        socketevent.Invoke((int)SocketEvent.Connected, 0);
+        return true;
     }
     public override async Task Close()
     {
@@ -96,6 +77,7 @@ public class SKCP : SBase
         cts?.Dispose();
         cts = null;
         socket?.Close();
+        socket?.Dispose();
         socket = null;
         kcp?.Dispose();
         kcp = null;
@@ -138,8 +120,11 @@ public class SKCP : SBase
     }
     public override void Send(ushort id, IExtensible msg)
     {
-        base.Send(id, msg);
-        signal?.Release();
+        if (connectMark)
+        {
+            base.Send(id, msg);
+            signal?.Release();
+        }
     }
     private async Task Send(CancellationToken token)
     {
@@ -173,7 +158,8 @@ public class SKCP : SBase
                     int count = 0;
                     try
                     {
-                        count = await socket.SendAsync(item.Datas, SocketFlags.None, token);
+                        //socket使用CancellationToken，cts?.Cancel导致await无法退出
+                        count = await socket.SendAsync(item.Datas, SocketFlags.None);
                     }
                     catch
                     {
@@ -232,8 +218,15 @@ public class SKCP : SBase
     /// </summary>
     private void Send(IMemoryOwner<byte> owner, int length)
     {
-        queue.Enqueue(new KcpPacket(owner, length));
-        signal?.Release();
+        if (connectMark)
+        {
+            queue.Enqueue(new KcpPacket(owner, length));
+            signal?.Release();
+        }
+        else
+        {
+            owner.Dispose();
+        }
     }
     #endregion
 
@@ -245,7 +238,8 @@ public class SKCP : SBase
             int count = 0;
             try
             {
-                count = await socket.ReceiveAsync(receiveBuffer.AsMemory(), SocketFlags.None, token);
+                //socket使用CancellationToken，cts?.Cancel导致await无法退出
+                count = await socket.ReceiveAsync(receiveBuffer.AsMemory(), SocketFlags.None);
             }
             catch
             {

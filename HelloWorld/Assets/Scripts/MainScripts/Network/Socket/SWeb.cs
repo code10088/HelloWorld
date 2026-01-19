@@ -1,7 +1,6 @@
 ﻿using ProtoBuf;
 using System;
 using System.Buffers.Binary;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using WebSocketSharp;
 
@@ -21,20 +20,9 @@ public class SWeb : SBase
     }
 
     #region 连接
-    private void Connect()
+    protected override async Task<bool> Connect()
     {
-        Close();
-        if (connectRetry++ > 3)
-        {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return;
-        }
-        socketevent.Invoke((int)SocketEvent.Reconect, 0);
-        if (NetworkInterface.GetIsNetworkAvailable() == false)
-        {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return;
-        }
+        if (await base.Connect() == false) return false;
         socket = new WebSocket(ip);
         socket.OnOpen += ConnectCallback;
         socket.OnMessage += Receive;
@@ -45,6 +33,7 @@ public class SWeb : SBase
         sendMark = true;
         sendRetry = 0;
         receiveRetry = 0;
+        return true;
     }
     private void ConnectCallback(object sender, EventArgs e)
     {

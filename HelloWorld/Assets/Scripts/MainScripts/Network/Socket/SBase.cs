@@ -3,6 +3,7 @@ using System;
 using System.Buffers;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -52,8 +53,9 @@ public class SBase
     //心跳
     private bool heartMark = true;
     private int heartTimerId = 0;
-    private float heartTimer = 0;
-    protected int heartInterval = 10000;
+    private int heartTimer = 0;
+    private int heartCount = 0;
+    protected int heartInterval = 10;
     private int[] record1 = new int[10];
     private long[] record2 = new long[10];
     private int recordIndex = 0;
@@ -63,18 +65,36 @@ public class SBase
     {
         this.deserialize = deserialize;
         this.socketevent = socketevent;
+        connectMark = false;
+        connectRetry = 0;
     }
 
     #region 连接
+    protected virtual async Task<bool> Connect()
+    {
+        await Close();
+        if (connectRetry++ > 3)
+        {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            return false;
+        }
+        socketevent.Invoke((int)SocketEvent.Reconect, 0);
+        if (NetworkInterface.GetIsNetworkAvailable() == false)
+        {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            return false;
+        }
+        return true;
+    }
     public virtual async Task Close()
     {
         connectMark = false;
-        connectRetry = 0;
         sendQueue.Clear();
         sendRetry = 0;
         receiveRetry = 0;
         heartTimer = 0;
-        heartInterval = 10000;
+        heartCount = 0;
+        heartInterval = 10;
         recordIndex = 0;
     }
     #endregion
@@ -82,8 +102,11 @@ public class SBase
     #region 发送
     public virtual void Send(ushort id, IExtensible msg)
     {
-        RefreshDelay1(id);
-        sendQueue.Enqueue(new SendItem { id = id, msg = msg });
+        if (connectMark)
+        {
+            RefreshDelay1(id);
+            sendQueue.Enqueue(new SendItem { id = id, msg = msg });
+        }
     }
     #endregion
 
@@ -110,8 +133,9 @@ public class SBase
         if (!heartMark || !connectMark) return;
         heartTimer++;
         if (heartTimer < heartInterval) return;
-        Send(0, heart);
         heartTimer = 0;
+        if (heartCount++ > 0) Connect();
+        else Send(0, heart);
     }
     private void RefreshDelay1(ushort id)
     {
@@ -121,12 +145,14 @@ public class SBase
     }
     private void RefreshDelay2(ushort id)
     {
-        var index = Array.IndexOf(record1, id - 10000);
+        heartTimer = 0;
+        id -= 10000;
+        if (id == 0) heartCount = 0;
+        var index = Array.IndexOf(record1, id);
         if (index < 0) return;
         record1[index] = -1;
         var delay = (DateTime.UtcNow.Ticks - record2[index]) / 10000;
-        heartTimer = 0;
-        heartInterval = delay > 100 ? 2000 : 10000;
+        heartInterval = delay > 100 ? 3 : 10;
         socketevent.Invoke((int)SocketEvent.RefreshDelay, (int)delay);
     }
     #endregion

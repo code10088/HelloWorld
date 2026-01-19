@@ -2,7 +2,6 @@
 using System;
 using System.Buffers.Binary;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,20 +31,9 @@ public class STCP : SBase
     }
 
     #region 连接
-    private async Task Connect()
+    protected override async Task<bool> Connect()
     {
-        await Close();
-        if (connectRetry++ > 3)
-        {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return;
-        }
-        socketevent.Invoke((int)SocketEvent.Reconect, 0);
-        if (NetworkInterface.GetIsNetworkAvailable() == false)
-        {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return;
-        }
+        if (await base.Connect() == false) return false;
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         socket.SendTimeout = heartInterval;
         socket.ReceiveTimeout = heartInterval;
@@ -68,10 +56,12 @@ public class STCP : SBase
             sendTask = Send(cts.Token);
             receiveTask = Receive(cts.Token);
             socketevent.Invoke((int)SocketEvent.Connected, 0);
+            return true;
         }
         else
         {
             Connect();
+            return false;
         }
     }
     public override async Task Close()
@@ -85,6 +75,7 @@ public class STCP : SBase
         cts = null;
         socket?.Shutdown(SocketShutdown.Both);
         socket?.Close();
+        socket?.Dispose();
         socket = null;
         await (sendTask ?? Task.CompletedTask);
         await (receiveTask ?? Task.CompletedTask);
@@ -99,8 +90,11 @@ public class STCP : SBase
     #region 发送
     public override void Send(ushort id, IExtensible msg)
     {
-        base.Send(id, msg);
-        signal?.Release();
+        if (connectMark)
+        {
+            base.Send(id, msg);
+            signal?.Release();
+        }
     }
     private async Task Send(CancellationToken token)
     {
@@ -132,7 +126,8 @@ public class STCP : SBase
                         int l = 0;
                         try
                         {
-                            l = await socket.SendAsync(wb.Buffer.AsMemory(count, wb.Pos - count), SocketFlags.None, token);
+                            //socket使用CancellationToken，cts?.Cancel导致await无法退出
+                            l = await socket.SendAsync(wb.Buffer.AsMemory(count, wb.Pos - count), SocketFlags.None);
                         }
                         catch
                         {
@@ -175,7 +170,8 @@ public class STCP : SBase
             int count = 0;
             try
             {
-                count = await socket.ReceiveAsync(receiveBuffer.AsMemory(), SocketFlags.None, token);
+                //socket使用CancellationToken，cts?.Cancel导致await无法退出
+                count = await socket.ReceiveAsync(receiveBuffer.AsMemory(), SocketFlags.None);
             }
             catch
             {
