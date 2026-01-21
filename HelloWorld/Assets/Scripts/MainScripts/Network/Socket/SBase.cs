@@ -52,10 +52,10 @@ public class SBase
 
     //心跳
     private bool heartMark = true;
-    private int heartTimerId = 0;
-    private int heartTimer = 0;
+    private int heartUpdateId = 0;
+    private float heartTimer = 0;
     private int heartCount = 0;
-    protected int heartInterval = 10;
+    protected int heartInterval = 10000;
     private int[] record1 = new int[10];
     private long[] record2 = new long[10];
     private int recordIndex = 0;
@@ -94,7 +94,7 @@ public class SBase
         receiveRetry = 0;
         heartTimer = 0;
         heartCount = 0;
-        heartInterval = 10;
+        heartInterval = 10000;
         recordIndex = 0;
     }
     #endregion
@@ -125,13 +125,13 @@ public class SBase
     public void SetHeartState(bool open)
     {
         heartMark = open;
-        if (open) heartTimerId = Driver.Instance.StartTimer(0, 1, UpdateHeart);
-        else Driver.Instance.Remove(heartTimerId);
+        if (open) heartUpdateId = Driver.Instance.StartUpdate(UpdateHeart);
+        else Driver.Instance.Remove(heartUpdateId);
     }
-    private void UpdateHeart(float t)
+    protected void UpdateHeart(float t)
     {
         if (!heartMark || !connectMark) return;
-        heartTimer++;
+        heartTimer += t * 1000;
         if (heartTimer < heartInterval) return;
         heartTimer = 0;
         if (heartCount++ > 0) Connect();
@@ -152,7 +152,7 @@ public class SBase
         if (index < 0) return;
         record1[index] = -1;
         var delay = (DateTime.UtcNow.Ticks - record2[index]) / 10000;
-        heartInterval = delay > 100 ? 3 : 10;
+        heartInterval = delay > 100 ? 3000 : 10000;
         socketevent.Invoke((int)SocketEvent.RefreshDelay, (int)delay);
     }
     #endregion
