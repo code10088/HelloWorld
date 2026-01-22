@@ -71,7 +71,7 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
                 param.type = UICommonBoxType.Sure;
                 param.title = "网络异常";
                 param.content = "网络连接已断开，请检查网络设置";
-                param.sure = a => SocketManager.Instance.Connect();
+                param.sure = a => SocketManager.Instance.Reconnect();
                 UICommonBox.OpenCommonBox(param);
                 break;
             case SocketEvent.RefreshDelay:

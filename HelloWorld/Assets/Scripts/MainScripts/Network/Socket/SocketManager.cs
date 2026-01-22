@@ -3,9 +3,6 @@ using System;
 
 public class SocketManager : Singletion<SocketManager>
 {
-    private string ip;
-    private ushort port;
-    private uint connectId;
     private SBase socket;
     private Func<ushort, Memory<byte>, bool> deserialize;
     private Action<int, int> socketevent;
@@ -16,13 +13,10 @@ public class SocketManager : Singletion<SocketManager>
         this.socketevent = socketevent;
     }
     /// <summary>
-    /// 创建后会自动连接
+    /// 创建自动连接
     /// </summary>
     public void Create<T>(string ip, ushort port, uint connectId) where T : SBase, new()
     {
-        this.ip = ip;
-        this.port = port;
-        this.connectId = connectId;
         socket = new T();
         socket.Init(ip, port, connectId, deserialize, socketevent);
     }
@@ -30,16 +24,12 @@ public class SocketManager : Singletion<SocketManager>
     {
         socket.Close();
     }
-    public void Connect()
+    public void Reconnect()
     {
-        socket.Init(ip, port, connectId, deserialize, socketevent);
+        socket.Reconnect();
     }
     public void Send(ushort id, IExtensible msg)
     {
         socket?.Send(id, msg);
-    }
-    public void SetHeartState(bool open)
-    {
-        socket?.SetHeartState(open);
     }
 }

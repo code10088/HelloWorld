@@ -1,13 +1,11 @@
-﻿using ProtoBuf;
-using System;
-using System.Buffers.Binary;
+﻿using System;
 using System.Threading.Tasks;
 using WebSocketSharp;
 
 public class SWeb : SBase
 {
     private string ip;
-    private WebSocket socket;
+    private new WebSocket socket;
     private int updateId = -1;
     private bool sendMark = false;
     private byte[] sendBuffer;
@@ -56,7 +54,7 @@ public class SWeb : SBase
         socket.Close();
         socket = null;
         sendMark = false;
-        if (sendBuffer != null) bytePool.Return(sendBuffer);
+        sendBuffer?.Return();
         sendBuffer = null;
     }
     #endregion
@@ -67,11 +65,8 @@ public class SWeb : SBase
         if (sendMark && sendQueue.TryDequeue(out var item))
         {
             sendMark = false;
-            var wb = new WriteBuffer(bytePool, 256, 6);
-            Serializer.Serialize(wb, item.msg);
-            BinaryPrimitives.WriteInt32LittleEndian(wb.Buffer.AsSpan(0, 4), wb.Pos - 4);
-            BinaryPrimitives.WriteUInt16LittleEndian(wb.Buffer.AsSpan(4, 2), item.id);
-            sendBuffer = bytePool.Rent(wb.Pos);
+            var wb = serialize.Serialize(item.Id, item.Msg);
+            sendBuffer = BufferPool.Rent(wb.Pos);
             Buffer.BlockCopy(wb.Buffer, 0, sendBuffer, 0, wb.Pos);
             wb.Dispose();
             Send(sendBuffer);
@@ -96,7 +91,7 @@ public class SWeb : SBase
         }
         if (result)
         {
-            bytePool.Return(sendBuffer);
+            sendBuffer?.Return();
             sendBuffer = null;
             sendMark = true;
             sendRetry = 0;
