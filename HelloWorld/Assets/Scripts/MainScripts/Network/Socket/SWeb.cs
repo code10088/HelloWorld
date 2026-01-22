@@ -51,7 +51,7 @@ public class SWeb : SBase
     {
         base.Close();
         Driver.Instance.Remove(updateId);
-        socket.Close();
+        socket?.Close();
         socket = null;
         sendMark = false;
         sendBuffer?.Return();
@@ -115,7 +115,7 @@ public class SWeb : SBase
         {
             return;
         }
-        if (Deserialize(message.RawData, message.RawData.Length))
+        if (Receive(message.RawData, message.RawData.Length))
         {
             receiveRetry = 0;
             return;

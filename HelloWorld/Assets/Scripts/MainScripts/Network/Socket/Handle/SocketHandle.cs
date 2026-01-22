@@ -44,6 +44,12 @@ public class SocketHandle
 
         }
     }
+    /// <summary>
+    /// 流式发送用于TCP
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public int Send(byte[] buffer, int length)
     {
         int count = 0;
@@ -66,12 +72,16 @@ public class SocketHandle
         }
         return count;
     }
+    /// <summary>
+    /// 发送用于UDP
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <returns></returns>
     public int Send(ReadOnlySpan<byte> buffer)
     {
         int count = 0;
         try
         {
-            //udp不需要流式发送
             count = socket.Send(buffer, SocketFlags.None);
         }
         catch
@@ -80,6 +90,12 @@ public class SocketHandle
         }
         return count;
     }
+    /// <summary>
+    /// 异步流式发送用于TCP
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="length"></param>
+    /// <returns></returns>
     public async Task<int> SendAsync(byte[] buffer, int length)
     {
         int count = 0;
@@ -103,12 +119,16 @@ public class SocketHandle
         }
         return count;
     }
+    /// <summary>
+    /// 异步发送用于UDP
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <returns></returns>
     public async Task<int> SendAsync(ReadOnlyMemory<byte> buffer)
     {
         int count = 0;
         try
         {
-            //udp不需要流式发送
             //socket使用CancellationToken，cts?.Cancel导致await无法退出
             count = await socket.SendAsync(buffer, SocketFlags.None);
         }

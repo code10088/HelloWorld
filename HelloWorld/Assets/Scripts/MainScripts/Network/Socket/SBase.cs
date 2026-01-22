@@ -51,7 +51,7 @@ public class SBase
         this.deserialize = deserialize;
         this.socketevent = socketevent;
         socket = new SocketHandle(ip, port);
-        serialize = new SerializeHandle(Deserialize);
+        serialize = new SerializeHandle(Receive);
         heart = new HeartHandle(Connect, Send);
         Connect();
     }
@@ -103,7 +103,7 @@ public class SBase
     #endregion
 
     #region 接收
-    protected bool Deserialize(byte[] bytes, int length)
+    protected bool Receive(byte[] bytes, int length)
     {
         var temp = bytes.AsMemory(0, length);
         var id = BitConverter.ToUInt16(temp.Span.Slice(0, 2));

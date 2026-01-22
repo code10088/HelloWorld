@@ -16,7 +16,7 @@ public class SKCP : SBase
 
     public override void Init(string ip, ushort port, uint connectId, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
     {
-        kcp = new KcpHandle(connectId, Send, Deserialize);
+        kcp = new KcpHandle(connectId, Send, Receive);
         base.Init(ip, port, connectId, deserialize, socketevent);
     }
 

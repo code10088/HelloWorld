@@ -66,5 +66,6 @@ public class HeartHandle
         heartTimer = 0;
         heartCount = 0;
         recordIndex = 0;
+        delay = 0;
     }
 }

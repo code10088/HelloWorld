@@ -8,13 +8,13 @@ public class KcpHandle
     private KcpSend kcpSend;
     private PoolSegManager.Kcp kcp;
     private DateTimeOffset next;
-    private Func<byte[], int, bool> deserialize;
+    private Func<byte[], int, bool> receive;
 
-    public KcpHandle(uint connectId, Action<IMemoryOwner<byte>, int> send, Func<byte[], int, bool> deserialize)
+    public KcpHandle(uint connectId, Action<IMemoryOwner<byte>, int> send, Func<byte[], int, bool> receive)
     {
         this.connectId = connectId;
         kcpSend = new KcpSend(send);
-        this.deserialize = deserialize;
+        this.receive = receive;
     }
     public void Start()
     {
@@ -44,23 +44,22 @@ public class KcpHandle
         while (true)
         {
             int size = kcp.PeekSize();
-            if (size <= 0) break;
+            if (size <= 0) return true;
             var temp = BufferPool.Rent(size);
             size = kcp.Recv(temp);
             if (size <= 0)
             {
                 temp.Return();
-                break;
+                return true;
             }
             else
             {
-                bool b = deserialize(temp, size);
+                bool b = receive(temp, size);
                 temp.Return();
                 if (b) retry = 0;
                 else return false;
             }
         }
-        return true;
     }
     public void Dispose()
     {
@@ -86,7 +85,6 @@ public struct KcpPacket
     private int length;
     public ReadOnlyMemory<byte> Datas => owner.Memory.Slice(0, length);
     public int Length => length;
-
     public KcpPacket(IMemoryOwner<byte> owner, int length)
     {
         this.owner = owner;

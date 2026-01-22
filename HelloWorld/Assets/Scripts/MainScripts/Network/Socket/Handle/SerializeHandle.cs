@@ -5,7 +5,7 @@ using System.IO;
 
 public class SerializeHandle
 {
-    private Func<byte[], int, bool> deserialize;
+    private Func<byte[], int, bool> receive;
     private byte[] headBuffer = new byte[4];
     private byte[] bodyBuffer;
     private int headPos = 0;
@@ -13,9 +13,9 @@ public class SerializeHandle
     private int headLength = 4;
     private int bodyLength = 0;
 
-    public SerializeHandle(Func<byte[], int, bool> deserialize)
+    public SerializeHandle(Func<byte[], int, bool> receive)
     {
-        this.deserialize = deserialize;
+        this.receive = receive;
     }
     public WriteBuffer Serialize(ushort id, IExtensible msg)
     {
@@ -62,7 +62,7 @@ public class SerializeHandle
                 {
                     headPos = 0;
                     bodyPos = 0;
-                    bool b = deserialize(bodyBuffer, bodyLength);
+                    bool b = receive(bodyBuffer, bodyLength);
                     bodyBuffer.Return();
                     bodyBuffer = null;
                     bodyLength = 0;
