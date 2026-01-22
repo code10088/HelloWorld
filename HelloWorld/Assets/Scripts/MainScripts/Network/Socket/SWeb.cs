@@ -12,7 +12,7 @@ public class SWeb : SBase
 
     public override void Init(string ip, ushort port, uint connectId, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
     {
-        this.ip = $"{ip}:{port}/{connectId}";
+        this.ip = $"ws://{ip}:{port}/{connectId}";
         base.Init(ip, port, connectId, deserialize, socketevent);
     }
 
