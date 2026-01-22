@@ -12,9 +12,8 @@ public class SWeb : SBase
 
     public override void Init(string ip, ushort port, uint connectId, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
     {
-        base.Init(ip, port, connectId, deserialize, socketevent);
         this.ip = $"{ip}:{port}/{connectId}";
-        Connect();
+        base.Init(ip, port, connectId, deserialize, socketevent);
     }
 
     #region 连接
