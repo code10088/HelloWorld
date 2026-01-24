@@ -4,19 +4,23 @@ using System.Net.Sockets.Kcp;
 
 public class KcpHandle
 {
-    private uint connectId;
     private KcpSend kcpSend;
     private PoolSegManager.Kcp kcp;
     private DateTimeOffset next;
+    private CS_KcpConnect kcpConnect;
     private Func<byte[], int, bool> receive;
 
-    public KcpHandle(uint connectId, Action<IMemoryOwner<byte>, int> send, Func<byte[], int, bool> receive)
+    public CS_KcpConnect CS_KcpConnect => kcpConnect;
+
+    public KcpHandle(uint playerId, string token, Action<IMemoryOwner<byte>, int> send, Func<byte[], int, bool> receive)
     {
-        this.connectId = connectId;
         kcpSend = new KcpSend(send);
         this.receive = receive;
+        kcpConnect = new CS_KcpConnect();
+        kcpConnect.playerId = playerId;
+        kcpConnect.token = token;
     }
-    public void Start()
+    public void Start(uint connectId)
     {
         kcp = new PoolSegManager.Kcp(connectId, kcpSend);
         kcp.NoDelay(1, 10, 2, 1);
@@ -38,27 +42,16 @@ public class KcpHandle
         }
         return (next - current).TotalMilliseconds;
     }
-    public bool Deserialize(byte[] buffer, int length, ref int retry)
+    public bool Deserialize(byte[] buffer, int length)
     {
         kcp.Input(buffer.AsSpan(0, length));
         while (true)
         {
             int size = kcp.PeekSize();
             if (size <= 0) return true;
-            var temp = BufferPool.Rent(size);
-            size = kcp.Recv(temp);
-            if (size <= 0)
-            {
-                temp.Return();
-                return true;
-            }
-            else
-            {
-                bool b = receive(temp, size);
-                temp.Return();
-                if (b) retry = 0;
-                else return false;
-            }
+            size = kcp.Recv(buffer);
+            if (size <= 0) return true;
+            if (receive(buffer, size) == false) return false;
         }
     }
     public void Dispose()

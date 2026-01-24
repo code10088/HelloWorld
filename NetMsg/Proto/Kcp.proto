@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+option csharp_namespace = "Message";
+
+message CSKcpConnect
+{
+	uint32 playerId = 1;
+	string token = 2;
+}
+message SCKcpConnect
+{
+	uint32 conv = 1;
+}

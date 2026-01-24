@@ -10,10 +10,10 @@ public class HKCP : SBase
     private Thread sendThread;
     private Thread receiveThread;
 
-    public override void Init(string ip, ushort port, uint connectId, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
+    public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
     {
-        kcp = new KcpHandle(connectId, Send, Receive);
-        base.Init(ip, port, connectId, deserialize, socketevent);
+        kcp = new KcpHandle(playerId, token, Send, Receive);
+        base.Init(ip, port, playerId, token, deserialize, socketevent);
     }
 
     #region 连接
@@ -23,17 +23,62 @@ public class HKCP : SBase
     protected override async Task<bool> Connect()
     {
         if (await base.Connect() == false) return false;
-        kcp.Start();
         socket.Connect(SocketType.Dgram, ProtocolType.Udp);
-        connectMark = true;
-        sendRetry = 0;
-        receiveRetry = 0;
-        sendThread = new Thread(Send);
-        sendThread.Start();
-        receiveThread = new Thread(Receive);
-        receiveThread.Start();
-        socketevent.Invoke((int)SocketEvent.Connected, 0);
-        return true;
+        var wb = serialize.Serialize(0, kcp.CS_KcpConnect);
+        while (true)
+        {
+            //await不受socket超时影响会一直等待
+            //int count = await socket.SendAsync(wb.Buffer.AsMemory(0, wb.Pos));
+            int count = socket.Send(wb.Buffer.AsSpan(0, wb.Pos));
+            if (count == wb.Pos)
+            {
+                wb.Dispose();
+                sendRetry = 0;
+                break;
+            }
+            if (sendRetry++ > 0)
+            {
+                wb.Dispose();
+                Connect();
+                return false;
+            }
+        }
+        while (true)
+        {
+            //await不受socket超时影响会一直等待
+            //int count = await socket.ReceiveAsync(receiveBuffer);
+            int count = socket.Receive(receiveBuffer);
+            if (count >= 0)
+            {
+                var id = BitConverter.ToUInt16(receiveBuffer);
+                if (id == NetMsgId.KcpConnect)
+                {
+                    socketevent.Invoke((int)SocketEvent.Connected, 0);
+                    var connectId = BitConverter.ToUInt32(receiveBuffer, 2);
+                    kcp.Start(connectId);
+                    connectMark = true;
+                    connectRetry = 0;
+                    sendRetry = 0;
+                    receiveRetry = 0;
+                    sendThread = new Thread(Send);
+                    sendThread.Start();
+                    receiveThread = new Thread(Receive);
+                    receiveThread.Start();
+                    heart.Start();
+                    return true;
+                }
+                else
+                {
+                    receiveRetry = 0;
+                    continue;
+                }
+            }
+            if (receiveRetry++ > 0)
+            {
+                Connect();
+                return false;
+            }
+        }
     }
     public override async Task Close()
     {
@@ -109,7 +154,7 @@ public class HKCP : SBase
             {
                 return;
             }
-            if (count >= 0 && kcp.Deserialize(receiveBuffer, count, ref connectRetry))
+            if (count >= 0 && kcp.Deserialize(receiveBuffer, count))
             {
                 receiveRetry = 0;
                 Thread.Sleep(GameSetting.updateTimeSliceMS);

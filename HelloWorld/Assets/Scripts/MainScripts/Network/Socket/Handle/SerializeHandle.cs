@@ -21,8 +21,8 @@ public class SerializeHandle
     {
         var wb = new WriteBuffer(256, 6);
         Serializer.Serialize(wb, msg);
-        BinaryPrimitives.WriteInt32LittleEndian(wb.Buffer.AsSpan(0, 4), wb.Pos - 4);
-        BinaryPrimitives.WriteUInt16LittleEndian(wb.Buffer.AsSpan(4, 2), id);
+        wb.Write(wb.Pos - 4, 0);
+        wb.Write(id, 4);
         return wb;
     }
     public bool Deserialize(byte[] buffer, int length)
@@ -106,6 +106,14 @@ public class WriteBuffer : Stream
         }
         System.Buffer.BlockCopy(bytes, offset, buffer, pos, count);
         pos += count;
+    }
+    public void Write(ushort value, int offset)
+    {
+        BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset, 2), value);
+    }
+    public void Write(int value, int offset)
+    {
+        BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(offset, 4), value);
     }
     protected override void Dispose(bool disposing)
     {

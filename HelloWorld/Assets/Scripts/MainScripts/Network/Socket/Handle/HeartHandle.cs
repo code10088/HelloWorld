@@ -4,14 +4,6 @@ using System.Threading.Tasks;
 
 public class HeartHandle
 {
-    [ProtoContract]
-    public class CS_Heart : IExtensible
-    {
-        private IExtension __pbn__extensionData;
-        IExtension IExtensible.GetExtensionObject(bool createIfMissing) => Extensible.GetExtensionObject(ref __pbn__extensionData, createIfMissing);
-    }
-
-
     private int heartTimerId = 0;
     private int heartTimer = 0;
     private int heartInterval = 10;
@@ -52,9 +44,8 @@ public class HeartHandle
     public void RefreshDelay2(ushort id)
     {
         heartTimer = 0;
-        id -= 10000;
-        if (id == 0) heartCount = 0;
-        var index = Array.IndexOf(record1, id);
+        if (id == NetMsgId.Heart) heartCount = 0;
+        var index = Array.IndexOf(record1, id - 10000);
         if (index < 0) return;
         record1[index] = -1;
         delay = (int)((DateTime.UtcNow.Ticks - record2[index]) / 10000);

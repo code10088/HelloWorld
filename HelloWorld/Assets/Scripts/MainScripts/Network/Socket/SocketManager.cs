@@ -15,10 +15,10 @@ public class SocketManager : Singletion<SocketManager>
     /// <summary>
     /// 创建自动连接
     /// </summary>
-    public void Create<T>(string ip, ushort port, uint connectId) where T : SBase, new()
+    public void Create<T>(string ip, ushort port, uint playerId, string token) where T : SBase, new()
     {
         socket = new T();
-        socket.Init(ip, port, connectId, deserialize, socketevent);
+        socket.Init(ip, port, playerId, token, deserialize, socketevent);
     }
     public void Close()
     {

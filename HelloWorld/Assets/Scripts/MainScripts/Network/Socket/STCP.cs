@@ -14,9 +14,10 @@ public class STCP : SBase
     protected override async Task<bool> Connect()
     {
         if (await base.Connect() == false) return false;
-        await socket.ConnectAsync(SocketType.Stream, ProtocolType.Tcp);
+        socket.Connect(SocketType.Stream, ProtocolType.Tcp);
         if (socket.Connected)
         {
+            socketevent.Invoke((int)SocketEvent.Connected, 0);
             connectMark = true;
             connectRetry = 0;
             sendRetry = 0;
@@ -25,7 +26,7 @@ public class STCP : SBase
             cts = new CancellationTokenSource();
             sendTask = Send(cts.Token);
             receiveTask = Receive(cts.Token);
-            socketevent.Invoke((int)SocketEvent.Connected, 0);
+            heart.Start();
             return true;
         }
         else

@@ -14,6 +14,7 @@ public class HTCP : SBase
         socket.Connect(SocketType.Stream, ProtocolType.Tcp);
         if (socket.Connected)
         {
+            socketevent.Invoke((int)SocketEvent.Connected, 0);
             connectMark = true;
             connectRetry = 0;
             sendRetry = 0;
@@ -22,7 +23,7 @@ public class HTCP : SBase
             sendThread.Start();
             receiveThread = new Thread(Receive);
             receiveThread.Start();
-            socketevent.Invoke((int)SocketEvent.Connected, 0);
+            heart.Start();
             return true;
         }
         else

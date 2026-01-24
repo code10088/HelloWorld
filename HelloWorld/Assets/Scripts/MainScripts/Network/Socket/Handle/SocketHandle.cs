@@ -30,20 +30,6 @@ public class SocketHandle
 
         }
     }
-    public async Task ConnectAsync(SocketType st, ProtocolType pt)
-    {
-        socket = new Socket(AddressFamily.InterNetwork, st, pt);
-        socket.SendTimeout = timeout;
-        socket.ReceiveTimeout = timeout;
-        try
-        {
-            await socket.ConnectAsync(endPoint);
-        }
-        catch
-        {
-
-        }
-    }
     /// <summary>
     /// 流式发送用于TCP
     /// </summary>

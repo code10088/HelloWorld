@@ -1,5 +1,6 @@
 //Id=(Namespace.)CalssName
-0		= Message.CSHeart
+0		= Message.CSKcpConnect
+1		= Message.CSHeart
 100		= Message.CSMail
 101		= Message.CSReadMail
 102		= Message.CSGetMailReward
@@ -7,8 +8,9 @@
 104		= Message.CSDeleteMail
 105		= Message.CSDeleteAllMail
 
-10000	= Message.SCHeart
-10001	= Message.SCPlayerInfo
+10000	= Message.SCKcpConnect
+10001	= Message.SCHeart
+10002	= Message.SCPlayerInfo
 10100	= Message.SCMail
 10102	= Message.SCGetMailReward
 10104	= Message.SCDeleteMail

@@ -9,7 +9,7 @@
 // {
 //    static async Task Main(string[] args)
 //    {
-//        int port = 8080; // 端口号可根据你的 STCP 配置修改
+//        int port = 8088; // 端口号可根据你的 STCP 配置修改
 //        var listener = new TcpListener(IPAddress.Any, port);
 //        listener.Start();
 //        Console.WriteLine($"TCP服务器已启动，监听端口 {port}");
@@ -69,26 +69,29 @@
 #endregion
 
 #region kcp
-// using System;
-// using System.Buffers;
-// using System.Net;
-// using System.Net.Sockets;
-// using System.Threading.Tasks;
-// using System.Net.Sockets.Kcp;
-// using System.Drawing;
+//using System;
+//using System.Buffers;
+//using System.Buffers.Binary;
+//using System.Drawing;
+//using System.Net;
+//using System.Net.Sockets;
+//using System.Net.Sockets.Kcp;
+//using System.Threading.Tasks;
+//using static System.Runtime.InteropServices.JavaScript.JSType;
 
-// class KcpServer : IKcpCallback
-// {
+//class KcpServer : IKcpCallback
+//{
 //    private readonly UdpClient udp;
 //    private readonly IPEndPoint listenEndPoint;
-//    private readonly PoolSegManager.Kcp kcp;
+//    private PoolSegManager.Kcp kcp;
 //    private IPEndPoint remoteEndPoint;
+//    private uint conv = 0;
 
 //    public KcpServer(int port)
 //    {
 //        listenEndPoint = new IPEndPoint(IPAddress.Any, port);
 //        udp = new UdpClient(listenEndPoint);
-//        kcp = new PoolSegManager.Kcp(2001, this);
+//        kcp = new PoolSegManager.Kcp(conv, this);
 //        StartReceive();
 //    }
 
@@ -110,6 +113,16 @@
 //            kcp.Update(DateTime.UtcNow);
 //            var result = await udp.ReceiveAsync();
 //            remoteEndPoint = result.RemoteEndPoint;
+//            var id = BitConverter.ToUInt16(result.Buffer, 4);
+//            if (id == 0)
+//            {
+//                byte[] a = new byte[6];
+//                BinaryPrimitives.WriteUInt16LittleEndian(a.AsSpan(0, 2), 10000);
+//                BinaryPrimitives.WriteUInt32LittleEndian(a.AsSpan(2, 4), ++conv);
+//                kcp = new PoolSegManager.Kcp(conv, this);
+//                udp.Send(a, a.Length, remoteEndPoint);
+//                continue;
+//            }
 //            kcp.Input(result.Buffer);
 //            // 这里可以根据需要处理收到的数据
 //            // 例如：自动回显
@@ -117,23 +130,23 @@
 //            if (recvBuffer != null && recvLen > 0)
 //            {
 //                // 回显收到的数据
-//                byte[] a = BitConverter.GetBytes((ushort)10000);
+//                byte[] a = BitConverter.GetBytes((ushort)10001);
 //                kcp.Send(a);
 //                recvBuffer.Dispose();
 //            }
 //        }
 //    }
-// }
+//}
 
-// class Program
-// {
+//class Program
+//{
 //    static void Main(string[] args)
 //    {
-//        Console.WriteLine("KCP服务器启动，监听端口: 8080");
-//        var server = new KcpServer(8080);
+//        Console.WriteLine("KCP服务器启动，监听端口: 8088");
+//        var server = new KcpServer(8088);
 //        Console.ReadLine();
 //    }
-// }
+//}
 #endregion
 
 #region websocket
@@ -183,18 +196,18 @@
 //     {
 //         static void Main(string[] args)
 //         {
-//             // 创建一个 WebSocket 服务器，监听 ws://localhost:8080/
-//             var wssv = new WebSocketServer("ws://192.168.7.136:8080/"); // 你也可以使用 wss://localhost:8080/ 来启用 SSL
+//             // 创建一个 WebSocket 服务器，监听 ws://localhost:8088/
+//             var wssv = new WebSocketServer("ws://192.168.7.136:8088/"); // 你也可以使用 wss://localhost:8088/ 来启用 SSL
 
 //             // 可选：设置日志级别（调试用）
 //             wssv.Log.Level = LogLevel.Debug;
 
 //             // 添加一个 WebSocket 服务，路径为 "/ws"，使用我们上面定义的 MyWebSocketService 类来处理
-//             wssv.AddWebSocketService<MyWebSocketService>("/2001");
+//             wssv.AddWebSocketService<MyWebSocketService>("/client");
 
 //             // 启动服务器
 //             wssv.Start();
-//             Console.WriteLine("WebSocket 服务器已启动，监听 ws://localhost:8080/2001");
+//             Console.WriteLine("WebSocket 服务器已启动，监听 ws://localhost:8088/client");
 //             Console.WriteLine("按任意键停止服务器...");
 //             Console.ReadKey(true);
 
