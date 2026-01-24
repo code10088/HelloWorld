@@ -18,7 +18,7 @@ public class KcpHandle
         this.receive = receive;
         kcpConnect = new CS_KcpConnect();
         kcpConnect.playerId = playerId;
-        kcpConnect.token = token;
+        kcpConnect.Token = token;
     }
     public void Start(uint connectId)
     {
