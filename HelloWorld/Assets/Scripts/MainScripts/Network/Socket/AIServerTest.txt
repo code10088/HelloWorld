@@ -60,7 +60,7 @@
 //                // 这里可以根据需要处理包体内容
 //                // 示例：原样回显
 //                await stream.WriteAsync(headBuffer, 0, 4);
-//                bodyBuffer = BitConverter.GetBytes(10000);
+//                bodyBuffer = BitConverter.GetBytes(10001);
 //                await stream.WriteAsync(bodyBuffer, 0, bodyLength);
 //            }
 //        }
@@ -175,7 +175,7 @@
 //             Console.WriteLine($"[Server] 收到来自  的消息: {e.Data}");
 
 //             // 简单回显：将收到的消息原样发回给客户端
-//             var a= BitConverter.GetBytes((ushort)10000);
+//             var a= BitConverter.GetBytes((ushort)10001);
 //             Send(a);
 //         }
 
@@ -197,7 +197,7 @@
 //         static void Main(string[] args)
 //         {
 //             // 创建一个 WebSocket 服务器，监听 ws://localhost:8088/
-//             var wssv = new WebSocketServer("ws://192.168.7.136:8088/"); // 你也可以使用 wss://localhost:8088/ 来启用 SSL
+//             var wssv = new WebSocketServer("ws://192.168.7.148:8088/"); // 你也可以使用 wss://localhost:8088/ 来启用 SSL
 
 //             // 可选：设置日志级别（调试用）
 //             wssv.Log.Level = LogLevel.Debug;

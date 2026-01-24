@@ -7,7 +7,7 @@ public class SerializeHandle
 {
     private Func<byte[], int, bool> receive;
     private byte[] headBuffer = new byte[4];
-    private byte[] bodyBuffer;
+    private byte[] bodyBuffer = new byte[2048];
     private int headPos = 0;
     private int bodyPos = 0;
     private int headLength = 4;
@@ -39,11 +39,7 @@ public class SerializeHandle
                 if (headPos == headLength)
                 {
                     bodyLength = BitConverter.ToInt32(headBuffer, 0);
-                    if (bodyLength >= 0 && bodyLength <= 0x2800)
-                    {
-                        bodyBuffer = BufferPool.Rent(bodyLength);
-                    }
-                    else
+                    if (bodyLength < 0 || bodyLength > 0x2800)
                     {
                         headPos = 0;
                         bodyPos = 0;
@@ -63,8 +59,6 @@ public class SerializeHandle
                     headPos = 0;
                     bodyPos = 0;
                     bool b = receive(bodyBuffer, bodyLength);
-                    bodyBuffer.Return();
-                    bodyBuffer = null;
                     bodyLength = 0;
                     if (!b) return false;
                 }
@@ -74,8 +68,6 @@ public class SerializeHandle
     }
     public void Dispose()
     {
-        bodyBuffer?.Return();
-        bodyBuffer = null;
         headPos = 0;
         bodyPos = 0;
         bodyLength = 0;
