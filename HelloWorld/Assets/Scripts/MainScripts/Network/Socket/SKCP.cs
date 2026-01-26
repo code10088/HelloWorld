@@ -28,21 +28,21 @@ public class SKCP : SBase
     {
         if (await base.Connect() == false) return false;
         socket.Connect(SocketType.Dgram, ProtocolType.Udp);
-        var wb = serialize.Serialize(0, kcp.CS_KcpConnect);
+        var stream = serialize.Serialize(0, kcp.CS_KcpConnect);
         while (true)
         {
             //await不受socket超时影响会一直等待
-            //int count = await socket.SendAsync(wb.Buffer.AsMemory(0, wb.Pos));
-            int count = socket.Send(wb.Buffer.AsSpan(0, wb.Pos));
-            if (count == wb.Pos)
+            //int count = await socket.SendAsync(stream.Buffer.AsMemory(0, stream.Pos));
+            int count = socket.Send(stream.Buffer.AsSpan(0, stream.WPos));
+            if (count == stream.WPos)
             {
-                wb.Dispose();
+                stream.Dispose();
                 sendRetry = 0;
                 break;
             }
             if (sendRetry++ > 0)
             {
-                wb.Dispose();
+                stream.Dispose();
                 Connect();
                 return false;
             }
@@ -52,30 +52,26 @@ public class SKCP : SBase
             //await不受socket超时影响会一直等待
             //int count = await socket.ReceiveAsync(receiveBuffer);
             int count = socket.Receive(receiveBuffer);
+            if (count == 6 && BitConverter.ToUInt16(receiveBuffer) == NetMsgId.KcpConnect)
+            {
+                socketevent.Invoke((int)SocketEvent.Connected, 0);
+                var connectId = BitConverter.ToUInt32(receiveBuffer, 2);
+                kcp.Start(connectId);
+                connectMark = true;
+                connectRetry = 0;
+                sendRetry = 0;
+                receiveRetry = 0;
+                cts = new CancellationTokenSource();
+                sendTask = Send(cts.Token);
+                updateTask = Update(cts.Token);
+                receiveTask = Receive(cts.Token);
+                heart.Start();
+                return true;
+            }
             if (count >= 0)
             {
-                var id = BitConverter.ToUInt16(receiveBuffer);
-                if (id == NetMsgId.KcpConnect)
-                {
-                    socketevent.Invoke((int)SocketEvent.Connected, 0);
-                    var connectId = BitConverter.ToUInt32(receiveBuffer, 2);
-                    kcp.Start(connectId);
-                    connectMark = true;
-                    connectRetry = 0;
-                    sendRetry = 0;
-                    receiveRetry = 0;
-                    cts = new CancellationTokenSource();
-                    sendTask = Send(cts.Token);
-                    updateTask = Update(cts.Token);
-                    receiveTask = Receive(cts.Token);
-                    heart.Start();
-                    return true;
-                }
-                else
-                {
-                    receiveRetry = 0;
-                    continue;
-                }
+                receiveRetry = 0;
+                continue;
             }
             if (receiveRetry++ > 0)
             {
@@ -117,9 +113,9 @@ public class SKCP : SBase
             }
             while (sendQueue.TryDequeue(out var item))
             {
-                var wb = serialize.Serialize(item.Id, item.Msg);
-                kcp.Send(wb.Buffer.AsSpan(0, wb.Pos));
-                wb.Dispose();
+                var stream = serialize.Serialize(item.Id, item.Msg);
+                kcp.Send(stream.Buffer.AsSpan(0, stream.WPos));
+                stream.Dispose();
             }
             while (queue.TryDequeue(out var item))
             {

@@ -17,13 +17,13 @@ public class SerializeHandle
     {
         this.receive = receive;
     }
-    public WriteBuffer Serialize(ushort id, IExtensible msg)
+    public BufferStream Serialize(ushort id, IExtensible msg)
     {
-        var wb = new WriteBuffer(256, 6);
-        Serializer.Serialize(wb, msg);
-        wb.Write(wb.Pos - 4, 0);
-        wb.Write(id, 4);
-        return wb;
+        var stream = new BufferStream(256, 6);
+        Serializer.Serialize(stream, msg);
+        stream.WriteAt(stream.WPos - 4, 0);
+        stream.WriteAt(id, 4);
+        return stream;
     }
     public bool Deserialize(byte[] buffer, int length)
     {
@@ -73,40 +73,73 @@ public class SerializeHandle
         bodyLength = 0;
     }
 }
-public class WriteBuffer : Stream
+public class BufferStream : Stream
 {
     private byte[] buffer;
-    private int pos;
+    private int capacity;
+    private int length;
+    private bool wr = true;
+    private int wPos;
+    private int rPos;
 
+    public override bool CanRead => true;
+    public override bool CanSeek => true;
+    public override bool CanWrite => true;
+    public override long Length => length;
     public byte[] Buffer => buffer;
-    public int Pos => pos;
+    public int WPos => wPos;
+    public int RPos => rPos;
 
-    public WriteBuffer(int size = 256, int offset = 0)
+    public BufferStream(int size = 256, int woffset = 0, int roffset = 0)
     {
+        capacity = size;
         buffer = BufferPool.Rent(size);
-        pos = offset;
+        wPos = woffset;
+        rPos = roffset;
+        length = woffset;
     }
-    public override void Write(byte[] bytes, int offset, int count)
+    private int NextPowerOfTwo(int x)
     {
-        if (count == 0) return;
-        if (pos + count > buffer.Length)
+        if (x == 0) return 1;
+        x--;
+        x |= x >> 1;
+        x |= x >> 2;
+        x |= x >> 4;
+        x |= x >> 8;
+        x |= x >> 16;
+        return x + 1;
+    }
+    private void EnsureCapacity(int count)
+    {
+        if (count <= capacity) return;
+        capacity = NextPowerOfTwo(count);
+        var _buffer = BufferPool.Rent(capacity);
+        System.Buffer.BlockCopy(buffer, 0, _buffer, 0, length);
+        BufferPool.Return(buffer);
+        buffer = _buffer;
+    }
+    public override long Position
+    {
+        get
         {
-            var _buffer = BufferPool.Rent(Math.Max(pos + count, buffer.Length * 2));
-            System.Buffer.BlockCopy(buffer, 0, _buffer, 0, pos);
-            buffer.Return();
-            buffer = _buffer;
+            return wr ? wPos : rPos;
         }
-        System.Buffer.BlockCopy(bytes, offset, buffer, pos, count);
-        pos += count;
+        set
+        {
+            if (value < 0 || value > length) throw new ArgumentOutOfRangeException();
+            if (wr) wPos = (int)value;
+            else rPos = (int)value;
+        }
     }
-    public void Write(ushort value, int offset)
+    public override void SetLength(long value)
     {
-        BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset, 2), value);
+        int _length = (int)value;
+        EnsureCapacity(_length);
+        length = _length;
+        if (wPos > length) wPos = length;
+        if (rPos > length) rPos = length;
     }
-    public void Write(int value, int offset)
-    {
-        BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(offset, 4), value);
-    }
+    public override void Flush() { }
     protected override void Dispose(bool disposing)
     {
         buffer?.Return();
@@ -114,14 +147,74 @@ public class WriteBuffer : Stream
         base.Dispose(disposing);
     }
 
-    public override bool CanRead => false;
-    public override bool CanSeek => false;
-    public override bool CanWrite => true;
-    public override long Length => pos;
-    public override long Position { get => pos; set => throw new NotSupportedException(); }
-    public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
-    public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
-    public override void SetLength(long value) => throw new NotSupportedException();
-    public override int ReadByte() => throw new NotSupportedException();
-    public override void Flush() { }
+    #region 写
+    public void Change2Write()
+    {
+        wr = true;
+    }
+    public override void Write(byte[] bytes, int offset, int count)
+    {
+        wr = true;
+        if (count == 0) return;
+        EnsureCapacity(wPos + count);
+        System.Buffer.BlockCopy(bytes, offset, buffer, wPos, count);
+        wPos += count;
+        if (wPos > length) length = wPos;
+    }
+    public void WriteAt(ushort value, int offset)
+    {
+        wr = true;
+        EnsureCapacity(offset + 2);
+        BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset, 2), value);
+        if (offset + 2 > length) length = offset + 2;
+    }
+    public void WriteAt(int value, int offset)
+    {
+        wr = true;
+        EnsureCapacity(offset + 4);
+        BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(offset, 4), value);
+        if (offset + 4 > length) length = offset + 4;
+    }
+    public override void WriteByte(byte value)
+    {
+        wr = true;
+        EnsureCapacity(wPos + 1);
+        buffer[wPos++] = value;
+        if (wPos > length) length = wPos;
+    }
+    #endregion
+
+    #region 读
+    public void Change2Read()
+    {
+        wr = false;
+    }
+    public override int Read(byte[] _buffer, int offset, int count)
+    {
+        wr = false;
+        if (count == 0) return 0;
+        int available = length - rPos;
+        if (available <= 0) return 0;
+        if (count > available) count = available;
+        System.Buffer.BlockCopy(buffer, rPos, _buffer, offset, count);
+        rPos += count;
+        return count;
+    }
+    public override int ReadByte()
+    {
+        if (rPos >= length) return -1;
+        return buffer[rPos++];
+    }
+    public override long Seek(long offset, SeekOrigin origin)
+    {
+        long pos = origin switch
+        {
+            SeekOrigin.Begin => offset,
+            SeekOrigin.Current => Position + offset,
+            SeekOrigin.End => length + offset,
+        };
+        Position = pos;
+        return pos;
+    }
+    #endregion
 }

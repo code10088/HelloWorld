@@ -53,24 +53,24 @@ public class HTCP : SBase
             }
             while (sendQueue.TryDequeue(out var item))
             {
-                var wb = serialize.Serialize(item.Id, item.Msg);
+                var stream = serialize.Serialize(item.Id, item.Msg);
                 while (true)
                 {
-                    int count = socket.Send(wb.Buffer, wb.Pos);
+                    int count = socket.Send(stream.Buffer, stream.WPos);
                     if (connectMark == false)
                     {
-                        wb.Dispose();
+                        stream.Dispose();
                         return;
                     }
-                    if (count == wb.Pos)
+                    if (count == stream.WPos)
                     {
-                        wb.Dispose();
+                        stream.Dispose();
                         sendRetry = 0;
                         break;
                     }
                     if (sendRetry++ > 0)
                     {
-                        wb.Dispose();
+                        stream.Dispose();
                         Connect();
                         return;
                     }

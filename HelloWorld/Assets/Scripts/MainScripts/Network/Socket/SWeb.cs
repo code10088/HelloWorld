@@ -8,7 +8,7 @@ public class SWeb : SBase
     private new WebSocket socket;
     private int updateId = -1;
     private bool sendMark = false;
-    private byte[] sendBuffer;
+    private BufferStream bs;
 
     public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
     {
@@ -54,8 +54,8 @@ public class SWeb : SBase
         socket?.Close();
         socket = null;
         sendMark = false;
-        sendBuffer?.Return();
-        sendBuffer = null;
+        bs?.Dispose();
+        bs = null;
     }
     #endregion
 
@@ -65,18 +65,15 @@ public class SWeb : SBase
         if (sendMark && sendQueue.TryDequeue(out var item))
         {
             sendMark = false;
-            var wb = serialize.Serialize(item.Id, item.Msg);
-            sendBuffer = BufferPool.Rent(wb.Pos);
-            Buffer.BlockCopy(wb.Buffer, 0, sendBuffer, 0, wb.Pos);
-            wb.Dispose();
-            Send(sendBuffer);
+            bs = serialize.Serialize(item.Id, item.Msg);
+            Send();
         }
     }
-    private void Send(byte[] bytes)
+    private void Send()
     {
         try
         {
-            socket.SendAsync(sendBuffer, SendCallback);
+            socket.SendAsync(bs, bs.WPos, SendCallback);
         }
         catch
         {
@@ -91,8 +88,8 @@ public class SWeb : SBase
         }
         if (result)
         {
-            sendBuffer?.Return();
-            sendBuffer = null;
+            bs?.Dispose();
+            bs = null;
             sendMark = true;
             sendRetry = 0;
             return;
@@ -103,7 +100,7 @@ public class SWeb : SBase
         }
         else
         {
-            Send(sendBuffer);
+            Send();
         }
     }
     #endregion
