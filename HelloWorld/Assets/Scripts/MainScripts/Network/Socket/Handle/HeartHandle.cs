@@ -33,7 +33,7 @@ public class HeartHandle
         if (heartTimer < heartInterval) return;
         heartTimer = 0;
         if (heartCount++ > 0) connect();
-        else send(0, heart);
+        else send(NetMsgId.CSHeart, heart);
     }
     public void RefreshDelay1(ushort id)
     {
@@ -44,7 +44,7 @@ public class HeartHandle
     public void RefreshDelay2(ushort id)
     {
         heartTimer = 0;
-        if (id == NetMsgId.Heart) heartCount = 0;
+        if (id == NetMsgId.SCHeart) heartCount = 0;
         var index = Array.IndexOf(record1, id - 10000);
         if (index < 0) return;
         record1[index] = -1;

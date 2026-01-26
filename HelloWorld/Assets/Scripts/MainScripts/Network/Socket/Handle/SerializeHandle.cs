@@ -39,7 +39,7 @@ public class SerializeHandle
                 if (headPos == headLength)
                 {
                     bodyLength = BitConverter.ToInt32(headBuffer, 0);
-                    if (bodyLength < 0 || bodyLength > 0x2800)
+                    if (bodyLength < 0 || bodyLength > bodyBuffer.Length)
                     {
                         headPos = 0;
                         bodyPos = 0;
@@ -92,31 +92,20 @@ public class BufferStream : Stream
 
     public BufferStream(int size = 256, int woffset = 0, int roffset = 0)
     {
-        capacity = size;
         buffer = BufferPool.Rent(size);
+        capacity = buffer.Length;
         wPos = woffset;
         rPos = roffset;
         length = woffset;
     }
-    private int NextPowerOfTwo(int x)
-    {
-        if (x == 0) return 1;
-        x--;
-        x |= x >> 1;
-        x |= x >> 2;
-        x |= x >> 4;
-        x |= x >> 8;
-        x |= x >> 16;
-        return x + 1;
-    }
     private void EnsureCapacity(int count)
     {
         if (count <= capacity) return;
-        capacity = NextPowerOfTwo(count);
-        var _buffer = BufferPool.Rent(capacity);
+        var _buffer = BufferPool.Rent(count);
         System.Buffer.BlockCopy(buffer, 0, _buffer, 0, length);
-        BufferPool.Return(buffer);
+        buffer?.Return();
         buffer = _buffer;
+        capacity = buffer.Length;
     }
     public override long Position
     {
@@ -152,12 +141,12 @@ public class BufferStream : Stream
     {
         wr = true;
     }
-    public override void Write(byte[] bytes, int offset, int count)
+    public override void Write(byte[] _buffer, int offset, int count)
     {
         wr = true;
         if (count == 0) return;
         EnsureCapacity(wPos + count);
-        System.Buffer.BlockCopy(bytes, offset, buffer, wPos, count);
+        System.Buffer.BlockCopy(_buffer, offset, buffer, wPos, count);
         wPos += count;
         if (wPos > length) length = wPos;
     }

@@ -22,11 +22,11 @@ public class SocketManager : Singletion<SocketManager>
     }
     public void Close()
     {
-        socket.Close();
+        socket?.Close();
     }
     public void Reconnect()
     {
-        socket.Reconnect();
+        socket?.Reconnect();
     }
     public void Send(ushort id, IExtensible msg)
     {

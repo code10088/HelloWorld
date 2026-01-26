@@ -24,7 +24,7 @@ public class HKCP : SBase
     {
         if (await base.Connect() == false) return false;
         socket.Connect(SocketType.Dgram, ProtocolType.Udp);
-        var stream = serialize.Serialize(0, kcp.CS_KcpConnect);
+        var stream = serialize.Serialize(NetMsgId.CSKcpConnect, kcp.CS_KcpConnect);
         while (true)
         {
             //await不受socket超时影响会一直等待
@@ -48,7 +48,7 @@ public class HKCP : SBase
             //await不受socket超时影响会一直等待
             //int count = await socket.ReceiveAsync(receiveBuffer);
             int count = socket.Receive(receiveBuffer);
-            if (count == 6 && BitConverter.ToUInt16(receiveBuffer) == NetMsgId.KcpConnect)
+            if (count == 6 && BitConverter.ToUInt16(receiveBuffer) == NetMsgId.SCKcpConnect)
             {
                 socketevent.Invoke((int)SocketEvent.Connected, 0);
                 var connectId = BitConverter.ToUInt32(receiveBuffer, 2);

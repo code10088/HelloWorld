@@ -2,8 +2,10 @@ using ProtoBuf;
 
 public class NetMsgId
 {
-    public const ushort KcpConnect = 10000;
-    public const ushort Heart = 10001;
+    public const ushort CSKcpConnect = 0;
+    public const ushort CSHeart = 1;
+    public const ushort SCKcpConnect = 10000;
+    public const ushort SCHeart = 10001;
 }
 [ProtoContract]
 public class CS_KcpConnect : IExtensible
