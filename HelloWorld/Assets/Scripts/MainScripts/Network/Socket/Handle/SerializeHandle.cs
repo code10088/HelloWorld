@@ -21,8 +21,8 @@ public class SerializeHandle
     {
         var stream = new BufferStream(256, 6);
         Serializer.Serialize(stream, msg);
-        stream.WriteAt(stream.WPos - 4, 0);
-        stream.WriteAt(id, 4);
+        stream.WriteAt(0, stream.WPos - 4);
+        stream.WriteAt(4, id);
         return stream;
     }
     public bool Deserialize(byte[] buffer, int length)
@@ -150,19 +150,19 @@ public class BufferStream : Stream
         wPos += count;
         if (wPos > length) length = wPos;
     }
-    public void WriteAt(ushort value, int offset)
+    public void WriteAt(int pos, ushort value)
     {
         wr = true;
-        EnsureCapacity(offset + 2);
-        BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset, 2), value);
-        if (offset + 2 > length) length = offset + 2;
+        EnsureCapacity(pos + 2);
+        BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(pos, 2), value);
+        if (pos + 2 > length) length = pos + 2;
     }
-    public void WriteAt(int value, int offset)
+    public void WriteAt(int pos, int value)
     {
         wr = true;
-        EnsureCapacity(offset + 4);
-        BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(offset, 4), value);
-        if (offset + 4 > length) length = offset + 4;
+        EnsureCapacity(pos + 4);
+        BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(pos, 4), value);
+        if (pos + 4 > length) length = pos + 4;
     }
     public override void WriteByte(byte value)
     {
