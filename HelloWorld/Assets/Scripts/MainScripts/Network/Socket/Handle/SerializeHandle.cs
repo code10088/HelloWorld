@@ -191,6 +191,7 @@ public class BufferStream : Stream
     }
     public override int ReadByte()
     {
+        wr = false;
         if (rPos >= length) return -1;
         return buffer[rPos++];
     }
