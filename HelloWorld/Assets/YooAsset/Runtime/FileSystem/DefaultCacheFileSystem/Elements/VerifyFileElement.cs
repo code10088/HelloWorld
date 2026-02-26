@@ -33,9 +33,9 @@ namespace YooAsset
             {
                 Directory.Delete(FileRootPath, true);
             }
-            catch (System.Exception ex)
+            catch (System.Exception e)
             {
-                YooLogger.Warning($"Failed to delete cache bundle folder : {ex}");
+                YooLogger.Warning($"Failed to delete cache bundle folder : {e}");
             }
         }
     }

@@ -134,7 +134,7 @@ namespace YooAsset
                 }
                 else
                 {
-                    throw new YooManifestException($"Invalid bundle ID : {bundleID}. Valid range is 0 to {BundleList.Count - 1}");
+                    throw new Exception($"Invalid bundle id : {bundleID} Asset path : {packageAsset.AssetPath}");
                 }
             }
 
@@ -196,13 +196,11 @@ namespace YooAsset
             if (bundleID >= 0 && bundleID < BundleList.Count)
             {
                 var packageBundle = BundleList[bundleID];
-                if (packageBundle == null)
-                    throw new YooInternalException();
                 return packageBundle;
             }
             else
             {
-                throw new YooManifestException($"Invalid bundle ID : {bundleID}. Valid range is 0 to {BundleList.Count - 1}");
+                throw new Exception($"Invalid bundle id : {bundleID}");
             }
         }
 

@@ -76,7 +76,7 @@ namespace YooAsset
             get
             {
                 if (string.IsNullOrEmpty(_fileName))
-                    throw new YooInternalException("File name can not be null or empty.");
+                    throw new Exception("Should never get here !");
                 return _fileName;
             }
         }
@@ -90,7 +90,7 @@ namespace YooAsset
             get
             {
                 if (string.IsNullOrEmpty(_fileExtension))
-                    throw new YooInternalException("File extension can not be null or empty.");
+                    throw new Exception("Should never get here !");
                 return _fileExtension;
             }
         }

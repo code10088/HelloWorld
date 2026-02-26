@@ -133,7 +133,7 @@ namespace YooAsset
         {
 #if UNITY_EDITOR
             if (Childs.Contains(child))
-                throw new YooInternalException($"The child node {child.GetType().Name} already exists !");
+                throw new Exception($"The child node {child.GetType().Name} already exists !");
 #endif
 
             Childs.Add(child);
@@ -188,19 +188,11 @@ namespace YooAsset
                 // 结束记录
                 DebugEndRecording();
 
-                try
-                {
-                    _callback?.Invoke(this);
-                }
-                catch (Exception ex)
-                {
-                    YooLogger.Error($"Exception in completion callback: {ex}");
-                }
-                finally
-                {
-                    if (_taskCompletionSource != null)
-                        _taskCompletionSource.TrySetResult(null);
-                }
+                //注意：如果完成回调内发生异常，会导致Task无限期等待
+                _callback?.Invoke(this);
+
+                if (_taskCompletionSource != null)
+                    _taskCompletionSource.TrySetResult(null);
             }
         }
 

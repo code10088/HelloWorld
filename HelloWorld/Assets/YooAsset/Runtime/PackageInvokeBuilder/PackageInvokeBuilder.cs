@@ -36,7 +36,7 @@ namespace YooAsset
     {
         public static PackageInvokeBuildResult InvokeBuilder(PackageInvokeBuildParam buildParam)
         {
-            throw new YooPlatformNotSupportedException("This feature is only supported in Unity Editor platform.");
+            throw new System.Exception("Only support in unity editor platform !");
         }
     }
 }
