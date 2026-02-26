@@ -16,6 +16,7 @@ public class UIBase
     private int atlasId = -1;
     private List<int> loadId1;
     private AssetObjectPool loader2;
+
     public void Init(GameObject UIObj, UIType from, UIConfig config, params object[] param)
     {
         this.UIObj = UIObj;

@@ -6,13 +6,13 @@
   <Project Path="HybridCLR.Editor.csproj" />
   <Project Path="HotAssembly.csproj" />
   <Project Path="Unity.Collections.csproj" />
+  <Project Path="Unity.MemoryProfiler.Editor.csproj" />
   <Project Path="Unity.PerformanceTesting.Editor.csproj" />
   <Project Path="Obfuz.Editor.csproj" />
   <Project Path="Unity.Burst.csproj" />
   <Project Path="YooAsset.Editor.csproj" />
   <Project Path="Unity.VisualStudio.Editor.csproj" />
   <Project Path="com.bytedance.ttsdk-editor.csproj" />
-  <Project Path="Unity.MemoryProfiler.Editor.csproj" />
   <Project Path="LeanCommon.csproj" />
   <Project Path="Obfuz4HybridCLR.Editor.csproj" />
   <Project Path="Unity.Searcher.Editor.csproj" />
@@ -25,6 +25,7 @@
   <Project Path="Unity.Burst.CodeGen.csproj" />
   <Project Path="MainAssembly.csproj" />
   <Project Path="LeanTouchPlus.csproj" />
+  <Project Path="IngameDebugConsole.Runtime.csproj" />
   <Project Path="LeanCommonPlus.csproj" />
   <Project Path="Unity.PerformanceTesting.csproj" />
   <Project Path="XCharts.Editor.csproj" />
@@ -45,7 +46,6 @@
   <Project Path="CW.Common.csproj" />
   <Project Path="TTWebGL.csproj" />
   <Project Path="CodeStage.AFPSCounter.Runtime.csproj" />
-  <Project Path="IngameDebugConsole.Runtime.csproj" />
   <Project Path="Kcp.csproj" />
   <Project Path="Unity.AI.Navigation.csproj" />
   <Project Path="Unity.Collections.CodeGen.csproj" />

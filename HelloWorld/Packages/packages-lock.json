@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "4df417e56ad827cd7e70a54662f0e8bab90aafe9"
+      "hash": "fc3d9dcd7dd79bdd4266950f5360d9041314dc1d"
     },
     "com.code-philosophy.luban": {
       "version": "https://github.com/focus-creative-games/luban_unity.git",
@@ -19,7 +19,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "1ff3b5c3249fa600af49a6328a4b7e531ea56243"
+      "hash": "3615bbcce922c2131161d356eddc708a3106477c"
     },
     "com.code-philosophy.obfuz4hybridclr": {
       "version": "https://github.com/focus-creative-games/obfuz4hybridclr.git",
@@ -33,21 +33,21 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "e807380631237f73848dbad6c4465bb88618f512"
+      "hash": "612a4815eb5fbf2d67d4ee734fdb92793f8a1304"
     },
     "com.monitor1394.xcharts": {
       "version": "https://github.com/XCharts-Team/XCharts.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "880a6b188572644d731de15f4bfd3da8538b849a"
+      "hash": "92abee1a6c082ecf07544827748cccfca4594c52"
     },
     "com.qq.weixin.minigame": {
       "version": "https://github.com/wechat-miniprogram/minigame-tuanjie-transform-sdk.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "98c94c1219b8ddf48d2836e946c5d5d16bfd2cca"
+      "hash": "da392637d3a224636d61af0b3da0eda8427d6bc8"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -56,7 +56,7 @@
       "dependencies": {}
     },
     "com.unity.ai.navigation": {
-      "version": "2.0.9",
+      "version": "2.0.11",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -107,7 +107,7 @@
       "dependencies": {}
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.26",
+      "version": "2.0.27",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -123,7 +123,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.memoryprofiler": {
-      "version": "1.1.9",
+      "version": "1.1.11",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -268,13 +268,6 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
-    },
-    "com.yasirkula.ingamedebugconsole": {
-      "version": "https://github.com/yasirkula/UnityIngameDebugConsole.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "192208bb4e01d0fcae194fa9bfa603c3d108d050"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",

@@ -24,7 +24,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="id">场景配置表里的id，可重复加载</param>
+    /// <param name="type"></param>
     /// <param name="open"></param>
     /// <param name="progress"></param>
     /// <param name="param"></param>
@@ -49,7 +49,9 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         while (loadScene.Count > 0 && loadScene[0].State)
         {
             loadScene[0].Init();
+            var t = loadScene[0].Type;
             loadScene.RemoveAt(0);
+            EventManager.Instance.FireEvent(EventType.OpenScene, t);
         }
     }
     public void CloseScene(int id)
@@ -72,6 +74,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
             item.Disable();
             curScene.RemoveAt(tempIndex);
             cacheScene.Add(item);
+            EventManager.Instance.FireEvent(EventType.CloseScene, item.Type);
             return;
         }
     }
@@ -95,6 +98,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
             item.Disable();
             curScene.RemoveAt(tempIndex);
             cacheScene.Add(item);
+            EventManager.Instance.FireEvent(EventType.CloseScene, item.Type);
             return;
         }
     }
