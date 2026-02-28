@@ -369,14 +369,14 @@ namespace SuperScrollView
         }
 
        //fetch or create a new item form the item pool.
-        public LoopGridViewItem NewListViewItem(string itemPrefabName)
+        public LoopGridViewItem NewListViewItem<T>(string itemPrefabName) where T : LoopItemData, new()
         {
             GridItemPool pool = null;
             if (mItemPoolDict.TryGetValue(itemPrefabName, out pool) == false)
             {
                 return null;
             }
-            LoopGridViewItem item = pool.GetItem(mCurCreatingItemIndex);
+            LoopGridViewItem item = pool.GetItem<T>(mCurCreatingItemIndex);
             RectTransform rf = item.GetComponent<RectTransform>();
             rf.SetParent(mContainerTrans);
             rf.localScale = Vector3.one;

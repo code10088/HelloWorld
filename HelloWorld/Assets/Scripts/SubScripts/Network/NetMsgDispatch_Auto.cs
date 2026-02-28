@@ -15,6 +15,7 @@ public class NetMsgId
     public const ushort Message_SCPlayerInfo = 10002;
     public const ushort Message_SCMail = 10100;
     public const ushort Message_SCGetMailReward = 10102;
+    public const ushort Message_SCGetMailAllReward = 10103;
     public const ushort Message_SCDeleteMail = 10104;
 }
 public partial class NetMsgDispatch
@@ -31,6 +32,7 @@ public partial class NetMsgDispatch
                 case NetMsgId.Message_SCPlayerInfo: msg = Serializer.Deserialize<Message.SCPlayerInfo>(memory); break;
                 case NetMsgId.Message_SCMail: msg = Serializer.Deserialize<Message.SCMail>(memory); break;
                 case NetMsgId.Message_SCGetMailReward: msg = Serializer.Deserialize<Message.SCGetMailReward>(memory); break;
+                case NetMsgId.Message_SCGetMailAllReward: msg = Serializer.Deserialize<Message.SCGetMailAllReward>(memory); break;
                 case NetMsgId.Message_SCDeleteMail: msg = Serializer.Deserialize<Message.SCDeleteMail>(memory); break;
             }
             HandleMsg(id, msg);

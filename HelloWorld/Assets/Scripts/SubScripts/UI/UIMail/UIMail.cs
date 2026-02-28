@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class UIMail : UIBase
 {
     private UIMailComponent component = new UIMailComponent();
-    private List<CommonItem_Normal> rewardItems = new List<CommonItem_Normal>();
+    private List<CommonItem> rewardItems = new List<CommonItem>();
     private uint curMailId = 0;
     private int totalCount = 0;
 
@@ -41,7 +41,7 @@ public class UIMail : UIBase
     {
         for (int i = 0; i < rewardItems.Count; i++)
         {
-            CommonItem.Instance.Recycle(rewardItems[i]);
+            CommonItemPool.Instance.Recycle(rewardItems[i]);
         }
         base.OnDestroy();
     }
@@ -101,17 +101,18 @@ public class UIMail : UIBase
         for (int i = 0; i < data.Rewards.Count; i++)
         {
             var reward = data.Rewards[i];
-            CommonItem_Normal rewardItem;
+            CommonItem rewardItem;
             if (i < rewardItems.Count)
             {
                 rewardItem = rewardItems[i];
             }
             else
             {
-                rewardItem = CommonItem.Instance.Get((int)reward.itemId);
+                rewardItem = CommonItemPool.Instance.Get();
+                rewardItem.SetParent(component.rewardContentRectTransform);
                 rewardItems.Add(rewardItem);
             }
-            rewardItem.SetParent(component.rewardContentRectTransform);
+            rewardItem.Refresh((int)reward.itemId);
             rewardItem.SetCount((int)reward.Count);
             rewardItem.SetReceived(data.Status == 2);
             rewardItem.SetActive(true);

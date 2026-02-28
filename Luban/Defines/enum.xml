@@ -9,6 +9,7 @@
 		<var name="UISceneLoading" value="7"/>
 		<var name="UIGuide" value="8"/>
 		<var name="UIMail" value="9"/>
+		<var name="UIShowReward" value="10"/>
     </enum>
 	<enum name="UIWindowType">
         <var name="Normal" value="0"/>

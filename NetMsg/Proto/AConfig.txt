@@ -13,4 +13,5 @@
 10002	= Message.SCPlayerInfo
 10100	= Message.SCMail
 10102	= Message.SCGetMailReward
+10103	= Message.SCGetMailAllReward
 10104	= Message.SCDeleteMail

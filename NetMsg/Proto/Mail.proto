@@ -41,6 +41,9 @@ message SCGetMailReward
 message CSGetMailAllReward
 {
 }
+message SCGetMailAllReward
+{
+}
 message CSDeleteMail
 {
 	uint32 mailId = 1;

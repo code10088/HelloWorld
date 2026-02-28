@@ -479,7 +479,7 @@ GameObject:
   - component: {fileID: 4032161765252897351}
   - component: {fileID: 8536625213140298274}
   m_Layer: 5
-  m_Name: CommonItem_Normal
+  m_Name: CommonItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -523,7 +523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: Assets/Scripts/SubScripts/UI/Base/
-  className: CommonItem_NormalComponent
+  className: CommonItemComponent
 --- !u!1 &6499622040819910972
 GameObject:
   m_ObjectHideFlags: 0

@@ -276,7 +276,7 @@ public class AssetManager : Singletion<AssetManager>
 public class AtlasManager : Singletion<AtlasManager>
 {
     private Dictionary<string, AtlasInfo> atlasInfos = new();
-    private Dictionary<int, List<string>> atlasRefs = new();
+    private Dictionary<int, HashSet<string>> atlasRefs = new();
     private int uniqueId = 0;
 
     public void LoadSprite(ref int id, string atlas, string name, Action<Sprite> action)
@@ -284,13 +284,12 @@ public class AtlasManager : Singletion<AtlasManager>
         bool addref = true;
         if (id > 0)
         {
-            if (atlasRefs[id].Contains(atlas)) addref = false;
-            else atlasRefs[id].Add(atlas);
+            addref = atlasRefs[id].Add(atlas);
         }
         else
         {
             id = ++uniqueId;
-            atlasRefs.Add(id, new List<string> { atlas });
+            atlasRefs.Add(id, new HashSet<string> { atlas });
         }
         if (atlasInfos.TryGetValue(atlas, out var info))
         {

@@ -5,8 +5,8 @@
   <Project Path="Unity.Mathematics.csproj" />
   <Project Path="HybridCLR.Editor.csproj" />
   <Project Path="HotAssembly.csproj" />
-  <Project Path="Unity.Collections.csproj" />
   <Project Path="Unity.MemoryProfiler.Editor.csproj" />
+  <Project Path="Unity.Collections.csproj" />
   <Project Path="Unity.PerformanceTesting.Editor.csproj" />
   <Project Path="Obfuz.Editor.csproj" />
   <Project Path="Unity.Burst.csproj" />

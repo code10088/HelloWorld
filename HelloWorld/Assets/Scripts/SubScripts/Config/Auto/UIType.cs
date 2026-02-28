@@ -22,6 +22,7 @@ namespace cfg
         UISceneLoading = 7,
         UIGuide = 8,
         UIMail = 9,
+        UIShowReward = 10,
     }
 
 } 

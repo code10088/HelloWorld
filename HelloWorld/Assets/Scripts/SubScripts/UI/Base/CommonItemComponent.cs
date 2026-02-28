@@ -1,5 +1,5 @@
 using UnityEngine;
-public partial class CommonItem_NormalComponent
+public partial class CommonItemComponent
 {
     public GameObject obj;
     public GameObject qualityObj = null;

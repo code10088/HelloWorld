@@ -225,13 +225,15 @@ public class UITest : UIBase
     }
     private void ShowCommonItem()
     {
-        var item = CommonItem.Instance.Get(1);
+        var item = CommonItemPool.Instance.Get();
         item.SetParent(component.itemRootObj.transform);
+        item.Refresh(1);
         item.SetActive(true);
         item.SetCount(10);
-        CommonItem.Instance.Recycle(item);
-        item = CommonItem.Instance.Get(1);
+        CommonItemPool.Instance.Recycle(item);
+        item = CommonItemPool.Instance.Get();
         item.SetParent(component.itemRootObj.transform);
+        item.Refresh(1);
         item.SetActive(true);
         item.SetCount(10);
     }

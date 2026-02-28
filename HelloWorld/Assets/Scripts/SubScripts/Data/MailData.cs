@@ -13,6 +13,7 @@ public class MailData : DataBase
     {
         NetMsgDispatch.Instance.Register(NetMsgId.Message_SCMail, SCMail);
         NetMsgDispatch.Instance.Register(NetMsgId.Message_SCGetMailReward, SCGetMailReward);
+        NetMsgDispatch.Instance.Register(NetMsgId.Message_SCGetMailAllReward, SCGetMailAllReward);
         NetMsgDispatch.Instance.Register(NetMsgId.Message_SCDeleteMail, SCDeleteMail);
 
         //测试
@@ -86,15 +87,14 @@ public class MailData : DataBase
     private void SCGetMailReward(IExtensible msg)
     {
         var mail = (SCGetMailReward)msg;
+        var data = all.Find(a => a.mailId == mail.mailId);
+        if (data == null) return;
         if (mail.Status == 0)
         {
-            var data = all.Find(a => a.mailId == mail.mailId);
-            if (data != null)
-            {
-                data.Status = 2;
-                EventManager.Instance.FireEvent(EventType.RefreshMail);
-            }
+            data.Status = 2;
+            EventManager.Instance.FireEvent(EventType.RefreshMail);
         }
+        DataManager.Instance.ShowRewardData.ShowRewards(data.Rewards);
     }
     /// <summary>
     /// 一键领取所有奖励
@@ -109,6 +109,24 @@ public class MailData : DataBase
             if (item.Rewards.Count > 0) item.Status = 2;
         }
         EventManager.Instance.FireEvent(EventType.RefreshMail);
+    }
+    /// <summary>
+    /// 一键领取所有奖励
+    /// </summary>
+    private void SCGetMailAllReward(IExtensible msg)
+    {
+        var mail = (SCGetMailAllReward)msg;
+        List<RewardInfo> rewards = new();
+        foreach (var item in all)
+        {
+            if (item.Status < 2)
+            {
+                item.Status = 2;
+                rewards.AddRange(item.Rewards);
+            }
+        }
+        EventManager.Instance.FireEvent(EventType.RefreshMail);
+        DataManager.Instance.ShowRewardData.ShowRewards(rewards);
     }
     /// <summary>
     /// 单个删除邮件

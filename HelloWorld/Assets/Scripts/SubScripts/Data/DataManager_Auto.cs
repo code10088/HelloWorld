@@ -5,6 +5,7 @@ public partial class DataManager
     private HotUpdateResData hotUpdateResData;
     private MailData mailData;
     private PlayerData playerData;
+    private ShowRewardData showRewardData;
     private TestData testData;
 
     public ActivityData ActivityData
@@ -67,6 +68,18 @@ public partial class DataManager
             return playerData;
         }
     }
+    public ShowRewardData ShowRewardData
+    {
+        get
+        {
+            if (showRewardData == null)
+            {
+                showRewardData = new ShowRewardData();
+                showRewardData.Init();
+            }
+            return showRewardData;
+        }
+    }
     public TestData TestData
     {
         get
@@ -87,6 +100,7 @@ public partial class DataManager
         hotUpdateResData?.Clear();
         mailData?.Clear();
         playerData?.Clear();
+        showRewardData?.Clear();
         testData?.Clear();
     }
 }

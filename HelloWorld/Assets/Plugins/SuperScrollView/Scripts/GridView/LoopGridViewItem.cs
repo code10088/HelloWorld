@@ -28,6 +28,7 @@ namespace SuperScrollView
         int mUserIntData2 = 0;
         string mUserStringData1 = null;
         string mUserStringData2 = null;
+        LoopItemData mItemData = null;
 
         LoopGridViewItem mPrevItem;
         LoopGridViewItem mNextItem;
@@ -171,5 +172,10 @@ namespace SuperScrollView
             set { mNextItem = value; }
         }
 
+        public LoopItemData ItemData
+        {
+            get { return mItemData; }
+            set { mItemData = value; }
+        }
     }
 }
