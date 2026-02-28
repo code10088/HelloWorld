@@ -115,7 +115,7 @@ public class MailData : DataBase
             }
         }
         EventManager.Instance.FireEvent(EventType.RefreshMail);
-        if (rewards.Count > 0) DataManager.Instance.ShowRewardData.ShowRewards(rewards);
+        DataManager.Instance.ShowRewardData.ShowRewards(rewards);
     }
     /// <summary>
     /// 一键领取所有奖励
@@ -133,7 +133,7 @@ public class MailData : DataBase
             }
         }
         EventManager.Instance.FireEvent(EventType.RefreshMail);
-        if (rewards.Count > 0) DataManager.Instance.ShowRewardData.ShowRewards(rewards);
+        DataManager.Instance.ShowRewardData.ShowRewards(rewards);
     }
     /// <summary>
     /// 单个删除邮件

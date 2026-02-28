@@ -18,6 +18,10 @@ public class ShowRewardData : DataBase
 
     public void ShowRewards(List<RewardInfo> rewards)
     {
+        if (rewards == null || rewards.Count == 0)
+        {
+            return;
+        }
         ShowRewardStruct[] temp = new ShowRewardStruct[rewards.Count];
         for (int i = 0; i < rewards.Count; i++)
         {
