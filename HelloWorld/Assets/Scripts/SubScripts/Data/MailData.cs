@@ -79,6 +79,7 @@ public class MailData : DataBase
         var data = all.Find(a => a.mailId == id);
         data.Status = 2;
         EventManager.Instance.FireEvent(EventType.RefreshMail);
+        DataManager.Instance.ShowRewardData.ShowRewards(data.Rewards);
     }
     /// <summary>
     /// 单个领取奖励
@@ -104,11 +105,17 @@ public class MailData : DataBase
         SocketManager.Instance.Send(NetMsgId.Message_CSGetMailAllReward, new CSGetMailAllReward());
 
         //测试
+        List<RewardInfo> rewards = new();
         foreach (var item in all)
         {
-            if (item.Rewards.Count > 0) item.Status = 2;
+            if (item.Status < 2 && item.Rewards.Count > 0)
+            {
+                item.Status = 2;
+                rewards.AddRange(item.Rewards);
+            }
         }
         EventManager.Instance.FireEvent(EventType.RefreshMail);
+        DataManager.Instance.ShowRewardData.ShowRewards(rewards);
     }
     /// <summary>
     /// 一键领取所有奖励
@@ -119,7 +126,7 @@ public class MailData : DataBase
         List<RewardInfo> rewards = new();
         foreach (var item in all)
         {
-            if (item.Status < 2)
+            if (item.Status < 2 && item.Rewards.Count > 0)
             {
                 item.Status = 2;
                 rewards.AddRange(item.Rewards);
