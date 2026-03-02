@@ -1,10 +1,6 @@
 /HelloWorld/.utmp
 /HelloWorld/.vs
 /HelloWorld/Bundles
-/HelloWorld/HotAssembly/.vs
-/HelloWorld/HotAssembly/bin
-/HelloWorld/HotAssembly/obj
-/HelloWorld/HotAssembly/*.csproj
 /HelloWorld/HybridCLRData
 /HelloWorld/Library
 !/HelloWorld/Library/BuildSettings.asset
@@ -20,6 +16,7 @@
 /HelloWorld/yoo
 /HelloWorld/*.csproj
 /HelloWorld/*.sln
+/HelloWorld/*.slnx
 
 /Build/Android
 /Build/iOS
