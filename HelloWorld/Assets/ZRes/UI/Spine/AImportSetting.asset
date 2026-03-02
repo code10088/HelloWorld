@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: AImportSetting
   m_EditorClassIdentifier: 
   MatchList:
-  - ZRes/Scene/CommonTexture
-  - ZRes/Scene/Effect/CommonTexture
-  - ZRes/Scene/Spine
+  - ZRes/UI/Spine
   IgnoreList: []
   TextureType: 0
   NPOTScale: 1

@@ -22,6 +22,7 @@
   <Project Path="Unity.AI.Navigation.Editor.ConversionSystem.csproj" />
   <Project Path="XCharts.Runtime.csproj" />
   <Project Path="Luban.Runtime.csproj" />
+  <Project Path="spine-csharp.csproj" />
   <Project Path="Unity.Burst.CodeGen.csproj" />
   <Project Path="MainAssembly.csproj" />
   <Project Path="LeanTouchPlus.csproj" />
@@ -37,7 +38,9 @@
   <Project Path="Unity.Performance.Profile-Analyzer.Editor.csproj" />
   <Project Path="Wx.csproj" />
   <Project Path="SuperScrollView_Runtime.csproj" />
+  <Project Path="spine-unity.csproj" />
   <Project Path="LeanTouch.csproj" />
+  <Project Path="spine-unity-editor.csproj" />
   <Project Path="Obfuz.Runtime.csproj" />
   <Project Path="Unity.AI.Navigation.Editor.csproj" />
   <Project Path="TTLitJson.csproj" />

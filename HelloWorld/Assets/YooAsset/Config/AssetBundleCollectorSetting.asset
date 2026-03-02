@@ -126,6 +126,14 @@ MonoBehaviour:
         FilterRuleName: CollectUserData
         AssetTags: 
         UserData: .mat
+      - CollectPath: Assets/ZRes/Scene/Spine
+        CollectorGUID: 8a73dcd03fcc3bd40bf316d677ff3adf
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackTopDirectory
+        FilterRuleName: CollectUserData
+        AssetTags: 
+        UserData: .asset
       - CollectPath: Assets/ZRes/Shader
         CollectorGUID: e7fa2046494f54d4dad9ddafb9835121
         CollectorType: 0
@@ -198,6 +206,14 @@ MonoBehaviour:
         FilterRuleName: CollectUserData
         AssetTags: 
         UserData: .prefab
+      - CollectPath: Assets/ZRes/UI/Spine
+        CollectorGUID: 8a73dcd03fcc3bd40bf316d677ff3adf
+        CollectorType: 0
+        AddressRuleName: AddressDisable
+        PackRuleName: PackTopDirectory
+        FilterRuleName: CollectUserData
+        AssetTags: 
+        UserData: .asset
     - GroupName: Debug
       GroupDesc: 
       AssetTags: 
