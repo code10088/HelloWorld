@@ -133,7 +133,7 @@ MonoBehaviour:
         PackRuleName: PackTopDirectory
         FilterRuleName: CollectUserData
         AssetTags: 
-        UserData: .asset
+        UserData: SkeletonData.asset
       - CollectPath: Assets/ZRes/Shader
         CollectorGUID: e7fa2046494f54d4dad9ddafb9835121
         CollectorType: 0
@@ -213,7 +213,7 @@ MonoBehaviour:
         PackRuleName: PackTopDirectory
         FilterRuleName: CollectUserData
         AssetTags: 
-        UserData: .asset
+        UserData: SkeletonData.asset
     - GroupName: Debug
       GroupDesc: 
       AssetTags: 

@@ -55,6 +55,12 @@
       },
       "hash": "43e530611d30c044a8bc16eba0486140e4dc2ce0"
     },
+    "com.kyrylokuzyk.primetween": {
+      "version": "file:../Assets/Plugins/PrimeTween/internal/com.kyrylokuzyk.primetween.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {}
+    },
     "com.monitor1394.xcharts": {
       "version": "https://github.com/XCharts-Team/XCharts.git",
       "depth": 0,

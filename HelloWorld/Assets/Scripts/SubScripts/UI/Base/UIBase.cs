@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityExtensions.Tween;
 
 public class UIBase
 {
@@ -59,8 +58,8 @@ public class UIBase
     protected virtual void PlayEnableAni()
     {
         SetTrue();
-        TweenPlayer tp = UIObj.GetComponent<TweenPlayer>();
-        if (tp) tp.SetForwardDirectionAndEnabled();
+        var ac = UIObj.GetComponent<AnimationController>();
+        if (ac) ac.Play("Open");
     }
     public virtual void OnDisable()
     {
@@ -68,16 +67,9 @@ public class UIBase
     }
     protected virtual void PlayDisableAni()
     {
-        TweenPlayer tp = UIObj.GetComponent<TweenPlayer>();
-        if (tp)
-        {
-            tp.SetBackDirectionAndEnabled();
-            tp.OnBackArrived = SetFalse;
-        }
-        else
-        {
-            SetFalse();
-        }
+        var ac = UIObj.GetComponent<AnimationController>();
+        if (ac) ac.Play("Close", 0, SetFalse);
+        else SetFalse();
     }
     protected void SetTrue()
     {

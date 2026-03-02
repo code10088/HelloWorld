@@ -163,7 +163,6 @@ GameObject:
   - component: {fileID: 8456132880688836655}
   - component: {fileID: 2291949672352292986}
   - component: {fileID: 7013088764165475755}
-  - component: {fileID: 3836106667183102359}
   - component: {fileID: 1008856141902637505}
   m_Layer: 5
   m_Name: Item
@@ -244,86 +243,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   path: Assets/Scripts/SubScripts/UI/Auto/
   className: UICommonTipsItem
---- !u!114 &3836106667183102359
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4506988812419148411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0fdc95d9dfe9cf54398eecb6868b0335, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _updateMode: 0
-  _foldoutControl: 1
-  _foldoutEvents: 0
-  _duration: 0.2
-  timeMode: 1
-  wrapMode: 0
-  arrivedAction: 3
-  sampleOnAwake: 1
-  _animations:
-  - rid: 6603607759915581441
-  - rid: 6603607759915581442
-  references:
-    version: 2
-    RefIds:
-    - rid: 6603607759915581441
-      type: {class: TweenTransformEulerAngles, ns: UnityExtensions.Tween, asm: UITween}
-      data:
-        enabled: 1
-        _minNormalizedTime: 0
-        _maxNormalizedTime: 1
-        _holdBeforeStart: 1
-        _holdAfterEnd: 1
-        _interpolator:
-          type: 0
-          strength: 0
-          customCurve:
-            serializedVersion: 2
-            m_Curve: []
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-        _foldout: 1
-        _comment: 
-        from: {x: 60, y: 0, z: 0}
-        to: {x: -0, y: 0, z: 0}
-        target: {fileID: 8651744152131430542}
-        toggle:
-          x: 1
-          y: 0
-          z: 0
-        space: 1
-    - rid: 6603607759915581442
-      type: {class: TweenTransformPosition, ns: UnityExtensions.Tween, asm: UITween}
-      data:
-        enabled: 1
-        _minNormalizedTime: 0
-        _maxNormalizedTime: 1
-        _holdBeforeStart: 1
-        _holdAfterEnd: 1
-        _interpolator:
-          type: 0
-          strength: 0
-          customCurve:
-            serializedVersion: 2
-            m_Curve: []
-            m_PreInfinity: 2
-            m_PostInfinity: 2
-            m_RotationOrder: 4
-        _foldout: 1
-        _comment: 
-        from: {x: 0, y: 340, z: 0}
-        to: {x: 0, y: 340, z: -100}
-        target: {fileID: 8651744152131430542}
-        toggle:
-          x: 0
-          y: 0
-          z: 1
-        space: 1
 --- !u!114 &1008856141902637505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -338,7 +257,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   exportComponent:
   - {fileID: 0}
-  - {fileID: 3836106667183102359}
 --- !u!1 &6141825163329895830
 GameObject:
   m_ObjectHideFlags: 0
