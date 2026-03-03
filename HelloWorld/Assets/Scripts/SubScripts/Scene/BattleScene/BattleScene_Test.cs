@@ -26,8 +26,8 @@ public class BattleScene_Test : BattleScene
         Driver.Instance.Remove(coroutineId);
     }
 
-    private IEnumerator<Coroutine> Start()
+    private IEnumerator<ICoroutine> Start()
     {
-        yield return new WaitForFrame(1);
+        yield return new WaitFrame(1);
     }
 }

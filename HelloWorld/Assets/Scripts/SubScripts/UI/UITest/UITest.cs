@@ -256,12 +256,12 @@ public class UITest : UIBase
         Driver.Instance.StartCoroutine(a);
         GameDebug.Log(1);
     }
-    private IEnumerator<Coroutine> _TestCoroutine()
+    private IEnumerator<ICoroutine> _TestCoroutine()
     {
         GameDebug.Log(0);
-        yield return new WaitForFrame(1);
+        yield return new WaitFrame(1);
         GameDebug.Log(2);
-        yield return new WaitForSeconds(1);
+        yield return new WaitSeconds(1);
         GameDebug.Log(3);
     }
     public TriggerManager triggerManager = new TriggerManager();

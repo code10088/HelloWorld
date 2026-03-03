@@ -416,15 +416,15 @@ public class Driver : MonoSingletion<Driver>
     #endregion
 }
 #region Coroutine
-public interface Coroutine : IEnumerator { }
-public class WaitForSeconds : Coroutine
+public interface ICoroutine : IEnumerator { }
+public class WaitSeconds : ICoroutine
 {
     private float time = 0;
     private float _time = 0;
 
     public object Current => _time;
 
-    public WaitForSeconds(float t)
+    public WaitSeconds(float t)
     {
         time = t;
     }
@@ -439,14 +439,14 @@ public class WaitForSeconds : Coroutine
         _time = 0;
     }
 }
-public class WaitForFrame : Coroutine
+public class WaitFrame : ICoroutine
 {
     private int count = 0;
     private int _count = 0;
 
     public object Current => _count;
 
-    public WaitForFrame(int c)
+    public WaitFrame(int c)
     {
         count = c;
     }
