@@ -20,7 +20,8 @@ public partial class ConfigManager : Singletion<ConfigManager>
         loaders = new int[fis.Length];
         for (int i = 0; i < fis.Length; i++)
         {
-            if (fis[i].FieldType.Namespace != "cfg") continue;
+            if (string.IsNullOrEmpty(fis[i].FieldType.Namespace)) continue;
+            if (fis[i].FieldType.Namespace.StartsWith("System")) continue;
             if (fis[i].Name.StartsWith("tblanguage")) continue;
 
             total++;
