@@ -7,7 +7,7 @@
     </type>
     <type name="*" obName="0" classType="class" inherit="UIBase,SceneBase">
     </type>
-    <type name="cfg.Tables" obName="0" classType="class" applyToMembers="*">
+    <type name="ConfigManager" obName="0" classType="class" applyToMembers="*">
     </type>
   </assembly>
 </obfuz>
