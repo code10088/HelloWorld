@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "fc3d9dcd7dd79bdd4266950f5360d9041314dc1d"
+      "hash": "4feac30cb2e105992986c737f7f54992b8300e1a"
     },
     "com.code-philosophy.luban": {
       "version": "https://github.com/focus-creative-games/luban_unity.git",
@@ -19,14 +19,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "3615bbcce922c2131161d356eddc708a3106477c"
+      "hash": "7b06f0fed8675c31cbae9760a93e7deec0c0a05c"
     },
     "com.code-philosophy.obfuz4hybridclr": {
       "version": "https://github.com/focus-creative-games/obfuz4hybridclr.git",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "c9214b2cf9869cf93e060442ec12b9fa828d98d5"
+      "hash": "6277e75ce11de86b765d4bd75d4968d1bcaa2eaa"
     },
     "com.cysharp.memorypack": {
       "version": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/MemoryPack.Unity",
@@ -40,7 +40,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "43e530611d30c044a8bc16eba0486140e4dc2ce0"
+      "hash": "4b72bb4a54d6b7956cc339e010e18f5e11f61a62"
     },
     "com.esotericsoftware.spine.spine-unity": {
       "version": "https://github.com/EsotericSoftware/spine-runtimes.git?path=spine-unity/Assets/Spine#4.2",
@@ -53,7 +53,7 @@
         "com.unity.modules.physics2d": "1.0.0",
         "com.esotericsoftware.spine.spine-csharp": "4.2.0"
       },
-      "hash": "43e530611d30c044a8bc16eba0486140e4dc2ce0"
+      "hash": "4b72bb4a54d6b7956cc339e010e18f5e11f61a62"
     },
     "com.kyrylokuzyk.primetween": {
       "version": "file:../Assets/Plugins/PrimeTween/internal/com.kyrylokuzyk.primetween.tgz",
