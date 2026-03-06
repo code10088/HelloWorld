@@ -90,7 +90,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 0}
   - {fileID: 815990896154327926}
 --- !u!114 &815990896154327926
@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8635628134895327354}
   - {fileID: 1895440665357932638}
   - {fileID: 5092781263134119039}
@@ -384,15 +384,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -523,8 +525,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8764031000229441226}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: db1d2a3fa4b58224983905bf42a43851, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/UIGuide/
-  className: UIGuideComponent
+  maskRectTransform: {fileID: 8635628134895327354}
+  maskImage: {fileID: 1895440665357932638}
+  maskUIButton: {fileID: 5092781263134119039}
+  skipBtnGameObject: {fileID: 2823740088563428327}
+  skipBtnUIButton: {fileID: 815990896154327926}

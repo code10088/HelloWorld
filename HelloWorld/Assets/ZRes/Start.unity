@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 33315354}
 --- !u!114 &33315354
 MonoBehaviour:
@@ -567,11 +567,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 208097515}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 0f9b5777a1f0d494591915086e371581, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/MainScripts/HotUpdateCode/
-  className: UIHotUpdateCodeComponent
+  sliderSlider: {fileID: 33315354}
+  tipsTextMeshProUGUI: {fileID: 2110661850}
+  commonBoxGameObject: {fileID: 2762404508644764666}
+  titleTextMeshProUGUI: {fileID: 86593165455586387}
+  contentTextMeshProUGUI: {fileID: 7092958764735292720}
+  sureButton: {fileID: 4685802335146462525}
+  cancelButton: {fileID: 5573494846107492298}
 --- !u!114 &208097518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -647,6 +652,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b545150268a8d8848825dd84db727414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  comp: {fileID: 0}
 --- !u!1 &439518325
 GameObject:
   m_ObjectHideFlags: 0
@@ -1192,7 +1198,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 22400762, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.0000076293945
+      value: -0.000022888184
       objectReference: {fileID: 0}
     - target: {fileID: 22426080, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2329,7 +2335,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 2110661850}
 --- !u!114 &2110661850
 MonoBehaviour:
@@ -2481,7 +2487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 7092958764735292720}
 --- !u!114 &86593165455586387
 MonoBehaviour:
@@ -2594,7 +2600,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 4685802335146462525}
 --- !u!114 &502207314610864127
 MonoBehaviour:
@@ -2888,7 +2894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 86593165455586387}
 --- !u!1 &2312432898071718358
 GameObject:
@@ -2967,7 +2973,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 0}
 --- !u!114 &3337026319641281611
 MonoBehaviour:
@@ -3431,7 +3437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 5573494846107492298}
 --- !u!1 &8026450473107659026
 GameObject:

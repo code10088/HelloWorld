@@ -322,7 +322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 420085671909688799}
 --- !u!1 &3680239838978687203
 GameObject:
@@ -414,7 +414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8338969855504301586}
 --- !u!114 &8338969855504301586
 MonoBehaviour:
@@ -509,7 +509,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8790202256221774374}
 --- !u!1 &5131363194794947262
 GameObject:
@@ -599,7 +599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8002334317187325790}
 --- !u!1 &8164031344546473252
 GameObject:
@@ -805,11 +805,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8764031000229441226}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 8e2ada6a3198c2d43b0616e68d30eb04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/UIShowReward/
-  className: UIShowRewardComponent
+  bgRectTransform: {fileID: 8002334317187325790}
+  loopLoopGridView: {fileID: 420085671909688799}
+  rewardItemGameObject: {fileID: 9053656778166197579}
+  getBtnUIButton: {fileID: 8338969855504301586}
 --- !u!1 &9053656778166197579
 GameObject:
   m_ObjectHideFlags: 0
@@ -899,11 +901,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9053656778166197579}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: aedd22c9bcef8c646be3cf9c672dba37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/UIShowReward/
-  className: UIShowRewardItemComponent
+  rewardItemGameObject: {fileID: 9053656778166197579}
+  rewardRectTransform: {fileID: 8790202256221774374}
 --- !u!114 &5757125913665292360
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -916,10 +918,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
-  - {fileID: 2562234452242225964}
-  - {fileID: 8140544806881063988}
-  - {fileID: 5017589765423109124}
+  components:
+  - {fileID: 0}
 --- !u!114 &8140544806881063988
 MonoBehaviour:
   m_ObjectHideFlags: 0

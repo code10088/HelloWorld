@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 7164480845228940322}
 --- !u!1 &178785132968742612
 GameObject:
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 5489140286745424125}
 --- !u!1 &272724444402226090
 GameObject:
@@ -359,7 +359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 3809015828851423097}
 --- !u!1 &577555598064224072
 GameObject:
@@ -459,7 +459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8134067998350956716}
 --- !u!1 &750249538879250666
 GameObject:
@@ -710,7 +710,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8320405536669812237}
 --- !u!1 &1079523797542906611
 GameObject:
@@ -1208,7 +1208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 5229621894763442838}
 --- !u!1 &1442544398075656749
 GameObject:
@@ -1610,7 +1610,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 2974082588488103987}
 --- !u!1 &1609757417750243634
 GameObject:
@@ -2012,7 +2012,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 6236254258289253920}
 --- !u!1 &1810633843627844877
 GameObject:
@@ -2451,7 +2451,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 228420283531705823}
 --- !u!1 &2812511735010996246
 GameObject:
@@ -2619,7 +2619,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 815990896154327926}
 --- !u!114 &815990896154327926
 MonoBehaviour:
@@ -2916,7 +2916,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 7432203675526892696}
 --- !u!1 &3234096568686431231
 GameObject:
@@ -3016,7 +3016,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 712251614520626529}
 --- !u!1 &3525509153604043996
 GameObject:
@@ -3192,7 +3192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 7748138246746401338}
 --- !u!1 &3806961719995306391
 GameObject:
@@ -3443,7 +3443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 335021340328149720}
 --- !u!1 &4179015129364885515
 GameObject:
@@ -3555,7 +3555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 3862705386637426181}
 --- !u!1 &4418929783039627187
 GameObject:
@@ -3867,7 +3867,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 5874808035660475050}
 --- !u!1 &4655145774893459714
 GameObject:
@@ -4178,7 +4178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 3811023824806616588}
 --- !u!1 &4986067168041328940
 GameObject:
@@ -4747,7 +4747,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8822710421849029157}
 --- !u!1 &5767218201630117922
 GameObject:
@@ -4896,7 +4896,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 1851843247088224954}
 --- !u!1 &5989293459553865935
 GameObject:
@@ -5596,7 +5596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 4410834024491626487}
 --- !u!1 &6897379424326676664
 GameObject:
@@ -6057,7 +6057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 4905615883630815254}
 --- !u!1 &7655558001872726919
 GameObject:
@@ -6147,7 +6147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8878064818236106684}
 --- !u!1 &7782682962387647663
 GameObject:
@@ -7562,11 +7562,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 8764031000229441226}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 6a6ad357ac51a4b45a51935a94175d39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/UISetting/
-  className: UISettingComponent
+  bgRectTransform: {fileID: 8878064818236106684}
+  closeBtnUIButton: {fileID: 815990896154327926}
+  qualitySettings0Toggle: {fileID: 8134067998350956716}
+  qualitySettings1Toggle: {fileID: 228420283531705823}
+  qualitySettings2Toggle: {fileID: 4410834024491626487}
+  frameRate0Toggle: {fileID: 5874808035660475050}
+  frameRate1Toggle: {fileID: 4905615883630815254}
+  frameRate2Toggle: {fileID: 5489140286745424125}
+  screenResolution0Toggle: {fileID: 712251614520626529}
+  screenResolution1Toggle: {fileID: 8320405536669812237}
+  screenResolution2Toggle: {fileID: 3862705386637426181}
+  masterTextureLimit0Toggle: {fileID: 3809015828851423097}
+  antiLv0Toggle: {fileID: 6236254258289253920}
+  shadow0Toggle: {fileID: 3316653787463681591}
+  softShadow0Toggle: {fileID: 7432203675526892696}
+  shadowLv0Toggle: {fileID: 8822710421849029157}
+  shadowLv1Toggle: {fileID: 2974082588488103987}
+  shadowLv2Toggle: {fileID: 7164480845228940322}
+  hDR0Toggle: {fileID: 335021340328149720}
+  postProcess0Toggle: {fileID: 7748138246746401338}
+  graphicsQualityLv0Toggle: {fileID: 5229621894763442838}
+  graphicsQualityLv1Toggle: {fileID: 3811023824806616588}
+  graphicsQualityLv2Toggle: {fileID: 1851843247088224954}
 --- !u!1 &8785119867214501394
 GameObject:
   m_ObjectHideFlags: 0
@@ -7794,7 +7815,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 3316653787463681591}
 --- !u!1 &8864590074205711553
 GameObject:

@@ -248,7 +248,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
                 baseObj.SetActive(true);
                 Type t = System.Type.GetType(config.Name);
                 baseScene = Activator.CreateInstance(t) as SceneBase;
-                baseScene.InitScene(baseObj, id, from, config, param);
+                baseScene.Init(baseObj, id, from, config, param);
                 Instance.curScene.Add(this);
                 OpenActionInvoke(true);
             }

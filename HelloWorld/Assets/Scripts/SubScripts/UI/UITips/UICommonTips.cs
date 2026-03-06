@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class UICommonTips : UIBase
 {
-    private UICommonTipsComponent component = new UICommonTipsComponent();
+    private UICommonTipsComponent comp;
     private static Queue<string> commonTipsQueue = new Queue<string>();
     private static Queue<UICommonTipsItem> items = new Queue<UICommonTipsItem>();
 
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
+        comp = component as UICommonTipsComponent;
         var item = new UICommonTipsItem();
-        item.Init(component.itemObj);
+        item.Init(comp.itemGameObject);
         items.Enqueue(item);
         for (int i = 0; i < 5; i++)
         {
-            var obj = Instantiate(component.itemObj, UIObj.transform);
+            var obj = Instantiate(comp.itemGameObject, UIObj.transform);
             var rt = obj.GetComponent<RectTransform>();
             rt.anchoredPosition = new Vector2(0, -200);
             item = new UICommonTipsItem();
@@ -55,20 +55,25 @@ public class UICommonTips : UIBase
         items.Enqueue(item);
     }
 }
-public partial class UICommonTipsItem
+public class UICommonTipsItem
 {
+    private UICommonTipsItemComponent comp;
     private int timerId = -1;
+    public void Init(GameObject obj)
+    {
+        comp = obj.GetComponent<UICommonTipsItemComponent>();
+    }
     public void Show(string str)
     {
-        obj.SetActive(true);
-        obj.transform.SetAsLastSibling();
-        contentTextMeshProUGUI.SetText(str);
+        comp.gameObject.SetActive(true);
+        comp.gameObject.transform.SetAsLastSibling();
+        comp.contentTextMeshProUGUI.SetText(str);
         if (timerId < 0) timerId = Driver.Instance.StartTimer(1, finish: Finish);
     }
     private void Finish()
     {
         timerId = -1;
-        obj.SetActive(false);
+        comp.gameObject.SetActive(false);
         UICommonTips.Recycle(this);
     }
 }

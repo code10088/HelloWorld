@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 3324553788605102108}
 --- !u!1 &3285489691680783532
 GameObject:
@@ -213,15 +213,17 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 1
+  m_ActiveFontFeatures: 6e72656b
   m_enableExtraPadding: 0
   checkPaddingRequired: 0
   m_isRichText: 1
+  m_EmojiFallbackSupport: 1
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
@@ -251,7 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8609970801006545599}
 --- !u!1 &4245330856243653740
 GameObject:
@@ -442,11 +444,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 5002353271530695791}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 6e8686aeb0d86524c98a26698ee937f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/UISceneLoading/
-  className: UISceneLoadingComponent
+  bgRectTransform: {fileID: 2993591471575906317}
+  bgUIRawImage: {fileID: 7196294017450975129}
+  sliderSlider: {fileID: 3324553788605102108}
+  tipsTextMeshProUGUI: {fileID: 8609970801006545599}
 --- !u!1 &5296364445460159186
 GameObject:
   m_ObjectHideFlags: 0
@@ -616,7 +620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 2993591471575906317}
   - {fileID: 7196294017450975129}
 --- !u!114 &7196294017450975129
@@ -646,4 +650,3 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
-  loadId: -1

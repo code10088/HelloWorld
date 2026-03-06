@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 
 public class BattleScene_Test : BattleScene
 {
-    private BattleScene_TestComponent component = new BattleScene_TestComponent();
     private int coroutineId = -1;
 
     protected override void Init()
     {
         base.Init();
-        component.Init(SceneObj);
     }
 
     public override void OnEnable(params object[] param)

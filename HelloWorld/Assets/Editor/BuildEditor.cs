@@ -1,18 +1,20 @@
-using UnityEditor;
-using UnityEngine;
-using Newtonsoft.Json;
-using System.IO;
-using System;
-using System.Collections.Generic;
 using COSXML;
 using COSXML.Auth;
 using COSXML.Model.Object;
-using YooAsset.Editor;
-using System.Text;
-using YooAsset;
-using Obfuz4HybridCLR;
-using Obfuz.Settings;
 using HybridCLR.Editor.Commands;
+using LibGit2Sharp;
+using Newtonsoft.Json;
+using Obfuz.Settings;
+using Obfuz4HybridCLR;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
+using YooAsset;
+using YooAsset.Editor;
 
 #if WEIXINMINIGAME
 using WeChatWASM;
@@ -164,13 +166,16 @@ public class BuildEditor
 
         try
         {
+            ProcessAssets();
             ScriptableBuildPipeline pipeline = new ScriptableBuildPipeline();
             var buildResult = pipeline.Run(buildParameters, true);
+            RevertAssets();
             if (buildResult.Success) GameDebug.Log("build success");
             else throw new Exception($"build fail:{buildResult.ErrorInfo}");
         }
         catch (Exception e)
         {
+            RevertAssets();
             GameDebug.LogError(e.Message);
             throw e;
         }
@@ -184,6 +189,44 @@ public class BuildEditor
             var config = JsonConvert.DeserializeObject<VersionConfig>(str);
             appversion = config.AppVersions[0];
             resversion = config.ResVersions[0];
+        }
+    }
+    private static List<string> processAssets;
+    private static void ProcessAssets()
+    {
+        processAssets = new List<string>();
+        var target = "Assets/Scripts/MainScripts/Tools/ExportComponent/MarkComponent.cs";
+        var guids = AssetDatabase.FindAssets("t:prefab", new string[] { "Assets/ZRes" });
+        foreach (var guid in guids)
+        {
+            var path = AssetDatabase.GUIDToAssetPath(guid);
+            var depends = AssetDatabase.GetDependencies(path, false);
+            foreach (var item in depends)
+            {
+                if (item.Length == target.Length && item[50] == target[50])
+                {
+                    var obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                    var components = obj.GetComponentsInChildren<MarkComponent>(true);
+                    foreach (var component in components) GameObject.DestroyImmediate(component, true);
+                    EditorUtility.SetDirty(obj);
+                    processAssets.Add(path);
+                    continue;
+                }
+            }
+        }
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+    }
+    private static void RevertAssets()
+    {
+        if (processAssets.Count > 0)
+        {
+            var paths = processAssets.Select(a => Path.GetFullPath(a)).ToArray();
+            var root = Directory.GetParent(Environment.CurrentDirectory);
+            var repository = new Repository(root.FullName);
+            repository.CheckoutPaths(repository.Head.FriendlyName, paths, new CheckoutOptions { CheckoutModifiers = CheckoutModifiers.Force });
+            repository.Dispose();
+            AssetDatabase.Refresh();
         }
     }
 

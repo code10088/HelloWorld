@@ -1,12 +1,4 @@
-using UnityEngine;
-public partial class UISubTestComponent
+public class UISubTestComponent : ComponentMark
 {
-    public GameObject obj;
-    public UIButton buttonUIButton = null;
-    public void Init(GameObject obj)
-    {
-        this.obj = obj;
-        ExportComponent[] allData = obj.GetComponentsInChildren<ExportComponent>(true);
-        buttonUIButton = allData[0].exportComponent[0] as UIButton;
-    }
+    public UIButton buttonUIButton;
 }

@@ -71,7 +71,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 392475982783516489}
-  - component: {fileID: 8422382113264368914}
   m_Layer: 0
   m_Name: BattleScene_Test
   m_TagString: Untagged
@@ -97,20 +96,6 @@ Transform:
   - {fileID: 3049046653899828657}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8422382113264368914
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6729683569169287116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/Scene/BattleScene/
-  className: BattleScene_TestComponent
 --- !u!1 &7091863500351045863
 GameObject:
   m_ObjectHideFlags: 0

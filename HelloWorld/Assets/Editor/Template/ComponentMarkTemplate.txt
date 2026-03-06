@@ -1,0 +1,6 @@
+public class {{ class_name }} : ComponentMark
+{
+    {{~ for component in components ~}}
+    public {{ component.component_type }} {{ component.field_name }};
+    {{~ end ~}}
+}

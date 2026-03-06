@@ -8,10 +8,11 @@ public class SceneBase
     protected int id;
     protected SceneType from;
     protected SceneConfig config;
+    protected ComponentMark component;
     private List<int> loadId1;
     private AssetObjectPool loader2;
 
-    public virtual void InitScene(GameObject _SceneObj, int _id, SceneType _from, SceneConfig _config, params object[] param)
+    public void Init(GameObject _SceneObj, int _id, SceneType _from, SceneConfig _config, params object[] param)
     {
         SceneObj = _SceneObj;
         id = _id;
@@ -22,7 +23,7 @@ public class SceneBase
     }
     protected virtual void Init()
     {
-
+        component = SceneObj.GetComponent<ComponentMark>();
     }
     public virtual void OnEnable(params object[] param)
     {

@@ -4,18 +4,18 @@ using UnityEngine;
 
 public class UIShowReward : UIBase
 {
-    private UIShowRewardComponent component = new UIShowRewardComponent();
+    private UIShowRewardComponent comp;
     private int totalCount = 0;
     private HashSet<UIShowRewardItem> rewardItems = new HashSet<UIShowRewardItem>();
 
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
-        component.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
-        component.getBtnUIButton.onClick.AddListener(OnClickGetReward);
+        comp = component as UIShowRewardComponent;
+        comp.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
+        comp.getBtnUIButton.onClick.AddListener(OnClickGetReward);
         totalCount = DataManager.Instance.ShowRewardData.Current.Length;
-        component.loopLoopGridView.InitGridView(totalCount, OnGetItemByIndex);
+        comp.loopLoopGridView.InitGridView(totalCount, OnGetItemByIndex);
     }
     public override void OnEnable(params object[] param)
     {
@@ -23,13 +23,13 @@ public class UIShowReward : UIBase
 
         if (totalCount == DataManager.Instance.ShowRewardData.Current.Length)
         {
-            component.loopLoopGridView.RefreshAllShownItem();
+            comp.loopLoopGridView.RefreshAllShownItem();
         }
         else
         {
             totalCount = DataManager.Instance.ShowRewardData.Current.Length;
-            component.loopLoopGridView.SetListItemCount(totalCount, false);
-            component.loopLoopGridView.RefreshAllShownItem();
+            comp.loopLoopGridView.SetListItemCount(totalCount, false);
+            comp.loopLoopGridView.RefreshAllShownItem();
         }
     }
     public override void OnDestroy()
@@ -59,13 +59,13 @@ public class UIShowReward : UIBase
 
 public class UIShowRewardItem : LoopItemData
 {
-    private UIShowRewardItemComponent component = new UIShowRewardItemComponent();
+    private UIShowRewardItemComponent comp;
     private CommonItem rewardItem;
     public void Init(GameObject obj)
     {
-        component.Init(obj);
+        comp = obj.GetComponent<UIShowRewardItemComponent>();
         rewardItem = CommonItemPool.Instance.Get();
-        rewardItem.SetParent(component.rewardRectTransform);
+        rewardItem.SetParent(comp.rewardRectTransform);
     }
     public void SetData(ShowRewardStruct data)
     {

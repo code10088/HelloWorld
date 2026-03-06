@@ -2,7 +2,7 @@
 
 public class TestScene : SceneBase
 {
-    private TestSceneComponent component = new TestSceneComponent();
+    private TestSceneComponent comp;
     private AssetObjectPool<ObjectPoolItem> pool = new AssetObjectPool<ObjectPoolItem>();
 
     private int testEffectId = -1;
@@ -10,7 +10,7 @@ public class TestScene : SceneBase
     protected override void Init()
     {
         base.Init();
-        component.Init(SceneObj);
+        comp = component as TestSceneComponent;
         pool.Init($"{ZResConst.ResScenePrefabPath}TestScene/TestBullet.prefab");
     }
     public override void OnEnable(params object[] param)
@@ -18,7 +18,7 @@ public class TestScene : SceneBase
         base.OnEnable(param);
         GameDebug.Log("TestScene OnEnable");
 
-        testEffectId = EffectManager.Instance.Get($"{ZResConst.ResSceneEffectPath}Fire/Fire.prefab", component.fireRootTransform);
+        testEffectId = EffectManager.Instance.Get($"{ZResConst.ResSceneEffectPath}Fire/Fire.prefab", comp.fireRootTransform);
     }
     public override void OnDisable()
     {
@@ -38,18 +38,18 @@ public class TestScene : SceneBase
     {
         pool.Dequeue((a, b, c) =>
         {
-            b.transform.SetParent(component.obj.transform);
+            b.transform.SetParent(comp.transform);
             b.transform.localScale = Vector3.one * Random.Range(0, 10);
         });
         pool.Dequeue((a, b, c) =>
         {
-            b.transform.SetParent(component.obj.transform);
+            b.transform.SetParent(comp.transform);
             b.transform.localScale = Vector3.one * Random.Range(0, 10);
         });
         pool.Enqueue(pool.Use[0].ItemID);
         pool.Dequeue((a, b, c) =>
         {
-            b.transform.SetParent(component.obj.transform);
+            b.transform.SetParent(comp.transform);
             b.transform.localScale = Vector3.one * Random.Range(0, 10);
         });
     }

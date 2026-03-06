@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class UIGuide : UIBase
 {
-    private UIGuideComponent component = new UIGuideComponent();
+    private UIGuideComponent comp;
     private Guide cfg;
     private int updateId = -1;
 
@@ -18,12 +18,12 @@ public class UIGuide : UIBase
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
-        component.maskRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
-        component.maskUIButton.onClick.AddListener(OnClickMask);
-        component.skipBtnUIButton.onClick.AddListener(OnClickSkip);
+        comp = component as UIGuideComponent;
+        comp.maskRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
+        comp.maskUIButton.onClick.AddListener(OnClickMask);
+        comp.skipBtnUIButton.onClick.AddListener(OnClickSkip);
 
-        mat = component.maskImage.material;
+        mat = comp.maskImage.material;
     }
     public override void OnEnable(params object[] param)
     {
@@ -47,7 +47,7 @@ public class UIGuide : UIBase
         //TODO:ÆÁ±Î3DÊäÈë
         //cfg.Is3D
 
-        component.skipBtnObj.SetActive(cfg.CanSkip > 0);
+        comp.skipBtnGameObject.SetActive(cfg.CanSkip > 0);
         Update();
     }
     private void Update(float delta = 0)
@@ -62,7 +62,7 @@ public class UIGuide : UIBase
         if (cfg.MaskType == 1) mat.EnableKeyword("CIRCLE");
         else mat.DisableKeyword("CIRCLE");
 
-        component.maskRectTransform.GetWorldCorners(corners);
+        comp.maskRectTransform.GetWorldCorners(corners);
         v1 = UIManager.Instance.UICamera.WorldToScreenPoint(corners[0]);
         v2 = UIManager.Instance.UICamera.WorldToScreenPoint(corners[2]);
         v3 = UIManager.Instance.UICamera.WorldToScreenPoint(new Vector3(p.x - cfg.Width / 2, p.y - cfg.Height / 2, p.z));
@@ -95,9 +95,9 @@ public class UIGuide : UIBase
     private void CheckClick()
     {
         if (!cfg.Interactable) return;
-        component.maskImage.raycastTarget = false;
+        comp.maskImage.raycastTarget = false;
         StandaloneInputModule.Click(Input.mousePosition);
-        component.maskImage.raycastTarget = true;
+        comp.maskImage.raycastTarget = true;
     }
     private void Next()
     {

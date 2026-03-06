@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 3324553788605102108}
 --- !u!1 &3285489691680783532
 GameObject:
@@ -253,7 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8609970801006545599}
 --- !u!1 &4245330856243653740
 GameObject:
@@ -444,11 +444,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 5002353271530695791}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 07c1e6613675efb48a65c2ca89efed4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/UIHotUpdateRes/
-  className: UIHotUpdateResComponent
+  bgRectTransform: {fileID: 2993591471575906317}
+  bgUIRawImage: {fileID: 3286725307376766826}
+  sliderSlider: {fileID: 3324553788605102108}
+  tipsTextMeshProUGUI: {fileID: 8609970801006545599}
 --- !u!1 &5296364445460159186
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,7 +620,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 2993591471575906317}
   - {fileID: 3286725307376766826}
 --- !u!114 &3286725307376766826
@@ -648,4 +650,3 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
-  loadId: -1

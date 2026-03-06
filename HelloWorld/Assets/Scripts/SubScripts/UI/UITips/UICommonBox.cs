@@ -4,36 +4,36 @@ using System.Collections.Generic;
 
 public class UICommonBox : UIBase
 {
-    private UICommonBoxComponent component = new UICommonBoxComponent();
+    private UICommonBoxComponent comp;
     private static Queue<UICommonBoxParam> commonBoxQueue = new Queue<UICommonBoxParam>();
     private UICommonBoxParam commonBoxParam;
 
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
-        component.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
-        component.sure1UIButton.onClick.AddListener(OnClickSure1);
-        component.sure2UIButton.onClick.AddListener(OnClickSure2);
-        component.cancelUIButton.onClick.AddListener(OnClickCancel);
+        comp = component as UICommonBoxComponent;
+        comp.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
+        comp.sure1UIButton.onClick.AddListener(OnClickSure1);
+        comp.sure2UIButton.onClick.AddListener(OnClickSure2);
+        comp.cancelUIButton.onClick.AddListener(OnClickCancel);
     }
     public override void OnEnable(params object[] param)
     {
         base.OnEnable(param);
         commonBoxParam = param[0] as UICommonBoxParam;
-        component.titleTextMeshProUGUI.text = commonBoxParam.title;
-        component.contentTextMeshProUGUI.text = commonBoxParam.content;
+        comp.titleTextMeshProUGUI.text = commonBoxParam.title;
+        comp.contentTextMeshProUGUI.text = commonBoxParam.content;
         if (commonBoxParam.type == UICommonBoxType.Sure)
         {
-            component.sure1UIButton.gameObject.SetActive(true);
-            component.sure2UIButton.gameObject.SetActive(false);
-            component.cancelUIButton.gameObject.SetActive(false);
+            comp.sure1UIButton.gameObject.SetActive(true);
+            comp.sure2UIButton.gameObject.SetActive(false);
+            comp.cancelUIButton.gameObject.SetActive(false);
         }
         else if (commonBoxParam.type == UICommonBoxType.SureAndCancel)
         {
-            component.sure1UIButton.gameObject.SetActive(false);
-            component.sure2UIButton.gameObject.SetActive(true);
-            component.cancelUIButton.gameObject.SetActive(true);
+            comp.sure1UIButton.gameObject.SetActive(false);
+            comp.sure2UIButton.gameObject.SetActive(true);
+            comp.cancelUIButton.gameObject.SetActive(true);
         }
     }
     protected override void OnClose()

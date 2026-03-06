@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class UIMail : UIBase
 {
-    private UIMailComponent component = new UIMailComponent();
+    private UIMailComponent comp;
     private List<CommonItem> rewardItems = new List<CommonItem>();
     private uint curMailId = 0;
     private int totalCount = 0;
@@ -15,15 +15,15 @@ public class UIMail : UIBase
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
-        component.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
-        component.closeBtnUIButton.onClick.AddListener(OnClose);
-        component.readAllBtnUIButton.onClick.AddListener(OnClickReadAll);
-        component.deleteAllBtnUIButton.onClick.AddListener(OnClickDeleteAll);
-        component.getBtnUIButton.onClick.AddListener(OnClickGetReward);
-        component.deleteBtnUIButton.onClick.AddListener(OnClickDelete);
+        comp = component as UIMailComponent;
+        comp.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
+        comp.closeBtnUIButton.onClick.AddListener(OnClose);
+        comp.readAllBtnUIButton.onClick.AddListener(OnClickReadAll);
+        comp.deleteAllBtnUIButton.onClick.AddListener(OnClickDeleteAll);
+        comp.getBtnUIButton.onClick.AddListener(OnClickGetReward);
+        comp.deleteBtnUIButton.onClick.AddListener(OnClickDelete);
         totalCount = DataManager.Instance.MailData.All.Count;
-        component.loopLoopListView2.InitListView(totalCount, OnGetItemByIndex);
+        comp.loopLoopListView2.InitListView(totalCount, OnGetItemByIndex);
     }
     public override void OnEnable(params object[] param)
     {
@@ -54,16 +54,16 @@ public class UIMail : UIBase
     private void Refresh(object o)
     {
         var hasRewards = DataManager.Instance.MailData.HasRewards();
-        component.readAllTextTextMeshProUGUI.text = LanguageManager.Instance.Get(hasRewards ? 10006 : 10007);
+        comp.readAllTextTextMeshProUGUI.text = LanguageManager.Instance.Get(hasRewards ? 10006 : 10007);
         if (totalCount == DataManager.Instance.MailData.All.Count)
         {
-            component.loopLoopListView2.RefreshAllShownItem();
+            comp.loopLoopListView2.RefreshAllShownItem();
         }
         else
         {
             totalCount = DataManager.Instance.MailData.All.Count;
-            component.loopLoopListView2.SetListItemCount(totalCount, false);
-            component.loopLoopListView2.RefreshAllShownItem();
+            comp.loopLoopListView2.SetListItemCount(totalCount, false);
+            comp.loopLoopListView2.RefreshAllShownItem();
         }
         RefreshContent(curMailId);
     }
@@ -85,19 +85,19 @@ public class UIMail : UIBase
         var index = DataManager.Instance.MailData.All.FindIndex(a => a.mailId == id);
         if (index < 0)
         {
-            component.contentRootObj.SetActive(false);
+            comp.contentRootGameObject.SetActive(false);
             return;
         }
-        var item = component.loopLoopListView2.GetShownItemByItemId((int)curMailId);
+        var item = comp.loopLoopListView2.GetShownItemByItemId((int)curMailId);
         if (item) ((UIMailItem)item.ItemData).SetSelect(false);
         curMailId = id;
-        item = component.loopLoopListView2.GetShownItemByItemId((int)curMailId);
+        item = comp.loopLoopListView2.GetShownItemByItemId((int)curMailId);
         if (item) ((UIMailItem)item.ItemData).SetSelect(true);
 
         var data = DataManager.Instance.MailData.All[index];
-        component.contentRootObj.SetActive(true);
-        component.titleTextMeshProUGUI.text = data.Title;
-        component.contentTextMeshProUGUI.text = data.Content;
+        comp.contentRootGameObject.SetActive(true);
+        comp.titleTextMeshProUGUI.text = data.Title;
+        comp.contentTextMeshProUGUI.text = data.Content;
         for (int i = 0; i < data.Rewards.Count; i++)
         {
             var reward = data.Rewards[i];
@@ -109,7 +109,7 @@ public class UIMail : UIBase
             else
             {
                 rewardItem = CommonItemPool.Instance.Get();
-                rewardItem.SetParent(component.rewardContentRectTransform);
+                rewardItem.SetParent(comp.rewardContentRectTransform);
                 rewardItems.Add(rewardItem);
             }
             rewardItem.Refresh((int)reward.itemId);
@@ -121,16 +121,16 @@ public class UIMail : UIBase
         {
             rewardItems[i].SetActive(false);
         }
-        LayoutRebuilder.MarkLayoutForRebuild(component.rewardContentRectTransform);
+        LayoutRebuilder.MarkLayoutForRebuild(comp.rewardContentRectTransform);
         if (data.Rewards.Count > 0 && data.Status != 2)
         {
-            component.getBtnObj.SetActive(true);
-            component.deleteBtnObj.SetActive(false);
+            comp.getBtnGameObject.SetActive(true);
+            comp.deleteBtnGameObject.SetActive(false);
         }
         else
         {
-            component.getBtnObj.SetActive(false);
-            component.deleteBtnObj.SetActive(true);
+            comp.getBtnGameObject.SetActive(false);
+            comp.deleteBtnGameObject.SetActive(true);
         }
     }
     private void OnClickReadAll()
@@ -160,31 +160,31 @@ public class UIMail : UIBase
 
 public class UIMailItem : LoopItemData
 {
-    private UIMailItemComponent component = new UIMailItemComponent();
+    private UIMailItemComponent comp;
     private MailDetail data;
     private Action<uint> action;
     public void Init(GameObject obj)
     {
-        component.Init(obj);
-        component.mailItemButton.onClick.AddListener(OnClick);
+        comp = obj.GetComponent<UIMailItemComponent>();
+        comp.mailItemButton.onClick.AddListener(OnClick);
     }
     public void SetData(MailDetail data, bool select, Action<uint> action)
     {
         this.data = data;
         this.action = action;
-        component.titleTextMeshProUGUI.text = data.Title;
-        component.timeTextMeshProUGUI.text = TimeUtils.FormatTime(data.Time);
-        component.redPointObj.SetActive(data.Rewards.Count == 0 && data.Status == 0 || data.Rewards.Count > 0 && data.Status != 2);
+        comp.titleTextMeshProUGUI.text = data.Title;
+        comp.timeTextMeshProUGUI.text = TimeUtils.FormatTime(data.Time);
+        comp.redPointGameObject.SetActive(data.Rewards.Count == 0 && data.Status == 0 || data.Rewards.Count > 0 && data.Status != 2);
         SetSelect(select);
     }
     private void OnClick()
     {
         DataManager.Instance.MailData.SetRead(data.mailId);
-        component.redPointObj.SetActive(data.Rewards.Count > 0 && data.Status != 2);
+        comp.redPointGameObject.SetActive(data.Rewards.Count > 0 && data.Status != 2);
         action.Invoke(data.mailId);
     }
     public void SetSelect(bool select)
     {
-        component.mailItemImage.color = select ? Color.green : Color.white;
+        comp.mailItemImage.color = select ? Color.green : Color.white;
     }
 }

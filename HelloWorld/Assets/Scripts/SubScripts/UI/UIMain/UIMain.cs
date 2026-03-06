@@ -2,14 +2,14 @@ using cfg;
 
 public class UIMain : UIBase
 {
-    private UIMainComponent component = new UIMainComponent();
+    private UIMainComponent comp;
 
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
-        component.uIMailBtnUIButton.onClick.AddListener(OnClickMail);
-        component.uITestBtnUIButton.onClick.AddListener(OnClickTest);
+        comp = component as UIMainComponent;
+        comp.uIMailBtnUIButton.onClick.AddListener(OnClickMail);
+        comp.uITestBtnUIButton.onClick.AddListener(OnClickTest);
 
     }
 

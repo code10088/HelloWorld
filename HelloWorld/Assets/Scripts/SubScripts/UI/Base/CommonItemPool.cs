@@ -23,7 +23,7 @@ public class CommonItemPool : MonoSingletion<CommonItemPool>, SingletionInterfac
 }
 public class CommonItem : ObjectPoolItem
 {
-    private CommonItemComponent component;
+    private CommonItemComponent comp;
     private Transform parent;
 
     private static int atlasId = -1;
@@ -35,6 +35,7 @@ public class CommonItem : ObjectPoolItem
     protected override void Finish(GameObject obj)
     {
         base.Finish(obj);
+        comp ??= obj?.GetComponent<CommonItemComponent>();
         Refresh();
     }
     public override void Disable()
@@ -59,30 +60,25 @@ public class CommonItem : ObjectPoolItem
         {
             return;
         }
-        if (component == null)
-        {
-            component = new CommonItemComponent();
-            component.Init(obj);
-        }
         obj.SetActive(active);
         obj.transform.parent = parent ? parent : CommonItemPool.Instance.transform;
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
         obj.transform.localScale = Vector3.one;
-        AtlasManager.Instance.LoadSprite(ref atlasId, ZResConst.ResUIAtlasItemPath, cfg.Quality.ToString(), sprite => component.qualityImage.sprite = sprite);
-        AtlasManager.Instance.LoadSprite(ref atlasId, ZResConst.ResUIAtlasItemPath, cfg.Icon, sprite => component.iconImage.sprite = sprite);
-        component.numTextMeshProUGUI.text = count.ToString();
-        component.nameTextMeshProUGUI.text = cfg.ItemNameKey;
+        AtlasManager.Instance.LoadSprite(ref atlasId, ZResConst.ResUIAtlasItemPath, cfg.Quality.ToString(), sprite => comp.qualityImage.sprite = sprite);
+        AtlasManager.Instance.LoadSprite(ref atlasId, ZResConst.ResUIAtlasItemPath, cfg.Icon, sprite => comp.iconImage.sprite = sprite);
+        comp.numTextMeshProUGUI.text = count.ToString();
+        comp.nameTextMeshProUGUI.text = cfg.ItemNameKey;
         if (DataManager.Instance.PlayerData.Lv > cfg.UseLevel)
         {
-            component.lockObj.SetActive(true);
-            component.lockLvTextMeshProUGUI.text = "Lv." + cfg.UseLevel;
+            comp.lockGameObject.SetActive(true);
+            comp.lockLvTextMeshProUGUI.text = "Lv." + cfg.UseLevel;
         }
         else
         {
-            component.lockObj.SetActive(false);
+            comp.lockGameObject.SetActive(false);
         }
-        component.receivedObj.SetActive(received);
+        comp.receivedGameObject.SetActive(received);
     }
     public void SetParent(Transform parent)
     {
@@ -103,11 +99,11 @@ public class CommonItem : ObjectPoolItem
     public void SetCount(int count)
     {
         this.count = count;
-        if (obj) component.numTextMeshProUGUI.text = count.ToString();
+        if (obj) comp.numTextMeshProUGUI.text = count.ToString();
     }
     public void SetReceived(bool state)
     {
         received = state;
-        if (obj) component.receivedObj.SetActive(state);
+        if (obj) comp.receivedGameObject.SetActive(state);
     }
 }

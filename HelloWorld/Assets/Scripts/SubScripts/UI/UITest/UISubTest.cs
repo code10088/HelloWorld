@@ -1,13 +1,13 @@
 public class UISubTest : UISubItem
 {
-    private UISubTestComponent component = new UISubTestComponent();
+    private UISubTestComponent comp;
 
     public UISubTest(string path) : base(path) { }
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
-        component.buttonUIButton.onClick.AddListener(OnClickClose);
+        comp = component as UISubTestComponent;
+        comp.buttonUIButton.onClick.AddListener(OnClickClose);
     }
     public override void OnEnable(params object[] param)
     {

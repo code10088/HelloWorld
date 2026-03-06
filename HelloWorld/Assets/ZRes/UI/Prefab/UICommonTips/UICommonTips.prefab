@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 1226506700969374556}
 --- !u!1 &4506988812419148411
 GameObject:
@@ -238,11 +238,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4506988812419148411}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 244c42a524f1d904f91bd6f8e1ec5492, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/Auto/
-  className: UICommonTipsItem
+  itemGameObject: {fileID: 4506988812419148411}
+  contentTextMeshProUGUI: {fileID: 1226506700969374556}
 --- !u!114 &1008856141902637505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,7 +255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 0}
 --- !u!1 &6141825163329895830
 GameObject:
@@ -369,8 +369,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6141825163329895830}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 865d6ee71e8495e4583ae2e13376960a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/UITips/
-  className: UICommonTipsComponent
+  itemGameObject: {fileID: 4506988812419148411}

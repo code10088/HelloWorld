@@ -9,6 +9,7 @@ public class UIBase
     protected GameObject UIObj;
     protected UIType from;
     protected UIConfig config;
+    protected ComponentMark component;
     protected Canvas[] layerRecord1;
     protected int[] layerRecord2;
     protected UIParticle[] layerRecord3;
@@ -26,6 +27,7 @@ public class UIBase
     }
     protected virtual void Init()
     {
+        component = UIObj.GetComponent<ComponentMark>();
         layerRecord1 = UIObj.GetComponentsInChildren<Canvas>(true);
         layerRecord2 = new int[layerRecord1.Length];
         for (int i = 0; i < layerRecord1.Length; i++) layerRecord2[i] = layerRecord1[i].sortingOrder;

@@ -14,58 +14,58 @@ using TTSDK.UNBridgeLib.LitJson;
 
 public class UITest : UIBase
 {
-    private UITestComponent component = new UITestComponent();
+    private UITestComponent comp;
     private UISubTest subUI = new UISubTest("UITest/UISubTest");
     private int updateId = -1;
 
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
-        component.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
-        component.closeBtnUIButton.onClick.AddListener(OnClickClose);
-        component.openSceneBtnUIButton.onClick.AddListener(OnOpenScene);
-        component.openUIBtnUIButton.onClick.AddListener(OnOpenUI);
-        component.openFunctionBtnUIButton.onClick.AddListener(OnOpenFunction);
-        component.openUISettingUIButton.onClick.AddListener(OnOpenUISetting);
-        component.openMiniGameBtnUIButton.onClick.AddListener(OnOpenMiniGame);
+        comp = component as UITestComponent;
+        comp.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
+        comp.closeBtnUIButton.onClick.AddListener(OnClickClose);
+        comp.openSceneBtnUIButton.onClick.AddListener(OnOpenScene);
+        comp.openUIBtnUIButton.onClick.AddListener(OnOpenUI);
+        comp.openFunctionBtnUIButton.onClick.AddListener(OnOpenFunction);
+        comp.openUISettingUIButton.onClick.AddListener(OnOpenUISetting);
+        comp.openMiniGameBtnUIButton.onClick.AddListener(OnOpenMiniGame);
 
         //Scene
-        component.openTestSceneUIButton.onClick.AddListener(OpenTestScene);
-        component.closeTestSceneUIButton.onClick.AddListener(CloseTestScene);
-        component.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
-        component.poolDequeueUIButton.onClick.AddListener(DelectBullet);
-        component.openBattleSceneUIButton.onClick.AddListener(OpenBattleScene);
-        component.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
-        component.cameraTRSUIButton.onClick.AddListener(SetCameraTRS);
+        comp.openTestSceneUIButton.onClick.AddListener(OpenTestScene);
+        comp.closeTestSceneUIButton.onClick.AddListener(CloseTestScene);
+        comp.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
+        comp.poolDequeueUIButton.onClick.AddListener(DelectBullet);
+        comp.openBattleSceneUIButton.onClick.AddListener(OpenBattleScene);
+        comp.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
+        comp.cameraTRSUIButton.onClick.AddListener(SetCameraTRS);
 
         //UI
-        component.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
-        component.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);
-        component.openTipsBtnUIButton.onClick.AddListener(OnOpenTips);
-        component.loadSpriteUIButton.onClick.AddListener(LoadSprite);
-        component.uIProcessBtnUIButton.onClick.AddListener(OpenUIProcess);
-        component.commonItemBtnUIButton.onClick.AddListener(ShowCommonItem);
-        component.languageBtnUIButton.onClick.AddListener(SetText);
+        comp.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
+        comp.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);
+        comp.openTipsBtnUIButton.onClick.AddListener(OnOpenTips);
+        comp.loadSpriteUIButton.onClick.AddListener(LoadSprite);
+        comp.uIProcessBtnUIButton.onClick.AddListener(OpenUIProcess);
+        comp.commonItemBtnUIButton.onClick.AddListener(ShowCommonItem);
+        comp.languageBtnUIButton.onClick.AddListener(SetText);
 
         //Function
-        component.openSDKBtnUIButton.onClick.AddListener(SDKInit);
-        component.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
-        component.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
-        component.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
-        component.guideUIButton.onClick.AddListener(StartGuide);
-        component.serializeUIButton.onClick.AddListener(MemoryPackSerialize);
-        component.deserializeUIButton.onClick.AddListener(MemoryPackDeserialize);
+        comp.openSDKBtnUIButton.onClick.AddListener(SDKInit);
+        comp.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
+        comp.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
+        comp.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
+        comp.guideUIButton.onClick.AddListener(StartGuide);
+        comp.serializeUIButton.onClick.AddListener(MemoryPackSerialize);
+        comp.deserializeUIButton.onClick.AddListener(MemoryPackDeserialize);
 
         //–°”Œœ∑
-        component.createAdBtnUIButton.onClick.AddListener(CreateAd);
-        component.showAdBtnUIButton.onClick.AddListener(ShowAd);
-        component.showAdVideoBtnUIButton.onClick.AddListener(ShowAdVideo);
-        component.uploadRankDataBtnUIButton.onClick.AddListener(UploadRankData);
-        component.openRankBtnUIButton.onClick.AddListener(OnOpenRank);
-        component.openMenuBtnUIButton.onClick.AddListener(OnOpenMenu);
+        comp.createAdBtnUIButton.onClick.AddListener(CreateAd);
+        comp.showAdBtnUIButton.onClick.AddListener(ShowAd);
+        comp.showAdVideoBtnUIButton.onClick.AddListener(ShowAdVideo);
+        comp.uploadRankDataBtnUIButton.onClick.AddListener(UploadRankData);
+        comp.openRankBtnUIButton.onClick.AddListener(OnOpenRank);
+        comp.openMenuBtnUIButton.onClick.AddListener(OnOpenMenu);
 
-        component.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
+        comp.loopLoopListView2.InitListView(DataManager.Instance.TestData.testItemDatas.Count, OnGetItemByIndex);
     }
     public override void OnEnable(params object[] param)
     {
@@ -103,18 +103,18 @@ public class UITest : UIBase
 
     private void OnOpenScene()
     {
-        component.totalObj.SetActive(false);
-        component.sceneObj.SetActive(true);
+        comp.totalGameObject.SetActive(false);
+        comp.sceneGameObject.SetActive(true);
     }
     private void OnOpenUI()
     {
-        component.totalObj.SetActive(false);
-        component.uIObj.SetActive(true);
+        comp.totalGameObject.SetActive(false);
+        comp.uIGameObject.SetActive(true);
     }
     private void OnOpenFunction()
     {
-        component.totalObj.SetActive(false);
-        component.functionObj.SetActive(true);
+        comp.totalGameObject.SetActive(false);
+        comp.functionGameObject.SetActive(true);
     }
     private void OnOpenUISetting()
     {
@@ -122,22 +122,22 @@ public class UITest : UIBase
     }
     private void OnOpenMiniGame()
     {
-        component.totalObj.SetActive(false);
-        component.miniGameObj.SetActive(true);
+        comp.totalGameObject.SetActive(false);
+        comp.miniGameGameObject.SetActive(true);
     }
     private void OnClickClose()
     {
-        if (component.totalObj.activeSelf)
+        if (comp.totalGameObject.activeSelf)
         {
             OnClose();
         }
         else
         {
-            component.totalObj.SetActive(true);
-            component.sceneObj.SetActive(false);
-            component.uIObj.SetActive(false);
-            component.functionObj.SetActive(false);
-            component.miniGameObj.SetActive(false);
+            comp.totalGameObject.SetActive(true);
+            comp.sceneGameObject.SetActive(false);
+            comp.uIGameObject.SetActive(false);
+            comp.functionGameObject.SetActive(false);
+            comp.miniGameGameObject.SetActive(false);
         }
     }
 
@@ -203,12 +203,12 @@ public class UITest : UIBase
     private void OnOpenSub()
     {
         if (subUI.Active) subUI.Close();
-        else subUI.Open(component.subRootObj.transform);
+        else subUI.Open(comp.subRootGameObject.transform);
     }
     private void LoadSprite()
     {
-        SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
-        SetSprite(component.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
+        SetSprite(comp.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
+        SetSprite(comp.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
         GameDebug.Log("SetSprite");
     }
     private ProcessControl<UIProcessItem> UIProcess = new ProcessControl<UIProcessItem>();
@@ -226,20 +226,20 @@ public class UITest : UIBase
     private void ShowCommonItem()
     {
         var item = CommonItemPool.Instance.Get();
-        item.SetParent(component.itemRootObj.transform);
+        item.SetParent(comp.itemRootGameObject.transform);
         item.Refresh(1);
         item.SetActive(true);
         item.SetCount(10);
         CommonItemPool.Instance.Recycle(item);
         item = CommonItemPool.Instance.Get();
-        item.SetParent(component.itemRootObj.transform);
+        item.SetParent(comp.itemRootGameObject.transform);
         item.Refresh(1);
         item.SetActive(true);
         item.SetCount(10);
     }
     private void SetText()
     {
-        component.languageUIText.SetText(10001, "World!!");
+        comp.languageUIText.SetText(10001, "World!!");
     }
     #endregion
 
@@ -425,11 +425,16 @@ public class UITest : UIBase
     #endregion
 
 }
-public partial class UITestItem
+public class UITestItem : LoopItemData
 {
+    private UITestItemComponent comp;
+    public void Init(GameObject obj)
+    {
+        comp = obj.GetComponent<UITestItemComponent>();
+    }
     public void SetData(TestData.TestItemData data)
     {
-        itemTextTextMeshProUGUI.text = data.name;
+        comp.itemTextTextMeshProUGUI.text = data.name;
     }
 }
 [MemoryPackable]

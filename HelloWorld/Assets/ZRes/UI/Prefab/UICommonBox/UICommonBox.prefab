@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 6059675293928980406}
 --- !u!1 &1350635659690636939
 GameObject:
@@ -276,7 +276,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 1226506700969374556}
 --- !u!1 &2020290080571723646
 GameObject:
@@ -413,7 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 6667764694839125247}
 --- !u!1 &4097555686801643062
 GameObject:
@@ -841,11 +841,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6141825163329895830}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 68aa790f413390e45855805cc327962e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/UITips/
-  className: UICommonBoxComponent
+  bgRectTransform: {fileID: 6059675293928980406}
+  titleTextMeshProUGUI: {fileID: 8239767850916831807}
+  contentTextMeshProUGUI: {fileID: 1226506700969374556}
+  sure1UIButton: {fileID: 6812743443583588743}
+  sure2UIButton: {fileID: 659327615239701436}
+  cancelUIButton: {fileID: 6667764694839125247}
 --- !u!225 &787921943325592899
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1165,7 +1169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 659327615239701436}
 --- !u!1 &8315666780243805024
 GameObject:
@@ -1316,7 +1320,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8239767850916831807}
 --- !u!1 &8433665970686772323
 GameObject:
@@ -1453,7 +1457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 6812743443583588743}
 --- !u!1 &8707225748441094243
 GameObject:

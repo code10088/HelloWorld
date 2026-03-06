@@ -1,70 +1,70 @@
 public class UISetting : UIBase
 {
-    private UISettingComponent component = new UISettingComponent();
+    private UISettingComponent comp;
 
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
-        component.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
-        component.closeBtnUIButton.onClick.AddListener(OnClose);
-        component.qualitySettings0Toggle.onValueChanged.AddListener(OnClickQualitySettings0);
-        component.qualitySettings1Toggle.onValueChanged.AddListener(OnClickQualitySettings1);
-        component.qualitySettings2Toggle.onValueChanged.AddListener(OnClickQualitySettings2);
-        component.frameRate0Toggle.onValueChanged.AddListener(OnClickFrameRate0);
-        component.frameRate1Toggle.onValueChanged.AddListener(OnClickFrameRate1);
-        component.frameRate2Toggle.onValueChanged.AddListener(OnClickFrameRate2);
-        component.screenResolution0Toggle.onValueChanged.AddListener(OnClickScreenResolution0);
-        component.screenResolution1Toggle.onValueChanged.AddListener(OnClickScreenResolution1);
-        component.screenResolution2Toggle.onValueChanged.AddListener(OnClickScreenResolution2);
-        component.masterTextureLimit0Toggle.onValueChanged.AddListener(OnClickMasterTextureLimit0);
-        component.antiLv0Toggle.onValueChanged.AddListener(OnClickAntiLv0);
-        component.shadow0Toggle.onValueChanged.AddListener(OnClickShadow0);
-        component.softShadow0Toggle.onValueChanged.AddListener(OnClickSoftShadow0);
-        component.shadowLv0Toggle.onValueChanged.AddListener(OnClickShadowLv0);
-        component.shadowLv1Toggle.onValueChanged.AddListener(OnClickShadowLv1);
-        component.shadowLv2Toggle.onValueChanged.AddListener(OnClickShadowLv2);
-        component.hDR0Toggle.onValueChanged.AddListener(OnClickHDR0);
-        component.postProcess0Toggle.onValueChanged.AddListener(OnClickPostProcess0);
-        component.graphicsQualityLv0Toggle.onValueChanged.AddListener(OnClickGraphicsQualityLv0);
-        component.graphicsQualityLv1Toggle.onValueChanged.AddListener(OnClickGraphicsQualityLv1);
-        component.graphicsQualityLv2Toggle.onValueChanged.AddListener(OnClickGraphicsQualityLv2);
+        comp = component as UISettingComponent;
+        comp.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
+        comp.closeBtnUIButton.onClick.AddListener(OnClose);
+        comp.qualitySettings0Toggle.onValueChanged.AddListener(OnClickQualitySettings0);
+        comp.qualitySettings1Toggle.onValueChanged.AddListener(OnClickQualitySettings1);
+        comp.qualitySettings2Toggle.onValueChanged.AddListener(OnClickQualitySettings2);
+        comp.frameRate0Toggle.onValueChanged.AddListener(OnClickFrameRate0);
+        comp.frameRate1Toggle.onValueChanged.AddListener(OnClickFrameRate1);
+        comp.frameRate2Toggle.onValueChanged.AddListener(OnClickFrameRate2);
+        comp.screenResolution0Toggle.onValueChanged.AddListener(OnClickScreenResolution0);
+        comp.screenResolution1Toggle.onValueChanged.AddListener(OnClickScreenResolution1);
+        comp.screenResolution2Toggle.onValueChanged.AddListener(OnClickScreenResolution2);
+        comp.masterTextureLimit0Toggle.onValueChanged.AddListener(OnClickMasterTextureLimit0);
+        comp.antiLv0Toggle.onValueChanged.AddListener(OnClickAntiLv0);
+        comp.shadow0Toggle.onValueChanged.AddListener(OnClickShadow0);
+        comp.softShadow0Toggle.onValueChanged.AddListener(OnClickSoftShadow0);
+        comp.shadowLv0Toggle.onValueChanged.AddListener(OnClickShadowLv0);
+        comp.shadowLv1Toggle.onValueChanged.AddListener(OnClickShadowLv1);
+        comp.shadowLv2Toggle.onValueChanged.AddListener(OnClickShadowLv2);
+        comp.hDR0Toggle.onValueChanged.AddListener(OnClickHDR0);
+        comp.postProcess0Toggle.onValueChanged.AddListener(OnClickPostProcess0);
+        comp.graphicsQualityLv0Toggle.onValueChanged.AddListener(OnClickGraphicsQualityLv0);
+        comp.graphicsQualityLv1Toggle.onValueChanged.AddListener(OnClickGraphicsQualityLv1);
+        comp.graphicsQualityLv2Toggle.onValueChanged.AddListener(OnClickGraphicsQualityLv2);
     }
     public override void OnEnable(params object[] param)
     {
         base.OnEnable(param);
         int lv = DPUtil.QualityLv;
-        if (lv == 0) component.qualitySettings0Toggle.isOn = true;
-        else if (lv == 1) component.qualitySettings1Toggle.isOn = true;
-        else if (lv == 2) component.qualitySettings2Toggle.isOn = true;
+        if (lv == 0) comp.qualitySettings0Toggle.isOn = true;
+        else if (lv == 1) comp.qualitySettings1Toggle.isOn = true;
+        else if (lv == 2) comp.qualitySettings2Toggle.isOn = true;
         lv = DPUtil.FrameRate;
-        if (lv == 0) component.frameRate0Toggle.isOn = true;
-        else if (lv == 1) component.frameRate1Toggle.isOn = true;
-        else if (lv == 2) component.frameRate2Toggle.isOn = true;
+        if (lv == 0) comp.frameRate0Toggle.isOn = true;
+        else if (lv == 1) comp.frameRate1Toggle.isOn = true;
+        else if (lv == 2) comp.frameRate2Toggle.isOn = true;
         lv = DPUtil.ScreenResolution;
-        if (lv == 0) component.screenResolution0Toggle.isOn = true;
-        else if (lv == 1) component.screenResolution1Toggle.isOn = true;
-        else if (lv == 2) component.screenResolution2Toggle.isOn = true;
+        if (lv == 0) comp.screenResolution0Toggle.isOn = true;
+        else if (lv == 1) comp.screenResolution1Toggle.isOn = true;
+        else if (lv == 2) comp.screenResolution2Toggle.isOn = true;
         lv = DPUtil.MasterTextureLimit;
-        component.masterTextureLimit0Toggle.isOn = lv == 1;
+        comp.masterTextureLimit0Toggle.isOn = lv == 1;
         lv = DPUtil.AntiLv;
-        component.antiLv0Toggle.isOn = lv == 1;
+        comp.antiLv0Toggle.isOn = lv == 1;
         lv = DPUtil.Shadow;
-        component.shadow0Toggle.isOn = lv == 1;
+        comp.shadow0Toggle.isOn = lv == 1;
         lv = DPUtil.SoftShadow;
-        component.softShadow0Toggle.isOn = lv == 1;
+        comp.softShadow0Toggle.isOn = lv == 1;
         lv = DPUtil.ShadowLv;
-        if (lv == 0) component.shadowLv0Toggle.isOn = true;
-        else if (lv == 1) component.shadowLv1Toggle.isOn = true;
-        else if (lv == 2) component.shadowLv2Toggle.isOn = true;
+        if (lv == 0) comp.shadowLv0Toggle.isOn = true;
+        else if (lv == 1) comp.shadowLv1Toggle.isOn = true;
+        else if (lv == 2) comp.shadowLv2Toggle.isOn = true;
         lv = DPUtil.HDR;
-        component.hDR0Toggle.isOn = lv == 1;
+        comp.hDR0Toggle.isOn = lv == 1;
         lv = DPUtil.PostProcess;
-        component.postProcess0Toggle.isOn = lv == 1;
+        comp.postProcess0Toggle.isOn = lv == 1;
         lv = DPUtil.GraphicsQualityLv;
-        if (lv == 0) component.graphicsQualityLv0Toggle.isOn = true;
-        else if (lv == 1) component.graphicsQualityLv1Toggle.isOn = true;
-        else if (lv == 2) component.graphicsQualityLv2Toggle.isOn = true;
+        if (lv == 0) comp.graphicsQualityLv0Toggle.isOn = true;
+        else if (lv == 1) comp.graphicsQualityLv1Toggle.isOn = true;
+        else if (lv == 2) comp.graphicsQualityLv2Toggle.isOn = true;
     }
     private void OnClickQualitySettings0(bool b)
     {

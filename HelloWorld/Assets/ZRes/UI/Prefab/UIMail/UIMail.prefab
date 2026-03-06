@@ -315,7 +315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 4343672022526335846}
 --- !u!1 &1590170793802355795
 GameObject:
@@ -466,7 +466,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 948326525384874700}
 --- !u!1 &1912379833494205610
 GameObject:
@@ -617,7 +617,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 2053957495482033463}
 --- !u!1 &1944914087488402900
 GameObject:
@@ -707,7 +707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 0}
 --- !u!1 &2659075617794310456
 GameObject:
@@ -798,7 +798,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 0}
   - {fileID: 2428829244684793103}
 --- !u!114 &2428829244684793103
@@ -939,7 +939,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 0}
 --- !u!1 &3680239838978687203
 GameObject:
@@ -1031,7 +1031,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8338969855504301586}
 --- !u!114 &8338969855504301586
 MonoBehaviour:
@@ -1303,7 +1303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 5922358210777595362}
 --- !u!114 &5922358210777595362
 MonoBehaviour:
@@ -1499,7 +1499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 7018531700462610828}
 --- !u!1 &5070706528379162013
 GameObject:
@@ -1665,7 +1665,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8002334317187325790}
 --- !u!1 &6079893260436556881
 GameObject:
@@ -1757,7 +1757,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 8814858529930042376}
 --- !u!114 &8814858529930042376
 MonoBehaviour:
@@ -1953,7 +1953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 485087137925829184}
 --- !u!1 &7528724167914908112
 GameObject:
@@ -2045,7 +2045,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 3614519793364042738}
 --- !u!1 &7947612022838804474
 GameObject:
@@ -2317,7 +2317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 0}
   - {fileID: 7837093376483359388}
 --- !u!114 &7837093376483359388
@@ -2514,7 +2514,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 272973936690900002}
 --- !u!1 &8764031000229441226
 GameObject:
@@ -2633,11 +2633,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 8764031000229441226}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: e11b6ff13b871d44e87078d947842f6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/UIMail/
-  className: UIMailComponent
+  bgRectTransform: {fileID: 8002334317187325790}
+  loopLoopListView2: {fileID: 4343672022526335846}
+  mailItemButton: {fileID: 8140544806881063988}
+  mailItemImage: {fileID: 5017589765423109124}
+  readAllBtnUIButton: {fileID: 8814858529930042376}
+  readAllTextTextMeshProUGUI: {fileID: 948326525384874700}
+  deleteAllBtnUIButton: {fileID: 8338969855504301586}
+  contentRootGameObject: {fileID: 2984027668179515054}
+  titleTextMeshProUGUI: {fileID: 2053957495482033463}
+  contentTextMeshProUGUI: {fileID: 272973936690900002}
+  rewardContentRectTransform: {fileID: 3614519793364042738}
+  getBtnGameObject: {fileID: 8521582556812687895}
+  getBtnUIButton: {fileID: 7837093376483359388}
+  deleteBtnGameObject: {fileID: 2659075617794310456}
+  deleteBtnUIButton: {fileID: 2428829244684793103}
+  closeBtnUIButton: {fileID: 5922358210777595362}
 --- !u!1 &9053656778166197579
 GameObject:
   m_ObjectHideFlags: 0
@@ -2650,9 +2664,9 @@ GameObject:
   - component: {fileID: 1243989284237644751}
   - component: {fileID: 5017589765423109124}
   - component: {fileID: 2390794548636344312}
-  - component: {fileID: 5757125913665292360}
   - component: {fileID: 6638893889755911602}
   - component: {fileID: 8140544806881063988}
+  - component: {fileID: 8665026136090873311}
   m_Layer: 5
   m_Name: MailItem
   m_TagString: Untagged
@@ -2729,27 +2743,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 9053656778166197579}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 7bf2cd8fdab53dc47b80a4b075cd03bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/UI/Auto/
-  className: UIMailItemComponent
---- !u!114 &5757125913665292360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9053656778166197579}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  exportComponent:
-  - {fileID: 6638893889755911602}
-  - {fileID: 8140544806881063988}
-  - {fileID: 5017589765423109124}
+  mailItemButton: {fileID: 8140544806881063988}
+  mailItemImage: {fileID: 5017589765423109124}
+  titleTextMeshProUGUI: {fileID: 485087137925829184}
+  timeTextMeshProUGUI: {fileID: 7018531700462610828}
+  redPointGameObject: {fileID: 1944914087488402900}
 --- !u!114 &6638893889755911602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2806,3 +2807,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8665026136090873311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9053656778166197579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  components:
+  - {fileID: 8140544806881063988}
+  - {fileID: 5017589765423109124}

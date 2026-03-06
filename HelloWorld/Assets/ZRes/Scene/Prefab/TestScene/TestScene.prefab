@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exportComponent:
+  components:
   - {fileID: 2356218167812486905}
 --- !u!1 &6729683569169287116
 GameObject:
@@ -89,11 +89,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6729683569169287116}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1adeaa6c781ea904aa1e38f079908674, type: 3}
+  m_Script: {fileID: 11500000, guid: 1c712a0dfa254dc40abcc5a769fad31c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/Scripts/SubScripts/Scene/TestScene/
-  className: TestSceneComponent
+  fireRootTransform: {fileID: 2356218167812486905}
 --- !u!1 &8711415407256112940
 GameObject:
   m_ObjectHideFlags: 0

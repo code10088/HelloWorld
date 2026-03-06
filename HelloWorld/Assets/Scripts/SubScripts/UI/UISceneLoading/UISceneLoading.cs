@@ -1,12 +1,12 @@
 public class UISceneLoading : UIBase
 {
-    public UISceneLoadingComponent component = new UISceneLoadingComponent();
+    public UISceneLoadingComponent comp;
 
     protected override void Init()
     {
         base.Init();
-        component.Init(UIObj);
-        component.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
+        comp = component as UISceneLoadingComponent;
+        comp.bgRectTransform.anchorMin = UIManager.Instance.anchorMinFull;
     }
     public override void OnEnable(params object[] param)
     {
@@ -26,17 +26,17 @@ public class UISceneLoading : UIBase
     }
     private void SetBg(object name)
     {
-        SetSprite(component.bgUIRawImage, (string)name);
+        SetSprite(comp.bgUIRawImage, (string)name);
     }
     private void Refresh(object info)
     {
         object[] temp = (object[])info;
 
         string str = (string)temp[0];
-        component.tipsTextMeshProUGUI.text = str;
+        comp.tipsTextMeshProUGUI.text = str;
 
         float progress = (float)temp[1];
         progress = float.IsNaN(progress) ? 0 : progress;
-        component.sliderSlider.value = progress;
+        comp.sliderSlider.value = progress;
     }
 }
