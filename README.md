@@ -141,9 +141,9 @@
 　![image](./Readme/7.png)<br>
 　![image](./Readme/10.png)<br>
 　ComponentMark：收集当前节点下（包括当前节点）所有挂载MarkComponent的节点<br>
-　　　Refresh：获取所有MarkComponent的组件并关联<br>
-　MarkComponent：需要导出的Component，Element为空时导出GameObject<br>
-　　　Refresh：自动添加当前节点主要组件，其他的可以通过拖拽提添加<br>
+　　　Refresh：获取所有标记的组件并关联<br>
+　MarkComponent：标记需要导出的组件，Element为空时标记为GameObject<br>
+　　　Refresh：自动添加当前节点主要组件，其他的可以通过拖拽添加<br>
 　　　导出属性命名规则：当前节点名+Component名（比如bgImage），所以要求需要导出的节点名不能重复<br>
 　不仅仅用于UI、Scene，所有需要Find/GetComponent的地方都可以使用<br>
 　打包bundle时会自动剔除MarkComponent<br>
