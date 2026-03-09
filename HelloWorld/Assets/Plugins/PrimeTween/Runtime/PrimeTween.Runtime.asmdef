@@ -1,0 +1,68 @@
+{
+    "name": "PrimeTween.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "Unity.TextMeshPro",
+        "Unity.Burst"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.ugui",
+            "expression": "1.0.0",
+            "define": "UNITY_UGUI_INSTALLED"
+        },
+        {
+            "name": "com.unity.modules.audio",
+            "expression": "1.0.0",
+            "define": "AUDIO_MODULE_INSTALLED"
+        },
+        {
+            "name": "com.unity.modules.physics",
+            "expression": "1.0.0",
+            "define": "PHYSICS_MODULE_INSTALLED"
+        },
+        {
+            "name": "com.unity.modules.physics2d",
+            "expression": "1.0.0",
+            "define": "PHYSICS2D_MODULE_INSTALLED"
+        },
+        {
+            "name": "com.unity.modules.uielements",
+            "expression": "1.0.0",
+            "define": "UI_ELEMENTS_MODULE_INSTALLED"
+        },
+        {
+            "name": "com.unity.textmeshpro",
+            "expression": "1.0.0",
+            "define": "TEXT_MESH_PRO_INSTALLED"
+        },
+        {
+            "name": "com.unity.ugui",
+            "expression": "2.0.0",
+            "define": "TEXT_MESH_PRO_INSTALLED"
+        },
+        {
+            "name": "com.kyrylokuzyk.primetween",
+            "expression": "[1.3.8-pro]",
+            "define": "PRIME_TWEEN_PRO"
+        },
+        {
+            "name": "com.unity.burst",
+            "expression": "1.0.0",
+            "define": "BURST_INSTALLED"
+        },
+        {
+          "name": "com.unity.test-framework",
+          "expression": "1.3.9",
+          "define": "TEST_FRAMEWORK_INSTALLED"
+        }
+    ],
+    "noEngineReferences": false
+}

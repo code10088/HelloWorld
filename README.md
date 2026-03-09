@@ -137,13 +137,16 @@
 
 ## 组件导出工具
 　以UI为例<br>
+　新建脚本继承ComponentMark<br>
 　![image](./Readme/7.png)<br>
-　ExportClass：收集当前节点下（包括当前节点）所有挂载ExportComponent的节点<br>
-　　　Path：代码导出路径<br>
-　　　ClassName：代码类名，如果需要继承可以这样写UITestComponent:UIComponent<br>
-　ExportComponent：需要导出的Component，Element为空时导出GameObject<br>
+　![image](./Readme/10.png)<br>
+　ComponentMark：收集当前节点下（包括当前节点）所有挂载MarkComponent的节点<br>
+　　　Refresh：获取所有MarkComponent的组件并关联<br>
+　MarkComponent：需要导出的Component，Element为空时导出GameObject<br>
+　　　Refresh：自动添加当前节点主要组件，其他的可以通过拖拽提添加<br>
 　　　导出属性命名规则：当前节点名+Component名（比如bgImage），所以要求需要导出的节点名不能重复<br>
 　不仅仅用于UI、Scene，所有需要Find/GetComponent的地方都可以使用<br>
+　打包bundle时会自动剔除MarkComponent<br>
 
 ## UI
 　1、在Luban/Defindes/enum.xml中加入UIType枚举配置<br>

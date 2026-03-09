@@ -1,0 +1,23 @@
+{
+    "name": "PrimeTween.Samples",
+    "rootNamespace": "",
+    "references": [
+        "PrimeTween.Runtime",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.inputsystem",
+            "expression": "1.0.0",
+            "define": "INPUT_SYSTEM_INSTALLED"
+        }
+    ],
+    "noEngineReferences": false
+}
