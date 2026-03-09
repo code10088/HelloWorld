@@ -49,6 +49,18 @@ public class CommonItem : ObjectPoolItem
         received = false;
     }
 
+    /// <summary>
+    /// 用于直接添加到UI上的Item，不用Pool管理
+    /// </summary>
+    public void Refresh(GameObject obj)
+    {
+        this.obj = obj;
+        parent = obj.transform.parent;
+        comp ??= obj?.GetComponent<CommonItemComponent>();
+    }
+    /// <summary>
+    /// 刷新数据
+    /// </summary>
     public void Refresh(int id)
     {
         cfg = ConfigManager.Instance.TbItems[id];
