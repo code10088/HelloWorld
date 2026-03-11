@@ -35,27 +35,8 @@ public class UIBase
     }
     public virtual void OnEnable(params object[] param)
     {
-        RefreshUILayer();
         PlayEnableAni();
-    }
-    protected virtual void RefreshUILayer()
-    {
-        for (int i = 0; i < layerRecord1.Length; i++)
-        {
-            if (layerRecord1[i] != null)
-            {
-                UIManager.Instance.Layer += Math.Max(layerRecord2[i], 1);
-                layerRecord1[i].sortingLayerName = config.UIWindowType.ToString();
-                layerRecord1[i].sortingOrder = UIManager.Instance.Layer;
-            }
-        }
-        for (int i = 0; i < layerRecord3.Length; i++)
-        {
-            if (layerRecord3[i] != null)
-            {
-                layerRecord3[i].Refresh();
-            }
-        }
+        RefreshUILayer();
     }
     protected virtual void PlayEnableAni()
     {
@@ -80,6 +61,25 @@ public class UIBase
     protected void SetFalse()
     {
         UIObj.SetActive(false);
+    }
+    protected virtual void RefreshUILayer()
+    {
+        for (int i = 0; i < layerRecord1.Length; i++)
+        {
+            if (layerRecord1[i] != null)
+            {
+                UIManager.Instance.Layer += Math.Max(layerRecord2[i], 1);
+                layerRecord1[i].sortingLayerName = config.UIWindowType.ToString();
+                layerRecord1[i].sortingOrder = UIManager.Instance.Layer;
+            }
+        }
+        for (int i = 0; i < layerRecord3.Length; i++)
+        {
+            if (layerRecord3[i] != null)
+            {
+                layerRecord3[i].Refresh();
+            }
+        }
     }
     public virtual void OnDestroy()
     {
