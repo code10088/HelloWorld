@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public partial class SceneManager : Singletion<SceneManager>, SingletionInterface
+public partial class SceneManager : Singleton<SceneManager>, SingletonInterface
 {
     private Transform sceneRoot;
     private CameraController cameraController;
@@ -51,7 +51,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
             loadScene[0].Init();
             var t = loadScene[0].Type;
             loadScene.RemoveAt(0);
-            EventManager.Instance.FireEvent(EventType.OpenScene, t);
+            EventManager.Instance.Fire(EventType.OpenScene, t);
         }
     }
     public void CloseScene(int id)
@@ -74,7 +74,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
             item.Disable();
             curScene.RemoveAt(tempIndex);
             cacheScene.Add(item);
-            EventManager.Instance.FireEvent(EventType.CloseScene, item.Type);
+            EventManager.Instance.Fire(EventType.CloseScene, item.Type);
             return;
         }
     }
@@ -98,7 +98,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
             item.Disable();
             curScene.RemoveAt(tempIndex);
             cacheScene.Add(item);
-            EventManager.Instance.FireEvent(EventType.CloseScene, item.Type);
+            EventManager.Instance.Fire(EventType.CloseScene, item.Type);
             return;
         }
     }
@@ -268,7 +268,7 @@ public partial class SceneManager : Singletion<SceneManager>, SingletionInterfac
         public void ProgressActionInvoke()
         {
             float f = AssetManager.Instance.GetProgerss(loadId);
-            EventManager.Instance.FireEvent(EventType.SetSceneLoadingProgress, "Loading Scene", f);
+            EventManager.Instance.Fire(EventType.SetSceneLoadingProgress, "Loading Scene", f);
             if (progress != null) progress(f);
         }
         public void Disable()

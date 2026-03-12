@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Object = UnityEngine.Object;
 
-public partial class UIManager : Singletion<UIManager>, SingletionInterface
+public partial class UIManager : Singleton<UIManager>, SingletonInterface
 {
     public GameObject UIRoot;
     public Transform tUIRoot;
@@ -85,7 +85,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
             loadUI[0].Init();
             var t = loadUI[0].Type;
             loadUI.RemoveAt(0);
-            EventManager.Instance.FireEvent(EventType.OpenUI, t);
+            EventManager.Instance.Fire(EventType.OpenUI, t);
         }
     }
     public void CloseUI(UIType type)
@@ -108,7 +108,7 @@ public partial class UIManager : Singletion<UIManager>, SingletionInterface
             item.Disable();
             curUI.RemoveAt(tempIndex);
             cacheUI.Add(item);
-            EventManager.Instance.FireEvent(EventType.CloseUI, item.Type);
+            EventManager.Instance.Fire(EventType.CloseUI, item.Type);
             return;
         }
     }

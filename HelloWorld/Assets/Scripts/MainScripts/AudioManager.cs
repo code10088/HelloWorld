@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioManager : Singletion<AudioManager>, SingletionInterface
+public class AudioManager : Singleton<AudioManager>, SingletonInterface
 {
     public static readonly string ResBgmPath = "Assets/ZRes/Audio/Bgm/";
     public static readonly string ResSoundPath = "Assets/ZRes/Audio/Sound/";

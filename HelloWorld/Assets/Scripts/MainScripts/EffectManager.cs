@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EffectManager : MonoSingletion<EffectManager>, SingletionInterface
+public class EffectManager : MonoSingleton<EffectManager>, SingletonInterface
 {
     private static Dictionary<string, AssetObjectPool<EffectItem>> effectDic = new();
 

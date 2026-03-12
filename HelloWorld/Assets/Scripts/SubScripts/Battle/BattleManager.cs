@@ -1,7 +1,7 @@
 using cfg;
 using UnityEngine;
 
-public class BattleManager : Singletion<BattleManager>
+public class BattleManager : Singleton<BattleManager>
 {
     private int updateId = -1;
     private int sceneId = -1;

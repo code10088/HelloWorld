@@ -28,14 +28,14 @@ public class UIMail : UIBase
     public override void OnEnable(params object[] param)
     {
         base.OnEnable(param);
-        EventManager.Instance.RegisterEvent(EventType.RefreshMail, Refresh);
+        EventManager.Instance.Register(EventType.RefreshMail, Refresh);
 
-        Refresh(null);
+        Refresh();
     }
     public override void OnDisable()
     {
         base.OnDisable();
-        EventManager.Instance.UnRegisterEvent(EventType.RefreshMail, Refresh);
+        EventManager.Instance.Unregister(EventType.RefreshMail, Refresh);
     }
     public override void OnDestroy()
     {
@@ -51,7 +51,7 @@ public class UIMail : UIBase
         DataManager.Instance.MailData.CSReadMail();
     }
 
-    private void Refresh(object o)
+    private void Refresh()
     {
         var hasRewards = DataManager.Instance.MailData.HasRewards();
         comp.readAllTextTextMeshProUGUI.text = LanguageManager.Instance.Get(hasRewards ? 10006 : 10007);

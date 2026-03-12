@@ -11,7 +11,7 @@ public enum LanguageType
 
     Max
 }
-public class LanguageManager : Singletion<LanguageManager>
+public class LanguageManager : Singleton<LanguageManager>
 {
     private LanguageType languageType;
     private Dictionary<int, string> languageDic = new Dictionary<int, string>();

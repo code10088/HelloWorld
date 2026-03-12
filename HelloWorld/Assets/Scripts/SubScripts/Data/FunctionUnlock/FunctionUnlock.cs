@@ -1,7 +1,7 @@
 using cfg;
 using System.Collections.Generic;
 
-public class FunctionUnlock : Singletion<FunctionUnlock>
+public class FunctionUnlock : Singleton<FunctionUnlock>
 {
 	/// <summary>
 	/// ½ûÖ¹Æµ·±µ÷ÓÃ

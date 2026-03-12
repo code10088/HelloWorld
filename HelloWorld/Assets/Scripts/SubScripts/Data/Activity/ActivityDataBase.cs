@@ -31,11 +31,11 @@ public class ActivityDataBase
     }
     public void Refresh()
     {
-        EventManager.Instance.FireEvent(EventType.RefreshActivity, activityId);
+        EventManager.Instance.Fire(EventType.RefreshActivity, activityId);
     }
     public virtual void End()
     {
-        EventManager.Instance.FireEvent(EventType.EndActivity, activityId);
+        EventManager.Instance.Fire(EventType.EndActivity, activityId);
     }
     public virtual int CheckRedPoint()
     {

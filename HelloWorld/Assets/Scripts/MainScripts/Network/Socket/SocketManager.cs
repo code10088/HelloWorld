@@ -1,7 +1,7 @@
 using ProtoBuf;
 using System;
 
-public class SocketManager : Singletion<SocketManager>
+public class SocketManager : Singleton<SocketManager>
 {
     private SBase socket;
     private Func<ushort, Memory<byte>, bool> deserialize;

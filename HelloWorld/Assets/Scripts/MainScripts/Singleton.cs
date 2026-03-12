@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class Singletion<T> where T : new()
+public abstract class Singleton<T> where T : new()
 {
     private static T instance;
     public static T Instance
@@ -10,13 +10,13 @@ public abstract class Singletion<T> where T : new()
             if (instance == null)
             {
                 instance = new T();
-                if (instance is SingletionInterface) ((SingletionInterface)instance).Init();
+                if (instance is SingletonInterface) ((SingletonInterface)instance).Init();
             }
             return instance;
         }
     }
 }
-public abstract class MonoSingletion<T> : MonoBehaviour where T : MonoSingletion<T>
+public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
 {
     private static T instance = null;
     public static T Instance
@@ -27,14 +27,14 @@ public abstract class MonoSingletion<T> : MonoBehaviour where T : MonoSingletion
             {
                 var obj = new GameObject(typeof(T).Name);
                 instance = obj.AddComponent<T>();
-                if (instance is SingletionInterface) ((SingletionInterface)instance).Init();
+                if (instance is SingletonInterface) ((SingletonInterface)instance).Init();
                 DontDestroyOnLoad(obj);
             }
             return instance;
         }
     }
 }
-public interface SingletionInterface
+public interface SingletonInterface
 {
     public void Init();
 }

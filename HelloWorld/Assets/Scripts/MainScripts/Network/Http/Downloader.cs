@@ -5,7 +5,7 @@ using System.IO;
 using System.Net;
 using UnityEngine.Networking;
 
-public class Downloader : Singletion<Downloader>, SingletionInterface
+public class Downloader : Singleton<Downloader>, SingletonInterface
 {
     private List<HttpItem> all = new List<HttpItem>();
     private List<HttpItemGroup> group = new List<HttpItemGroup>();

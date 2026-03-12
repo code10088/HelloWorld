@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public partial class ConfigManager : Singletion<ConfigManager>
+public partial class ConfigManager : Singleton<ConfigManager>
 {
     private FieldInfo[] fis;
     private int[] loaders;
@@ -52,7 +52,7 @@ public partial class ConfigManager : Singletion<ConfigManager>
         {
             string str = "Loading Config";
             float progress = (float)count / total;
-            EventManager.Instance.FireEvent(EventType.SetSceneLoadingProgress, str, progress);
+            EventManager.Instance.Fire(EventType.SetSceneLoadingProgress, str, progress);
         }
     }
     public void InitUIConfig(Action finish)

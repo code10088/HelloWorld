@@ -11,31 +11,26 @@ public class UISceneLoading : UIBase
     public override void OnEnable(params object[] param)
     {
         base.OnEnable();
-        EventManager.Instance.RegisterEvent(EventType.SetSceneLoadingBg, SetBg);
-        EventManager.Instance.RegisterEvent(EventType.SetSceneLoadingProgress, Refresh);
+        EventManager.Instance.Register<string>(EventType.SetSceneLoadingBg, SetBg);
+        EventManager.Instance.Register<string, float>(EventType.SetSceneLoadingProgress, Refresh);
     }
     public override void OnDisable()
     {
         base.OnDisable();
-        EventManager.Instance.UnRegisterEvent(EventType.SetSceneLoadingBg, SetBg);
-        EventManager.Instance.UnRegisterEvent(EventType.SetSceneLoadingProgress, Refresh);
+        EventManager.Instance.Unregister<string>(EventType.SetSceneLoadingBg, SetBg);
+        EventManager.Instance.Unregister<string, float>(EventType.SetSceneLoadingProgress, Refresh);
     }
     public override void OnDestroy()
     {
         base.OnDestroy();
     }
-    private void SetBg(object name)
+    private void SetBg(string name)
     {
-        SetSprite(comp.bgUIRawImage, (string)name);
+        SetSprite(comp.bgUIRawImage, name);
     }
-    private void Refresh(object info)
+    private void Refresh(string str, float progress)
     {
-        object[] temp = (object[])info;
-
-        string str = (string)temp[0];
         comp.tipsTextMeshProUGUI.text = str;
-
-        float progress = (float)temp[1];
         progress = float.IsNaN(progress) ? 0 : progress;
         comp.sliderSlider.value = progress;
     }

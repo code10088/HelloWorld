@@ -34,7 +34,7 @@ public class MailData : DataBase
         {
             item.Rewards.Add(new RewardInfo { itemId = 1, Count = 10 });
         }
-        EventManager.Instance.FireEvent(EventType.RefreshMail);
+        EventManager.Instance.Fire(EventType.RefreshMail);
     }
     public void Clear()
     {
@@ -51,7 +51,7 @@ public class MailData : DataBase
     {
         var mail = (SCMail)msg;
         all = mail.Details;
-        EventManager.Instance.FireEvent(EventType.RefreshMail);
+        EventManager.Instance.Fire(EventType.RefreshMail);
     }
     /// <summary>
     /// 关闭界面时调用，批量标记已读
@@ -78,7 +78,7 @@ public class MailData : DataBase
         //测试
         var data = all.Find(a => a.mailId == id);
         data.Status = 2;
-        EventManager.Instance.FireEvent(EventType.RefreshMail);
+        EventManager.Instance.Fire(EventType.RefreshMail);
         DataManager.Instance.ShowRewardData.ShowRewards(data.Rewards);
     }
     /// <summary>
@@ -93,7 +93,7 @@ public class MailData : DataBase
         if (mail.Status == 0)
         {
             data.Status = 2;
-            EventManager.Instance.FireEvent(EventType.RefreshMail);
+            EventManager.Instance.Fire(EventType.RefreshMail);
         }
         DataManager.Instance.ShowRewardData.ShowRewards(data.Rewards);
     }
@@ -114,7 +114,7 @@ public class MailData : DataBase
                 rewards.AddRange(item.Rewards);
             }
         }
-        EventManager.Instance.FireEvent(EventType.RefreshMail);
+        EventManager.Instance.Fire(EventType.RefreshMail);
         DataManager.Instance.ShowRewardData.ShowRewards(rewards);
     }
     /// <summary>
@@ -132,7 +132,7 @@ public class MailData : DataBase
                 rewards.AddRange(item.Rewards);
             }
         }
-        EventManager.Instance.FireEvent(EventType.RefreshMail);
+        EventManager.Instance.Fire(EventType.RefreshMail);
         DataManager.Instance.ShowRewardData.ShowRewards(rewards);
     }
     /// <summary>
@@ -146,7 +146,7 @@ public class MailData : DataBase
         //测试
         var index = all.FindIndex(a => a.mailId == id);
         all.RemoveAt(index);
-        EventManager.Instance.FireEvent(EventType.RefreshMail);
+        EventManager.Instance.Fire(EventType.RefreshMail);
     }
     /// <summary>
     /// 单个删除邮件
@@ -160,7 +160,7 @@ public class MailData : DataBase
             if (index >= 0)
             {
                 all.RemoveAt(index);
-                EventManager.Instance.FireEvent(EventType.RefreshMail);
+                EventManager.Instance.Fire(EventType.RefreshMail);
             }
         }
     }
@@ -174,7 +174,7 @@ public class MailData : DataBase
 
         //测试
         all.Clear();
-        EventManager.Instance.FireEvent(EventType.RefreshMail);
+        EventManager.Instance.Fire(EventType.RefreshMail);
     }
 
 

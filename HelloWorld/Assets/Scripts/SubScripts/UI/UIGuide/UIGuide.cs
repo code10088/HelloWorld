@@ -28,20 +28,20 @@ public class UIGuide : UIBase
     public override void OnEnable(params object[] param)
     {
         base.OnEnable(param);
-        EventManager.Instance.RegisterEvent(EventType.RefreshGuide, Refresh);
+        EventManager.Instance.Register(EventType.RefreshGuide, Refresh);
 
         updateId = Driver.Instance.StartUpdate(Update);
-        Refresh(null);
+        Refresh();
     }
     public override void OnDisable()
     {
         base.OnDisable();
-        EventManager.Instance.UnRegisterEvent(EventType.RefreshGuide, Refresh);
+        EventManager.Instance.Unregister(EventType.RefreshGuide, Refresh);
 
         Driver.Instance.Remove(updateId);
     }
 
-    private void Refresh(object param)
+    private void Refresh()
     {
         cfg = DataManager.Instance.GuideData.GuideCfg;
         //TODO:∆¡±Œ3D ‰»Î

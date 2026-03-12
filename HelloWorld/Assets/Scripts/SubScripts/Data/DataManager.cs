@@ -6,7 +6,7 @@ public interface DataBase
     void Init();
     void Clear();
 }
-public partial class DataManager : Singletion<DataManager>
+public partial class DataManager : Singleton<DataManager>
 {
     private Dictionary<Type, DataBase> dataMap = new Dictionary<Type, DataBase>();
 

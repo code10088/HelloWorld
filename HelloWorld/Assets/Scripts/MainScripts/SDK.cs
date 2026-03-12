@@ -9,7 +9,7 @@ using TTSDK;
 using TTSDK.UNBridgeLib.LitJson;
 #endif
 
-public class SDK : MonoSingletion<SDK>
+public class SDK : MonoSingleton<SDK>
 {
 #if UNITY_ANDROID
     private AndroidJavaObject androidActivity;

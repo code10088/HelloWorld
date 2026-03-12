@@ -5,7 +5,7 @@ using YooAsset;
 using Object = UnityEngine.Object;
 using System.Text;
 
-public class HotUpdateCode : Singletion<HotUpdateCode>
+public class HotUpdateCode : Singleton<HotUpdateCode>
 {
     enum HotUpdateCodeStep
     {

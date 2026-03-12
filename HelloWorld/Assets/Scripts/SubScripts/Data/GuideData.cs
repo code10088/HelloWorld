@@ -55,7 +55,7 @@ public class GuideData : DataBase
             End();
             return;
         }
-        EventManager.Instance.FireEvent(EventType.RefreshGuide);
+        EventManager.Instance.Fire(EventType.RefreshGuide);
     }
     public void Skip()
     {

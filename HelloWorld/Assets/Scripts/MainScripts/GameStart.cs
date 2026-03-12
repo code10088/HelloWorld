@@ -13,7 +13,7 @@ using WeChatWASM;
 using TTSDK;
 #endif
 
-public class GameStart : Singletion<GameStart>
+public class GameStart : Singleton<GameStart>
 {
     private enum StartProcess
     {

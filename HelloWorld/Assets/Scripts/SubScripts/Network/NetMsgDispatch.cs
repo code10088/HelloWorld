@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
+public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
 {
     class NetMsgItem
     {
@@ -75,7 +75,7 @@ public partial class NetMsgDispatch : Singletion<NetMsgDispatch>
                 UICommonBox.OpenCommonBox(param);
                 break;
             case SocketEvent.RefreshDelay:
-                EventManager.Instance.FireEvent(EventType.RefreshDelay, item.param);
+                EventManager.Instance.Fire(EventType.RefreshDelay, item.param);
                 break;
         }
     }

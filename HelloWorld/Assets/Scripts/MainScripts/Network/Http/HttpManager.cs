@@ -5,7 +5,7 @@ using System.IO;
 using System.Net;
 using UnityEngine.Networking;
 
-public class HttpManager : Singletion<HttpManager>
+public class HttpManager : Singleton<HttpManager>
 {
     private List<HttpItem> all = new List<HttpItem>();
     private int count = 0;

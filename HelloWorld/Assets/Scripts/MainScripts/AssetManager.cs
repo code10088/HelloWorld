@@ -21,7 +21,7 @@ public enum CacheTime
     Short,
     Long,
 }
-public class AssetManager : Singletion<AssetManager>
+public class AssetManager : Singleton<AssetManager>
 {
     private Dictionary<int, AssetItemGroup> group = new();
     private Dictionary<int, string> totalKey = new();
@@ -273,7 +273,7 @@ public class AssetManager : Singletion<AssetManager>
         }
     }
 }
-public class AtlasManager : Singletion<AtlasManager>
+public class AtlasManager : Singleton<AtlasManager>
 {
     private Dictionary<string, AtlasInfo> atlasInfos = new();
     private Dictionary<int, HashSet<string>> atlasRefs = new();

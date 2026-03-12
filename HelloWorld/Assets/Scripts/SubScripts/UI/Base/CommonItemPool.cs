@@ -1,7 +1,7 @@
 using cfg;
 using UnityEngine;
 
-public class CommonItemPool : MonoSingletion<CommonItemPool>, SingletionInterface
+public class CommonItemPool : MonoSingleton<CommonItemPool>, SingletonInterface
 {
     private AssetObjectPool<CommonItem> pool;
 

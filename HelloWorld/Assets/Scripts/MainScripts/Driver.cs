@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using YooAsset;
 
-public class Driver : MonoSingletion<Driver>
+public class Driver : MonoSingleton<Driver>
 {
     #region Driver
     private ArrayEx<DriverItem> array1 = new ArrayEx<DriverItem>(100);//²»ÇÐÆ¬ÁÐ±í
