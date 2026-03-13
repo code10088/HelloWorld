@@ -3,9 +3,9 @@
 public class TestScene : SceneBase
 {
     private TestSceneComponent comp;
-    private AssetObjectPool<ObjectPoolItem> pool = new AssetObjectPool<ObjectPoolItem>();
-
-    private int testEffectId = -1;
+    private ObjectPool<ObjectPoolItem> pool = new ObjectPool<ObjectPoolItem>();
+    private ObjectPoolItem testItem;
+    private EffectItem testEffect;
 
     protected override void Init()
     {
@@ -18,43 +18,32 @@ public class TestScene : SceneBase
         base.OnEnable(param);
         GameDebug.Log("TestScene OnEnable");
 
-        testEffectId = EffectManager.Instance.Get($"{ZResConst.ResSceneEffectPath}Fire/Fire.prefab", comp.fireRootTransform);
+        testEffect = EffectManager.Instance.Get($"{ZResConst.ResSceneEffectPath}Fire/Fire.prefab", comp.fireRootTransform);
     }
     public override void OnDisable()
     {
         base.OnDisable();
         GameDebug.Log("TestScene OnDisable");
 
-        EffectManager.Instance.Recycle(testEffectId);
+        EffectManager.Instance.Return(testEffect);
     }
     public override void OnDestroy()
     {
         base.OnDestroy();
         GameDebug.Log("TestScene OnDestroy");
-        pool.Destroy();
+        pool.Clear();
     }
 
     public void LoadBulletFromPool()
     {
-        pool.Dequeue((a, b, c) =>
+        testItem = pool.Get((a, b) =>
         {
-            b.transform.SetParent(comp.transform);
-            b.transform.localScale = Vector3.one * Random.Range(0, 10);
-        });
-        pool.Dequeue((a, b, c) =>
-        {
-            b.transform.SetParent(comp.transform);
-            b.transform.localScale = Vector3.one * Random.Range(0, 10);
-        });
-        pool.Enqueue(pool.Use[0].ItemID);
-        pool.Dequeue((a, b, c) =>
-        {
-            b.transform.SetParent(comp.transform);
-            b.transform.localScale = Vector3.one * Random.Range(0, 10);
+            a.transform.SetParent(comp.transform);
+            a.transform.localScale = Vector3.one * Random.Range(0, 10);
         });
     }
     public void DelectBullet()
     {
-        pool.Enqueue(pool.Use[0].ItemID);
+        pool.Return(testItem);
     }
 }

@@ -3,22 +3,22 @@ using UnityEngine;
 
 public class CommonItemPool : MonoSingleton<CommonItemPool>, SingletonInterface
 {
-    private AssetObjectPool<CommonItem> pool;
+    private ObjectPool<CommonItem> pool;
 
     public void Init()
     {
         gameObject.SetActive(false);
-        pool = new AssetObjectPool<CommonItem>();
+        pool = new ObjectPool<CommonItem>();
         pool.Init($"{ZResConst.ResUIPrefabPath}Common/CommonItem.prefab", 30);
     }
 
     public CommonItem Get()
     {
-        return pool.Dequeue();
+        return pool.Get();
     }
-    public void Recycle(CommonItem item)
+    public void Return(CommonItem item)
     {
-        pool.Enqueue(item.ItemID);
+        pool.Return(item);
     }
 }
 public class CommonItem : ObjectPoolItem

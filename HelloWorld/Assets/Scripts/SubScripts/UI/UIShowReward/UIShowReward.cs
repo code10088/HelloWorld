@@ -74,6 +74,6 @@ public class UIShowRewardItem : LoopItemData
     }
     public void Recycle()
     {
-        CommonItemPool.Instance.Recycle(rewardItem);
+        CommonItemPool.Instance.Return(rewardItem);
     }
 }

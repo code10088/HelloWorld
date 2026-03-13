@@ -41,7 +41,7 @@ public class UIMail : UIBase
     {
         for (int i = 0; i < rewardItems.Count; i++)
         {
-            CommonItemPool.Instance.Recycle(rewardItems[i]);
+            CommonItemPool.Instance.Return(rewardItems[i]);
         }
         base.OnDestroy();
     }

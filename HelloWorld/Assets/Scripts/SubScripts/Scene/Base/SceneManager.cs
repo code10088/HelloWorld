@@ -281,11 +281,11 @@ public partial class SceneManager : Singleton<SceneManager>, SingletonInterface
         public void Destroy()
         {
             Instance.cacheScene.Remove(this);
-            if (baseScene != null) baseScene?.OnDestroy();
+            baseScene?.OnDestroy();
             baseScene = null;
             asset = null;
             aio = null;
-            if (baseObj != null) GameObject.Destroy(baseObj);
+            if (baseObj) GameObject.Destroy(baseObj);
             baseObj = null;
             AssetManager.Instance.Unload(ref loadId);
             state = LoadState.Release;

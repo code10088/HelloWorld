@@ -128,7 +128,7 @@ public class UISubItem : UIBase
         parent = null;
         asset = null;
         aio = null;
-        if (UIObj != null) GameObject.Destroy(UIObj);
+        if (UIObj) GameObject.Destroy(UIObj);
         UIObj = null;
         AssetManager.Instance.Unload(ref loadId);
         state = LoadState.Release;

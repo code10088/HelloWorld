@@ -292,11 +292,11 @@ public partial class UIManager : Singleton<UIManager>, SingletonInterface
         }
         public void Destroy()
         {
-            if (baseUI != null) baseUI.OnDestroy();
+            baseUI?.OnDestroy();
             baseUI = null;
             asset = null;
             aio = null;
-            if (baseObj != null) GameObject.Destroy(baseObj);
+            if (baseObj) GameObject.Destroy(baseObj);
             baseObj = null;
             AssetManager.Instance.Unload(ref loadId);
             state = LoadState.Release;

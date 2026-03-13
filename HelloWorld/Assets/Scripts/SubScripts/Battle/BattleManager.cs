@@ -6,7 +6,7 @@ public class BattleManager : Singleton<BattleManager>
     private int updateId = -1;
     private int sceneId = -1;
     public BattleScene BattleScene;
-    public AssetObjectPool Pool = new AssetObjectPool();
+    public ObjectPoolList Pool = new ObjectPoolList();
 
     public Vector2 InputWorldPos => BattleScene.ScreenToWorldPoint(Input.mousePosition);
 
@@ -21,7 +21,7 @@ public class BattleManager : Singleton<BattleManager>
     }
     public void Exit()
     {
-        Pool.Destroy();
+        Pool.Clear();
         Driver.Instance.Remove(updateId);
         SceneManager.Instance.CloseScene(sceneId);
         BattleScene = null;

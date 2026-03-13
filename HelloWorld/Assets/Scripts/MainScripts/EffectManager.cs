@@ -4,78 +4,69 @@ using UnityEngine;
 
 public class EffectManager : MonoSingleton<EffectManager>, SingletonInterface
 {
-    private static Dictionary<string, AssetObjectPool<EffectItem>> effectDic = new();
+    private static Dictionary<string, ObjectPool<EffectItem>> pool = new();
 
     public void Init()
     {
         gameObject.SetActive(false);
     }
 
-    public int Get(string path, Transform parent, Action<GameObject> action = null, float time = 0)
+    public EffectItem Get(string path, Transform parent, Action<GameObject, object[]> action = null, float time = 0, params object[] param)
     {
-        if (string.IsNullOrEmpty(path)) return -1;
-        AssetObjectPool<EffectItem> pool;
-        if (!effectDic.TryGetValue(path, out pool))
+        if (string.IsNullOrEmpty(path)) return null;
+        if (!pool.TryGetValue(path, out var temp))
         {
-            pool = new AssetObjectPool<EffectItem>();
-            pool.Init(path);
-            effectDic.Add(path, pool);
+            temp = new();
+            temp.Init(path);
+            pool.Add(path, temp);
         }
-        var temp = pool.Dequeue();
-        temp.Init(parent, action, time);
-        return temp.ItemID;
+        var item = temp.Get(action, param);
+        item.Init(path, parent, time);
+        return item;
     }
-    public void Recycle(int id)
+    public void Return(EffectItem item)
     {
-        if (id < 0) return;
-        foreach (var item in effectDic)
-        {
-            if (item.Value.Use.Exists(a => a.ItemID == id))
-            {
-                item.Value.Enqueue(id);
-                return;
-            }
-        }
+        if (item == null) return;
+        if (pool.TryGetValue(item.Path, out var temp)) temp.Return(item);
     }
     public void Clear()
     {
-        foreach (var item in effectDic) item.Value.Destroy();
-        effectDic.Clear();
+        foreach (var item in pool) item.Value.Clear();
+        pool.Clear();
     }
+}
+public class EffectItem : ObjectPoolItem
+{
+    private string path;
+    private Transform parent;
+    private int timerId = -1;
 
+    public string Path => path;
 
-    private class EffectItem : ObjectPoolItem
+    public void Init(string path, Transform parent, float time = 0)
     {
-        private Transform parent;
-        private Action<GameObject> action;
-        private int timerId = -1;
-
-        public void Init(Transform parent, Action<GameObject> action = null, float time = 0)
-        {
-            this.parent = parent;
-            this.action = action;
-            if (time > 0) timerId = Driver.Instance.StartTimer(time, finish: Recycle);
-        }
-        protected override void Finish(GameObject obj)
-        {
-            base.Finish(obj);
-            if (obj == null) return;
-            obj.transform.parent = parent;
-            obj.transform.localPosition = Vector3.zero;
-            obj.transform.localRotation = Quaternion.identity;
-            obj.transform.localScale = Vector3.one;
-            action?.Invoke(obj);
-        }
-        public override void Disable()
-        {
-            base.Disable();
-            if (obj) obj.transform.parent = Instance.transform;
-            Driver.Instance.Remove(timerId);
-            timerId = -1;
-        }
-        private void Recycle()
-        {
-            Instance.Recycle(ItemID);
-        }
+        this.path = path;
+        this.parent = parent;
+        if (time > 0) timerId = Driver.Instance.StartTimer(time, finish: Recycle);
+    }
+    protected override void Finish(GameObject obj)
+    {
+        if (obj == null) return;
+        obj.transform.parent = parent;
+        obj.transform.localPosition = Vector3.zero;
+        obj.transform.localRotation = Quaternion.identity;
+        obj.transform.localScale = Vector3.one;
+        base.Finish(obj);
+    }
+    public override void Disable()
+    {
+        base.Disable();
+        if (obj) obj.transform.parent = EffectManager.Instance.transform;
+        Driver.Instance.Remove(timerId);
+        timerId = -1;
+    }
+    private void Recycle()
+    {
+        EffectManager.Instance.Return(this);
     }
 }

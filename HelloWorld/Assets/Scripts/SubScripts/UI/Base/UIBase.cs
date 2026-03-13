@@ -15,7 +15,7 @@ public class UIBase
     protected UIParticle[] layerRecord3;
     private int atlasId = -1;
     private List<int> loadId1;
-    private AssetObjectPool loader2;
+    private ObjectPoolList loader2;
 
     public void Init(GameObject UIObj, UIType from, UIConfig config, params object[] param)
     {
@@ -98,7 +98,7 @@ public class UIBase
         }
         if (loader2 != null)
         {
-            loader2.Destroy();
+            loader2.Clear();
             loader2 = null;
         }
     }
@@ -145,37 +145,25 @@ public class UIBase
     /// 加载Prefab
     /// </summary>
     /// <param name="path">相对于Assets/ZRes/UI/Prefab的相对路径</param>
-    protected void LoadPrefab(ref int itemId, string path, Action<GameObject> finish)
+    protected ObjectPoolListItem LoadPrefab(string path, Action<GameObject, object[]> finish)
     {
-        if (loader2 == null) loader2 = new();
+        loader2 ??= new();
         path = $"{ZResConst.ResUIPrefabPath}{path}.prefab";
-        if (itemId > 0) loader2.Enqueue(path, itemId);
-        itemId = loader2.Dequeue(path, (a, b, c) => finish?.Invoke(b));
+        return loader2.Get(path, finish);
     }
-    protected void RemovePrefab(ref int itemId, string path)
+    protected void RemovePrefab(ObjectPoolListItem item)
     {
-        if (itemId > 0)
-        {
-            path = $"{ZResConst.ResUIPrefabPath}{path}.prefab";
-            loader2.Enqueue(path, itemId);
-            itemId = -1;
-        }
+        loader2.Return(item);
     }
-    protected void AddEffect(ref int itemId, string path, Action<GameObject> finish)
+    protected ObjectPoolListItem AddEffect(ref int itemId, string path, Action<GameObject, object[]> finish)
     {
-        if (loader2 == null) loader2 = new();
+        loader2 ??= new();
         path = $"{ZResConst.ResUIEffectPath}{path}.prefab";
-        if (itemId > 0) loader2.Enqueue(path, itemId);
-        itemId = loader2.Dequeue(path, (a, b, c) => finish?.Invoke(b));
+        return loader2.Get(path, finish);
     }
-    protected void RemoveEffect(ref int itemId, string path)
+    protected void RemoveEffect(ObjectPoolListItem item)
     {
-        if (itemId > 0)
-        {
-            path = $"{ZResConst.ResUIEffectPath}{path}.prefab";
-            loader2.Enqueue(path, itemId);
-            itemId = -1;
-        }
+        loader2.Return(item);
     }
     protected GameObject Instantiate(GameObject obj, Transform parent = null)
     {

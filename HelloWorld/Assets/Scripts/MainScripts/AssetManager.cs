@@ -504,7 +504,7 @@ public class LoadGameObjectItem
     {
         asset = null;
         aio = null;
-        if (obj != null) GameObject.Destroy(obj);
+        if (obj) GameObject.Destroy(obj);
         obj = null;
         AssetManager.Instance.Unload(ref loadId);
         state = LoadState.None;

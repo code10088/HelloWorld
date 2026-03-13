@@ -70,7 +70,7 @@ public class UITest : UIBase
     public override void OnEnable(params object[] param)
     {
         base.OnEnable(param);
-        EventManager.Instance.Register<int>(EventType.CloseUI, NextUIProcess);
+        EventManager.Instance.Register<UIType>(EventType.CloseUI, NextUIProcess);
 
         updateId = Driver.Instance.StartUpdate(UpdateTrigger);
         GameDebug.Log("UITest OnEnable");
@@ -88,7 +88,7 @@ public class UITest : UIBase
     public override void OnDisable()
     {
         base.OnDisable();
-        EventManager.Instance.Unregister<int>(EventType.CloseUI, NextUIProcess);
+        EventManager.Instance.Unregister<UIType>(EventType.CloseUI, NextUIProcess);
 
         subUI.Close();
         Driver.Instance.Remove(updateId);
@@ -219,9 +219,9 @@ public class UITest : UIBase
         UIProcess.Add((int)UIType.UISetting, single: false);
         UIProcess.Start();
     }
-    private void NextUIProcess(int id)
+    private void NextUIProcess(UIType type)
     {
-        if (id == UIProcess.CurId) UIProcess.Next();
+        if ((int)type == UIProcess.CurId) UIProcess.Next();
     }
     private void ShowCommonItem()
     {
@@ -230,7 +230,7 @@ public class UITest : UIBase
         item.Refresh(1);
         item.SetActive(true);
         item.SetCount(10);
-        CommonItemPool.Instance.Recycle(item);
+        CommonItemPool.Instance.Return(item);
         item = CommonItemPool.Instance.Get();
         item.SetParent(comp.itemRootGameObject.transform);
         item.Refresh(1);

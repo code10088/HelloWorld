@@ -10,7 +10,7 @@ public class SceneBase
     protected SceneConfig config;
     protected ComponentMark component;
     private List<int> loadId1;
-    private AssetObjectPool loader2;
+    private ObjectPoolList loader2;
 
     public void Init(GameObject _SceneObj, int _id, SceneType _from, SceneConfig _config, params object[] param)
     {
@@ -54,7 +54,7 @@ public class SceneBase
         }
         if (loader2 != null)
         {
-            loader2.Destroy();
+            loader2.Clear();
             loader2 = null;
         }
     }
