@@ -2,8 +2,13 @@ using cfg;
 
 public class UIProcessItem : ProcessItem
 {
-    public override void Excute()
+    public UIType type;
+    public UIProcessItem(UIType type)
     {
-        UIManager.Instance.OpenUI((UIType)Id);
+        this.type = type;
+    }
+    public void Excute()
+    {
+        UIManager.Instance.OpenUI(type);
     }
 }

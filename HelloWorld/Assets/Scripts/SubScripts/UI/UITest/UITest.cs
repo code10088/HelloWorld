@@ -211,17 +211,17 @@ public class UITest : UIBase
         SetSprite(comp.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
         GameDebug.Log("SetSprite");
     }
-    private ProcessControl<UIProcessItem> UIProcess = new ProcessControl<UIProcessItem>();
+    private ProcessControl UIProcess = new ProcessControl();
     private void OpenUIProcess()
     {
-        UIProcess = new ProcessControl<UIProcessItem>();
-        UIProcess.Add((int)UIType.UISetting, single: false);
-        UIProcess.Add((int)UIType.UISetting, single: false);
+        UIProcess = new ProcessControl();
+        UIProcess.Add(new UIProcessItem(UIType.UISetting));
+        UIProcess.Add(new UIProcessItem(UIType.UISetting));
         UIProcess.Start();
     }
     private void NextUIProcess(UIType type)
     {
-        if ((int)type == UIProcess.CurId) UIProcess.Next();
+        if (type == ((UIProcessItem)UIProcess.Cur).type) UIProcess.Next();
     }
     private void ShowCommonItem()
     {

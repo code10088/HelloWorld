@@ -1,23 +1,19 @@
-using System;
 using System.Collections.Generic;
 
-public class ProcessControl<T> where T : ProcessItem, new()
+public class ProcessControl
 {
-    private List<T> list = new List<T>();
+    private List<ProcessItem> list = new List<ProcessItem>();
     private int index = 0;
-    public int CurId => index < list.Count ? list[index].Id : int.MaxValue;
 
-    public void Add(int id, Action<int> action = null, bool single = true)
+    public ProcessItem Cur => index < list.Count ? list[index] : null;
+
+    public void Add(ProcessItem item)
     {
-        if (single && list.Exists(a => a.Id == id)) return;
-        var item = new T();
-        item.Init(id, action);
         list.Add(item);
     }
-    public void Remove(int id)
+    public void Remove(ProcessItem item)
     {
-        var index = list.FindIndex(a => a.Id == id);
-        if (index >= 0) list.RemoveAt(index);
+        list.Remove(item);
     }
     public void Start()
     {
@@ -30,27 +26,11 @@ public class ProcessControl<T> where T : ProcessItem, new()
         if (index < list.Count) list[index].Excute();
         else list.Clear();
     }
-    public void Goto(int id)
+    public void Goto(ProcessItem item)
     {
-        var index = list.FindIndex(a => a.Id == id);
+        var index = list.IndexOf(item);
         if (index < 0) return;
         this.index = index;
         list[index].Excute();
-    }
-}
-public class ProcessItem
-{
-    private int id;
-    private Action<int> action;
-    public int Id => id;
-
-    public void Init(int id, Action<int> action)
-    {
-        this.id = id;
-        this.action = action;
-    }
-    public virtual void Excute()
-    {
-        action?.Invoke(id);
     }
 }

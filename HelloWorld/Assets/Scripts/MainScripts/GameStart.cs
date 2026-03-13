@@ -15,15 +15,7 @@ using TTSDK;
 
 public class GameStart : Singleton<GameStart>
 {
-    private enum StartProcess
-    {
-        Init,
-        HotUpdate,
-        LoadConfig,
-        StartHotAssembly,
-    }
-
-    private ProcessControl<ProcessItem> Process = new ProcessControl<ProcessItem>();
+    private ProcessControl Process = new ProcessControl();
     private HotUpdateConfig config;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -34,14 +26,14 @@ public class GameStart : Singleton<GameStart>
     }
     private void __()
     {
-        Process.Add((int)StartProcess.Init, Init);
-        Process.Add((int)StartProcess.HotUpdate, HotUpdate);
-        Process.Add((int)StartProcess.LoadConfig, LoadConfig);
-        Process.Add((int)StartProcess.StartHotAssembly, StartHotAssembly);
+        Process.Add(new ActionProcessItem(Init));
+        Process.Add(new ActionProcessItem(HotUpdate));
+        Process.Add(new ActionProcessItem(LoadConfig));
+        Process.Add(new ActionProcessItem(StartHotAssembly));
         Process.Start();
     }
 
-    private void Init(int id)
+    private void Init()
     {
         Driver.Instance.Update();
         Application.runInBackground = true;
@@ -58,11 +50,11 @@ public class GameStart : Singleton<GameStart>
         if (GameDebug.GDebug == false) GameObject.DestroyImmediate(GameObject.FindWithTag("Debug"));
         AssetManager.Instance.Init(Process.Next);
     }
-    private void HotUpdate(int id)
+    private void HotUpdate()
     {
         HotUpdateCode.Instance.StartUpdate(Process.Next);
     }
-    private void LoadConfig(int id)
+    private void LoadConfig()
     {
         int loadId = -1;
         AssetManager.Instance.Load<TextAsset>(ref loadId, GameSetting.HotUpdateConfigPath, (a, b) =>
@@ -73,7 +65,7 @@ public class GameStart : Singleton<GameStart>
             Process.Next();
         });
     }
-    private void StartHotAssembly(int id)
+    private void StartHotAssembly()
     {
 #if UNITY_EDITOR && !HotUpdateDebug
         var hotAssembly = AppDomain.CurrentDomain.GetAssemblies().First(a => a.FullName.Contains("HotAssembly"));

@@ -3,43 +3,30 @@ using UnityEngine;
 
 public class GameStart
 {
-    private enum StartProcess
-    {
-        InitLanguage,
-        InitUIConfig,
-        OpenUIHotUpdateRes,
-        HotUpdate,
-        OpenUILoading,
-        InitConfig,
-        WarmUpShader,
-        InitSetting,
-        EnterMainScene,
-    }
-
-    private ProcessControl<ProcessItem> Process = new ProcessControl<ProcessItem>();
+    private ProcessControl Process = new ProcessControl();
 
     public void Init()
     {
-        Process.Add((int)StartProcess.InitLanguage, InitLanguage);
-        Process.Add((int)StartProcess.InitUIConfig, InitUIConfig);
-        Process.Add((int)StartProcess.OpenUIHotUpdateRes, OpenUIHotUpdateRes);
-        Process.Add((int)StartProcess.HotUpdate, HotUpdate);
-        Process.Add((int)StartProcess.OpenUILoading, OpenUILoading);
-        Process.Add((int)StartProcess.InitConfig, InitConfig);
-        Process.Add((int)StartProcess.InitSetting, InitSetting);
-        Process.Add((int)StartProcess.WarmUpShader, WarmUpShader);
-        Process.Add((int)StartProcess.EnterMainScene, EnterMainScene);
+        Process.Add(new ActionProcessItem(InitLanguage));
+        Process.Add(new ActionProcessItem(InitUIConfig));
+        Process.Add(new ActionProcessItem(OpenUIHotUpdateRes));
+        Process.Add(new ActionProcessItem(HotUpdate));
+        Process.Add(new ActionProcessItem(OpenUILoading));
+        Process.Add(new ActionProcessItem(InitConfig));
+        Process.Add(new ActionProcessItem(InitSetting));
+        Process.Add(new ActionProcessItem(WarmUpShader));
+        Process.Add(new ActionProcessItem(EnterMainScene));
         Process.Start();
     }
-    private void InitLanguage(int id)
+    private void InitLanguage()
     {
         LanguageManager.Instance.Init(Process.Next);
     }
-    private void InitUIConfig(int id)
+    private void InitUIConfig()
     {
         ConfigManager.Instance.InitUIConfig(Process.Next);
     }
-    private void OpenUIHotUpdateRes(int id)
+    private void OpenUIHotUpdateRes()
     {
         UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, a =>
         {
@@ -47,25 +34,25 @@ public class GameStart
             Process.Next();
         });
     }
-    private void HotUpdate(int id)
+    private void HotUpdate()
     {
         DataManager.Instance.HotUpdateResData.StartUpdate(Process.Next);
     }
-    private void OpenUILoading(int id)
+    private void OpenUILoading()
     {
         UIManager.Instance.OpenUI(UIType.UISceneLoading, a => Process.Next());
     }
-    private void InitConfig(int id)
+    private void InitConfig()
     {
         UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
         ConfigManager.Instance.Init(Process.Next);
     }
-    private void InitSetting(int id)
+    private void InitSetting()
     {
         DPUtil.Init();
         Process.Next();
     }
-    private void WarmUpShader(int id)
+    private void WarmUpShader()
     {
         int loadId = -1;
         AssetManager.Instance.Load<ShaderVariantCollection>(ref loadId, $"{ZResConst.ResShderPath}MyShaderVariants.shadervariants", (a, b) =>
@@ -76,7 +63,7 @@ public class GameStart
             Process.Next();
         });
     }
-    private void EnterMainScene(int id)
+    private void EnterMainScene()
     {
         UIManager.Instance.OpenUI(UIType.UIMain, a => UIManager.Instance.CloseUI(UIType.UISceneLoading));
         Process.Next();
