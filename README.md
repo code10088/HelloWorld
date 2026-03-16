@@ -204,10 +204,8 @@
 　　StartTask：线程池<br>
 　　StartCoroutine：协程<br>
 　Pool：<br>
-　　GameObjectPool\<T>：缓存一个GameObject，使用异步实例化接口<br>
-　　GameObjectPool：缓存多个不需要特殊处理的GameObject<br>
-　　AssetObjectPool\<T>：在GameObjectPool\<T>基础上增加了资源加载缓存卸载<br>
-　　AssetObjectPool：在GameObjectPool基础上增加了资源加载缓存卸载<br>
+　　ObjectPool\<T>：GameObject缓存，包含资源加载卸载<br>
+　　ObjectPoolList：ObjectPool集合<br>
 　　基本覆盖所有缓存使用场景，具体可以查看代码实现ObjectPool.cs<br>
 　Debug：<br>
 　　在ProjectSetting/Player中加入宏Debug开启Debug模式，正式上线时需要关闭<br>
