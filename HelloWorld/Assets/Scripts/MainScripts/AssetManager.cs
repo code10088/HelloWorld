@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.U2D;
 using YooAsset;
@@ -88,7 +89,7 @@ public class AssetManager : Singleton<AssetManager>
         initFinish?.Invoke();
     }
 
-    public void Load<T>(ref int loadId, string path, Action<int, Object> action = null) where T : Object
+    public Task<Object> Load<T>(ref int loadId, string path, Action<int, Object> action = null) where T : Object
     {
         if (loadId > 0) Unload(ref loadId);
         if (!totalValue.TryGetValue(path, out AssetItem temp))
@@ -99,14 +100,16 @@ public class AssetManager : Singleton<AssetManager>
             totalValue.Add(path, temp);
         }
         temp.Load(ref loadId, action);
+        return temp.Task;
     }
-    public void Load(ref int loadId, string[] path, Action<string[], Object[]> action = null)
+    public Task<Object[]> Load(ref int loadId, string[] path, Action<string[], Object[]> action = null)
     {
         if (loadId > 0) Unload(ref loadId);
         AssetItemGroup temp = new();
         temp.Init(++uniqueId, path);
         group.Add(uniqueId, temp);
         temp.Load(ref loadId, action);
+        return temp.Task;
     }
     public void Unload(ref int id, CacheTime time = CacheTime.None)
     {
@@ -129,17 +132,20 @@ public class AssetManager : Singleton<AssetManager>
     private class AssetItemGroup
     {
         private int itemId = -1;
+        private TaskCompletionSource<Object[]> tcs;
         private Action<string[], Object[]> action;
         private string[] path;
         private int[] ids;
         private Object[] assets;
         private int complete;
+        public Task<Object[]> Task => tcs.Task;
         public float Progress => (float)complete / ids.Length;
 
         public void Init(int itemId, string[] path)
         {
             this.path = path;
             this.itemId = itemId << 8;
+            tcs = new TaskCompletionSource<Object[]>();
         }
         public void Load(ref int loadId, Action<string[], Object[]> action)
         {
@@ -153,12 +159,15 @@ public class AssetManager : Singleton<AssetManager>
         {
             int index = Array.FindIndex(ids, a => a == id);
             assets[index] = asset;
-            if (++complete == ids.Length) action?.Invoke(path, assets);
+            if (++complete < ids.Length) return;
+            tcs.TrySetResult(assets);
+            action?.Invoke(path, assets);
         }
         public void Unload(int id, CacheTime time)
         {
             Instance.group.Remove(id);
             for (int i = 0; i < ids.Length; i++) Instance.Unload(ref ids[i], time);
+            tcs = null;
             action = null;
             path = null;
             ids = null;
@@ -172,9 +181,11 @@ public class AssetManager : Singleton<AssetManager>
         private int loadId = 0;
         private LoadState state = LoadState.None;
         private AssetHandle ah;
+        private TaskCompletionSource<Object> tcs;
         private Dictionary<int, Action<int, Object>> loaders = new();
         private CacheTime timer = CacheTime.None;
         private int timerId = -1;
+        public Task<Object> Task => tcs.Task;
         public float Progress => ah == null ? 0 : ah.Progress;
 
         public void Init<T>(int itemId, string path) where T : Object
@@ -182,6 +193,7 @@ public class AssetManager : Singleton<AssetManager>
             this.path = path;
             this.itemId = itemId;
             state = LoadState.Loading;
+            tcs = new TaskCompletionSource<Object>();
             ah = Instance.package.LoadAssetAsync<T>(path);
             ah.Completed += LoadFinish;
         }
@@ -213,6 +225,7 @@ public class AssetManager : Singleton<AssetManager>
                 //防止回调时加载卸载
                 Instance.totalKey.Remove(itemId);
                 Instance.totalValue.Remove(path);
+                tcs.TrySetResult(null);
                 foreach (var item in loaders) item.Value?.Invoke(item.Key, null);
                 Unload();
             }
@@ -220,7 +233,7 @@ public class AssetManager : Singleton<AssetManager>
             {
                 if (state.HasFlag(LoadState.Release)) state = LoadState.LoadFinish | LoadState.Release;
                 else state = LoadState.LoadFinish;
-
+                tcs.TrySetResult(ah.AssetObject);
                 //注意：A的回调中卸载B，可能导致B的回调无法执行
                 var list = loaders.Keys.ToList();
                 foreach (var item in list)
@@ -265,6 +278,7 @@ public class AssetManager : Singleton<AssetManager>
             var asset = ah.GetAssetInfo();
             Instance.package.TryUnloadUnusedAsset(asset);
             ah = null;
+            tcs = null;
             loaders.Clear();
             timer = CacheTime.None;
             Driver.Instance.Remove(timerId);
