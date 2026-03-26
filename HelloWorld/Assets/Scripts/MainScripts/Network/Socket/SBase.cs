@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine.Networking;
 
 public enum SocketEvent
 {
@@ -53,7 +54,11 @@ public class SBase
         socket = new SocketHandle(ip, port);
         serialize = new SerializeHandle(Receive);
         heart = new HeartHandle(Connect, Send);
+#if UNITY_WEBGL
+        Connect();
+#else
         Task.Run(Connect);
+#endif
     }
 
     #region 连接
@@ -61,7 +66,11 @@ public class SBase
     {
         connectMark = false;
         connectRetry = 0;
+#if UNITY_WEBGL
+        Connect();
+#else
         Task.Run(Connect);
+#endif
     }
     protected virtual async Task<bool> Connect()
     {
@@ -72,11 +81,23 @@ public class SBase
             return false;
         }
         socketevent.Invoke((int)SocketEvent.Reconect, 0);
+#if UNITY_WEBGL
+        using (UnityWebRequest request = UnityWebRequest.Head("https://www.baidu.com/"))
+        {
+            request.timeout = 3;
+            var operation = request.SendWebRequest();
+            var tcs = new TaskCompletionSource<bool>();
+            operation.completed += a => tcs.SetResult(true);
+            await tcs.Task;
+            return request.result == UnityWebRequest.Result.Success;
+        }
+#else
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return false;
         }
+#endif
         return true;
     }
     public virtual async Task Close()
