@@ -17,10 +17,11 @@ public class SerializeHandle
     {
         this.receive = receive;
     }
-    public BufferStream Serialize<T>(ushort id, T msg) where T : IExtensible
+    public BufferStream Serialize(ushort id, IExtensible msg)
     {
+        dynamic concrete = msg;
         var stream = new BufferStream(256, 6);
-        Serializer.Serialize(stream, msg);
+        Serializer.Serialize(stream, concrete);
         stream.WriteAt(0, stream.WPos - 4);
         stream.WriteAt(4, id);
         return stream;
