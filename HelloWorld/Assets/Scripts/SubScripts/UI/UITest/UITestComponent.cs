@@ -45,5 +45,7 @@ public class UITestComponent : ComponentMark
     public UIButton uploadRankDataBtnUIButton;
     public UIButton openRankBtnUIButton;
     public UIButton openMenuBtnUIButton;
+    public UnityEngine.GameObject rankGameObject;
+    public UnityEngine.RectTransform rankRectTransform;
     public UnityEngine.UI.RawImage rankRawImage;
 }

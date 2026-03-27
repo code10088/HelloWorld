@@ -1599,6 +1599,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   components:
+  - {fileID: 0}
+  - {fileID: 1847227141007909858}
   - {fileID: 8793603157066371534}
 --- !u!1 &1139114592251882799
 GameObject:
@@ -10272,6 +10274,8 @@ MonoBehaviour:
   uploadRankDataBtnUIButton: {fileID: 2394668523782037932}
   openRankBtnUIButton: {fileID: 7491352844116733712}
   openMenuBtnUIButton: {fileID: 8073578249754227083}
+  rankGameObject: {fileID: 1124451751428380685}
+  rankRectTransform: {fileID: 1847227141007909858}
   rankRawImage: {fileID: 8793603157066371534}
 --- !u!114 &527947892253892834
 MonoBehaviour:
