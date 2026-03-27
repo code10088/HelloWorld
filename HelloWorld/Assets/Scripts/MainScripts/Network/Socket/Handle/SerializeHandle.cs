@@ -17,7 +17,7 @@ public class SerializeHandle
     {
         this.receive = receive;
     }
-    public BufferStream Serialize(ushort id, IExtensible msg)
+    public BufferStream Serialize<T>(ushort id, T msg) where T : IExtensible
     {
         var stream = new BufferStream(256, 6);
         Serializer.Serialize(stream, msg);

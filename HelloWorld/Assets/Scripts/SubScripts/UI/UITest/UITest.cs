@@ -384,13 +384,13 @@ public class UITest : UIBase
     private void OnOpenRank()
     {
 #if WEIXINMINIGAME
-        component.rankObj.SetActive(true);
-        var x = Mathf.FloorToInt(-component.rankRectTransform.offsetMax.x);
-        var y = Mathf.FloorToInt(150 - component.rankRectTransform.offsetMax.y);
-        var offset = Screen.width / component.uITestCanvasScaler.referenceResolution.x;
-        var width = Mathf.FloorToInt(component.rankRectTransform.rect.width * offset);
-        var height = Mathf.FloorToInt(component.rankRectTransform.rect.height * offset);
-        WX.ShowOpenData(component.rankRawImage.texture, x, y, width, height);
+        comp.rankGameObject.SetActive(true);
+        var x = Mathf.FloorToInt(-comp.rankRectTransform.offsetMax.x);
+        var y = Mathf.FloorToInt(150 - comp.rankRectTransform.offsetMax.y);
+        var offset = Screen.width / comp.uITestCanvasScaler.referenceResolution.x;
+        var width = Mathf.FloorToInt(comp.rankRectTransform.rect.width * offset);
+        var height = Mathf.FloorToInt(comp.rankRectTransform.rect.height * offset);
+        WX.ShowOpenData(comp.rankRawImage.texture, x, y, width, height);
         var message = new OpenDataMessage();
         message.type = "showFriendsRank";
         var str = JsonConvert.SerializeObject(message);

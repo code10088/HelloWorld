@@ -1,5 +1,6 @@
 public class UITestComponent : ComponentMark
 {
+    public UnityEngine.UI.CanvasScaler uITestCanvasScaler;
     public UnityEngine.RectTransform bgRectTransform;
     public UIButton closeBtnUIButton;
     public UnityEngine.GameObject totalGameObject;

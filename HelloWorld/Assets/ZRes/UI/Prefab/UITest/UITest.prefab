@@ -10118,6 +10118,7 @@ GameObject:
   - component: {fileID: 439251197655552881}
   - component: {fileID: 5149010856302671980}
   - component: {fileID: 1786932483805765560}
+  - component: {fileID: 527947892253892834}
   m_Layer: 5
   m_Name: UITest
   m_TagString: Untagged
@@ -10226,6 +10227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a184d4794870c648b406641d31524dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uITestCanvasScaler: {fileID: 439251197655552881}
   bgRectTransform: {fileID: 8878064818236106684}
   closeBtnUIButton: {fileID: 3091738798528698615}
   totalGameObject: {fileID: 6278310537686642279}
@@ -10271,6 +10273,20 @@ MonoBehaviour:
   openRankBtnUIButton: {fileID: 7491352844116733712}
   openMenuBtnUIButton: {fileID: 8073578249754227083}
   rankRawImage: {fileID: 8793603157066371534}
+--- !u!114 &527947892253892834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8764031000229441226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  components:
+  - {fileID: 439251197655552881}
 --- !u!1 &8819200151629333775
 GameObject:
   m_ObjectHideFlags: 0
