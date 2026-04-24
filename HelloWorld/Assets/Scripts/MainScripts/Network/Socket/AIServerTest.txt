@@ -150,71 +150,105 @@
 #endregion
 
 #region websocket
-// using System;
-// using WebSocketSharp;
-// using WebSocketSharp.Server;
-// using ErrorEventArgs = WebSocketSharp.ErrorEventArgs;
+//using System.Net.WebSockets;
+//using System.Text;
+//using Microsoft.AspNetCore.Builder;
+//using Microsoft.AspNetCore.Hosting;
+//using Microsoft.AspNetCore.Http;
+//using Microsoft.Extensions.Hosting;
 
-// namespace SimpleWebSocketServer
-// {
-//     // 自定义一个 WebSocket 服务行为类，处理客户端的连接、消息等
-//     public class MyWebSocketService : WebSocketBehavior
-//     {
-//         // 当客户端连接到服务时触发
-//         protected override void OnOpen()
-//         {
-//             Console.WriteLine($"[Server] 客户端已连接: ");
+//namespace SimpleWebSocketServer;
 
-//             // 可选：向刚连接的客户端发送欢迎消息
-//             Send("欢迎连接到 WebSocket 服务器！");
-//         }
+//internal sealed class Program
+//{
+//    private const int Port = 8088;
+//    private const string Route = "/client";
 
-//         // 当服务器收到来自客户端的消息时触发
-//         protected override void OnMessage(MessageEventArgs e)
-//         {
-//             Console.WriteLine($"[Server] 收到来自  的消息: {e.Data}");
+//    private static async Task Main(string[] args)
+//    {
+//        var builder = WebApplication.CreateSlimBuilder(args);
+//        builder.WebHost.UseUrls($"http://0.0.0.0:{Port}");
 
-//             // 简单回显：将收到的消息原样发回给客户端
-//             var a= BitConverter.GetBytes((ushort)10001);
-//             Send(a);
-//         }
+//        var app = builder.Build();
+//        app.UseWebSockets();
+//        app.Map(Route, HandleWebSocketAsync);
 
-//         // 当连接发生错误时触发
-//         protected override void OnError(ErrorEventArgs e)
-//         {
-//             Console.WriteLine($"[Server] 发生错误: {e.Message}");
-//         }
+//        await app.StartAsync();
 
-//         // 当客户端断开连接时触发
-//         protected override void OnClose(CloseEventArgs e)
-//         {
-//             Console.WriteLine($"[Server] 客户端断开连接: , 原因: {e.Reason}");
-//         }
-//     }
+//        Console.WriteLine($"WebSocket 服务器已启动，监听 ws://localhost:{Port}{Route}");
+//        Console.WriteLine("可直接使用 NativeWebSocket 客户端连接。按任意键停止服务器...");
+//        Console.ReadKey(true);
 
-//     class Program
-//     {
-//         static void Main(string[] args)
-//         {
-//             // 创建一个 WebSocket 服务器，监听 ws://localhost:8088/
-//             var wssv = new WebSocketServer("ws://192.168.7.148:8088/"); // 你也可以使用 wss://localhost:8088/ 来启用 SSL
+//        await app.StopAsync();
+//        Console.WriteLine("服务器已停止。");
+//    }
 
-//             // 可选：设置日志级别（调试用）
-//             wssv.Log.Level = LogLevel.Debug;
+//    private static async Task HandleWebSocketAsync(HttpContext context)
+//    {
+//        if (!context.WebSockets.IsWebSocketRequest)
+//        {
+//            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+//            await context.Response.WriteAsync("WebSocket request expected.");
+//            return;
+//        }
 
-//             // 添加一个 WebSocket 服务，路径为 "/ws"，使用我们上面定义的 MyWebSocketService 类来处理
-//             wssv.AddWebSocketService<MyWebSocketService>("/client");
+//        using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+//        var remote = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+//        Console.WriteLine($"[Server] 客户端已连接: {remote}");
 
-//             // 启动服务器
-//             wssv.Start();
-//             Console.WriteLine("WebSocket 服务器已启动，监听 ws://localhost:8088/client");
-//             Console.WriteLine("按任意键停止服务器...");
-//             Console.ReadKey(true);
+//        try
+//        {
+//            await ReceiveLoopAsync(webSocket, remote, context.RequestAborted);
+//        }
+//        catch (OperationCanceledException)
+//        {
+//        }
+//        catch (WebSocketException ex)
+//        {
+//            Console.WriteLine($"[Server] WebSocket 错误: {ex.Message}");
+//        }
+//        finally
+//        {
+//            Console.WriteLine($"[Server] 客户端断开连接: {remote}");
+//        }
+//    }
 
-//             // 停止服务器
-//             wssv.Stop();
-//             Console.WriteLine("服务器已停止。");
-//         }
-//     }
-// }
+//    private static async Task ReceiveLoopAsync(WebSocket webSocket, string remote, CancellationToken cancellationToken)
+//    {
+//        var buffer = new byte[4096];
+
+//        while (webSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
+//        {
+//            using var stream = new MemoryStream();
+//            WebSocketReceiveResult result;
+
+//            do
+//            {
+//                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
+
+//                if (result.MessageType == WebSocketMessageType.Close)
+//                {
+//                    await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", cancellationToken);
+//                    return;
+//                }
+
+//                stream.Write(buffer, 0, result.Count);
+//            }
+//            while (!result.EndOfMessage);
+
+//            var payload = stream.ToArray();
+//            if (result.MessageType == WebSocketMessageType.Text)
+//            {
+//                Console.WriteLine($"[Server] 收到来自 {remote} 的文本消息: {Encoding.UTF8.GetString(payload)}");
+//            }
+//            else
+//            {
+//                Console.WriteLine($"[Server] 收到来自 {remote} 的二进制消息，长度: {payload.Length}");
+//            }
+
+//            var response = BitConverter.GetBytes((ushort)10001);
+//            await webSocket.SendAsync(new ArraySegment<byte>(response), WebSocketMessageType.Binary, true, cancellationToken);
+//        }
+//    }
+//}
 #endregion

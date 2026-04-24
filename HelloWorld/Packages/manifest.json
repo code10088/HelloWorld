@@ -5,6 +5,7 @@
     "com.code-philosophy.obfuz": "https://github.com/focus-creative-games/obfuz.git",
     "com.code-philosophy.obfuz4hybridclr": "https://github.com/focus-creative-games/obfuz4hybridclr.git",
     "com.cysharp.memorypack": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/MemoryPack.Unity",
+    "com.endel.nativewebsocket": "https://github.com/endel/NativeWebSocket.git#upm-2",
     "com.esotericsoftware.spine.spine-csharp": "https://github.com/EsotericSoftware/spine-runtimes.git?path=spine-csharp/src#4.2",
     "com.esotericsoftware.spine.spine-unity": "https://github.com/EsotericSoftware/spine-runtimes.git?path=spine-unity/Assets/Spine#4.2",
     "com.monitor1394.xcharts": "https://github.com/XCharts-Team/XCharts.git",

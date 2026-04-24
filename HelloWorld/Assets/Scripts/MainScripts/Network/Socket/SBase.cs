@@ -89,7 +89,7 @@ public class SBase
             var tcs = new TaskCompletionSource<bool>();
             operation.completed += a => tcs.SetResult(true);
             await tcs.Task;
-            return request.result == UnityWebRequest.Result.Success;
+            if (request.result > UnityWebRequest.Result.Success) return false;
         }
 #else
         if (NetworkInterface.GetIsNetworkAvailable() == false)
