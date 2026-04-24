@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿#if !UNITY_WEBGL
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -106,3 +107,4 @@ public class HTCP : SBase
     }
     #endregion
 }
+#endif

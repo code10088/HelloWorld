@@ -1,3 +1,4 @@
+#if !UNITY_WEBGL
 using System;
 using System.Buffers;
 using System.Net.Sockets;
@@ -165,3 +166,4 @@ public class HKCP : SBase
     }
     #endregion
 }
+#endif

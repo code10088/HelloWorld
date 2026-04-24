@@ -1,3 +1,4 @@
+#if !UNITY_WEBGL
 using System;
 using System.Buffers;
 using System.Collections.Concurrent;
@@ -197,3 +198,4 @@ public class SKCP : SBase
     }
     #endregion
 }
+#endif
