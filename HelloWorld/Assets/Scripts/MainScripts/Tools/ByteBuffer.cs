@@ -51,13 +51,14 @@ public sealed class SafeByteBuffer
 
 
     private byte[] _buffer;
-    private int _position;
-    private int _length;
+    private int _wpos;
+    private int _rpos;
 
-    public int Position => _position;
-    public int Length => _length;
+    public int WPos => _wpos;
+    public int RPos => _rpos;
+    public int Length => _wpos;
     public int Capacity => _buffer.Length;
-    public Memory<byte> Memory => _buffer.AsMemory(0, _length);
+    public Memory<byte> Memory => _buffer.AsMemory(0, _wpos);
 
     public SafeByteBuffer(int capacity = 1024)
     {
@@ -65,31 +66,36 @@ public sealed class SafeByteBuffer
         int _capacity = NextPowerOfTwo(capacity);
         if (_capacity <= 0) throw new ArgumentOutOfRangeException(nameof(capacity));
         _buffer = new byte[_capacity];
-        _position = 0;
-        _length = 0;
+        _wpos = 0;
+        _rpos = 0;
     }
-    public void SetPosition(int position)
+    public void SetWPos(int pos)
     {
-        if (position > _length) throw new ArgumentOutOfRangeException(nameof(position));
-        _position = position;
+        if (pos > _buffer.Length) throw new ArgumentOutOfRangeException(nameof(pos));
+        _wpos = pos;
+    }
+    public void SetRPos(int pos)
+    {
+        if (pos > _wpos) throw new ArgumentOutOfRangeException(nameof(pos));
+        _rpos = pos;
     }
     public void Clear()
     {
-        _position = 0;
-        _length = 0;
+        _wpos = 0;
+        _rpos = 0;
     }
 
     #region 扩容
     private void EnsureCapacity(int need)
     {
-        if (_position + need <= _buffer.Length) return;
-        int size = NextPowerOfTwo(Math.Max(_buffer.Length * 2, _position + need));
+        if (_wpos + need <= _buffer.Length) return;
+        int size = NextPowerOfTwo(Math.Max(_buffer.Length * 2, _wpos + need));
         if (size <= 0) throw new OutOfMemoryException();
         Array.Resize(ref _buffer, size);
     }
     private void EnsureReadable(int need)
     {
-        if (_position + need > _length) throw new IndexOutOfRangeException("SafeByteBuffer readable bytes are not enough.");
+        if (_rpos + need > _wpos) throw new IndexOutOfRangeException("SafeByteBuffer readable bytes are not enough.");
     }
     #endregion
 
@@ -97,61 +103,53 @@ public sealed class SafeByteBuffer
     public void WriteByte(byte value)
     {
         EnsureCapacity(1);
-        _buffer[_position++] = value;
-        if (_position > _length) _length = _position;
+        _buffer[_wpos++] = value;
     }
     public void WriteShort(short value)
     {
         EnsureCapacity(2);
-        BinaryPrimitives.WriteInt16LittleEndian(_buffer.AsSpan(_position, 2), value);
-        _position += 2;
-        if (_position > _length) _length = _position;
+        BinaryPrimitives.WriteInt16LittleEndian(_buffer.AsSpan(_wpos, 2), value);
+        _wpos += 2;
     }
     public void WriteUShort(ushort value)
     {
         EnsureCapacity(2);
-        BinaryPrimitives.WriteUInt16LittleEndian(_buffer.AsSpan(_position, 2), value);
-        _position += 2;
-        if (_position > _length) _length = _position;
+        BinaryPrimitives.WriteUInt16LittleEndian(_buffer.AsSpan(_wpos, 2), value);
+        _wpos += 2;
     }
     public void WriteInt(int value)
     {
         EnsureCapacity(4);
-        BinaryPrimitives.WriteInt32LittleEndian(_buffer.AsSpan(_position, 4), value);
-        _position += 4;
-        if (_position > _length) _length = _position;
+        BinaryPrimitives.WriteInt32LittleEndian(_buffer.AsSpan(_wpos, 4), value);
+        _wpos += 4;
     }
     public void WriteUInt(uint value)
     {
         EnsureCapacity(4);
-        BinaryPrimitives.WriteUInt32LittleEndian(_buffer.AsSpan(_position, 4), value);
-        _position += 4;
-        if (_position > _length) _length = _position;
+        BinaryPrimitives.WriteUInt32LittleEndian(_buffer.AsSpan(_wpos, 4), value);
+        _wpos += 4;
     }
     public void WriteLong(long value)
     {
         EnsureCapacity(8);
-        BinaryPrimitives.WriteInt64LittleEndian(_buffer.AsSpan(_position, 8), value);
-        _position += 8;
-        if (_position > _length) _length = _position;
+        BinaryPrimitives.WriteInt64LittleEndian(_buffer.AsSpan(_wpos, 8), value);
+        _wpos += 8;
     }
     public void WriteFloat(float value)
     {
         EnsureCapacity(4);
         var bytes = BitConverter.GetBytes(value);
         if (!BitConverter.IsLittleEndian) Array.Reverse(bytes);
-        Buffer.BlockCopy(bytes, 0, _buffer, _position, 4);
-        _position += 4;
-        if (_position > _length) _length = _position;
+        Buffer.BlockCopy(bytes, 0, _buffer, _wpos, 4);
+        _wpos += 4;
     }
     public void WriteDouble(double value)
     {
         EnsureCapacity(8);
         var bytes = BitConverter.GetBytes(value);
         if (!BitConverter.IsLittleEndian) Array.Reverse(bytes);
-        Buffer.BlockCopy(bytes, 0, _buffer, _position, 8);
-        _position += 8;
-        if (_position > _length) _length = _position;
+        Buffer.BlockCopy(bytes, 0, _buffer, _wpos, 8);
+        _wpos += 8;
     }
     public void WriteString(string value)
     {
@@ -163,11 +161,10 @@ public sealed class SafeByteBuffer
         int byteCount = Encoding.UTF8.GetByteCount(value);
         if (byteCount > ushort.MaxValue) throw new ArgumentException("String UTF8 byte length cannot exceed 65535.", nameof(value));
         EnsureCapacity(2 + byteCount);
-        BinaryPrimitives.WriteUInt16LittleEndian(_buffer.AsSpan(_position, 2), (ushort)byteCount);
-        _position += 2;
-        Encoding.UTF8.GetBytes(value, _buffer.AsSpan(_position, byteCount));
-        _position += byteCount;
-        if (_position > _length) _length = _position;
+        BinaryPrimitives.WriteUInt16LittleEndian(_buffer.AsSpan(_wpos, 2), (ushort)byteCount);
+        _wpos += 2;
+        Encoding.UTF8.GetBytes(value, _buffer.AsSpan(_wpos, byteCount));
+        _wpos += byteCount;
     }
     #endregion
 
@@ -178,9 +175,8 @@ public sealed class SafeByteBuffer
         WriteInt(count);
         if (count == 0) return;
         EnsureCapacity(count);
-        Buffer.BlockCopy(arr, 0, _buffer, _position, count);
-        _position += count;
-        if (_position > _length) _length = _position;
+        Buffer.BlockCopy(arr, 0, _buffer, _wpos, count);
+        _wpos += count;
     }
     public void WriteShortArray(short[] arr)
     {
@@ -239,8 +235,7 @@ public sealed class SafeByteBuffer
         WriteInt(count);
         if (count == 0) return;
         EnsureCapacity(count);
-        for (int i = 0; i < count; i++) _buffer[_position++] = list[i];
-        if (_position > _length) _length = _position;
+        for (int i = 0; i < count; i++) _buffer[_wpos++] = list[i];
     }
     public void WriteShortList(List<short> list)
     {
@@ -296,55 +291,55 @@ public sealed class SafeByteBuffer
     public byte ReadByte()
     {
         EnsureReadable(1);
-        return _buffer[_position++];
+        return _buffer[_rpos++];
     }
     public short ReadShort()
     {
         EnsureReadable(2);
-        var v = BinaryPrimitives.ReadInt16LittleEndian(_buffer.AsSpan(_position, 2));
-        _position += 2;
+        var v = BinaryPrimitives.ReadInt16LittleEndian(_buffer.AsSpan(_rpos, 2));
+        _rpos += 2;
         return v;
     }
     public ushort ReadUShort()
     {
         EnsureReadable(2);
-        var v = BinaryPrimitives.ReadUInt16LittleEndian(_buffer.AsSpan(_position, 2));
-        _position += 2;
+        var v = BinaryPrimitives.ReadUInt16LittleEndian(_buffer.AsSpan(_rpos, 2));
+        _rpos += 2;
         return v;
     }
     public int ReadInt()
     {
         EnsureReadable(4);
-        var v = BinaryPrimitives.ReadInt32LittleEndian(_buffer.AsSpan(_position, 4));
-        _position += 4;
+        var v = BinaryPrimitives.ReadInt32LittleEndian(_buffer.AsSpan(_rpos, 4));
+        _rpos += 4;
         return v;
     }
     public uint ReadUInt()
     {
         EnsureReadable(4);
-        var v = BinaryPrimitives.ReadUInt32LittleEndian(_buffer.AsSpan(_position, 4));
-        _position += 4;
+        var v = BinaryPrimitives.ReadUInt32LittleEndian(_buffer.AsSpan(_rpos, 4));
+        _rpos += 4;
         return v;
     }
     public long ReadLong()
     {
         EnsureReadable(8);
-        var v = BinaryPrimitives.ReadInt64LittleEndian(_buffer.AsSpan(_position, 8));
-        _position += 8;
+        var v = BinaryPrimitives.ReadInt64LittleEndian(_buffer.AsSpan(_rpos, 8));
+        _rpos += 8;
         return v;
     }
     public float ReadFloat()
     {
         EnsureReadable(4);
-        var v = BitConverter.ToSingle(_buffer, _position);
-        _position += 4;
+        var v = BitConverter.ToSingle(_buffer, _rpos);
+        _rpos += 4;
         return v;
     }
     public double ReadDouble()
     {
         EnsureReadable(8);
-        var v = BitConverter.ToDouble(_buffer, _position);
-        _position += 8;
+        var v = BitConverter.ToDouble(_buffer, _rpos);
+        _rpos += 8;
         return v;
     }
     public string ReadString()
@@ -352,8 +347,8 @@ public sealed class SafeByteBuffer
         ushort len = ReadUShort();
         if (len == 0) return string.Empty;
         EnsureReadable(len);
-        var value = Encoding.UTF8.GetString(_buffer, _position, len);
-        _position += len;
+        var value = Encoding.UTF8.GetString(_buffer, _rpos, len);
+        _rpos += len;
         return value;
     }
     #endregion
@@ -365,8 +360,8 @@ public sealed class SafeByteBuffer
         if (count == 0) return Array.Empty<byte>();
         EnsureReadable(count);
         var arr = new byte[count];
-        Buffer.BlockCopy(_buffer, _position, arr, 0, count);
-        _position += count;
+        Buffer.BlockCopy(_buffer, _rpos, arr, 0, count);
+        _rpos += count;
         return arr;
     }
     public short[] ReadShortArray()
@@ -441,7 +436,7 @@ public sealed class SafeByteBuffer
         int count = ReadInt();
         var list = new List<byte>(count);
         EnsureReadable(count);
-        for (int i = 0; i < count; i++) list.Add(_buffer[_position++]);
+        for (int i = 0; i < count; i++) list.Add(_buffer[_rpos++]);
         return list;
     }
     public List<short> ReadShortList()
@@ -551,19 +546,24 @@ public sealed unsafe class UnsafeByteBuffer
 
 
     private byte* _ptr;
-    private int _position;
-    private int _length;
+    private int _wpos;
+    private int _rpos;
     private int _capacity;
 
-    public int Position
+    public int WPos
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _position;
+        get => _wpos;
+    }
+    public int RPos
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => _rpos;
     }
     public int Length
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _length;
+        get => _wpos;
     }
     public int Capacity
     {
@@ -573,7 +573,7 @@ public sealed unsafe class UnsafeByteBuffer
     public Span<byte> Span
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => new Span<byte>(_ptr, _length);
+        get => new Span<byte>(_ptr, _wpos);
     }
     public Span<byte> FullSpan
     {
@@ -589,31 +589,37 @@ public sealed unsafe class UnsafeByteBuffer
         IntPtr ptr = Marshal.AllocHGlobal(_capacity);
         if (ptr == IntPtr.Zero) throw new OutOfMemoryException();
         _ptr = (byte*)ptr;
-        _position = 0;
-        _length = 0;
+        _wpos = 0;
+        _rpos = 0;
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void SetPosition(int position)
+    public void SetWPos(int pos)
     {
-        if (position > _length) throw new ArgumentOutOfRangeException(nameof(position));
-        _position = position;
+        if (pos > _capacity) throw new ArgumentOutOfRangeException(nameof(pos));
+        _wpos = pos;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void SetRPos(int pos)
+    {
+        if (pos > _wpos) throw new ArgumentOutOfRangeException(nameof(pos));
+        _rpos = pos;
     }
     public void Clear()
     {
-        _position = 0;
-        _length = 0;
+        _wpos = 0;
+        _rpos = 0;
     }
 
     #region 扩容
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void EnsureCapacity(int need)
     {
-        if (_position + need <= _capacity) return;
-        int size = NextPowerOfTwo(Math.Max(_capacity * 2, _position + need));
+        if (_wpos + need <= _capacity) return;
+        int size = NextPowerOfTwo(Math.Max(_capacity * 2, _wpos + need));
         if (size <= 0) throw new OutOfMemoryException();
         IntPtr newPtr = Marshal.AllocHGlobal(size);
         if (newPtr == IntPtr.Zero) throw new OutOfMemoryException();
-        if (_length > 0) Buffer.MemoryCopy(_ptr, (void*)newPtr, size, _length);
+        if (_wpos > 0) Buffer.MemoryCopy(_ptr, (void*)newPtr, size, _wpos);
         Marshal.FreeHGlobal((IntPtr)_ptr);
         _ptr = (byte*)newPtr;
         _capacity = size;
@@ -621,12 +627,7 @@ public sealed unsafe class UnsafeByteBuffer
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void EnsureReadable(int need)
     {
-        if (_position + need > _length) throw new IndexOutOfRangeException("ByteBuffer readable bytes are not enough.");
-    }
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void ValidateReadCount(int count)
-    {
-        if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+        if (_rpos + need > _wpos) throw new IndexOutOfRangeException("ByteBuffer readable bytes are not enough.");
     }
     #endregion
 
@@ -636,17 +637,16 @@ public sealed unsafe class UnsafeByteBuffer
     {
         int size = sizeof(T);
         EnsureCapacity(size);
-        Unsafe.WriteUnaligned(_ptr + _position, value);
-        _position += size;
-        if (_position > _length) _length = _position;
+        Unsafe.WriteUnaligned(_ptr + _wpos, value);
+        _wpos += size;
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteValueAt<T>(int offset, T value) where T : unmanaged
     {
         int size = sizeof(T);
-        EnsureCapacity(size);
+        EnsureCapacity(offset + size);
         Unsafe.WriteUnaligned(_ptr + offset, value);
-        if (offset + size > _length) _length = offset + size;
+        if (offset + size > _wpos) _wpos = offset + size;
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteByte(byte value) => WriteValue(value);
@@ -676,11 +676,10 @@ public sealed unsafe class UnsafeByteBuffer
             int byteCount = Encoding.UTF8.GetByteCount(chars, value.Length);
             if (byteCount > ushort.MaxValue) throw new ArgumentException("String UTF8 byte length cannot exceed 65535.", nameof(value));
             EnsureCapacity(2 + byteCount);
-            Unsafe.WriteUnaligned(_ptr + _position, (ushort)byteCount);
-            _position += 2;
-            Encoding.UTF8.GetBytes(chars, value.Length, _ptr + _position, byteCount);
-            _position += byteCount;
-            if (_position > _length) _length = _position;
+            Unsafe.WriteUnaligned(_ptr + _wpos, (ushort)byteCount);
+            _wpos += 2;
+            Encoding.UTF8.GetBytes(chars, value.Length, _ptr + _wpos, byteCount);
+            _wpos += byteCount;
         }
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -691,10 +690,9 @@ public sealed unsafe class UnsafeByteBuffer
         EnsureCapacity(size);
         fixed (byte* srcPtr = src)
         {
-            Buffer.MemoryCopy(srcPtr, _ptr + _position, size, size);
+            Buffer.MemoryCopy(srcPtr, _ptr + _wpos, size, size);
         }
-        _position += size;
-        if (_position > _length) _length = _position;
+        _wpos += size;
     }
     #endregion
 
@@ -709,10 +707,9 @@ public sealed unsafe class UnsafeByteBuffer
         EnsureCapacity(byteCount);
         fixed (T* src = arr)
         {
-            Buffer.MemoryCopy(src, _ptr + _position, byteCount, byteCount);
+            Buffer.MemoryCopy(src, _ptr + _wpos, byteCount, byteCount);
         }
-        _position += byteCount;
-        if (_position > _length) _length = _position;
+        _wpos += byteCount;
     }
     public void WriteByteArray(byte[] arr) => WriteArrayValues(arr);
     public void WriteShortArray(short[] arr) => WriteArrayValues(arr);
@@ -741,10 +738,9 @@ public sealed unsafe class UnsafeByteBuffer
         EnsureCapacity(count * size);
         for (int i = 0; i < count; i++)
         {
-            Unsafe.WriteUnaligned(_ptr + _position, list[i]);
-            _position += size;
+            Unsafe.WriteUnaligned(_ptr + _wpos, list[i]);
+            _wpos += size;
         }
-        if (_position > _length) _length = _position;
     }
     public void WriteByteList(List<byte> list) => WriteListValues(list);
     public void WriteShortList(List<short> list) => WriteListValues(list);
@@ -768,8 +764,8 @@ public sealed unsafe class UnsafeByteBuffer
     {
         int size = sizeof(T);
         EnsureReadable(size);
-        T value = Unsafe.ReadUnaligned<T>(_ptr + _position);
-        _position += size;
+        T value = Unsafe.ReadUnaligned<T>(_ptr + _rpos);
+        _rpos += size;
         return value;
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -793,8 +789,8 @@ public sealed unsafe class UnsafeByteBuffer
         ushort len = ReadUShort();
         if (len == 0) return string.Empty;
         EnsureReadable(len);
-        string value = Encoding.UTF8.GetString(_ptr + _position, len);
-        _position += len;
+        string value = Encoding.UTF8.GetString(_ptr + _rpos, len);
+        _rpos += len;
         return value;
     }
     #endregion
@@ -809,9 +805,9 @@ public sealed unsafe class UnsafeByteBuffer
         T[] arr = new T[count];
         fixed (T* dst = arr)
         {
-            Buffer.MemoryCopy(_ptr + _position, dst, byteCount, byteCount);
+            Buffer.MemoryCopy(_ptr + _rpos, dst, byteCount, byteCount);
         }
-        _position += byteCount;
+        _rpos += byteCount;
         return arr;
     }
     public byte[] ReadByteArray() => ReadArray<byte>();
@@ -843,8 +839,8 @@ public sealed unsafe class UnsafeByteBuffer
         EnsureReadable(byteCount);
         for (int i = 0; i < count; i++)
         {
-            list.Add(Unsafe.ReadUnaligned<T>(_ptr + _position));
-            _position += size;
+            list.Add(Unsafe.ReadUnaligned<T>(_ptr + _rpos));
+            _rpos += size;
         }
         return list;
     }
