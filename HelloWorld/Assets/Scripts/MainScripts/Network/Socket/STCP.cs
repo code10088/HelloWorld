@@ -1,5 +1,6 @@
 ﻿#if !UNITY_WEBGL
 using System;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +24,11 @@ public class STCP : SBase
     protected override async Task<bool> ConnectAsync()
     {
         if (await base.ConnectAsync() == false) return false;
+        if (NetworkInterface.GetIsNetworkAvailable() == false)
+        {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            return false;
+        }
         socket.Connect(SocketType.Stream, ProtocolType.Tcp);
         if (socket.Connected)
         {
