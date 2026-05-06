@@ -108,8 +108,8 @@ public class SBase
     protected bool Receive(byte[] bytes, int length)
     {
         var id = BitConverter.ToUInt16(bytes);
-        var mm = bytes.AsMemory(0, length);
-        var b = deserialize(id, mm.Slice(2));
+        var mm = bytes.AsMemory(2, length);
+        var b = deserialize(id, mm);
         heart.RefreshDelay2(id);
         socketevent.Invoke((int)SocketEvent.RefreshDelay, heart.Delay);
         return b;
