@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 using System;
 using System.Collections.Concurrent;
-using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine.Networking;
 
 public enum SocketEvent
 {
@@ -17,12 +15,19 @@ public struct SendItem
 {
     private ushort id;
     private IExtensible msg;
-    public ushort Id => id;
-    public IExtensible Msg => msg;
     public SendItem(ushort id, IExtensible msg)
     {
         this.id = id;
         this.msg = msg;
+    }
+    public BufferStream Serialize()
+    {
+        dynamic concrete = msg;
+        var stream = new BufferStream(256, 6);
+        Serializer.Serialize(stream, concrete);
+        stream.WriteAt(0, stream.WPos - 4);
+        stream.WriteAt(4, id);
+        return stream;
     }
 }
 public class SBase
@@ -30,7 +35,6 @@ public class SBase
     private Func<ushort, Memory<byte>, bool> deserialize;
     protected Action<int, int> socketevent;
     protected SocketHandle socket;
-    protected SerializeHandle serialize;
     protected HeartHandle heart;
     //连接
     private int connectFlag = 0;
@@ -52,13 +56,8 @@ public class SBase
         this.deserialize = deserialize;
         this.socketevent = socketevent;
         socket = new SocketHandle(ip, port);
-        serialize = new SerializeHandle(Receive);
         heart = new HeartHandle(Connect, Send);
-#if UNITY_WEBGL
         Connect();
-#else
-        Task.Run(Connect);
-#endif
     }
 
     #region 连接
@@ -66,13 +65,13 @@ public class SBase
     {
         connectMark = false;
         connectRetry = 0;
-#if UNITY_WEBGL
         Connect();
-#else
-        Task.Run(Connect);
-#endif
     }
-    protected virtual async Task<bool> Connect()
+    protected virtual void Connect()
+    {
+
+    }
+    protected virtual async Task<bool> ConnectAsync()
     {
         await Close();
         if (connectRetry++ > 0)
@@ -81,23 +80,6 @@ public class SBase
             return false;
         }
         socketevent.Invoke((int)SocketEvent.Reconect, 0);
-#if UNITY_WEBGL
-        using (UnityWebRequest request = UnityWebRequest.Head("https://www.baidu.com/"))
-        {
-            request.timeout = 3;
-            var operation = request.SendWebRequest();
-            var tcs = new TaskCompletionSource<bool>();
-            operation.completed += a => tcs.SetResult(true);
-            await tcs.Task;
-            if (request.result > UnityWebRequest.Result.Success) return false;
-        }
-#else
-        if (NetworkInterface.GetIsNetworkAvailable() == false)
-        {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return false;
-        }
-#endif
         return true;
     }
     public virtual async Task Close()

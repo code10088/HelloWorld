@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 
 public class SocketHandle
 {
@@ -31,11 +30,8 @@ public class SocketHandle
         }
     }
     /// <summary>
-    /// 流式发送用于TCP
+    /// TCP流式发送
     /// </summary>
-    /// <param name="buffer"></param>
-    /// <param name="length"></param>
-    /// <returns></returns>
     public int Send(byte[] buffer, int length)
     {
         int count = 0;
@@ -58,11 +54,6 @@ public class SocketHandle
         }
         return count;
     }
-    /// <summary>
-    /// 发送用于UDP
-    /// </summary>
-    /// <param name="buffer"></param>
-    /// <returns></returns>
     public int Send(ReadOnlySpan<byte> buffer)
     {
         int count = 0;
@@ -76,74 +67,12 @@ public class SocketHandle
         }
         return count;
     }
-    /// <summary>
-    /// 异步流式发送用于TCP
-    /// </summary>
-    /// <param name="buffer"></param>
-    /// <param name="length"></param>
-    /// <returns></returns>
-    public async Task<int> SendAsync(byte[] buffer, int length)
-    {
-        int count = 0;
-        while (count < length)
-        {
-            int l = 0;
-            try
-            {
-                //socket使用CancellationToken，cts?.Cancel导致await无法退出
-                l = await socket.SendAsync(buffer.AsMemory(count, length - count), SocketFlags.None);
-            }
-            catch
-            {
-                l = -1;
-            }
-            if (l <= 0)
-            {
-                break;
-            }
-            count += l;
-        }
-        return count;
-    }
-    /// <summary>
-    /// 异步发送用于UDP
-    /// </summary>
-    /// <param name="buffer"></param>
-    /// <returns></returns>
-    public async Task<int> SendAsync(ReadOnlyMemory<byte> buffer)
-    {
-        int count = 0;
-        try
-        {
-            //socket使用CancellationToken，cts?.Cancel导致await无法退出
-            count = await socket.SendAsync(buffer, SocketFlags.None);
-        }
-        catch
-        {
-            count = -1;
-        }
-        return count;
-    }
     public int Receive(byte[] buffer)
     {
         int count = 0;
         try
         {
             count = socket.Receive(buffer, SocketFlags.None);
-        }
-        catch
-        {
-            count = -1;
-        }
-        return count;
-    }
-    public async Task<int> ReceiveAsync(byte[] buffer)
-    {
-        int count = 0;
-        try
-        {
-            //socket使用CancellationToken，cts?.Cancel导致await无法退出
-            count = await socket.ReceiveAsync(buffer.AsMemory(), SocketFlags.None);
         }
         catch
         {

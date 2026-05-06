@@ -4,6 +4,7 @@ using ProtoBuf;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using UnityEngine.Networking;
 
 public class SWeb : SBase
 {
@@ -20,9 +21,22 @@ public class SWeb : SBase
     }
 
     #region 连接
-    protected override async Task<bool> Connect()
+    protected override void Connect()
     {
-        if (await base.Connect() == false) return false;
+        ConnectAsync();
+    }
+    protected override async Task<bool> ConnectAsync()
+    {
+        if (await base.ConnectAsync() == false) return false;
+        using (UnityWebRequest request = UnityWebRequest.Head("https://www.baidu.com/"))
+        {
+            request.timeout = 3;
+            var operation = request.SendWebRequest();
+            var tcs = new TaskCompletionSource<bool>();
+            operation.completed += a => tcs.SetResult(true);
+            await tcs.Task;
+            if (request.result > UnityWebRequest.Result.Success) return false;
+        }
         socket = new WebSocket(ip);
         socket.OnOpen += ConnectCallback;
         socket.OnMessage += Receive;
@@ -45,7 +59,7 @@ public class SWeb : SBase
     private void Error(string error)
     {
         GameDebug.LogError(error);
-        Connect();
+        ConnectAsync();
     }
     public override async Task Close()
     {
@@ -89,7 +103,7 @@ public class SWeb : SBase
             }
             while (sendQueue.TryDequeue(out var item))
             {
-                var stream = serialize.Serialize(item.Id, item.Msg);
+                var stream = item.Serialize();
                 var buffer = new byte[stream.WPos];
                 Buffer.BlockCopy(stream.Buffer, 0, buffer, 0, stream.WPos);
                 stream.Dispose();
@@ -117,7 +131,7 @@ public class SWeb : SBase
         }
         if (receiveRetry++ > 0)
         {
-            Connect();
+            ConnectAsync();
         }
     }
     #endregion

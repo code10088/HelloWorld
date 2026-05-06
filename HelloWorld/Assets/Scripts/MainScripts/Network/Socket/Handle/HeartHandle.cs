@@ -1,6 +1,5 @@
 using ProtoBuf;
 using System;
-using System.Threading.Tasks;
 
 public class HeartHandle
 {
@@ -12,13 +11,13 @@ public class HeartHandle
     private long[] record2 = new long[10];
     private int recordIndex = 0;
     private int delay = 0;
-    private Func<Task<bool>> connect;
+    private Action connect;
     private Action<ushort, IExtensible> send;
     private CS_Heart heart = new CS_Heart();
 
     public int Delay => delay;
 
-    public HeartHandle(Func<Task<bool>> connect, Action<ushort, IExtensible> send)
+    public HeartHandle(Action connect, Action<ushort, IExtensible> send)
     {
         this.connect = connect;
         this.send = send;

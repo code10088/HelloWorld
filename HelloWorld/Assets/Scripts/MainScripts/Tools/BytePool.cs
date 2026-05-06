@@ -1,6 +1,6 @@
 using System.Buffers;
 
-public static class BufferPool
+public static class BytePool
 {
     private static ArrayPool<byte> pool = ArrayPool<byte>.Shared;
     private static int NextPowerOfTwo(int x)
