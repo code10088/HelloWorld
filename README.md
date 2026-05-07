@@ -176,7 +176,7 @@
 　STCP：tcp网络，继承于SBase<br>
 　SWeb：websocket网络，继承于SBase<br>
 　三种都实现了心跳、断线重连、粘包处理<br>
-　序列化/反序列化：为了兼容多种语言，使用protocolbuffer处理，如果需要使用Memorypack等其他库可自行更换<br>
+　序列化/反序列化：UnsafeByteBuffer兼容多平台<br>
 　NetMsgDispatch：解析后的网络消息加入队列在主线程中分发到各个模块<br>
 　![image](./Readme/8.png)<br>
 　Unity工具中执行Tools/CopyMsg会自动执行导出脚本并复制代码到工程中，需要配置Preferences/Customer Msg路径<br>
