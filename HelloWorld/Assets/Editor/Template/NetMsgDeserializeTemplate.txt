@@ -1,4 +1,3 @@
-using ProtoBuf;
 using System;
 public class NetMsgId
 {
@@ -8,19 +7,20 @@ public class NetMsgId
 }
 public partial class NetMsgDispatch
 {
-    private bool Deserialize(ushort id, Memory<byte> memory)
+    private bool Deserialize(ushort id, UnsafeByteBuffer buffer)
     {
         try
         {
-            IExtensible msg = null;
+            IDeserialize msg = null;
             switch (id)
             {
 {{~ for msg in messages ~}}
     {{~ if msg.id >= 10000 ~}}
-                case NetMsgId.{{ msg.name }}: msg = Serializer.Deserialize<{{ msg.type }}>(memory); break;
+                case NetMsgId.{{ msg.name }}: msg = new {{ msg.type }}(); break;
     {{~ end ~}}
 {{~ end ~}}
             }
+            msg.Deserialize(buffer);
             HandleMsg(id, msg);
             return true;
         }

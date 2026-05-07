@@ -103,35 +103,22 @@ public class GameEditorTools
     [MenuItem("Tools/CopyMsg", false, (int)ToolsMenuSort.CopyMsg)]
     public static void CopyMsg()
     {
-        string path = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.MsgPath);
-        Process process = new Process();
-        ProcessStartInfo startInfo = process.StartInfo;
-        startInfo.FileName = $"{path}/Net/gen.bat";
-        startInfo.WorkingDirectory = $"{path}/Net";
-        startInfo.CreateNoWindow = true;
-        startInfo.UseShellExecute = false;
-        startInfo.RedirectStandardOutput = true;
-        startInfo.RedirectStandardError = true;
-        process.StartInfo = startInfo;
-        process.Start();
-        process.WaitForExit();
-        string log = process.StandardOutput.ReadToEnd();
-        process.Close();
-        if (log.Contains("finish")) UnityEngine.Debug.Log("finish");
-        else UnityEngine.Debug.LogError(log);
+        string msgDir = $"{Application.dataPath}/Scripts/SubScripts/Network/Message";
         List<FileInfo> list = new List<FileInfo>();
-        FileUtils.GetAllFilePath($"{Application.dataPath}/Scripts/SubScripts/Network/Message", list);
+        FileUtils.GetAllFilePath(msgDir, list);
         for (int i = 0; i < list.Count; i++) File.Delete(list[i].FullName);
         list.Clear();
-        FileUtils.GetAllFilePath($"{path}/Net/OutCodes", list);
+
+        string path = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.MsgPath);
+        FileUtils.GetAllFilePath($"{path}/Proto", list, "*.proto");
         for (int i = 0; i < list.Count; i++)
         {
-            string target = $"{Application.dataPath}/Scripts/SubScripts/Network/Message/{list[i].Name}";
-            File.Copy(list[i].FullName, target, true);
+            string name = list[i].FullName;
+            string fileName = Path.GetFileNameWithoutExtension(name);
+            string code = ProtoParser.GenerateMsgClass(name);
+            File.WriteAllText($"{msgDir}/{fileName}.cs", code, Encoding.UTF8);
         }
 
-        string str1 = string.Empty;
-        string str2 = string.Empty;
         var messages = new List<NetMessage>();
         string[] lines = File.ReadAllLines($"{path}/Proto/AConfig.txt");
         for (int i = 0; i < lines.Length; i++)
