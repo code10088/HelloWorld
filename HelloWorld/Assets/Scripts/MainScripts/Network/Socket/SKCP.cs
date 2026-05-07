@@ -5,7 +5,6 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Net.Sockets.Kcp;
 using System.Threading;
-using System.Threading.Tasks;
 
 public class SKCP : SBase
 {
@@ -29,18 +28,25 @@ public class SKCP : SBase
     #region 连接
     protected override void Connect()
     {
-        Task.Run(ConnectAsync);
+        var thread = new Thread(ConnectAsync);
+        thread.Start();
     }
     /// <summary>
     /// UDP无连接协议，BeginConnect仅记录目标地址和端口
     /// </summary>
-    protected override async Task<bool> ConnectAsync()
+    private void ConnectAsync()
     {
-        if (await base.ConnectAsync() == false) return false;
+        Close();
+        if (connectRetry++ > 0)
+        {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            return;
+        }
+        socketevent.Invoke((int)SocketEvent.Reconect, 0);
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return false;
+            return;
         }
         socket.Connect(SocketType.Dgram, ProtocolType.Udp);
         var buffer = kcpConnect.Serialize();
@@ -56,8 +62,8 @@ public class SKCP : SBase
             if (sendRetry++ > 0)
             {
                 UnsafeByteBuffer.Return(buffer);
-                ConnectAsync();
-                return false;
+                Connect();
+                return;
             }
         }
         while (true)
@@ -86,7 +92,7 @@ public class SKCP : SBase
                     receiveThread = new Thread(Receive);
                     receiveThread.Start();
                     heart.Start();
-                    return true;
+                    return;
                 }
             }
             if (count >= 0)
@@ -96,14 +102,14 @@ public class SKCP : SBase
             }
             if (receiveRetry++ > 0)
             {
-                ConnectAsync();
-                return false;
+                Connect();
+                return;
             }
         }
     }
-    public override async Task Close()
+    public override void Close()
     {
-        await base.Close();
+        base.Close();
         kcp?.Dispose();
         kcp = null;
         sendThread?.Join();
@@ -176,7 +182,7 @@ public class SKCP : SBase
             if (sendRetry++ > 0)
             {
                 owner.Dispose();
-                ConnectAsync();
+                Connect();
                 return;
             }
         }
@@ -201,7 +207,7 @@ public class SKCP : SBase
             }
             if (receiveRetry++ > 0)
             {
-                ConnectAsync();
+                Connect();
                 return;
             }
         }

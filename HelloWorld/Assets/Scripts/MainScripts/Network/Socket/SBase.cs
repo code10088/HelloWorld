@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using System.Threading.Tasks;
 
 public enum SocketEvent
 {
@@ -71,18 +70,7 @@ public class SBase
     {
 
     }
-    protected virtual async Task<bool> ConnectAsync()
-    {
-        await Close();
-        if (connectRetry++ > 0)
-        {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return false;
-        }
-        socketevent.Invoke((int)SocketEvent.Reconect, 0);
-        return true;
-    }
-    public virtual async Task Close()
+    public virtual void Close()
     {
         connectMark = false;
         socket.Dispose();

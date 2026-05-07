@@ -1,9 +1,8 @@
-﻿#if !UNITY_WEBGL
+#if !UNITY_WEBGL
 using System;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 
 public class STCP : SBase
 {
@@ -24,15 +23,22 @@ public class STCP : SBase
     #region 连接
     protected override void Connect()
     {
-        Task.Run(ConnectAsync);
+        var thread = new Thread(ConnectAsync);
+        thread.Start();
     }
-    protected override async Task<bool> ConnectAsync()
+    private void ConnectAsync()
     {
-        if (await base.ConnectAsync() == false) return false;
+        Close();
+        if (connectRetry++ > 0)
+        {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            return;
+        }
+        socketevent.Invoke((int)SocketEvent.Reconect, 0);
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return false;
+            return;
         }
         socket.Connect(SocketType.Stream, ProtocolType.Tcp);
         if (socket.Connected)
@@ -47,17 +53,15 @@ public class STCP : SBase
             receiveThread = new Thread(Receive);
             receiveThread.Start();
             heart.Start();
-            return true;
         }
         else
         {
-            ConnectAsync();
-            return false;
+            Connect();
         }
     }
-    public override async Task Close()
+    public override void Close()
     {
-        await base.Close();
+        base.Close();
         sendThread?.Join();
         receiveThread?.Join();
         headBuffer.Clear();
@@ -95,7 +99,7 @@ public class STCP : SBase
                     if (sendRetry++ > 0)
                     {
                         UnsafeByteBuffer.Return(buffer);
-                        ConnectAsync();
+                        Connect();
                         return;
                     }
                 }
@@ -123,7 +127,7 @@ public class STCP : SBase
             }
             if (receiveRetry++ > 0)
             {
-                ConnectAsync();
+                Connect();
                 return;
             }
         }

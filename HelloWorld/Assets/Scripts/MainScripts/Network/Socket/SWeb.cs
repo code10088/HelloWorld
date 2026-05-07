@@ -24,9 +24,15 @@ public class SWeb : SBase
     {
         ConnectAsync();
     }
-    protected override async Task<bool> ConnectAsync()
+    private async Task ConnectAsync()
     {
-        if (await base.ConnectAsync() == false) return false;
+        await CloseAsync();
+        if (connectRetry++ > 0)
+        {
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            return;
+        }
+        socketevent.Invoke((int)SocketEvent.Reconect, 0);
         using (UnityWebRequest request = UnityWebRequest.Head("https://www.baidu.com/"))
         {
             request.timeout = 3;
@@ -34,14 +40,13 @@ public class SWeb : SBase
             var tcs = new TaskCompletionSource<bool>();
             operation.completed += a => tcs.SetResult(true);
             await tcs.Task;
-            if (request.result > UnityWebRequest.Result.Success) return false;
+            if (request.result > UnityWebRequest.Result.Success) return;
         }
         socket = new WebSocket(ip);
         socket.OnOpen += ConnectCallback;
         socket.OnMessage += Receive;
         socket.OnError += Error;
-        socket.Connect();
-        return true;
+        await socket.Connect();
     }
     private void ConnectCallback()
     {
@@ -58,11 +63,11 @@ public class SWeb : SBase
     private void Error(string error)
     {
         GameDebug.LogError(error);
-        ConnectAsync();
+        Connect();
     }
-    public override async Task Close()
+    public override void Close()
     {
-        await base.Close();
+        base.Close();
         socket?.Close();
         socket = null;
         signal?.Release();
@@ -71,6 +76,10 @@ public class SWeb : SBase
         cts?.Cancel();
         cts?.Dispose();
         cts = null;
+    }
+    private async Task CloseAsync()
+    {
+        Close();
         await (sendTask ?? Task.CompletedTask);
     }
     #endregion
@@ -131,7 +140,7 @@ public class SWeb : SBase
         }
         if (receiveRetry++ > 0)
         {
-            ConnectAsync();
+            Connect();
         }
     }
     #endregion
