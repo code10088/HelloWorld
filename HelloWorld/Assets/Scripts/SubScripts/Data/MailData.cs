@@ -39,6 +39,7 @@ public class MailData : DataBase
     {
         NetMsgDispatch.Instance.UnRegister(NetMsgId.Message_SCMail);
         NetMsgDispatch.Instance.UnRegister(NetMsgId.Message_SCGetMailReward);
+        NetMsgDispatch.Instance.UnRegister(NetMsgId.Message_SCGetMailAllReward);
         NetMsgDispatch.Instance.UnRegister(NetMsgId.Message_SCDeleteMail);
     }
 

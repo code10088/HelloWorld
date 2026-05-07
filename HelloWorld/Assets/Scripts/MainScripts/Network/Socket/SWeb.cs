@@ -62,7 +62,7 @@ public class SWeb : SBase
     }
     public override async Task Close()
     {
-        base.Close();
+        await base.Close();
         socket?.Close();
         socket = null;
         signal?.Release();
