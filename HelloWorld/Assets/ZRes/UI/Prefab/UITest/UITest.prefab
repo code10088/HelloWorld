@@ -9854,8 +9854,6 @@ MonoBehaviour:
   addTriggerBtnUIButton: {fileID: 1788715781831264983}
   excuteTriggerBtnUIButton: {fileID: 5039245088730886163}
   guideUIButton: {fileID: 4717763022065894862}
-  serializeUIButton: {fileID: 0}
-  deserializeUIButton: {fileID: 0}
   miniGameGameObject: {fileID: 7749320665802415220}
   createAdBtnUIButton: {fileID: 4189473407504692647}
   showAdBtnUIButton: {fileID: 2193880090877537387}
