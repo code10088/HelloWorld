@@ -63,28 +63,31 @@ public class SKCP : SBase
         while (true)
         {
             int count = socket.Receive(receiveBuffer.FullSpan);
-            receiveBuffer.SetWPos(count);
-            receiveBuffer.SetRPos(0);
-            if (count == 6 && receiveBuffer.ReadUShort() == NetMsgId.SCKcpConnect)
+            if (count == 6)
             {
-                socketevent.Invoke((int)SocketEvent.Connected, 0);
-                var connectId = receiveBuffer.ReadUInt();
-                kcp = new PoolSegManager.Kcp(connectId, kcpSend);
-                kcp.NoDelay(1, 10, 2, 1);
-                kcp.WndSize();
-                kcp.SetMtu();
-                next = DateTime.UtcNow;
+                receiveBuffer.SetWPos(6);
+                receiveBuffer.SetRPos(0);
+                if (receiveBuffer.ReadUShort() == NetMsgId.SCKcpConnect)
+                {
+                    socketevent.Invoke((int)SocketEvent.Connected, 0);
+                    var connectId = receiveBuffer.ReadUInt();
+                    kcp = new PoolSegManager.Kcp(connectId, kcpSend);
+                    kcp.NoDelay(1, 10, 2, 1);
+                    kcp.WndSize();
+                    kcp.SetMtu();
+                    next = DateTime.UtcNow;
 
-                connectMark = true;
-                connectRetry = 0;
-                sendRetry = 0;
-                receiveRetry = 0;
-                sendThread = new Thread(Send);
-                sendThread.Start();
-                receiveThread = new Thread(Receive);
-                receiveThread.Start();
-                heart.Start();
-                return true;
+                    connectMark = true;
+                    connectRetry = 0;
+                    sendRetry = 0;
+                    receiveRetry = 0;
+                    sendThread = new Thread(Send);
+                    sendThread.Start();
+                    receiveThread = new Thread(Receive);
+                    receiveThread.Start();
+                    heart.Start();
+                    return true;
+                }
             }
             if (count >= 0)
             {
@@ -103,7 +106,6 @@ public class SKCP : SBase
         await base.Close();
         kcp?.Dispose();
         kcp = null;
-        await Task.Yield();
         sendThread?.Join();
         receiveThread?.Join();
     }

@@ -58,7 +58,6 @@ public class STCP : SBase
     public override async Task Close()
     {
         await base.Close();
-        await Task.Yield();
         sendThread?.Join();
         receiveThread?.Join();
         headBuffer.Clear();
