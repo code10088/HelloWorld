@@ -5,6 +5,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Net.Sockets.Kcp;
 using System.Threading;
+using System.Threading.Tasks;
 
 public class SKCP : SBase
 {
@@ -28,13 +29,12 @@ public class SKCP : SBase
     #region 连接
     protected override void Connect()
     {
-        var thread = new Thread(ConnectAsync);
-        thread.Start();
+        Task.Run(ConnectAsync);
     }
     /// <summary>
     /// UDP无连接协议，BeginConnect仅记录目标地址和端口
     /// </summary>
-    private void ConnectAsync()
+    private async Task ConnectAsync()
     {
         Close();
         if (connectRetry++ > 0)
