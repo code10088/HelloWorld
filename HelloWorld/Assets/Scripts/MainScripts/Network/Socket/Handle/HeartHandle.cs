@@ -1,4 +1,3 @@
-using ProtoBuf;
 using System;
 
 public class HeartHandle
@@ -12,12 +11,12 @@ public class HeartHandle
     private int recordIndex = 0;
     private int delay = 0;
     private Action connect;
-    private Action<ushort, IExtensible> send;
+    private Action<ushort, ISerialize> send;
     private CS_Heart heart = new CS_Heart();
 
     public int Delay => delay;
 
-    public HeartHandle(Action connect, Action<ushort, IExtensible> send)
+    public HeartHandle(Action connect, Action<ushort, ISerialize> send)
     {
         this.connect = connect;
         this.send = send;

@@ -1,4 +1,3 @@
-using ProtoBuf;
 using System;
 public class NetMsgId
 {
@@ -20,21 +19,22 @@ public class NetMsgId
 }
 public partial class NetMsgDispatch
 {
-    private bool Deserialize(ushort id, Memory<byte> memory)
+    private bool Deserialize(ushort id, UnsafeByteBuffer buffer)
     {
         try
         {
-            IExtensible msg = null;
+            IDeserialize msg = null;
             switch (id)
             {
-                case NetMsgId.Message_SCKcpConnect: msg = Serializer.Deserialize<Message.SCKcpConnect>(memory); break;
-                case NetMsgId.Message_SCHeart: msg = Serializer.Deserialize<Message.SCHeart>(memory); break;
-                case NetMsgId.Message_SCPlayerInfo: msg = Serializer.Deserialize<Message.SCPlayerInfo>(memory); break;
-                case NetMsgId.Message_SCMail: msg = Serializer.Deserialize<Message.SCMail>(memory); break;
-                case NetMsgId.Message_SCGetMailReward: msg = Serializer.Deserialize<Message.SCGetMailReward>(memory); break;
-                case NetMsgId.Message_SCGetMailAllReward: msg = Serializer.Deserialize<Message.SCGetMailAllReward>(memory); break;
-                case NetMsgId.Message_SCDeleteMail: msg = Serializer.Deserialize<Message.SCDeleteMail>(memory); break;
+                case NetMsgId.Message_SCKcpConnect: msg = new Message.SCKcpConnect(); break;
+                case NetMsgId.Message_SCHeart: msg = new Message.SCHeart(); break;
+                case NetMsgId.Message_SCPlayerInfo: msg = new Message.SCPlayerInfo(); break;
+                case NetMsgId.Message_SCMail: msg = new Message.SCMail(); break;
+                case NetMsgId.Message_SCGetMailReward: msg = new Message.SCGetMailReward(); break;
+                case NetMsgId.Message_SCGetMailAllReward: msg = new Message.SCGetMailAllReward(); break;
+                case NetMsgId.Message_SCDeleteMail: msg = new Message.SCDeleteMail(); break;
             }
+            msg.Deserialize(buffer);
             HandleMsg(id, msg);
             return true;
         }

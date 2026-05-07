@@ -32,7 +32,7 @@ public class SocketHandle
     /// <summary>
     /// TCP流式发送
     /// </summary>
-    public int Send(byte[] buffer, int length)
+    public int Send(ReadOnlySpan<byte> buffer, int length)
     {
         int count = 0;
         while (count < length)
@@ -40,7 +40,7 @@ public class SocketHandle
             int l = 0;
             try
             {
-                l = socket.Send(buffer, count, length - count, SocketFlags.None);
+                l = socket.Send(buffer.Slice(count, length - count), SocketFlags.None);
             }
             catch
             {
@@ -67,7 +67,7 @@ public class SocketHandle
         }
         return count;
     }
-    public int Receive(byte[] buffer)
+    public int Receive(Span<byte> buffer)
     {
         int count = 0;
         try

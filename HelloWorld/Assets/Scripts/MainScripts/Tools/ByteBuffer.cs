@@ -560,11 +560,6 @@ public sealed unsafe class UnsafeByteBuffer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => _rpos;
     }
-    public int Length
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => _wpos;
-    }
     public int Capacity
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -692,6 +687,14 @@ public sealed unsafe class UnsafeByteBuffer
         {
             Buffer.MemoryCopy(srcPtr, _ptr + _wpos, size, size);
         }
+        _wpos += size;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void WriteBuffer(UnsafeByteBuffer src, int offset, int size)
+    {
+        if (size == 0) return;
+        EnsureCapacity(size);
+        Buffer.MemoryCopy(src._ptr + offset, _ptr + _wpos, size, size);
         _wpos += size;
     }
     #endregion

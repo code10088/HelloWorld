@@ -1,5 +1,4 @@
-﻿using ProtoBuf;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,25 +13,25 @@ public enum SocketEvent
 public struct SendItem
 {
     private ushort id;
-    private IExtensible msg;
-    public SendItem(ushort id, IExtensible msg)
+    private ISerialize msg;
+    public SendItem(ushort id, ISerialize msg)
     {
         this.id = id;
         this.msg = msg;
     }
-    public BufferStream Serialize()
+    public UnsafeByteBuffer Serialize(bool writelength = false)
     {
-        dynamic concrete = msg;
-        var stream = new BufferStream(256, 6);
-        Serializer.Serialize(stream, concrete);
-        stream.WriteAt(0, stream.WPos - 4);
-        stream.WriteAt(4, id);
-        return stream;
+        var buffer = UnsafeByteBuffer.Rent(256);
+        if (writelength) buffer.WriteInt(0);
+        buffer.WriteUShort(id);
+        msg.Serialize(buffer);
+        if (writelength) buffer.WriteValueAt(0, buffer.WPos - 4);
+        return buffer;
     }
 }
 public class SBase
 {
-    private Func<ushort, Memory<byte>, bool> deserialize;
+    private Func<ushort, UnsafeByteBuffer, bool> deserialize;
     protected Action<int, int> socketevent;
     protected SocketHandle socket;
     protected HeartHandle heart;
@@ -48,15 +47,16 @@ public class SBase
     protected ConcurrentQueue<SendItem> sendQueue = new ConcurrentQueue<SendItem>();
     protected int sendRetry = 0;
     //接收
-    protected byte[] receiveBuffer = new byte[2048];
+    protected UnsafeByteBuffer receiveBuffer;
     protected int receiveRetry = 0;
 
-    public virtual void Init(string ip, ushort port, uint playerId, string token, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
+    public virtual void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
     {
         this.deserialize = deserialize;
         this.socketevent = socketevent;
         socket = new SocketHandle(ip, port);
         heart = new HeartHandle(Connect, Send);
+        receiveBuffer = UnsafeByteBuffer.Rent(2048);
         Connect();
     }
 
@@ -94,7 +94,7 @@ public class SBase
     #endregion
 
     #region 发送
-    public virtual void Send(ushort id, IExtensible msg)
+    public virtual void Send(ushort id, ISerialize msg)
     {
         if (connectMark)
         {
@@ -105,11 +105,10 @@ public class SBase
     #endregion
 
     #region 接收
-    protected bool Receive(byte[] bytes, int length)
+    protected bool Receive(UnsafeByteBuffer buffer)
     {
-        var id = BitConverter.ToUInt16(bytes);
-        var mm = bytes.AsMemory(2, length);
-        var b = deserialize(id, mm);
+        var id = buffer.ReadUShort();
+        var b = deserialize(id, buffer);
         heart.RefreshDelay2(id);
         socketevent.Invoke((int)SocketEvent.RefreshDelay, heart.Delay);
         return b;

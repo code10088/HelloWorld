@@ -1,5 +1,4 @@
-﻿using ProtoBuf;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
@@ -7,7 +6,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
     class NetMsgItem
     {
         public ushort id;
-        public IExtensible msg;
+        public IDeserialize msg;
     }
     class SocketEventItem
     {
@@ -15,7 +14,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
         public int param;
     }
     private Queue<NetMsgItem> msgPool = new Queue<NetMsgItem>();
-    private Dictionary<ushort, Action<IExtensible>> msgAction = new Dictionary<ushort, Action<IExtensible>>();
+    private Dictionary<ushort, Action<IDeserialize>> msgAction = new Dictionary<ushort, Action<IDeserialize>>();
     private Queue<SocketEventItem> socketevent = new Queue<SocketEventItem>();
 
     public void Init()
@@ -23,7 +22,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
         SocketManager.Instance.SetFunc(Deserialize, HandleSocketEvent);
         Driver.Instance.StartUpdate(Update);
     }
-    public void Register(ushort id, Action<IExtensible> action)
+    public void Register(ushort id, Action<IDeserialize> action)
     {
         msgAction[id] = action;
     }
@@ -35,7 +34,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
     {
         socketevent.Enqueue(new SocketEventItem() { type = type, param = param });
     }
-    private void HandleMsg(ushort id, IExtensible msg)
+    private void HandleMsg(ushort id, IDeserialize msg)
     {
         lock (msgPool) msgPool.Enqueue(new NetMsgItem() { id = id, msg = msg });
     }

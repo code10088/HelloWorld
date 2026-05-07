@@ -1,5 +1,4 @@
 using Message;
-using ProtoBuf;
 
 public class PlayerData : DataBase
 {
@@ -18,10 +17,10 @@ public class PlayerData : DataBase
         NetMsgDispatch.Instance.UnRegister(NetMsgId.Message_SCPlayerInfo);
     }
 
-    private void SCPlayerInfo(IExtensible msg)
+    private void SCPlayerInfo(IDeserialize msg)
     {
         var info = (SCPlayerInfo)msg;
-        playerId = info.Info.playerId;
-        lv = info.Info.Level;
+        playerId = info.info.playerId;
+        lv = info.info.level;
     }
 }

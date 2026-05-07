@@ -1,6 +1,5 @@
 ﻿#if UNITY_WEBGL
 using NativeWebSocket;
-using ProtoBuf;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ public class SWeb : SBase
     private CancellationTokenSource cts;
     private Task sendTask;
 
-    public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
+    public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
     {
         this.ip = $"ws://{ip}:{port}/client";
         base.Init(ip, port, playerId, token, deserialize, socketevent);
@@ -77,7 +76,7 @@ public class SWeb : SBase
     #endregion
 
     #region 发送
-    public override void Send(ushort id, IExtensible msg)
+    public override void Send(ushort id, ISerialize msg)
     {
         if (connectMark)
         {
@@ -103,11 +102,10 @@ public class SWeb : SBase
             }
             while (sendQueue.TryDequeue(out var item))
             {
-                var stream = item.Serialize();
-                var buffer = new byte[stream.WPos];
-                Buffer.BlockCopy(stream.Buffer, 0, buffer, 0, stream.WPos);
-                stream.Dispose();
-                await socket.Send(buffer);
+                var buffer = item.Serialize();
+                var bytes = buffer.Span.ToArray();
+                UnsafeByteBuffer.Return(buffer);
+                await socket.Send(bytes);
                 if (connectMark == false)
                 {
                     return;
@@ -124,7 +122,9 @@ public class SWeb : SBase
         {
             return;
         }
-        if (Receive(data, data.Length))
+        receiveBuffer.Clear();
+        receiveBuffer.WriteSpan(data);
+        if (Receive(receiveBuffer))
         {
             receiveRetry = 0;
             return;

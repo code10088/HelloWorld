@@ -16,12 +16,12 @@ public class SKCP : SBase
     private DateTimeOffset next;
     private SendItem kcpConnect;
 
-    public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
+    public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
     {
         kcpSend = new KcpSend(Send);
         var msg = new CS_KcpConnect();
         msg.playerId = playerId;
-        msg.Token = token;
+        msg.token = token;
         kcpConnect = new SendItem(NetMsgId.CSKcpConnect, msg);
         base.Init(ip, port, playerId, token, deserialize, socketevent);
     }
@@ -43,30 +43,32 @@ public class SKCP : SBase
             return false;
         }
         socket.Connect(SocketType.Dgram, ProtocolType.Udp);
-        var stream = kcpConnect.Serialize();
+        var buffer = kcpConnect.Serialize();
         while (true)
         {
-            int count = socket.Send(stream.Buffer.AsSpan(0, stream.WPos));
-            if (count == stream.WPos)
+            int count = socket.Send(buffer.Span);
+            if (count == buffer.WPos)
             {
-                stream.Dispose();
+                UnsafeByteBuffer.Return(buffer);
                 sendRetry = 0;
                 break;
             }
             if (sendRetry++ > 0)
             {
-                stream.Dispose();
+                UnsafeByteBuffer.Return(buffer);
                 ConnectAsync();
                 return false;
             }
         }
         while (true)
         {
-            int count = socket.Receive(receiveBuffer);
-            if (count == 6 && BitConverter.ToUInt16(receiveBuffer) == NetMsgId.SCKcpConnect)
+            int count = socket.Receive(receiveBuffer.FullSpan);
+            receiveBuffer.SetWPos(count);
+            receiveBuffer.SetRPos(0);
+            if (count == 6 && receiveBuffer.ReadUShort() == NetMsgId.SCKcpConnect)
             {
                 socketevent.Invoke((int)SocketEvent.Connected, 0);
-                var connectId = BitConverter.ToUInt32(receiveBuffer, 2);
+                var connectId = receiveBuffer.ReadUInt();
                 kcp = new PoolSegManager.Kcp(connectId, kcpSend);
                 kcp.NoDelay(1, 10, 2, 1);
                 kcp.WndSize();
@@ -130,9 +132,9 @@ public class SKCP : SBase
             }
             while (sendQueue.TryDequeue(out var item))
             {
-                var stream = item.Serialize();
-                kcp.Send(stream.Buffer.AsSpan(0, stream.WPos));
-                stream.Dispose();
+                var buffer = item.Serialize();
+                kcp.Send(buffer.Span);
+                UnsafeByteBuffer.Return(buffer);
             }
             var current = DateTime.UtcNow;
             if (current >= next)
@@ -184,7 +186,7 @@ public class SKCP : SBase
     {
         while (true)
         {
-            int count = socket.Receive(receiveBuffer);
+            int count = socket.Receive(receiveBuffer.FullSpan);
             if (connectMark == false)
             {
                 return;
@@ -202,16 +204,18 @@ public class SKCP : SBase
             }
         }
     }
-    private bool Deserialize(byte[] buffer, int length)
+    private bool Deserialize(UnsafeByteBuffer buffer, int length)
     {
-        kcp.Input(buffer.AsSpan(0, length));
+        kcp.Input(buffer.FullSpan.Slice(0, length));
         while (true)
         {
             int size = kcp.PeekSize();
             if (size <= 0) return true;
-            size = kcp.Recv(buffer);
+            size = kcp.Recv(buffer.FullSpan);
             if (size <= 0) return true;
-            if (!Receive(buffer, size)) return false;
+            buffer.SetWPos(size);
+            buffer.SetRPos(0);
+            if (!Receive(buffer)) return false;
         }
     }
     #endregion

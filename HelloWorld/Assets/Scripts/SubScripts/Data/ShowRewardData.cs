@@ -25,7 +25,7 @@ public class ShowRewardData : DataBase
         ShowRewardStruct[] temp = new ShowRewardStruct[rewards.Count];
         for (int i = 0; i < rewards.Count; i++)
         {
-            temp[i] = new ShowRewardStruct { Id = (int)rewards[i].itemId, Count = (int)rewards[i].Count };
+            temp[i] = new ShowRewardStruct { Id = (int)rewards[i].itemId, Count = (int)rewards[i].count };
         }
         if (current == null)
         {

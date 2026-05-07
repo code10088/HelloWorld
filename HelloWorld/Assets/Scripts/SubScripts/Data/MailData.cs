@@ -1,5 +1,4 @@
 using Message;
-using ProtoBuf;
 using System.Collections.Generic;
 
 public class MailData : DataBase
@@ -19,20 +18,20 @@ public class MailData : DataBase
         //测试
         all = new()
         {
-            new MailDetail() { mailId = 1, Title = "1", Time = 1767710843 },
-            new MailDetail() { mailId = 2, Title = "2", Time = 1767710843 },
-            new MailDetail() { mailId = 3, Title = "3", Time = 1767710843 },
-            new MailDetail() { mailId = 4, Title = "4", Time = 1767710843 },
-            new MailDetail() { mailId = 5, Title = "5", Time = 1767710843 },
-            new MailDetail() { mailId = 6, Title = "6", Time = 1767710843 },
-            new MailDetail() { mailId = 7, Title = "7", Time = 1767710843 },
-            new MailDetail() { mailId = 8, Title = "8", Time = 1767710843 },
-            new MailDetail() { mailId = 9, Title = "9", Time = 1767710843 },
-            new MailDetail() { mailId = 10, Title = "10", Time = 1767710843 },
+            new MailDetail() { mailId = 1, title = "1", time = 1767710843 },
+            new MailDetail() { mailId = 2, title = "2", time = 1767710843 },
+            new MailDetail() { mailId = 3, title = "3", time = 1767710843 },
+            new MailDetail() { mailId = 4, title = "4", time = 1767710843 },
+            new MailDetail() { mailId = 5, title = "5", time = 1767710843 },
+            new MailDetail() { mailId = 6, title = "6", time = 1767710843 },
+            new MailDetail() { mailId = 7, title = "7", time = 1767710843 },
+            new MailDetail() { mailId = 8, title = "8", time = 1767710843 },
+            new MailDetail() { mailId = 9, title = "9", time = 1767710843 },
+            new MailDetail() { mailId = 10, title = "10", time = 1767710843 },
         };
         foreach (var item in all)
         {
-            item.Rewards.Add(new RewardInfo { itemId = 1, Count = 10 });
+            item.rewards.Add(new RewardInfo { itemId = 1, count = 10 });
         }
         EventManager.Instance.Fire(EventType.RefreshMail);
     }
@@ -47,10 +46,10 @@ public class MailData : DataBase
     {
         SocketManager.Instance.Send(NetMsgId.Message_CSMail, new CSMail());
     }
-    private void SCMail(IExtensible msg)
+    private void SCMail(IDeserialize msg)
     {
         var mail = (SCMail)msg;
-        all = mail.Details;
+        all = mail.details;
         EventManager.Instance.Fire(EventType.RefreshMail);
     }
     /// <summary>
@@ -58,13 +57,13 @@ public class MailData : DataBase
     /// </summary>
     public void CSReadMail()
     {
-        SocketManager.Instance.Send(NetMsgId.Message_CSReadMail, new CSReadMail { Lists = readList.ToArray() });
+        SocketManager.Instance.Send(NetMsgId.Message_CSReadMail, new CSReadMail { lists = readList.ToArray() });
 
         //测试
         foreach (var mail in readList)
         {
             var data = all.Find(a => a.mailId == mail);
-            if (data != null && data.Status == 0) data.Status = 1;
+            if (data != null && data.status == 0) data.status = 1;
         }
     }
     /// <summary>
@@ -77,25 +76,25 @@ public class MailData : DataBase
 
         //测试
         var data = all.Find(a => a.mailId == id);
-        data.Status = 2;
+        data.status = 2;
         EventManager.Instance.Fire(EventType.RefreshMail);
-        DataManager.Instance.ShowRewardData.ShowRewards(data.Rewards);
+        DataManager.Instance.ShowRewardData.ShowRewards(data.rewards);
     }
     /// <summary>
     /// 单个领取奖励
     /// </summary>
     /// <param name="msg"></param>
-    private void SCGetMailReward(IExtensible msg)
+    private void SCGetMailReward(IDeserialize msg)
     {
         var mail = (SCGetMailReward)msg;
         var data = all.Find(a => a.mailId == mail.mailId);
         if (data == null) return;
-        if (mail.Status == 0)
+        if (mail.status == 0)
         {
-            data.Status = 2;
+            data.status = 2;
             EventManager.Instance.Fire(EventType.RefreshMail);
         }
-        DataManager.Instance.ShowRewardData.ShowRewards(data.Rewards);
+        DataManager.Instance.ShowRewardData.ShowRewards(data.rewards);
     }
     /// <summary>
     /// 一键领取所有奖励
@@ -108,10 +107,10 @@ public class MailData : DataBase
         List<RewardInfo> rewards = new();
         foreach (var item in all)
         {
-            if (item.Status < 2 && item.Rewards.Count > 0)
+            if (item.status < 2 && item.rewards.Count > 0)
             {
-                item.Status = 2;
-                rewards.AddRange(item.Rewards);
+                item.status = 2;
+                rewards.AddRange(item.rewards);
             }
         }
         EventManager.Instance.Fire(EventType.RefreshMail);
@@ -120,16 +119,16 @@ public class MailData : DataBase
     /// <summary>
     /// 一键领取所有奖励
     /// </summary>
-    private void SCGetMailAllReward(IExtensible msg)
+    private void SCGetMailAllReward(IDeserialize msg)
     {
         var mail = (SCGetMailAllReward)msg;
         List<RewardInfo> rewards = new();
         foreach (var item in all)
         {
-            if (item.Status < 2 && item.Rewards.Count > 0)
+            if (item.status < 2 && item.rewards.Count > 0)
             {
-                item.Status = 2;
-                rewards.AddRange(item.Rewards);
+                item.status = 2;
+                rewards.AddRange(item.rewards);
             }
         }
         EventManager.Instance.Fire(EventType.RefreshMail);
@@ -151,10 +150,10 @@ public class MailData : DataBase
     /// <summary>
     /// 单个删除邮件
     /// </summary>
-    private void SCDeleteMail(IExtensible msg)
+    private void SCDeleteMail(IDeserialize msg)
     {
         var mail = (SCDeleteMail)msg;
-        if (mail.Status == 0)
+        if (mail.status == 0)
         {
             var index = all.FindIndex(a => a.mailId == mail.mailId);
             if (index >= 0)
@@ -181,9 +180,9 @@ public class MailData : DataBase
     public void SetRead(uint id)
     {
         var data = all.Find(a => a.mailId == id);
-        if (data != null && data.Status == 0)
+        if (data != null && data.status == 0)
         {
-            data.Status = 1;
+            data.status = 1;
             readList.Add(id);
         }
     }
@@ -191,9 +190,9 @@ public class MailData : DataBase
     {
         for (int i = 0; i < all.Count; i++)
         {
-            if (all[i].Status == 0)
+            if (all[i].status == 0)
             {
-                all[i].Status = 1;
+                all[i].status = 1;
                 readList.Add(all[i].mailId);
             }
         }
@@ -202,7 +201,7 @@ public class MailData : DataBase
     {
         for (int i = 0; i < all.Count; i++)
         {
-            if (all[i].Rewards.Count > 0) return true;
+            if (all[i].rewards.Count > 0) return true;
         }
         return false;
     }

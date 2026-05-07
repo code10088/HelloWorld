@@ -1,13 +1,12 @@
-using ProtoBuf;
 using System;
 
 public class SocketManager : Singleton<SocketManager>
 {
     private SBase socket;
-    private Func<ushort, Memory<byte>, bool> deserialize;
+    private Func<ushort, UnsafeByteBuffer, bool> deserialize;
     private Action<int, int> socketevent;
 
-    public void SetFunc(Func<ushort, Memory<byte>, bool> deserialize, Action<int, int> socketevent)
+    public void SetFunc(Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
     {
         this.deserialize = deserialize;
         this.socketevent = socketevent;
@@ -28,7 +27,7 @@ public class SocketManager : Singleton<SocketManager>
     {
         socket?.Reconnect();
     }
-    public void Send(ushort id, IExtensible msg)
+    public void Send(ushort id, ISerialize msg)
     {
         socket?.Send(id, msg);
     }

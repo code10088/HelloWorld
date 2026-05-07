@@ -9,12 +9,17 @@ public class STCP : SBase
 {
     private Thread sendThread;
     private Thread receiveThread;
-    private byte[] headBuffer = new byte[4];
-    private byte[] bodyBuffer = new byte[2048];
-    private int headPos = 0;
-    private int bodyPos = 0;
+    private UnsafeByteBuffer headBuffer;
+    private UnsafeByteBuffer bodyBuffer;
     private int headLength = 4;
     private int bodyLength = 0;
+
+    public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
+    {
+        headBuffer = UnsafeByteBuffer.Rent(4);
+        bodyBuffer = UnsafeByteBuffer.Rent(2048);
+        base.Init(ip, port, playerId, token, deserialize, socketevent);
+    }
 
     #region 连接
     protected override void Connect()
@@ -56,8 +61,8 @@ public class STCP : SBase
         await Task.Yield();
         sendThread?.Join();
         receiveThread?.Join();
-        headPos = 0;
-        bodyPos = 0;
+        headBuffer.Clear();
+        bodyBuffer.Clear();
         bodyLength = 0;
     }
     #endregion
@@ -73,24 +78,24 @@ public class STCP : SBase
             }
             while (sendQueue.TryDequeue(out var item))
             {
-                var stream = item.Serialize();
+                var buffer = item.Serialize(true);
                 while (true)
                 {
-                    int count = socket.Send(stream.Buffer, stream.WPos);
+                    int count = socket.Send(buffer.Span, buffer.WPos);
                     if (connectMark == false)
                     {
-                        stream.Dispose();
+                        UnsafeByteBuffer.Return(buffer);
                         return;
                     }
-                    if (count == stream.WPos)
+                    if (count == buffer.WPos)
                     {
-                        stream.Dispose();
+                        UnsafeByteBuffer.Return(buffer);
                         sendRetry = 0;
                         break;
                     }
                     if (sendRetry++ > 0)
                     {
-                        stream.Dispose();
+                        UnsafeByteBuffer.Return(buffer);
                         ConnectAsync();
                         return;
                     }
@@ -106,7 +111,7 @@ public class STCP : SBase
     {
         while (true)
         {
-            int count = socket.Receive(receiveBuffer);
+            int count = socket.Receive(receiveBuffer.FullSpan);
             if (connectMark == false)
             {
                 return;
@@ -124,24 +129,24 @@ public class STCP : SBase
             }
         }
     }
-    private bool Deserialize(byte[] buffer, int length)
+    private bool Deserialize(UnsafeByteBuffer buffer, int length)
     {
         int pos = 0;
         while (pos < length)
         {
-            if (headPos < headLength)
+            if (headBuffer.WPos < headLength)
             {
-                int l = Math.Min(headLength - headPos, length - pos);
-                Buffer.BlockCopy(buffer, pos, headBuffer, headPos, l);
+                int l = Math.Min(headLength - headBuffer.WPos, length - pos);
+                headBuffer.WriteBuffer(buffer, pos, l);
                 pos += l;
-                headPos += l;
-                if (headPos == headLength)
+                if (headBuffer.WPos == headLength)
                 {
-                    bodyLength = BitConverter.ToInt32(headBuffer, 0);
-                    if (bodyLength < 0 || bodyLength > bodyBuffer.Length)
+                    headBuffer.SetRPos(0);
+                    bodyLength = headBuffer.ReadInt();
+                    if (bodyLength < 0 || bodyLength > bodyBuffer.Capacity)
                     {
-                        headPos = 0;
-                        bodyPos = 0;
+                        headBuffer.Clear();
+                        bodyBuffer.Clear();
                         bodyLength = 0;
                         return false;
                     }
@@ -149,15 +154,14 @@ public class STCP : SBase
             }
             else
             {
-                int l = Math.Min(bodyLength - bodyPos, length - pos);
-                Buffer.BlockCopy(buffer, pos, bodyBuffer, bodyPos, l);
+                int l = Math.Min(bodyLength - bodyBuffer.WPos, length - pos);
+                bodyBuffer.WriteBuffer(buffer, pos, l);
                 pos += l;
-                bodyPos += l;
-                if (bodyPos == bodyLength)
+                if (bodyBuffer.WPos == bodyLength)
                 {
-                    headPos = 0;
-                    bodyPos = 0;
-                    bool b = Receive(bodyBuffer, bodyLength);
+                    bool b = Receive(bodyBuffer);
+                    headBuffer.Clear();
+                    bodyBuffer.Clear();
                     bodyLength = 0;
                     if (!b) return false;
                 }

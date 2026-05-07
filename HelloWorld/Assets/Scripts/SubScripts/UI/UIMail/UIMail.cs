@@ -96,11 +96,11 @@ public class UIMail : UIBase
 
         var data = DataManager.Instance.MailData.All[index];
         comp.contentRootGameObject.SetActive(true);
-        comp.titleTextMeshProUGUI.text = data.Title;
-        comp.contentTextMeshProUGUI.text = data.Content;
-        for (int i = 0; i < data.Rewards.Count; i++)
+        comp.titleTextMeshProUGUI.text = data.title;
+        comp.contentTextMeshProUGUI.text = data.content;
+        for (int i = 0; i < data.rewards.Count; i++)
         {
-            var reward = data.Rewards[i];
+            var reward = data.rewards[i];
             CommonItem rewardItem;
             if (i < rewardItems.Count)
             {
@@ -113,16 +113,16 @@ public class UIMail : UIBase
                 rewardItems.Add(rewardItem);
             }
             rewardItem.Refresh((int)reward.itemId);
-            rewardItem.SetCount((int)reward.Count);
-            rewardItem.SetReceived(data.Status == 2);
+            rewardItem.SetCount((int)reward.count);
+            rewardItem.SetReceived(data.status == 2);
             rewardItem.SetActive(true);
         }
-        for (int i = data.Rewards.Count; i < rewardItems.Count; i++)
+        for (int i = data.rewards.Count; i < rewardItems.Count; i++)
         {
             rewardItems[i].SetActive(false);
         }
         LayoutRebuilder.MarkLayoutForRebuild(comp.rewardContentRectTransform);
-        if (data.Rewards.Count > 0 && data.Status != 2)
+        if (data.rewards.Count > 0 && data.status != 2)
         {
             comp.getBtnGameObject.SetActive(true);
             comp.deleteBtnGameObject.SetActive(false);
@@ -172,15 +172,15 @@ public class UIMailItem : LoopItemData
     {
         this.data = data;
         this.action = action;
-        comp.titleTextMeshProUGUI.text = data.Title;
-        comp.timeTextMeshProUGUI.text = TimeUtils.FormatTime(data.Time);
-        comp.redPointGameObject.SetActive(data.Rewards.Count == 0 && data.Status == 0 || data.Rewards.Count > 0 && data.Status != 2);
+        comp.titleTextMeshProUGUI.text = data.title;
+        comp.timeTextMeshProUGUI.text = TimeUtils.FormatTime(data.time);
+        comp.redPointGameObject.SetActive(data.rewards.Count == 0 && data.status == 0 || data.rewards.Count > 0 && data.status != 2);
         SetSelect(select);
     }
     private void OnClick()
     {
         DataManager.Instance.MailData.SetRead(data.mailId);
-        comp.redPointGameObject.SetActive(data.Rewards.Count > 0 && data.Status != 2);
+        comp.redPointGameObject.SetActive(data.rewards.Count > 0 && data.status != 2);
         action.Invoke(data.mailId);
     }
     public void SetSelect(bool select)
