@@ -1,5 +1,4 @@
 using cfg;
-using MemoryPack;
 using Newtonsoft.Json;
 using SuperScrollView;
 using System.Collections.Generic;
@@ -54,8 +53,6 @@ public class UITest : UIBase
         comp.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
         comp.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
         comp.guideUIButton.onClick.AddListener(StartGuide);
-        comp.serializeUIButton.onClick.AddListener(MemoryPackSerialize);
-        comp.deserializeUIButton.onClick.AddListener(MemoryPackDeserialize);
 
         //小游戏
         comp.createAdBtnUIButton.onClick.AddListener(CreateAd);
@@ -285,21 +282,6 @@ public class UITest : UIBase
     {
         DataManager.Instance.GuideData.StartGuide(1);
     }
-    private byte[] testBytes;
-    private MemoryPackTest memoryPackTest = new MemoryPackTest();
-    private void MemoryPackSerialize()
-    {
-        memoryPackTest.a = 123;
-        memoryPackTest.b = "Hello, MemoryPack!";
-        memoryPackTest.c = 1.0f;
-        testBytes = MemoryPackSerializer.Serialize(memoryPackTest);
-        GameDebug.Log(testBytes.Length);
-    }
-    private void MemoryPackDeserialize()
-    {
-        MemoryPackSerializer.Deserialize(testBytes, ref memoryPackTest);
-        GameDebug.Log(memoryPackTest.c);
-    }
     #endregion
 
     #region 小游戏
@@ -436,13 +418,6 @@ public class UITestItem : LoopItemData
     {
         comp.itemTextTextMeshProUGUI.text = data.name;
     }
-}
-[MemoryPackable]
-public partial class MemoryPackTest
-{
-    public int a;
-    public string b;
-    public float c;
 }
 #if WEIXINMINIGAME
 [System.Serializable]

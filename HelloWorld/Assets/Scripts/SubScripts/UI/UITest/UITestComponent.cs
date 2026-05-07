@@ -36,8 +36,6 @@ public class UITestComponent : ComponentMark
     public UIButton addTriggerBtnUIButton;
     public UIButton excuteTriggerBtnUIButton;
     public UIButton guideUIButton;
-    public UIButton serializeUIButton;
-    public UIButton deserializeUIButton;
     public UnityEngine.GameObject miniGameGameObject;
     public UIButton createAdBtnUIButton;
     public UIButton showAdBtnUIButton;

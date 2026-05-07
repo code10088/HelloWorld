@@ -28,13 +28,6 @@
       "dependencies": {},
       "hash": "6277e75ce11de86b765d4bd75d4968d1bcaa2eaa"
     },
-    "com.cysharp.memorypack": {
-      "version": "https://github.com/Cysharp/MemoryPack.git?path=src/MemoryPack.Unity/Assets/MemoryPack.Unity",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "612a4815eb5fbf2d67d4ee734fdb92793f8a1304"
-    },
     "com.endel.nativewebsocket": {
       "version": "https://github.com/endel/NativeWebSocket.git#upm-2",
       "depth": 0,
