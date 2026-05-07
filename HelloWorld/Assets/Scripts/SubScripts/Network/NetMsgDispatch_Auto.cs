@@ -1,4 +1,5 @@
 using System;
+
 public class NetMsgId
 {
     public const ushort Message_CSKcpConnect = 0;

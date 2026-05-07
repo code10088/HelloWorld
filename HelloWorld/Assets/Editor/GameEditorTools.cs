@@ -103,22 +103,7 @@ public class GameEditorTools
     [MenuItem("Tools/CopyMsg", false, (int)ToolsMenuSort.CopyMsg)]
     public static void CopyMsg()
     {
-        string msgDir = $"{Application.dataPath}/Scripts/SubScripts/Network/Message";
-        List<FileInfo> list = new List<FileInfo>();
-        FileUtils.GetAllFilePath(msgDir, list);
-        for (int i = 0; i < list.Count; i++) File.Delete(list[i].FullName);
-        list.Clear();
-
         string path = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.MsgPath);
-        FileUtils.GetAllFilePath($"{path}/Proto", list, "*.proto");
-        for (int i = 0; i < list.Count; i++)
-        {
-            string name = list[i].FullName;
-            string fileName = Path.GetFileNameWithoutExtension(name);
-            string code = ProtoParser.GenerateMsgClass(name);
-            File.WriteAllText($"{msgDir}/{fileName}.cs", code, Encoding.UTF8);
-        }
-
         var messages = new List<NetMessage>();
         string[] lines = File.ReadAllLines($"{path}/Proto/AConfig.txt");
         for (int i = 0; i < lines.Length; i++)
