@@ -58,10 +58,9 @@ public class AssetManager : Singleton<AssetManager>
         parameters.AutoUnloadBundleWhenUnused = true;
 #if WEIXINMINIGAME
         string packageRoot = WeChatWASM.WX.PluginCachePath + "/" + Application.version;
-        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteService, bundleDecryptor);
+        parameters.WebNetworkFileSystemParameters = WechatFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteService, bundleDecryptor);
 #elif DOUYINMINIGAME
-        string packageRoot = Application.version;
-        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteService, bundleDecryptor);
+        parameters.WebNetworkFileSystemParameters = TiktokFileSystemCreater.CreateFileSystemParameters(remoteService, bundleDecryptor);
 #else
         parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
         parameters.WebServerFileSystemParameters.AddParameter(EFileSystemParameter.AssetBundleDecryptor, bundleDecryptor);
