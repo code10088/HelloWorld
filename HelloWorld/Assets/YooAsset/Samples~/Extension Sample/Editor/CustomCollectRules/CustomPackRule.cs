@@ -1,38 +1,46 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using YooAsset.Editor;
 
+/// <summary>
+/// 将特效纹理按首字符分组到资源包
+/// </summary>
 [DisplayName("打包特效纹理（自定义）")]
-public class PackEffectTexture : IPackRule
+public class PackEffectTexture : IBundlePackRule
 {
     private const string PackDirectory = "Assets/Effect/Textures/";
 
-    PackRuleResult IPackRule.GetPackRuleResult(PackRuleData data)
+    /// <inheritdoc/>
+    BundlePackRuleResult IBundlePackRule.GetPackRuleResult(BundlePackRuleData data)
     {
         string assetPath = data.AssetPath;
         if (assetPath.StartsWith(PackDirectory) == false)
-            throw new Exception($"Only support folder : {PackDirectory}");
+            throw new ArgumentException($"Only support folder: {PackDirectory}", nameof(data));
     
         string assetName = Path.GetFileName(assetPath).ToLower();
         string firstChar = assetName.Substring(0, 1);
         string bundleName = $"{PackDirectory}effect_texture_{firstChar}";
-        var packRuleResult = new PackRuleResult(bundleName, DefaultPackRule.AssetBundleFileExtension);
+        var packRuleResult = new BundlePackRuleResult(bundleName, DefaultBundlePackRule.AssetBundleFileExtension);
         return packRuleResult;
     }
 }
 
+/// <summary>
+/// 按视频资源路径生成原始文件资源包
+/// </summary>
 [DisplayName("打包视频（自定义）")]
-public class PackVideo : IPackRule
+public class PackVideo : IBundlePackRule
 {
-    public PackRuleResult GetPackRuleResult(PackRuleData data)
+    /// <inheritdoc/>
+    public BundlePackRuleResult GetPackRuleResult(BundlePackRuleData data)
     {
         string bundleName = RemoveExtension(data.AssetPath);
         string fileExtension = Path.GetExtension(data.AssetPath);
         fileExtension = fileExtension.Remove(0, 1);
-        PackRuleResult result = new PackRuleResult(bundleName, fileExtension);
+        BundlePackRuleResult result = new BundlePackRuleResult(bundleName, fileExtension);
         return result;
     }
 

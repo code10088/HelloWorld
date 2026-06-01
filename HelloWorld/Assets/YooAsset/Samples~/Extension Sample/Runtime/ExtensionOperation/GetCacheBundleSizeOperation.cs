@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using YooAsset;
 /// <summary>
 /// 获取沙盒目录里缓存文件大小
 /// </summary>
-public class GetCacheBundleSizeOperation : GameAsyncOperation
+public class GetCacheBundleSizeOperation : AsyncOperationBase
 {
     private enum ESteps
     {
@@ -20,20 +20,27 @@ public class GetCacheBundleSizeOperation : GameAsyncOperation
     private ESteps _steps = ESteps.None;
 
     /// <summary>
-    /// 总大小（单位：字节）
+    /// 缓存文件总大小，单位为字节
     /// </summary>
-    public long TotalSize = 0;
+    public long TotalSize { private set; get; }
 
 
+    /// <summary>
+    /// 创建缓存文件大小统计操作实例
+    /// </summary>
+    /// <param name="packageName">资源包裹名称</param>
     public GetCacheBundleSizeOperation(string packageName)
     {
+        if (string.IsNullOrEmpty(packageName))
+            throw new System.ArgumentNullException(nameof(packageName));
+
         _packageName = packageName;
     }
-    protected override void OnStart()
+    protected override void InternalStart()
     {
         _steps = ESteps.GetCacheFiles;
     }
-    protected override void OnUpdate()
+    protected override void InternalUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
@@ -54,17 +61,14 @@ public class GetCacheBundleSizeOperation : GameAsyncOperation
 
             TotalSize = totalSize;
             _steps = ESteps.Done;
-            Status = EOperationStatus.Succeed;
+            SetResult();
         }
-    }
-    protected override void OnAbort()
-    {
     }
 
     private string GetCacheDirectoryRoot()
     {
-        string rootDirectory = YooAssetSettingsData.GetYooDefaultCacheRoot();
+        string rootDirectory = YooAssetConfiguration.GetDefaultCacheRoot();
         string packageRoot = PathUtility.Combine(rootDirectory, _packageName);
-        return PathUtility.Combine(packageRoot, DefaultCacheFileSystemDefine.BundleFilesFolderName);
+        return PathUtility.Combine(packageRoot, SandboxFileSystemConsts.BundleFilesFolderName);
     }
 }

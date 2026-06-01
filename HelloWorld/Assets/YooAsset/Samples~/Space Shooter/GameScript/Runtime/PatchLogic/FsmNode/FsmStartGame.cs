@@ -1,20 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UniFramework.Machine;
+using YooAsset;
 
 internal class FsmStartGame : IStateNode
 {
-    private PatchOperation _owner;
-
     void IStateNode.OnCreate(StateMachine machine)
     {
-        _owner = machine.Owner as PatchOperation;
     }
     void IStateNode.OnEnter()
     {
-        PatchEventDefine.PatchStepsChange.SendEventMessage("开始游戏！");
-        _owner.SetFinish();
+        PatchStepChangedEvent.SendEventMessage("Starting game.");
+
+        // Set default package.
+        GameManager.Instance.SetGamePackage(YooAssets.GetPackage("DefaultPackage"));
+
+        // Change to home scene.
+        SceneChangeToHomeEvent.SendEventMessage();
     }
     void IStateNode.OnUpdate()
     {

@@ -42,45 +42,48 @@ public class AssetManager : Singleton<AssetManager>
         YooAssets.Initialize();
         package = YooAssets.CreatePackage(PackageName);
 #if UNITY_EDITOR && !HotUpdateDebug
-        var simulate = EditorSimulateModeHelper.SimulateBuild(PackageName);
+        var simulate = EditorSimulateBuildInvoker.Build(PackageName, (int)EBundleType.VirtualAssetBundle);
         var editorFileSystem = FileSystemParameters.CreateDefaultEditorFileSystemParameters(simulate.PackageRootDirectory);
-        var parameters = new EditorSimulateModeParameters();
+        var parameters = new EditorSimulateModeOptions();
         parameters.AutoUnloadBundleWhenUnused = true;
         parameters.EditorFileSystemParameters = editorFileSystem;
-        var operation = package.InitializeAsync(parameters);
+        var operation = package.InitializePackageAsync(parameters);
         operation.Completed += InitFinish;
 #elif UNITY_WEBGL
         string defaultHostServer = GameSetting.CDNVersion;
         string fallbackHostServer = GameSetting.CDNVersion;
-        IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-        WebDecryptionServices decryptionServices = new WebDecryptionServices();
-        var parameters = new WebPlayModeParameters();
+        RemoteService remoteService = new RemoteService(defaultHostServer, fallbackHostServer);
+        BundleDecryptor bundleDecryptor = new BundleDecryptor();
+        var parameters = new WebPlayModeOptions();
         parameters.AutoUnloadBundleWhenUnused = true;
 #if WEIXINMINIGAME
         string packageRoot = WeChatWASM.WX.PluginCachePath + "/" + Application.version;
-        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteServices, decryptionServices);
+        parameters.WebServerFileSystemParameters = WechatFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteService, bundleDecryptor);
 #elif DOUYINMINIGAME
         string packageRoot = Application.version;
-        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteServices, decryptionServices);
+        parameters.WebServerFileSystemParameters = TiktokFileSystemCreater.CreateFileSystemParameters(packageRoot, remoteService, bundleDecryptor);
 #else
-        parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters(decryptionServices);
-        parameters.WebRemoteFileSystemParameters = FileSystemParameters.CreateDefaultWebRemoteFileSystemParameters(remoteServices, decryptionServices);
+        parameters.WebServerFileSystemParameters = FileSystemParameters.CreateDefaultWebServerFileSystemParameters();
+        parameters.WebServerFileSystemParameters.AddParameter(EFileSystemParameter.AssetBundleDecryptor, bundleDecryptor);
+        parameters.WebNetworkFileSystemParameters = FileSystemParameters.CreateDefaultWebNetworkFileSystemParameters(remoteService);
+        parameters.WebNetworkFileSystemParameters.AddParameter(EFileSystemParameter.AssetBundleDecryptor, bundleDecryptor);
 #endif
-        var operation = package.InitializeAsync(parameters);
+        var operation = package.InitializePackageAsync(parameters);
         operation.Completed += InitFinish;
 #else
         string defaultHostServer = GameSetting.CDNVersion;
         string fallbackHostServer = GameSetting.CDNVersion;
-        IRemoteServices remoteServices = new RemoteServices(defaultHostServer, fallbackHostServer);
-        DecryptionServices decryptionServices = new DecryptionServices();
-        var buildinFileSystem = FileSystemParameters.CreateDefaultBuildinFileSystemParameters(decryptionServices);   
-        var cacheFileSystem = FileSystemParameters.CreateDefaultCacheFileSystemParameters(remoteServices, decryptionServices);
-        cacheFileSystem.AddParameter(FileSystemParametersDefine.DOWNLOAD_WATCH_DOG_TIME, GameSetting.timeoutS);
-        var parameters = new HostPlayModeParameters();
+        RemoteService remoteService = new RemoteService(defaultHostServer, fallbackHostServer);
+        BundleDecryptor bundleDecryptor = new BundleDecryptor();
+        var builtinFileSystem = FileSystemParameters.CreateDefaultBuiltinFileSystemParameters();
+        builtinFileSystem.AddParameter(EFileSystemParameter.AssetBundleDecryptor, bundleDecryptor);
+        var sandboxFileSystem = FileSystemParameters.CreateDefaultSandboxFileSystemParameters(remoteService);
+        sandboxFileSystem.AddParameter(EFileSystemParameter.AssetBundleDecryptor, bundleDecryptor);
+        var parameters = new HostPlayModeOptions();
         parameters.AutoUnloadBundleWhenUnused = true;
-        parameters.BuildinFileSystemParameters = buildinFileSystem;
-        parameters.CacheFileSystemParameters = cacheFileSystem;
-        var operation = package.InitializeAsync(parameters);
+        parameters.BuiltinFileSystemParameters = builtinFileSystem;
+        parameters.CacheFileSystemParameters = sandboxFileSystem;
+        var operation = package.InitializePackageAsync(parameters);
         operation.Completed += InitFinish;
 #endif
     }

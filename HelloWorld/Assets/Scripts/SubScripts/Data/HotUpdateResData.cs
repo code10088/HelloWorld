@@ -27,7 +27,8 @@ public class HotUpdateResData : DataBase
     }
     private void CheckDownloadHotUpdateRes()
     {
-        downloaderOperation = AssetManager.Instance.Package.CreateResourceDownloader(GameSetting.downloadLimit, GameSetting.retryTime);
+        var options = new ResourceDownloaderOptions(GameSetting.downloadLimit, GameSetting.retryTime);
+        downloaderOperation = AssetManager.Instance.Package.CreateResourceDownloader(options);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
             string content = $"更新资源大小 {downloaderOperation.TotalDownloadBytes / 1024f} Kb";
@@ -46,14 +47,14 @@ public class HotUpdateResData : DataBase
     }
     private void StartDownload()
     {
-        downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateRes;
-        downloaderOperation.DownloadUpdateCallback = Downloading;
-        downloaderOperation.DownloadErrorCallback = DownloadError;
-        downloaderOperation.BeginDownload();
+        downloaderOperation.DownloadCompleted += CheckDownloadHotUpdateRes;
+        downloaderOperation.DownloadProgressChanged += Downloading;
+        downloaderOperation.DownloadError += DownloadError;
+        downloaderOperation.StartDownload();
     }
-    private void CheckDownloadHotUpdateRes(DownloaderFinishData data)
+    private void CheckDownloadHotUpdateRes(DownloadCompletedEventArgs args)
     {
-        if (data.Succeed)
+        if (args.Succeeded)
         {
             UpdateFinish();
         }
@@ -67,15 +68,15 @@ public class HotUpdateResData : DataBase
             UICommonBox.OpenCommonBox(param);
         }
     }
-    private void Downloading(DownloadUpdateData data)
+    private void Downloading(DownloadProgressChangedEventArgs args)
     {
         var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
-        hotUpdateRes.SetText($"HotUpdateRes：{data.CurrentDownloadBytes}/{data.TotalDownloadBytes}");
-        hotUpdateRes.SetSlider(data.Progress);
+        hotUpdateRes.SetText($"HotUpdateRes：{args.CurrentDownloadBytes}/{args.TotalDownloadBytes}");
+        hotUpdateRes.SetSlider(args.Progress);
     }
-    private void DownloadError(DownloadErrorData data)
+    private void DownloadError(DownloadErrorEventArgs args)
     {
-        GameDebug.LogError($"DownloadError：{data.FileName}:{data.ErrorInfo}");
+        GameDebug.LogError($"DownloadError：{args.FileName}:{args.ErrorInfo}");
     }
     private void UpdateFinish()
     {

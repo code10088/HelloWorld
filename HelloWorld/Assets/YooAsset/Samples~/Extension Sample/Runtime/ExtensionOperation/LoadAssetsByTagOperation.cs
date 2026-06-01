@@ -1,10 +1,14 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using YooAsset;
 
-public class LoadAssetsByTagOperation<TObject> : GameAsyncOperation where TObject : UnityEngine.Object
+/// <summary>
+/// 按资源标签加载一组资源对象
+/// </summary>
+/// <typeparam name="TObject">资源对象的 Unity 类型</typeparam>
+public class LoadAssetsByTagOperation<TObject> : AsyncOperationBase where TObject : UnityEngine.Object
 {
     private enum ESteps
     {
@@ -14,36 +18,50 @@ public class LoadAssetsByTagOperation<TObject> : GameAsyncOperation where TObjec
         Done,
     }
 
+    private readonly string _packageName;
     private readonly string _tag;
     private ESteps _steps = ESteps.None;
     private List<AssetHandle> _handles;
+    private List<TObject> _assetObjects;
 
     /// <summary>
-    /// 资源对象集合
+    /// 加载成功的资源对象集合
     /// </summary>
-    public List<TObject> AssetObjects { private set; get; }
+    public IReadOnlyList<TObject> AssetObjects { get { return _assetObjects; } }
 
 
-    public LoadAssetsByTagOperation(string tag)
+    /// <summary>
+    /// 创建按标签加载资源对象的操作实例
+    /// </summary>
+    /// <param name="packageName">资源包裹名称</param>
+    /// <param name="tag">资源标签</param>
+    public LoadAssetsByTagOperation(string packageName, string tag)
     {
+        if (string.IsNullOrEmpty(packageName))
+            throw new System.ArgumentNullException(nameof(packageName));
+        if (string.IsNullOrEmpty(tag))
+            throw new System.ArgumentNullException(nameof(tag));
+
+        _packageName = packageName;
         _tag = tag;
     }
-    protected override void OnStart()
+    protected override void InternalStart()
     {
         _steps = ESteps.LoadAssets;
     }
-    protected override void OnUpdate()
+    protected override void InternalUpdate()
     {
         if (_steps == ESteps.None || _steps == ESteps.Done)
             return;
 
         if (_steps == ESteps.LoadAssets)
         {
-            AssetInfo[] assetInfos = YooAssets.GetAssetInfos(_tag);
+            var package = YooAssets.GetPackage(_packageName);
+            AssetInfo[] assetInfos = package.GetAssetInfos(_tag);
             _handles = new List<AssetHandle>(assetInfos.Length);
             foreach (var assetInfo in assetInfos)
             {
-                var handle = YooAssets.LoadAssetAsync(assetInfo);
+                var handle = package.LoadAssetAsync(assetInfo);
                 _handles.Add(handle);
             }
             _steps = ESteps.CheckResult;
@@ -53,7 +71,7 @@ public class LoadAssetsByTagOperation<TObject> : GameAsyncOperation where TObjec
         {
             int index = 0;
             foreach (var handle in _handles)
-            {			
+            {
                 if (handle.IsDone == false)
                 {
                     Progress = (float)index / _handles.Count;
@@ -62,52 +80,56 @@ public class LoadAssetsByTagOperation<TObject> : GameAsyncOperation where TObjec
                 index++;
             }
 
-            AssetObjects = new List<TObject>(_handles.Count);
+            _assetObjects = new List<TObject>(_handles.Count);
             foreach (var handle in _handles)
             {
-                if (handle.Status == EOperationStatus.Succeed)
+                if (handle.Status == EOperationStatus.Succeeded)
                 {
                     var assetObject = handle.AssetObject as TObject;
                     if (assetObject != null)
                     {
-                        AssetObjects.Add(assetObject);
+                        _assetObjects.Add(assetObject);
                     }
                     else
                     {
-                        string error = $"资源类型转换失败：{handle.AssetObject.name}";
-                        Debug.LogError($"{error}");
-                        AssetObjects.Clear();
-                        SetFinish(false, error);
+                        string error = $"Asset type cast failed: {handle.AssetObject.name}";
+                        Debug.LogError(error);
+                        _assetObjects.Clear();
+                        SetFailed(error);
                         return;
                     }
                 }
                 else
                 {
-                    Debug.LogError($"{handle.LastError}");
-                    AssetObjects.Clear();
-                    SetFinish(false, handle.LastError);
+                    Debug.LogError(handle.Error);
+                    _assetObjects.Clear();
+                    SetFailed(handle.Error);
                     return;
                 }
             }
 
-            SetFinish(true);
+            SetSucceed();
         }
     }
-    protected override void OnAbort()
+    private void SetSucceed()
     {
+        SetResult();
+        _steps = ESteps.Done;
     }
-    private void SetFinish(bool succeed, string error = "")
+    private void SetFailed(string error)
     {
-        Error = error;
-        Status = succeed ? EOperationStatus.Succeed : EOperationStatus.Failed;
+        SetError(error);
         _steps = ESteps.Done;
     }
 
     /// <summary>
-    /// 释放资源句柄
+    /// 释放加载过程中创建的资源句柄
     /// </summary>
     public void ReleaseHandle()
     {
+        if (_handles == null)
+            return;
+
         foreach (var handle in _handles)
         {
             handle.Release();

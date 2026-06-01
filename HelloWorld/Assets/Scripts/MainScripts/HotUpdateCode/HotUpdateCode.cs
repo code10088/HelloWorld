@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Text;
 using UnityEngine;
-using Newtonsoft.Json;
 using YooAsset;
 using Object = UnityEngine.Object;
-using System.Text;
 
 public class HotUpdateCode : Singleton<HotUpdateCode>
 {
@@ -34,7 +34,8 @@ public class HotUpdateCode : Singleton<HotUpdateCode>
     #region Editor
     private void EditorSimulate()
     {
-        var operation = AssetManager.Instance.Package.UpdatePackageManifestAsync("Simulate");
+        var options = new LoadPackageManifestOptions("Simulate", GameSetting.timeoutS);
+        var operation = AssetManager.Instance.Package.LoadPackageManifestAsync(options);
         operation.Completed += EditorSimulate;
     }
     private void EditorSimulate(AsyncOperationBase o)
@@ -75,20 +76,23 @@ public class HotUpdateCode : Singleton<HotUpdateCode>
     }
     private void CheckPackageManifest()
     {
-        var operation = AssetManager.Instance.Package.UpdatePackageManifestAsync(resVersion);
+        var options = new LoadPackageManifestOptions(resVersion, GameSetting.timeoutS);
+        var operation = AssetManager.Instance.Package.LoadPackageManifestAsync(options);
         operation.Completed += CheckPackageManifest;
     }
     private void CheckPackageManifest(AsyncOperationBase o)
     {
         UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.CheckPackageManifest / (float)HotUpdateCodeStep.Max);
 
-        if (o.Status == EOperationStatus.Succeed) ClearPackageUnusedCacheFiles();
+        if (o.Status == EOperationStatus.Succeeded) ClearPackageUnusedCacheFiles();
         else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckPackageManifest);
     }
     private void ClearPackageUnusedCacheFiles()
     {
-        AssetManager.Instance.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedManifestFiles);
-        AssetManager.Instance.Package.ClearCacheFilesAsync(EFileClearMode.ClearUnusedBundleFiles);
+        var options = new ClearCacheOptions(ClearCacheMethods.ClearUnusedManifestFiles);
+        AssetManager.Instance.Package.ClearCacheAsync(options);
+        options = new ClearCacheOptions(ClearCacheMethods.ClearUnusedBundleFiles);
+        AssetManager.Instance.Package.ClearCacheAsync(options);
         CheckDownloadHotUpdateConfig();
     }
     #endregion
@@ -96,12 +100,14 @@ public class HotUpdateCode : Singleton<HotUpdateCode>
     #region Config
     private void CheckDownloadHotUpdateConfig()
     {
-        downloaderOperation = AssetManager.Instance.Package.CreateBundleDownloader(GameSetting.HotUpdateConfigPath, 1, GameSetting.retryTime);
+        var info = AssetManager.Instance.Package.GetAssetInfo(GameSetting.HotUpdateConfigPath);
+        var options = new BundleDownloaderOptions(info, true, GameSetting.downloadLimit, GameSetting.retryTime);
+        downloaderOperation = AssetManager.Instance.Package.CreateResourceDownloader(options);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
-            downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateConfig;
-            downloaderOperation.DownloadErrorCallback = DownloadError;
-            downloaderOperation.BeginDownload();
+            downloaderOperation.DownloadCompleted += CheckDownloadHotUpdateConfig;
+            downloaderOperation.DownloadError += DownloadError;
+            downloaderOperation.StartDownload();
         }
         else
         {
@@ -109,16 +115,16 @@ public class HotUpdateCode : Singleton<HotUpdateCode>
             LoadHotUpdateConfig();
         }
     }
-    private void CheckDownloadHotUpdateConfig(DownloaderFinishData data)
+    private void CheckDownloadHotUpdateConfig(DownloadCompletedEventArgs args)
     {
         UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.DownloadingHotUpdateConfig / (float)HotUpdateCodeStep.Max);
 
-        if (data.Succeed) LoadHotUpdateConfig();
+        if (args.Succeeded) LoadHotUpdateConfig();
         else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", CheckDownloadHotUpdateConfig);
     }
-    private void DownloadError(DownloadErrorData data)
+    private void DownloadError(DownloadErrorEventArgs args)
     {
-        GameDebug.LogError($"DownloadError：{data.FileName}:{data.ErrorInfo}");
+        GameDebug.LogError($"DownloadError：{args.FileName}:{args.ErrorInfo}");
     }
     private void LoadHotUpdateConfig()
     {
@@ -135,16 +141,23 @@ public class HotUpdateCode : Singleton<HotUpdateCode>
         TextAsset ta = asset as TextAsset;
         var config = JsonConvert.DeserializeObject<HotUpdateConfig>(ta.text);
         AssetManager.Instance.Unload(ref id);
-        string[] paths = new string[config.HotAssembly.Length + config.HotUpdateRes.Length];
-        Array.Copy(config.HotAssembly, 0, paths, 0, config.HotAssembly.Length);
-        Array.Copy(config.HotUpdateRes, 0, paths, config.HotAssembly.Length, config.HotUpdateRes.Length);
-        downloaderOperation = AssetManager.Instance.Package.CreateBundleDownloader(paths, GameSetting.downloadLimit, GameSetting.retryTime);
+        var infos = new AssetInfo[config.HotAssembly.Length + config.HotUpdateRes.Length];
+        for (int i = 0; i < config.HotAssembly.Length; i++)
+        {
+            infos[i] = AssetManager.Instance.Package.GetAssetInfo(config.HotAssembly[i]);
+        }
+        for (int i = 0; i < config.HotUpdateRes.Length; i++)
+        {
+            infos[i + config.HotAssembly.Length] = AssetManager.Instance.Package.GetAssetInfo(config.HotUpdateRes[i]);
+        }
+        var options = new BundleDownloaderOptions(infos, true, GameSetting.downloadLimit, GameSetting.retryTime);
+        downloaderOperation = AssetManager.Instance.Package.CreateResourceDownloader(options);
         if (downloaderOperation.TotalDownloadBytes > 0)
         {
-            downloaderOperation.DownloadFinishCallback = CheckDownloadHotUpdateRes;
-            downloaderOperation.DownloadUpdateCallback = DownloadingHotUpdateRes;
-            downloaderOperation.DownloadErrorCallback = DownloadError;
-            downloaderOperation.BeginDownload();
+            downloaderOperation.DownloadCompleted += CheckDownloadHotUpdateRes;
+            downloaderOperation.DownloadProgressChanged += DownloadingHotUpdateRes;
+            downloaderOperation.DownloadError += DownloadError;
+            downloaderOperation.StartDownload();
         }
         else
         {
@@ -152,18 +165,18 @@ public class HotUpdateCode : Singleton<HotUpdateCode>
             UpdateFinish();
         }
     }
-    private void CheckDownloadHotUpdateRes(DownloaderFinishData data)
+    private void CheckDownloadHotUpdateRes(DownloadCompletedEventArgs args)
     {
         UIHotUpdateCode.Instance.SetSlider((float)HotUpdateCodeStep.DownloadingHotUpdateRes / (float)HotUpdateCodeStep.Max);
 
-        if (data.Succeed) UpdateFinish();
+        if (args.Succeeded) UpdateFinish();
         else UIHotUpdateCode.Instance.OpenCommonBox("Tips", "Retry", LoadHotUpdateConfig);
     }
-    private void DownloadingHotUpdateRes(DownloadUpdateData data)
+    private void DownloadingHotUpdateRes(DownloadProgressChangedEventArgs args)
     {
         float f = (float)HotUpdateCodeStep.LoadHotUpdateConfig / (float)HotUpdateCodeStep.Max;
         float w = (HotUpdateCodeStep.DownloadingHotUpdateRes - HotUpdateCodeStep.LoadHotUpdateConfig) / (float)HotUpdateCodeStep.Max;
-        f += data.Progress * w;
+        f += args.Progress * w;
         UIHotUpdateCode.Instance.SetSlider(f);
     }
     #endregion

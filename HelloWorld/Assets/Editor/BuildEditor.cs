@@ -137,10 +137,10 @@ public class BuildEditor
     {
         CheckAppVersion();
         var buildParameters = new ScriptableBuildParameters();
-        buildParameters.BuildOutputRoot = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
-        buildParameters.BuildinFileRoot = AssetBundleBuilderHelper.GetStreamingAssetsRoot();
+        buildParameters.BuildOutputRoot = BundleBuilderHelper.GetDefaultBuildOutputRoot();
+        buildParameters.BundledFileRoot = BundleBuilderHelper.GetStreamingAssetsRoot();
         buildParameters.BuildPipeline = EBuildPipeline.ScriptableBuildPipeline.ToString();
-        buildParameters.BuildBundleType = (int)EBuildBundleType.AssetBundle;
+        buildParameters.BuildBundleType = (int)EBundleType.AssetBundle;
         buildParameters.BuildTarget = EditorUserBuildSettings.activeBuildTarget;
         buildParameters.PackageName = AssetManager.PackageName;
         buildParameters.PackageVersion = resversion;
@@ -151,15 +151,14 @@ public class BuildEditor
         buildParameters.SingleReferencedPackAlone = true;
         buildParameters.VerifyBuildingResult = true;
         buildParameters.FileNameStyle = EFileNameStyle.BundleName_HashName;
-        buildParameters.BuildinFileCopyOption = EBuildinFileCopyOption.ClearAndCopyByTags;
-        buildParameters.BuildinFileCopyParams = "Builtin";
-        buildParameters.EncryptionServices = new EncryptionServices();
-        buildParameters.ManifestProcessServices = null;
-        buildParameters.ManifestRestoreServices = null;
+        buildParameters.BundledCopyOption = EBundledCopyOption.ClearAndCopyByTags;
+        buildParameters.BundledCopyParams = "Builtin";
+        buildParameters.BundleEncryptor = new BundleEncryptor();
+        buildParameters.ManifestEncryptor = null;
+        buildParameters.ManifestDecryptor = null;
         buildParameters.CompressOption = ECompressOption.LZ4;
         buildParameters.StripUnityVersion = false;
         buildParameters.DisableWriteTypeTree = false;
-        buildParameters.IgnoreTypeTreeChanges = true;
         buildParameters.ReplaceAssetPathWithAddress = false;
         buildParameters.TrackSpriteAtlasDependencies = true;
         buildParameters.WriteLinkXML = true;
@@ -240,7 +239,7 @@ public class BuildEditor
         QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(cosBucketConfig.SecretId, cosBucketConfig.SecretKey, durationSecond);
         CosXml cosXml = new CosXmlServer(cosXmlConfig, qCloudCredentialProvider);
 
-        string packageOutputDir = AssetBundleBuilderHelper.GetDefaultBuildOutputRoot();
+        string packageOutputDir = BundleBuilderHelper.GetDefaultBuildOutputRoot();
         packageOutputDir = $"{packageOutputDir}/{EditorUserBuildSettings.activeBuildTarget}/{AssetManager.PackageName}/{resversion}";
         List<FileInfo> fileList = new List<FileInfo>();
         FileUtils.GetAllFilePath(packageOutputDir, fileList);
