@@ -587,6 +587,13 @@ public sealed unsafe class UnsafeByteBuffer
         _wpos = 0;
         _rpos = 0;
     }
+    public UnsafeByteBuffer(void* ptr, int capacity = 1024)
+    {
+        _capacity = capacity;
+        _ptr = (byte*)ptr;
+        _wpos = 0;
+        _rpos = 0;
+    }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void SetWPos(int pos)
     {
