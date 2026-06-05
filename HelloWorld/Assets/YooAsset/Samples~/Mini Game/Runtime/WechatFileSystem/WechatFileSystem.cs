@@ -40,9 +40,9 @@ public static class WechatFileSystemCreater
         fileSystemParams.AddParameter(EFileSystemParameter.WebPlatformStrategy, new WechatPlatform());
 
         if (assetBundleDecryptor != null)
-            fileSystemParams.AddParameter(EFileSystemParameter.AssetbundleDecryptor, assetBundleDecryptor);
+            fileSystemParams.AddParameter(EFileSystemParameter.AssetBundleDecryptor, assetBundleDecryptor);
         if (rawBundleDecryptor != null)
-            fileSystemParams.AddParameter(EFileSystemParameter.RawbundleDecryptor, rawBundleDecryptor);
+            fileSystemParams.AddParameter(EFileSystemParameter.RawBundleDecryptor, rawBundleDecryptor);
         return fileSystemParams;
     }
 }
