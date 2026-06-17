@@ -9,16 +9,12 @@ using UnityEngine;
 public class ComponentMarkEditor : Editor
 {
     private static bool refresh = true;
-    [UnityEditor.Callbacks.DidReloadScripts]
-    private static void Reload()
-    {
-        refresh = true;
-    }
     public override void OnInspectorGUI()
     {
         GUI.backgroundColor = Color.green;
         if (GUILayout.Button("Refresh", GUILayout.Height(30)))
         {
+            refresh = true;
             string result = ExportScript();
             if (string.IsNullOrEmpty(result)) AssetDatabase.Refresh();
             else EditorUtility.DisplayDialog("Fail", result, "OK");
@@ -43,7 +39,7 @@ public class ComponentMarkEditor : Editor
             var parentComp = tempMark.transform.parent.GetComponentInParent<ComponentMark>(true);
             if (selfComp == component || parentComp == component)
             {
-                if (markList.Exists(a => a.name == tempMark.name)) return "变量名重复" + component.name;
+                if (markList.Exists(a => a.name == tempMark.name)) return "变量名重复" + tempMark.name;
                 else markList.Add(tempMark);
             }
         }
