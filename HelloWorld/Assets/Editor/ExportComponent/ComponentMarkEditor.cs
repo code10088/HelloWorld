@@ -50,7 +50,7 @@ public class ComponentMarkEditor : Editor
             for (int j = 0; j < markList[i].components.Length; j++)
             {
                 var tempMark = markList[i].components[j];
-                if (tempMark == null) tempMark = markList[i].gameObject;
+                if (tempMark == null) continue;
                 string fieldType = tempMark.GetType().ToString();
                 string fieldName = char.ToLower(tempMark.name[0]) + tempMark.name.Substring(1) + fieldType.Substring(fieldType.LastIndexOf('.') + 1);
                 if (components.Exists(a => a.field_name == fieldName))
@@ -58,11 +58,23 @@ public class ComponentMarkEditor : Editor
                     fieldName += counter;
                     counter++;
                 }
-                components.Add(new MarkComponentInfo
+                if (markList[i].isArray)
                 {
-                    component_type = fieldType,
-                    field_name = fieldName
-                });
+                    components.Add(new MarkComponentInfo
+                    {
+                        component_type = fieldType + "[]",
+                        field_name = fieldName
+                    });
+                    break;
+                }
+                else
+                {
+                    components.Add(new MarkComponentInfo
+                    {
+                        component_type = fieldType,
+                        field_name = fieldName
+                    });
+                }
             }
         }
 
@@ -94,14 +106,29 @@ public class ComponentMarkEditor : Editor
             var parentComp = tempMark.transform.parent.GetComponentInParent<ComponentMark>(true);
             if (selfComp == component || parentComp == component) markList.Add(tempMark);
         }
-        List<Object> components = new List<Object>();
+        List<object> components = new List<object>();
         for (int i = 0; i < markList.Count; i++)
         {
-            for (int j = 0; j < markList[i].components.Length; j++)
+            if (markList[i].isArray)
             {
-                var tempMark = markList[i].components[j];
-                if (tempMark == null) tempMark = markList[i].gameObject;
-                components.Add(tempMark);
+                var elementType = markList[i].components[0].GetType();
+                var array = System.Array.CreateInstance(elementType, markList[i].components.Length);
+                for (int j = 0; j < markList[i].components.Length; j++)
+                {
+                    var tempMark = markList[i].components[j];
+                    if (tempMark == null) continue;
+                    if (tempMark.GetType() == elementType) array.SetValue(tempMark, j);
+                }
+                components.Add(array);
+            }
+            else
+            {
+                for (int j = 0; j < markList[i].components.Length; j++)
+                {
+                    var tempMark = markList[i].components[j];
+                    if (tempMark == null) continue;
+                    components.Add(tempMark);
+                }
             }
         }
         try

@@ -14,7 +14,7 @@ public class MarkComponentEditor : Editor
         if (GUILayout.Button("Refresh", GUILayout.Height(30)))
         {
             var component = target as MarkComponent;
-            var components = component.components = new Object[1];
+            var components = component.components = new Object[1] { component.gameObject };
             if (components[0] == null) components[0] = component.GetComponent<LoopListView2>();
             if (components[0] == null) components[0] = component.GetComponent<LoopGridView>();
             if (components[0] == null) components[0] = component.GetComponent<Button>();
@@ -25,7 +25,26 @@ public class MarkComponentEditor : Editor
             if (components[0] == null) components[0] = component.GetComponent<TextMeshProUGUI>();
         }
         GUI.backgroundColor = Color.white;
+        EditorGUI.BeginChangeCheck();
         base.OnInspectorGUI();
+        if (EditorGUI.EndChangeCheck())
+        {
+            var component = target as MarkComponent;
+            if (component.isArray)
+            {
+                var componentType = component.components[0].GetType();
+                for (int i = 1; i < component.components.Length; i++)
+                {
+                    var temp = component.components[i];
+                    if (temp == null || temp.GetType() == componentType) continue;
+                    GameObject gameObject = temp as GameObject;
+                    if (temp is Component c) gameObject = c.gameObject;
+                    if (componentType == typeof(GameObject)) component.components[i] = gameObject;
+                    else component.components[i] = gameObject.GetComponent(componentType);
+                    EditorUtility.SetDirty(component);
+                }
+            }
+        }
     }
 
 
