@@ -52,7 +52,9 @@ public class ComponentMarkEditor : Editor
                 var tempMark = markList[i].components[j];
                 if (tempMark == null) continue;
                 string fieldType = tempMark.GetType().ToString();
-                string fieldName = char.ToLower(tempMark.name[0]) + tempMark.name.Substring(1) + fieldType.Substring(fieldType.LastIndexOf('.') + 1);
+                string fieldName = string.Empty;
+                if (markList[i].isArray) fieldName = char.ToLower(markList[i].name[0]) + markList[i].name.Substring(1);
+                else fieldName = char.ToLower(tempMark.name[0]) + tempMark.name.Substring(1) + fieldType.Substring(fieldType.LastIndexOf('.') + 1);
                 if (components.Exists(a => a.field_name == fieldName))
                 {
                     fieldName += counter;
