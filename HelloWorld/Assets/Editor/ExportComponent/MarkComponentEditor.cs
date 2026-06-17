@@ -14,7 +14,7 @@ public class MarkComponentEditor : Editor
         if (GUILayout.Button("Refresh", GUILayout.Height(30)))
         {
             var component = target as MarkComponent;
-            var components = component.components = new Object[1] { component.gameObject };
+            var components = component.components = new Object[1];
             if (components[0] == null) components[0] = component.GetComponent<LoopListView2>();
             if (components[0] == null) components[0] = component.GetComponent<LoopGridView>();
             if (components[0] == null) components[0] = component.GetComponent<Button>();
@@ -23,6 +23,7 @@ public class MarkComponentEditor : Editor
             if (components[0] == null) components[0] = component.GetComponent<Image>();
             if (components[0] == null) components[0] = component.GetComponent<RawImage>();
             if (components[0] == null) components[0] = component.GetComponent<TextMeshProUGUI>();
+            if (components[0] == null) components[0] = component.gameObject;
         }
         GUI.backgroundColor = Color.white;
         EditorGUI.BeginChangeCheck();
