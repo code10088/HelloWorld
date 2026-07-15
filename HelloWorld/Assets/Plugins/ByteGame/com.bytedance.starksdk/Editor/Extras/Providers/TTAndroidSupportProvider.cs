@@ -57,7 +57,7 @@ namespace TTSDK.Tool
             get
             {
 #if TT_ANDROID_BUILD_SUPPORTED
-                return AndroidExternalToolsSettings.gradlePath;
+                return AndroidExternalToolsSettings.Gradle.path;
 #else
                 Debug.LogError(NotSupportedTips);
                 return string.Empty;

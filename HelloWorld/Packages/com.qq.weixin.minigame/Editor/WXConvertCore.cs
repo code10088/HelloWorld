@@ -1,0 +1,2515 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Text.RegularExpressions;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Rendering;
+using LitJson;
+using UnityEditor.Build;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using static WeChatWASM.LifeCycleEvent;
+namespace WeChatWASM
+{
+    public class WXConvertCore
+    {
+
+        static WXConvertCore()
+        {
+
+        }
+
+        public static void Init()
+        {
+            string templateHeader = "PROJECT:";
+#if TUANJIE_2022_3_OR_NEWER
+            PlayerSettings.WeixinMiniGame.threadsSupport = WXConvertCore.EnableRenderThread;
+            PlayerSettings.runInBackground = false;
+            PlayerSettings.WeixinMiniGame.compressionFormat = WeixinMiniGameCompressionFormat.Disabled;
+            if(UnityUtil.GetEngineVersion() == UnityUtil.EngineVersion.Tuanjie)
+            {
+                var absolutePath = Path.GetFullPath("Packages/com.qq.weixin.minigame/WebGLTemplates/WXTemplate2022TJ");
+                if (!Directory.Exists(absolutePath))
+                {
+                    PlayerSettings.WeixinMiniGame.template = $"{templateHeader}WXTemplate2022TJ";
+                }
+                else
+                {
+                    PlayerSettings.WeixinMiniGame.template = $"PATH:{absolutePath}";
+                }
+            }
+            else
+            {
+                PlayerSettings.WeixinMiniGame.template = $"{templateHeader}WXTemplate2022TJ";
+            }
+            PlayerSettings.WeixinMiniGame.linkerTarget = WeixinMiniGameLinkerTarget.Wasm;
+            PlayerSettings.WeixinMiniGame.dataCaching = false;
+            PlayerSettings.WeixinMiniGame.debugSymbolMode = WeixinMiniGameDebugSymbolMode.External;
+#else
+            PlayerSettings.WebGL.threadsSupport = false;
+            PlayerSettings.runInBackground = false;
+            PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Disabled;
+#if UNITY_2022_3_OR_NEWER
+        PlayerSettings.WebGL.template = $"{templateHeader}WXTemplate2022";
+#elif UNITY_2020_1_OR_NEWER
+            PlayerSettings.WebGL.template = $"{templateHeader}WXTemplate2020";
+#else
+            PlayerSettings.WebGL.template = $"{templateHeader}WXTemplate";
+#endif
+            PlayerSettings.WebGL.linkerTarget = WebGLLinkerTarget.Wasm;
+            PlayerSettings.WebGL.dataCaching = false;
+#if UNITY_2021_2_OR_NEWER
+            PlayerSettings.WebGL.debugSymbolMode = WebGLDebugSymbolMode.External;
+#else
+            PlayerSettings.WebGL.debugSymbols = true;
+#endif
+#endif
+        }
+
+        public enum WXExportError
+        {
+            SUCCEED = 0,
+            NODE_NOT_FOUND = 1,
+            BUILD_WEBGL_FAILED = 2,
+        }
+
+        public static WXEditorScriptObject config => isPlayableBuild ? WXPlayableConvertCore.GetFakeScriptObject() : UnityUtil.GetEditorConf();
+
+        public static string defaultTemplateDir => isPlayableBuild ? "playable-default" : "wechat-default";
+        public static string webglDir = "webgl"; // 导出的webgl目录
+        public static string miniGameDir = "minigame"; // 生成小游戏的目录
+        public static string audioDir = "Assets"; // 音频资源目录
+        public static string frameworkDir = "framework";
+        public static string frameworkFilename = "webgl.wasm.framework.unityweb.js";
+        public static string wasmWorkerIndexFilename = "webgl.worker.js";
+        public static string dataFileSize = string.Empty;
+        public static string codeMd5 = string.Empty;
+        public static string dataMd5 = string.Empty;
+        public static string defaultImgSrc = "Assets/WX-WASM-SDK-V2/Runtime/wechat-default/images/background.jpg";
+        /// <summary>
+        /// 是否在构建试玩，构建开始前修改值，构建结束后恢复值
+        /// </summary>
+        public static bool isPlayableBuild = false;
+
+        private static bool lastBrotliType = false;
+        public static bool UseIL2CPP
+        {
+            get
+            {
+#if TUANJIE_2022_3_OR_NEWER
+                return PlayerSettings.GetScriptingBackend(BuildTargetGroup.WeixinMiniGame) == ScriptingImplementation.IL2CPP;
+#else
+                return true;
+#endif
+            }
+        }
+        // 是否使用 iOS Metal 渲染
+        public static bool UseiOSMetal
+        {
+            get
+            {
+                return config.CompileOptions.enableiOSMetal;
+            }
+        }
+        // 用于replaceRules判断是否需要注入相关的修改
+        public static bool UseEmscriptenGLX
+        {
+            get
+            {
+                return config.CompileOptions.enableEmscriptenGLX;
+            }
+        }
+        public static bool EnableRenderThread
+        {
+            get
+            {
+#if TUANJIE_1_9_OR_NEWER
+                return config.CompileOptions.enableRenderThread;
+#else
+                return config.CompileOptions.enableRenderThread;
+#endif
+            }
+        }
+
+        private static bool EnableWasmException
+        {
+            get
+            {
+#if PLATFORM_WEIXINMINIGAME
+                return IsWasmExceptionSupport(PlayerSettings.WeixinMiniGame.exceptionSupport);
+#else
+                return IsWasmExceptionSupport(PlayerSettings.WebGL.exceptionSupport);
+#endif
+            }
+        }
+
+        private static bool IsWasmExceptionSupport(object exceptionSupport)
+        {
+            string exceptionSupportName = exceptionSupport.ToString();
+            return exceptionSupportName.IndexOf("Wasm", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                exceptionSupportName.IndexOf("WebAssembly", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        /// <summary>
+        /// 刷新 enableRenderThread 配置。有 buildProfile 时从 BuildProfile 读取，否则从全局 PlayerSettings 读取。
+        /// 在 DoExport 前调用，确保 EnableRenderThread 属性返回正确值。
+        /// </summary>
+        public static void RefreshEnableRenderThread(
+#if TUANJIE_1_9_OR_NEWER
+            UnityEditor.Build.Profile.BuildProfile buildProfile = null
+#endif
+        )
+        {
+#if TUANJIE_1_9_OR_NEWER
+            if (buildProfile != null)
+            {
+                bool val = BuildPipeline.IsMiniGameBuildThreadedFromBuildProfile(buildProfile);
+                UnityEngine.Debug.LogFormat("[WX] RefreshEnableRenderThread: from BuildProfile, enableRenderThread = {0}", val);
+                config.CompileOptions.enableRenderThread = val;
+            }
+            else
+            {
+                bool val = BuildPipeline.IsMiniGameBuildThreadedFromPlayerSettings();
+                UnityEngine.Debug.LogFormat("[WX] RefreshEnableRenderThread: from PlayerSettings, enableRenderThread = {0}", val);
+                config.CompileOptions.enableRenderThread = val;
+            }
+#else
+            UnityEngine.Debug.Log("[WX] RefreshEnableRenderThread: TUANJIE_1_9_OR_NEWER not defined, skipped (using config value: " + config.CompileOptions.enableRenderThread + ")");
+#endif
+        }
+        // public static void SetPlayableEnabled(bool enabled)
+        // {
+        //     isPlayableBuild = enabled;
+        // }
+        /// <summary>
+        /// 导出前的初始配置
+        /// 小游戏模式和试玩模式都会使用这个函数，如果要在这个函数加新方法，建议都以不兼容试玩模式看待
+        /// </summary>
+        public static void PreInit()
+        {
+            CheckBuildTarget();
+            Init();
+            // 可能有顺序要求？如果没要求，可挪到此函数外
+            if (!isPlayableBuild)
+            {
+                ProcessWxPerfBinaries();
+            }
+            // iOS metal 的相关特性
+            ProcessWxiOSMetalBinaries();
+            // emscriptenglx的相关特性
+            ProcessWxEmscriptenGLXBinaries();
+            MakeEnvForLuaAdaptor();
+            // JSLib
+            SettingWXTextureMinJSLib();
+            UpdateGraphicAPI();
+            EditorUtility.SetDirty(config);
+            AssetDatabase.SaveAssets();
+        }
+        public static WXExportError PreCheck()
+        {
+            if (!CheckSDK())
+            {
+                Debug.LogError("若游戏曾使用旧版本微信SDK，需删除 Assets/WX-WASM-SDK 文件夹后再导入最新工具包。");
+                return WXExportError.BUILD_WEBGL_FAILED;
+            }
+            if (!isPlayableBuild && !CheckBuildTemplate())
+            {
+                Debug.LogError("因构建模板检查失败终止导出。");
+                return WXExportError.BUILD_WEBGL_FAILED;
+            }
+            if (!isPlayableBuild && CheckInvalidPerfIntegration())
+            {
+                Debug.LogError("性能分析工具只能用于Development Build, 终止导出!");
+                return WXExportError.BUILD_WEBGL_FAILED;
+            }
+            dynamic config = isPlayableBuild ? UnityUtil.GetPlayableEditorConf() : UnityUtil.GetEditorConf();
+            if (config.ProjectConf.relativeDST == string.Empty)
+            {
+                Debug.LogError("请先配置游戏导出路径");
+                return WXExportError.BUILD_WEBGL_FAILED;
+            }
+            return WXExportError.SUCCEED;
+        }
+        // 可以调用这个来集成
+        public static WXExportError DoExport(bool buildWebGL = true)
+        {
+            LifeCycleEvent.Init();
+            Emit(LifeCycle.beforeExport);
+            var preCheckResult = PreCheck();
+            if (preCheckResult != WXExportError.SUCCEED)
+            {
+                return preCheckResult;
+            }
+
+            PreInit();
+
+            // 记录上次导出的brotliType
+            {
+                var filePath = Path.Combine(config.ProjectConf.DST, miniGameDir, "unity-namespace.js");
+                string content = string.Empty;
+                if (File.Exists(filePath))
+                {
+                    content = File.ReadAllText(filePath, Encoding.UTF8);
+                }
+                Regex regex = new Regex("brotliMT\\s*:\\s*(true|false)", RegexOptions.IgnoreCase);
+                Match match = regex.Match(content);
+                if (match.Success)
+                {
+                    lastBrotliType = match.Groups[1].Value == "true";
+                }
+            }
+
+            {
+                // 仅删除StreamingAssets目录
+                if (config.CompileOptions.DeleteStreamingAssets)
+                {
+                    UnityUtil.DelectDir(Path.Combine(config.ProjectConf.DST, webglDir + "/StreamingAssets"));
+                }
+
+                if (buildWebGL && Build() != 0)
+                {
+                    return WXExportError.BUILD_WEBGL_FAILED;
+                }
+
+                if (WXExtEnvDef.GETDEF("UNITY_2021_2_OR_NEWER") && !config.CompileOptions.DevelopBuild)
+                {
+                    // 如果是2021版本，官方symbols产生有BUG，这里需要用工具将函数名提取出来
+                    var symFile1 = "";
+                    if (!UseIL2CPP)
+                    {
+                        symFile1 = Path.Combine(config.ProjectConf.DST, webglDir, "Code", "wwwroot", "_framework", "dotnet.native.js.symbols");
+                    }
+                    else
+                    {
+                        var rootPath = Directory.GetParent(Application.dataPath).FullName;
+                        string webglDir = WXExtEnvDef.GETDEF("WEIXINMINIGAME") ? "WeixinMiniGame" : "WebGL";
+#if PLATFORM_PLAYABLEADS
+                        webglDir = "PlayableAds";
+#endif
+                        symFile1 = Path.Combine(rootPath, "Library", "Bee", "artifacts", webglDir, "build", config.CompileOptions.enableRenderThread ? "debug_WebGL_wasm_mt" : "debug_WebGL_wasm", "build.js.symbols");
+                    }
+                    WeChatWASM.UnityUtil.preprocessSymbols(symFile1, GetWebGLSymbolPath());
+                    // WeChatWASM.UnityUtil.preprocessSymbols(GetWebGLSymbolPath());
+                }
+
+                ConvertCode();
+                if (!UseIL2CPP)
+                {
+                    ConvertDotnetCode();
+                }
+                string dataFilePath = GetWebGLDataPath();
+                string wxTextDataDir = WXAssetsTextTools.GetTextMinDataDir();
+                string dataFilePathBackupDir = $"{wxTextDataDir}{WXAssetsTextTools.DS}slim";
+                string dataFilePathBackupPath = $"{dataFilePathBackupDir}{WXAssetsTextTools.DS}backup.txt";
+                if (!Directory.Exists(dataFilePathBackupDir))
+                {
+                    Directory.CreateDirectory(dataFilePathBackupDir);
+                }
+                if (File.Exists(dataFilePathBackupPath))
+                {
+                    File.Delete(dataFilePathBackupPath);
+                }
+                File.Copy(dataFilePath, dataFilePathBackupPath);
+
+                if (UnityUtil.GetEngineVersion() == 0 && config.CompileOptions.fbslim && !IsInstantGameAutoStreaming())
+                {
+                    WXAssetsTextTools.FirstBundleSlim(dataFilePath, (result, info) =>
+                    {
+                        if (!result)
+                        {
+                            Debug.LogWarning("[首资源包跳过优化]：因处理失败自动跳过" + info);
+                        }
+
+                        finishExport();
+                    });
+                }
+                else
+                {
+                    finishExport();
+                }
+            }
+            return WXExportError.SUCCEED;
+        }
+
+        private static int GetEnabledFlagStringIndex(string inAllText, string inTagStr)
+        {
+            try
+            {
+                int tagStrIdx = inAllText.IndexOf(inTagStr);
+                if (tagStrIdx == -1) throw new Exception($"Tag string '{inTagStr}' not found.");
+
+                int enabledStrIdx = inAllText.IndexOf("enabled: ", tagStrIdx);
+                if (enabledStrIdx == -1) throw new Exception("'enabled: ' string not found after tag.");
+
+                // inAllText[enabledStrIdx] == 'e'
+                // And that is to say, inAllText[enabledStrIdx + 9] should be 0 or 1
+                return enabledStrIdx + 9;
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogWarning($"Failed to get enabled flag string index: {ex.Message}");
+                return -1; // -1 means failed
+            }
+        }
+
+        private static void SetPluginCompatibilityByModifyingMetadataFile(string inAssetPath, bool inEnabled)
+        {
+            try
+            {
+                string metaPath = AssetDatabase.GetTextMetaFilePathFromAssetPath(inAssetPath); // 获取.meta文件的路径
+                string enableFlagStr = inEnabled ? "1" : "0";
+
+                // 读取.meta文件
+                // 处理WebGL
+                string metaContent = File.ReadAllText(metaPath);
+                int idxWebGLEnableFlag = GetEnabledFlagStringIndex(metaContent, "WebGL: WebGL");
+
+                metaContent = metaContent.Remove(idxWebGLEnableFlag, 1).Insert(idxWebGLEnableFlag, enableFlagStr);
+                // WeixinMiniGame
+                int idxWeixinMiniGameEnableFlag = GetEnabledFlagStringIndex(metaContent, "WeixinMiniGame: WeixinMiniGame");
+
+                metaContent = metaContent.Remove(idxWeixinMiniGameEnableFlag, 1).Insert(idxWeixinMiniGameEnableFlag, enableFlagStr);
+
+                // 写回.meta文件
+
+                File.WriteAllText(metaPath, metaContent);
+                AssetDatabase.ImportAsset(inAssetPath, ImportAssetOptions.ForceUpdate);
+            }
+            catch (Exception ex)
+            {
+                // 避免 Error 日志阻塞打包流程
+                UnityEngine.Debug.LogWarning($"Failed to enable plugin asset: {ex.Message}");
+            }
+        }
+
+        private static void ProcessWxPerfBinaries()
+        {
+            string[] wxPerfPlugins;
+            string DS = WXAssetsTextTools.DS;
+            if (UnityUtil.GetSDKMode() == UnityUtil.SDKMode.Package)
+            {
+                wxPerfPlugins = new string[]
+                {
+                    $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}WxPerfJsBridge.jslib",
+                    $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}wx_perf_2022.a",
+                    $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}wx_perf_2021.a",
+                };
+            }
+            else
+            {
+                string jsLibRootDir = $"Assets{DS}WX-WASM-SDK-V2{DS}Runtime{DS}Plugins{DS}";
+
+                // 下方顺序不可变动
+                wxPerfPlugins = new string[]
+                {
+                     $"{jsLibRootDir}WxPerfJsBridge.jslib",
+                     $"{jsLibRootDir}wx_perf_2022.a",
+                     $"{jsLibRootDir}wx_perf_2021.a",
+                };
+            }
+
+            {
+                // WxPerfJsBridge.jslib
+                var wxPerfJSBridgeImporter = AssetImporter.GetAtPath(wxPerfPlugins[0]) as PluginImporter;
+#if PLATFORM_PLAYABLEADS
+				wxPerfJSBridgeImporter.SetCompatibleWithPlatform(BuildTarget.PlayableAds, config.CompileOptions.enablePerfAnalysis);
+#elif PLATFORM_WEIXINMINIGAME
+                wxPerfJSBridgeImporter.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, config.CompileOptions.enablePerfAnalysis);
+#else
+                wxPerfJSBridgeImporter.SetCompatibleWithPlatform(BuildTarget.WebGL, config.CompileOptions.enablePerfAnalysis);
+#endif
+                SetPluginCompatibilityByModifyingMetadataFile(wxPerfPlugins[0], config.CompileOptions.enablePerfAnalysis);
+            }
+
+            {
+                // wx_perf_2022.a
+                bool bShouldEnablePerf2022Plugin = config.CompileOptions.enablePerfAnalysis && IsCompatibleWithUnity202203OrNewer();
+
+                var wxPerf2022Importer = AssetImporter.GetAtPath(wxPerfPlugins[1]) as PluginImporter;
+
+#if PLATFORM_PLAYABLEADS
+				wxPerf2022Importer.SetCompatibleWithPlatform(BuildTarget.PlayableAds, bShouldEnablePerf2022Plugin);
+#elif PLATFORM_WEIXINMINIGAME
+                wxPerf2022Importer.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, bShouldEnablePerf2022Plugin);
+#else
+                wxPerf2022Importer.SetCompatibleWithPlatform(BuildTarget.WebGL, bShouldEnablePerf2022Plugin);
+#endif
+                SetPluginCompatibilityByModifyingMetadataFile(wxPerfPlugins[1], bShouldEnablePerf2022Plugin);
+            }
+
+            {
+                // wx_perf_2021.a
+                bool bShouldEnablePerf2021Plugin = config.CompileOptions.enablePerfAnalysis && IsCompatibleWithUnity202102To202203();
+
+                var wxPerf2021Importer = AssetImporter.GetAtPath(wxPerfPlugins[2]) as PluginImporter;
+#if PLATFORM_PLAYABLEADS
+                wxPerf2021Importer.SetCompatibleWithPlatform(BuildTarget.PlayableAds, bShouldEnablePerf2021Plugin);
+#elif PLATFORM_WEIXINMINIGAME
+                wxPerf2021Importer.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, bShouldEnablePerf2021Plugin);
+#else
+                wxPerf2021Importer.SetCompatibleWithPlatform(BuildTarget.WebGL, bShouldEnablePerf2021Plugin);
+#endif
+                SetPluginCompatibilityByModifyingMetadataFile(wxPerfPlugins[2], bShouldEnablePerf2021Plugin);
+            }
+            AssetDatabase.Refresh();
+        }
+
+        private static void ProcessWxEmscriptenGLXBinaries()
+        {
+            string[] glLibs;
+            string DS = WXAssetsTextTools.DS;
+            if (UnityUtil.GetSDKMode() == UnityUtil.SDKMode.Package)
+            {
+                glLibs = new string[]
+                {
+                    $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}libemscriptenglx.a",
+                    $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}libemscriptenglx_2021.a",
+                    $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}libemscriptenglx-mt.a",
+                    $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}libemscriptenglx-mt-wasmex.a",
+                };
+            }
+            else
+            {
+                string glLibRootDir = $"Assets{DS}WX-WASM-SDK-V2{DS}Runtime{DS}Plugins{DS}";
+
+                // 下方顺序不要变动
+                glLibs = new string[]
+                {
+                    $"{glLibRootDir}libemscriptenglx.a",
+                    $"{glLibRootDir}libemscriptenglx_2021.a",
+                    $"{glLibRootDir}libemscriptenglx-mt.a",
+                    $"{glLibRootDir}libemscriptenglx-mt-wasmex.a",
+                };
+            }
+
+            bool enableGLX = config.CompileOptions.enableEmscriptenGLX;
+            bool enableRenderThread = EnableRenderThread;
+            bool enableWasmException = EnableWasmException;
+            bool enableGLXMTPlugin = enableGLX && enableRenderThread && !enableWasmException;
+            bool enableGLXMTWasmExceptionPlugin = enableGLX && enableRenderThread && enableWasmException;
+
+            {
+                // unity2022, tuanjie lib引入
+                bool showEnableGLX2022Plugin = enableGLX && !enableRenderThread && IsCompatibleWithUnity202203OrNewer();
+
+                var glx2022Importer = AssetImporter.GetAtPath(glLibs[0]) as PluginImporter;
+#if PLATFORM_WEIXINMINIGAME
+                    glx2022Importer.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, showEnableGLX2022Plugin);
+#else
+                glx2022Importer.SetCompatibleWithPlatform(BuildTarget.WebGL, showEnableGLX2022Plugin);
+#endif
+                SetPluginCompatibilityByModifyingMetadataFile(glLibs[0], showEnableGLX2022Plugin);
+            }
+
+            {
+                // unity2021 lib引入
+                bool showEnableGLX2021Plugin = enableGLX && !enableRenderThread && IsCompatibleWithUnity202102To202203();
+
+                var glx2021Importer = AssetImporter.GetAtPath(glLibs[1]) as PluginImporter;
+#if PLATFORM_WEIXINMINIGAME
+                    glx2021Importer.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, showEnableGLX2021Plugin);
+#else
+                glx2021Importer.SetCompatibleWithPlatform(BuildTarget.WebGL, showEnableGLX2021Plugin);
+#endif
+                SetPluginCompatibilityByModifyingMetadataFile(glLibs[1], showEnableGLX2021Plugin);
+            }
+
+            {
+                // 渲染线程 lib 引入
+                var glxMTImporter = AssetImporter.GetAtPath(glLibs[2]) as PluginImporter;
+#if PLATFORM_WEIXINMINIGAME
+                    glxMTImporter.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, enableGLXMTPlugin);
+#else
+                glxMTImporter.SetCompatibleWithPlatform(BuildTarget.WebGL, enableGLXMTPlugin);
+#endif
+                SetPluginCompatibilityByModifyingMetadataFile(glLibs[2], enableGLXMTPlugin);
+            }
+
+            {
+                // 渲染线程 + Wasm Exception lib 引入
+                var glxMTWasmExceptionImporter = AssetImporter.GetAtPath(glLibs[3]) as PluginImporter;
+#if PLATFORM_WEIXINMINIGAME
+                    glxMTWasmExceptionImporter.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, enableGLXMTWasmExceptionPlugin);
+#else
+                glxMTWasmExceptionImporter.SetCompatibleWithPlatform(BuildTarget.WebGL, enableGLXMTWasmExceptionPlugin);
+#endif
+                SetPluginCompatibilityByModifyingMetadataFile(glLibs[3], enableGLXMTWasmExceptionPlugin);
+            }
+
+            AssetDatabase.Refresh();
+        }
+
+        /**
+         * Lua Adaptor Settings.
+         */
+
+        private static bool GetRequiredLuaHeaderFiles(out Dictionary<string, string> luaPaths)
+        {
+            luaPaths = new Dictionary<string, string>()
+            {
+                {"lua.h", null},
+                {"lobject.h", null},
+                {"lstate.h", null},
+                {"lfunc.h", null},
+                {"lapi.h", null},
+                {"lstring.h", null},
+                {"ltable.h", null},
+                {"lauxlib.h", null},
+            };
+
+            string rootPath = Directory.GetParent(Application.dataPath).ToString();
+            string[] paths = Directory.GetFiles(rootPath, "*.h", SearchOption.AllDirectories);
+            foreach (var path in paths)
+            {
+                string filename = Path.GetFileName(path);
+                if (luaPaths.ContainsKey(Path.GetFileName(path)))
+                {
+                    luaPaths[filename] = path;
+                }
+            }
+
+            foreach (var expectFile in luaPaths)
+            {
+                if (expectFile.Value == null)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static void ProcessWxiOSMetalBinaries()
+        {
+            string[] glLibs;
+            string DS = WXAssetsTextTools.DS;
+            if (UnityUtil.GetSDKMode() == UnityUtil.SDKMode.Package)
+            {
+                glLibs = new string[]
+                {
+                $"Packages{DS}com.qq.weixin.minigame{DS}Editor{DS}BuildProfile{DS}lib{DS}libwx-metal-cpp.bc",
+                $"Packages{DS}com.qq.weixin.minigame{DS}Editor{DS}BuildProfile{DS}lib{DS}mtl_library.jslib",
+                };
+            }
+            else
+            {
+                string glLibRootDir = $"Assets{DS}WX-WASM-SDK-V2{DS}Editor{DS}BuildProfile{DS}lib{DS}";
+                glLibs = new string[]
+                {
+                    $"{glLibRootDir}libwx-metal-cpp.bc",
+                    $"{glLibRootDir}mtl_library.jslib",
+                };
+            }
+            for (int i = 0; i < glLibs.Length; i++)
+            {
+                var importer = AssetImporter.GetAtPath(glLibs[i]) as PluginImporter;
+#if PLATFORM_WEIXINMINIGAME
+                    importer.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, config.CompileOptions.enableiOSMetal);
+#else
+                importer.SetCompatibleWithPlatform(BuildTarget.WebGL, config.CompileOptions.enableiOSMetal);
+#endif
+                // importer.SaveAndReimport();
+                SetPluginCompatibilityByModifyingMetadataFile(glLibs[i], config.CompileOptions.enableiOSMetal);
+            }
+            AssetDatabase.Refresh();
+        }
+
+        private static string GetLuaAdaptorPath(string filename)
+        {
+            string DS = WXAssetsTextTools.DS;
+            if (UnityUtil.GetSDKMode() == UnityUtil.SDKMode.Package)
+            {
+                return $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}LuaAdaptor{DS}{filename}";
+            }
+
+            return $"Assets{DS}WX-WASM-SDK-V2{DS}Runtime{DS}Plugins{DS}LuaAdaptor{DS}{filename}";
+        }
+
+        private static void MakeLuaImport(Dictionary<string, string> luaPaths)
+        {
+            string luaAdaptorImportHeaderPath = GetLuaAdaptorPath("lua_adaptor_import.h");
+            if (!File.Exists(luaAdaptorImportHeaderPath))
+            {
+                Debug.LogError("Lua Adaptor File Not Found: " + luaAdaptorImportHeaderPath);
+                return;
+            }
+
+            string includeLuaContent = "//EMSCRIPTEN_ENV_LUA_IMPORT_LOGIC_START";
+            foreach (var luaPath in luaPaths)
+            {
+                includeLuaContent += $"\n#include \"{luaPath.Value.Replace("\\", "\\\\")}\"";
+            }
+            includeLuaContent += "\n//EMSCRIPTEN_ENV_LUA_IMPORT_LOGIC_END";
+
+            string importHeaderContent = File.ReadAllText(luaAdaptorImportHeaderPath);
+            importHeaderContent = Regex.Replace(
+                importHeaderContent,
+                "//EMSCRIPTEN_ENV_LUA_IMPORT_LOGIC_START([\\s\\S]*?)//EMSCRIPTEN_ENV_LUA_IMPORT_LOGIC_END",
+                includeLuaContent
+            );
+
+            File.WriteAllText(luaAdaptorImportHeaderPath, importHeaderContent);
+        }
+
+        private static void ManageLuaAdaptorBuildOptions(bool shouldBuild)
+        {
+            string[] maybeBuildFiles = new string[]
+            {
+                "lua_adaptor_501.c",
+                "lua_adaptor_503.c",
+                "lua_adaptor_comm.c",
+                "lua_adaptor_import.h",
+            };
+
+            foreach (var maybeBuildFile in maybeBuildFiles)
+            {
+                string path = GetLuaAdaptorPath(maybeBuildFile);
+                if (!File.Exists(path) && shouldBuild)
+                {
+                    Debug.LogError("Lua Adaptor File Not Found: " + maybeBuildFile);
+                    continue;
+                }
+
+                var wxPerfJSBridgeImporter = AssetImporter.GetAtPath(path) as PluginImporter;
+                if (wxPerfJSBridgeImporter == null)
+                {
+                    Debug.LogError("Lua Adaptor Importer Not Found: " + maybeBuildFile);
+                    continue;
+                }
+#if PLATFORM_PLAYABLEADS
+                wxPerfJSBridgeImporter.SetCompatibleWithPlatform(BuildTarget.PlayableAds, shouldBuild);
+#elif PLATFORM_WEIXINMINIGAME
+                wxPerfJSBridgeImporter.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, shouldBuild);
+#else
+                wxPerfJSBridgeImporter.SetCompatibleWithPlatform(BuildTarget.WebGL, shouldBuild);
+#endif
+                SetPluginCompatibilityByModifyingMetadataFile(path, shouldBuild);
+            }
+        }
+
+        private static void MakeEnvForLuaAdaptor()
+        {
+            bool hasLuaEnv = GetRequiredLuaHeaderFiles(out var luaPaths);
+            if (hasLuaEnv)
+            {
+                MakeLuaImport(luaPaths);
+            }
+
+            ManageLuaAdaptorBuildOptions(hasLuaEnv && config.CompileOptions.enablePerfAnalysis);
+        }
+
+        private static bool IsCompatibleWithUnity202203OrNewer()
+        {
+#if UNITY_2022_3_OR_NEWER
+            return true;
+#else
+            return false;
+#endif
+        }
+
+        static bool IsCompatibleWithUnity202102To202203()
+        {
+#if UNITY_2022_3_OR_NEWER
+            return false;
+#elif !UNITY_2021_2_OR_NEWER
+            return false;
+#else
+            return true;
+#endif
+        }
+
+        private static void CheckBuildTarget()
+        {
+            Emit(LifeCycle.beforeSwitchActiveBuildTarget);
+            if (UnityUtil.GetEngineVersion() == UnityUtil.EngineVersion.Unity)
+            {
+                EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
+            }
+            else
+            {
+#if TUANJIE_2022_3_OR_NEWER
+                if(EditorUserBuildSettings.activeBuildTarget != BuildTarget.WeixinMiniGame 
+#if PLATFORM_PLAYABLEADS
+                    && EditorUserBuildSettings.activeBuildTarget != BuildTarget.PlayableAds
+#endif
+                    )
+                    EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WeixinMiniGame, BuildTarget.WeixinMiniGame);
+#endif
+            }
+            Emit(LifeCycle.afterSwitchActiveBuildTarget);
+        }
+
+        public static void UpdateGraphicAPI()
+        {
+            GraphicsDeviceType[] targets = new GraphicsDeviceType[] { };
+#if PLATFORM_WEIXINMINIGAME
+            PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.WeixinMiniGame, false);
+            // 启用 iOS Metal 渲染
+            if (UseiOSMetal)
+            {
+                if (config.CompileOptions.Webgl2)
+                {
+                    PlayerSettings.SetGraphicsAPIs(BuildTarget.WeixinMiniGame, new GraphicsDeviceType[] { GraphicsDeviceType.Metal, GraphicsDeviceType.OpenGLES3 });
+                }
+                else
+                {
+                    PlayerSettings.SetGraphicsAPIs(BuildTarget.WeixinMiniGame, new GraphicsDeviceType[] { GraphicsDeviceType.Metal, GraphicsDeviceType.OpenGLES2 });
+                }
+            }
+            else
+            {
+                if (config.CompileOptions.Webgl2)
+                {
+                    PlayerSettings.SetGraphicsAPIs(BuildTarget.WeixinMiniGame, new GraphicsDeviceType[] { GraphicsDeviceType.OpenGLES3 });
+                }
+                else
+                {
+                    PlayerSettings.SetGraphicsAPIs(BuildTarget.WeixinMiniGame, new GraphicsDeviceType[] { GraphicsDeviceType.OpenGLES2 });
+                }
+            }
+#else
+            PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.WebGL, false);
+            if (config.CompileOptions.Webgl2)
+            {
+                PlayerSettings.SetGraphicsAPIs(BuildTarget.WebGL, new GraphicsDeviceType[] { GraphicsDeviceType.OpenGLES3 });
+            }
+            else
+            {
+                PlayerSettings.SetGraphicsAPIs(BuildTarget.WebGL, new GraphicsDeviceType[] { GraphicsDeviceType.OpenGLES2 });
+            }
+#endif
+        }
+
+        public static int SeekFunctionEnd(string input, int lastIndex)
+        {
+            int braceCount = 0;
+            while (input[lastIndex] != '{')
+            {
+                lastIndex++;
+            }
+
+            braceCount = 1;
+            ++lastIndex;
+
+            while (lastIndex < input.Length && braceCount > 0)
+            {
+                if (input[lastIndex] == '{')
+                {
+                    ++braceCount;
+                }
+                else if (input[lastIndex] == '}')
+                {
+                    --braceCount;
+                }
+                ++lastIndex;
+            }
+            return lastIndex;
+        }
+        /// <summary>
+        /// 扫一遍代码，把带删除前缀的函数删除，把带替换前缀的替换成调sdk的接口，function与函数名之间仅允许有一个空格
+        /// </summary>
+        /// <param name="input">输入字符串</param>
+        /// <param name="removePrefix">要删除函数的名字前缀</param
+        /// <param name="replacePrefix">要替换函数的前缀</param>>
+        /// <returns>处理后的字符串</returns>
+        public static string ReplaceOrRemoveFunctionsWithPrefix(string input, string[] removePrefixes, string[] replacePrefixes)
+        {
+            StringBuilder output = new StringBuilder();
+            int lastIndex = 0;
+            int index = input.IndexOf("function ");
+
+            while (index != -1)
+            {
+                output.Append(input, lastIndex, index - lastIndex);
+                lastIndex = index;
+                index = input.IndexOf("(", lastIndex);
+                if (index == -1)
+                {
+                    break;
+                }
+                bool shouldRemove = false;
+                bool shouldReplace = false;
+                string funcName = input.Substring(lastIndex + 9, index - lastIndex - 9).TrimStart();
+                for (int i = 0; i < removePrefixes.Length; ++i)
+                {
+                    if (funcName.Contains(removePrefixes[i]))
+                    {
+                        shouldRemove = true;
+                        break;
+                    }
+                }
+                if (shouldRemove)
+                {
+                    lastIndex = SeekFunctionEnd(input, index);
+                    index = lastIndex < input.Length ? input.IndexOf("function ", lastIndex) : -1;
+                    continue;
+                }
+                for (int i = 0; i < replacePrefixes.Length; ++i)
+                {
+                    if (funcName.Contains(replacePrefixes[i]))
+                    {
+                        shouldReplace = true;
+                        break;
+                    }
+                }
+                if (shouldReplace)
+                {
+                    lastIndex = SeekFunctionEnd(input, index);
+                    index = lastIndex < input.Length ? input.IndexOf("function ", lastIndex) : -1;
+                    output.Append("var " + funcName + " = window.WXWASMSDK." + funcName + " ? window.WXWASMSDK." + funcName + " : () => console.warn(\"unimplemented:" + funcName + "\", jsStackTrace());");
+                    continue;
+                }
+                index = input.IndexOf("function ", index);
+            }
+            if (lastIndex < input.Length)
+            {
+                output.Append(input, lastIndex, input.Length - lastIndex);
+            }
+
+            return output.ToString();
+        }
+
+
+        private static bool CheckBuildTemplate()
+        {
+            string[] res = BuildTemplate.CheckCustomCoverBaseConflict(
+                Path.Combine(UnityUtil.GetWxSDKRootPath(), "Runtime", defaultTemplateDir),
+                Path.Combine(Application.dataPath, "WX-WASM-SDK-V2", "Editor", "template"),
+                new string[] { @"\.(js|ts|json)$" }
+                );
+            if (res.Length != 0)
+            {
+                Debug.LogError("系统发现自定义构建模板中存在以下文件对应的基础模板已被更新，为确保游戏导出正常工作请自行解决可能存在的冲突：");
+                for (int i = 0; i < res.Length; i++)
+                {
+                    Debug.LogError($"自定义模板文件 [{i}]: [ {res[i]} ]");
+                }
+                Debug.LogError("有关上述警告产生原因及处理办法请阅读：https://wechat-miniprogram.github.io/minigame-unity-webgl-transform/Design/BuildTemplate.html#%E6%96%B0%E7%89%88%E6%9C%ACsdk%E5%BC%95%E8%B5%B7%E7%9A%84%E5%86%B2%E7%AA%81%E6%8F%90%E9%86%92");
+                return false;
+            }
+            return true;
+        }
+
+
+        // Assert when release + Perf-feature
+        private static bool CheckInvalidPerfIntegration()
+        {
+            const string MACRO_ENABLE_WX_PERF_FEATURE = "ENABLE_WX_PERF_FEATURE";
+            string defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+
+            return (!config.CompileOptions.DevelopBuild) && (defineSymbols.IndexOf(MACRO_ENABLE_WX_PERF_FEATURE) != -1);
+        }
+
+        private static void ConvertDotnetCode()
+        {
+            CompressAssemblyBrotli();
+            ConvertDotnetRuntimeCode();
+            ConvertDotnetFrameworkCode();
+        }
+
+        private static void ConvertDotnetRuntimeCode()
+        {
+            var runtimePath = GetWeixinMiniGameFilePath("jsModuleRuntime")[0];
+            var dotnetJs = File.ReadAllText(runtimePath, Encoding.UTF8);
+
+            Rule[] rules =
+            {
+                new Rule()
+                {
+                    old = "await *WebAssembly\\.instantiate\\(\\w*,",
+                    newStr = $"await WebAssembly.instantiate(Module[\"wasmPath\"],",
+                },
+                new Rule()
+                {
+                    old = "['\"]Expected methodFullName if trace is instrumented['\"]\\);?",
+                    newStr = "'Expected methodFullName if trace is instrumented'); return;",
+                }
+            };
+            foreach (var rule in rules)
+            {
+                if (ShowMatchFailedWarning(dotnetJs, rule.old, "runtime") == false)
+                {
+                    dotnetJs = Regex.Replace(dotnetJs, rule.old, rule.newStr);
+                }
+            }
+
+            File.WriteAllText(Path.Combine(config.ProjectConf.DST, miniGameDir, frameworkDir, Path.GetFileName(runtimePath)), dotnetJs, new UTF8Encoding(false));
+        }
+
+        private static void CompressAssemblyBrotli()
+        {
+            GetWeixinMiniGameFilePath("assembly").ToList().ForEach(assembly => UnityUtil.brotli(assembly, assembly + ".br", "8"));
+        }
+
+        private static void ConvertDotnetFrameworkCode()
+        {
+            var target = frameworkFilename;
+            var dotnetJsPath =
+                Path.Combine(config.ProjectConf.DST, webglDir, "Code", "wwwroot", "_framework", "dotnet.js");
+            var dotnetJs = File.ReadAllText(dotnetJsPath, Encoding.UTF8);
+            // todo: handle dotnet js
+            foreach (var rule in ReplaceRules.DoenetRules(new string[] { frameworkDir,
+                Path.GetFileName(GetWeixinMiniGameFilePath("jsModuleRuntime")[0]),
+                Path.GetFileName(GetWeixinMiniGameFilePath("jsModuleNative")[0]),
+            }))
+            {
+                if (ShowMatchFailedWarning(dotnetJs, rule.old, "dotnet") == false)
+                {
+                    dotnetJs = Regex.Replace(dotnetJs, rule.old, rule.newStr);
+                }
+            }
+            File.WriteAllText(Path.Combine(config.ProjectConf.DST, miniGameDir, frameworkDir, target), ReplaceRules.DotnetHeader + dotnetJs + ReplaceRules.DotnetFooter, new UTF8Encoding(false));
+        }
+
+        private static void ConvertCode()
+        {
+            UnityEngine.Debug.LogFormat("[Converter] Starting to adapt framework. Dst: " + config.ProjectConf.DST);
+
+            UnityUtil.DelectDir(Path.Combine(config.ProjectConf.DST, miniGameDir));
+            string text = String.Empty;
+            var target = frameworkFilename;
+            if (WXExtEnvDef.GETDEF("UNITY_2020_1_OR_NEWER"))
+            {
+                if (UseIL2CPP)
+                {
+                    text = File.ReadAllText(Path.Combine(config.ProjectConf.DST, webglDir, "Build", "webgl.framework.js"), Encoding.UTF8);
+                }
+                else
+                {
+                    var frameworkPath = GetWeixinMiniGameFilePath("jsModuleNative")[0];
+                    target = Path.GetFileName(frameworkPath);
+                    text = File.ReadAllText(frameworkPath, Encoding.UTF8);
+                }
+            }
+            else
+            {
+                text = File.ReadAllText(Path.Combine(config.ProjectConf.DST, webglDir, "Build", "webgl.wasm.framework.unityweb"), Encoding.UTF8);
+            }
+            string[] removePrefixes = new string[] {
+                "jsAudio",
+            };
+            string[] replacePrefixes = new string[] {
+                "_JS_Video_",
+                "_JS_Sound_",
+                "_JS_MobileKeyboard_",
+                "_JS_MobileKeybard_"
+            };
+            text = ReplaceOrRemoveFunctionsWithPrefix(text, removePrefixes, replacePrefixes);
+            int i;
+            for (i = 0; i < ReplaceRules.rules.Length; i++)
+            {
+                var current = i + 1;
+                var total = ReplaceRules.rules.Length;
+                EditorUtility.DisplayProgressBar($"Converting...，{current}/{total}", "Replace holder...", current * 1.0f / total);
+                var rule = ReplaceRules.rules[i];
+                // text = Regex.Replace(text, rule.old, rule.newStr);
+                if (ShowMatchFailedWarning(text, rule.old, "WXReplaceRules") == false)
+                {
+                    text = Regex.Replace(text, rule.old, rule.newStr);
+                }
+            }
+            if (EnableRenderThread)
+            {
+                UnityEngine.Debug.Log("[WX] EnableRenderThread=true, applying MainThreadRules");
+                text = ReplaceByRegex(text, ReplaceRules.MainThreadRules(), "MainThreadReplaceRules");
+            }
+            else
+            {
+                UnityEngine.Debug.Log("[WX] EnableRenderThread=false, skipping MainThreadRules");
+            }
+            EditorUtility.ClearProgressBar();
+
+#if PLATFORM_WEIXINMINIGAME
+            if (PlayerSettings.WeixinMiniGame.exceptionSupport == WeixinMiniGameExceptionSupport.None)
+#else
+            if (PlayerSettings.WebGL.exceptionSupport == WebGLExceptionSupport.None)
+#endif
+            {
+                Rule[] rules =
+                {
+                    new Rule()
+                    {
+                        old = "console.log\\(\"Exception at",
+                        newStr = "if(Module.IsWxGame);console.log(\"Exception at",
+                    },
+                    new Rule()
+                    {
+                        old = "throw ptr",
+                        newStr = "if(Module.IsWxGame)window.WXWASMSDK.WXUncaughtException(true);else throw ptr",
+                    },
+                };
+                foreach (var rule in rules)
+                {
+                    text = Regex.Replace(text, rule.old, rule.newStr);
+                }
+            }
+
+            if (text.Contains("UnityModule"))
+            {
+                text += ";GameGlobal.unityNamespace.UnityModule = UnityModule;";
+            }
+            else if (text.Contains("unityFramework"))
+            {
+                text += ";GameGlobal.unityNamespace.UnityModule = unityFramework;";
+            }
+            else if (text.Contains("tuanjieFramework"))
+            {
+                text += ";GameGlobal.unityNamespace.UnityModule = tuanjieFramework;";
+            }
+            else if (UseIL2CPP)
+            {
+                if (text.StartsWith("(") && text.EndsWith(")"))
+                {
+                    text = text.Substring(1, text.Length - 2);
+                }
+
+                text = "GameGlobal.unityNamespace.UnityModule = " + text;
+            }
+
+            if (!Directory.Exists(Path.Combine(config.ProjectConf.DST, miniGameDir)))
+            {
+                Directory.CreateDirectory(Path.Combine(config.ProjectConf.DST, miniGameDir));
+            }
+
+            if (!Directory.Exists(Path.Combine(config.ProjectConf.DST, miniGameDir, frameworkDir)))
+            {
+                Directory.CreateDirectory(Path.Combine(config.ProjectConf.DST, miniGameDir, frameworkDir));
+            }
+
+            var header = "var OriginalAudioContext = window.AudioContext || window.webkitAudioContext;window.AudioContext = function() {if (this instanceof window.AudioContext) {return wx.createWebAudioContext();} else {return new OriginalAudioContext();}};";
+
+            if (config.CompileOptions.DevelopBuild && config.CompileOptions.enablePerfAnalysis)
+            {
+                header = header + RenderAnalysisRules.header;
+                for (i = 0; i < RenderAnalysisRules.rules.Length; i++)
+                {
+                    var rule = RenderAnalysisRules.rules[i];
+                    text = Regex.Replace(text, rule.old, rule.newStr);
+                }
+            }
+
+            text = header + text;
+
+            var targetPath = Path.Combine(config.ProjectConf.DST, miniGameDir, target);
+            if (!UseIL2CPP)
+            {
+                targetPath = Path.Combine(config.ProjectConf.DST, miniGameDir, frameworkDir, target);
+
+                foreach (var rule in ReplaceRules.NativeRules)
+                {
+                    if (ShowMatchFailedWarning(text, rule.old, "native") == false)
+                    {
+                        text = Regex.Replace(text, rule.old, rule.newStr);
+                    }
+                }
+            }
+
+            {
+                Rule[] rules =
+                {
+                    new Rule()
+                    {
+                        old = "if (GameGlobal.unityNamespace.enableProfileStats)",
+                        newStr = "if (GameGlobal.unityNamespace.enableProfileStats || (typeof GameGlobal.manager.getWXAppCheatMonitor === 'function' && GameGlobal.manager.getWXAppCheatMonitor().shouldForceShowPerfMonitor()))"
+                    }
+                };
+                foreach (var rule in rules)
+                {
+                    text = text.Replace(rule.old, rule.newStr);
+                }
+            }
+
+
+            File.WriteAllText(targetPath, text, new UTF8Encoding(false));
+
+            UnityEngine.Debug.LogFormat("[Converter]  adapt framework done! ");
+        }
+
+        private static int Build()
+        {
+#if PLATFORM_WEIXINMINIGAME
+            PlayerSettings.WeixinMiniGame.emscriptenArgs = string.Empty;
+            if (WXExtEnvDef.GETDEF("UNITY_2021_2_OR_NEWER"))
+            {
+                PlayerSettings.WeixinMiniGame.emscriptenArgs += " -s EXPORTED_FUNCTIONS=_main,_sbrk,_emscripten_stack_get_base,_emscripten_stack_get_end";
+                if (config.CompileOptions.enablePerfAnalysis)
+                {
+                    PlayerSettings.WeixinMiniGame.emscriptenArgs += ",_WxPerfFrameIntervalCallback";
+                }
+                PlayerSettings.WeixinMiniGame.emscriptenArgs += " -s ERROR_ON_UNDEFINED_SYMBOLS=0";
+            }
+
+#else
+            PlayerSettings.WebGL.emscriptenArgs = string.Empty;
+            if (WXExtEnvDef.GETDEF("UNITY_2021_2_OR_NEWER"))
+            {
+                PlayerSettings.WebGL.emscriptenArgs += " -s EXPORTED_FUNCTIONS=_sbrk,_emscripten_stack_get_base,_emscripten_stack_get_end";
+                if (config.CompileOptions.enablePerfAnalysis)
+                {
+                    PlayerSettings.WebGL.emscriptenArgs += ",_WxPerfFrameIntervalCallback";
+                }
+#if UNITY_2021_2_5
+                PlayerSettings.WebGL.emscriptenArgs += ",_main";
+#endif
+                PlayerSettings.WebGL.emscriptenArgs += " -s ERROR_ON_UNDEFINED_SYMBOLS=0";
+            }
+#endif
+            PlayerSettings.runInBackground = false;
+            if (config.ProjectConf.MemorySize != 0)
+            {
+                if (config.ProjectConf.MemorySize >= 1024)
+                {
+                    UnityEngine.Debug.LogErrorFormat($"UnityHeap必须小于1024，请查看GIT文档<a href=\"https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/blob/main/Design/OptimizationMemory.md\">优化Unity WebGL的内存</a>");
+                    return -1;
+                }
+                else if (config.ProjectConf.MemorySize >= 500)
+                {
+                    UnityEngine.Debug.LogWarningFormat($"UnityHeap大于500M时，32位Android与iOS普通模式较大概率启动失败，中轻度游戏建议小于该值。请查看GIT文档<a href=\"https://github.com/wechat-miniprogram/minigame-unity-webgl-transform/blob/main/Design/OptimizationMemory.md\">优化Unity WebGL的内存</a>");
+                }
+#if PLATFORM_WEIXINMINIGAME
+                PlayerSettings.WeixinMiniGame.emscriptenArgs += $" -s TOTAL_MEMORY={config.ProjectConf.MemorySize}MB";
+#else
+                PlayerSettings.WebGL.emscriptenArgs += $" -s TOTAL_MEMORY={config.ProjectConf.MemorySize}MB";
+#endif
+            }
+
+            string original_EXPORTED_RUNTIME_METHODS = "\"ccall\",\"cwrap\",\"stackTrace\",\"addRunDependency\",\"removeRunDependency\",\"FS_createPath\",\"FS_createDataFile\",\"stackTrace\",\"writeStackCookie\",\"checkStackCookie\"";
+            // 添加额外的EXPORTED_RUNTIME_METHODS
+            string additional_EXPORTED_RUNTIME_METHODS = ",\"lengthBytesUTF8\",\"stringToUTF8\"";
+
+#if PLATFORM_WEIXINMINIGAME
+            PlayerSettings.WeixinMiniGame.emscriptenArgs += " -s EXPORTED_RUNTIME_METHODS='[" + original_EXPORTED_RUNTIME_METHODS + additional_EXPORTED_RUNTIME_METHODS + "]'";
+
+            if (config.CompileOptions.ProfilingMemory)
+            {
+                PlayerSettings.WeixinMiniGame.emscriptenArgs += " --memoryprofiler ";
+            }
+
+            if (config.CompileOptions.profilingFuncs)
+            {
+                PlayerSettings.WeixinMiniGame.emscriptenArgs += " --profiling-funcs ";
+            }
+
+#if UNITY_2021_2_OR_NEWER
+#if UNITY_2022_1_OR_NEWER
+            // 默认更改为OptimizeSize，减少代码包体积
+            PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WeixinMiniGame, config.CompileOptions.Il2CppOptimizeSize ? Il2CppCodeGeneration.OptimizeSize : Il2CppCodeGeneration.OptimizeSpeed);
+#else
+            EditorUserBuildSettings.il2CppCodeGeneration = config.CompileOptions.Il2CppOptimizeSize ? Il2CppCodeGeneration.OptimizeSize : Il2CppCodeGeneration.OptimizeSpeed;
+#endif
+#endif
+            UnityEngine.Debug.Log("[Builder] Starting to build WeixinMiniGame project ... ");
+            UnityEngine.Debug.Log("PlayerSettings.WeixinMiniGame.emscriptenArgs : " + PlayerSettings.WeixinMiniGame.emscriptenArgs);
+#else
+            PlayerSettings.WebGL.emscriptenArgs += " -s EXPORTED_RUNTIME_METHODS='[" + original_EXPORTED_RUNTIME_METHODS + additional_EXPORTED_RUNTIME_METHODS + "]'";
+
+            if (config.CompileOptions.ProfilingMemory)
+            {
+                PlayerSettings.WebGL.emscriptenArgs += " --memoryprofiler ";
+            }
+
+            if (config.CompileOptions.profilingFuncs)
+            {
+                PlayerSettings.WebGL.emscriptenArgs += " --profiling-funcs ";
+            }
+
+#if UNITY_6000_0_OR_NEWER
+            // 从小游戏转换工具里无法直接开启wasm2023特性 会导致转出的webgl异常，所以强制关闭
+           	PlayerSettings.WebGL.wasm2023 = false;
+#endif
+
+#if UNITY_2021_2_OR_NEWER
+#if UNITY_2022_1_OR_NEWER
+                // 默认更改为OptimizeSize，减少代码包体积
+            PlayerSettings.SetIl2CppCodeGeneration(NamedBuildTarget.WebGL, config.CompileOptions.Il2CppOptimizeSize ? Il2CppCodeGeneration.OptimizeSize : Il2CppCodeGeneration.OptimizeSpeed);
+#else
+            EditorUserBuildSettings.il2CppCodeGeneration = config.CompileOptions.Il2CppOptimizeSize ? Il2CppCodeGeneration.OptimizeSize : Il2CppCodeGeneration.OptimizeSpeed;
+#endif
+#endif
+            UnityEngine.Debug.Log("[Builder] Starting to build WebGL project ... ");
+            UnityEngine.Debug.Log("PlayerSettings.WebGL.emscriptenArgs : " + PlayerSettings.WebGL.emscriptenArgs);
+#endif
+
+
+            // PlayerSettings.WebGL.memorySize = memorySize;
+            BuildOptions option = BuildOptions.None;
+
+            if (config.CompileOptions.DevelopBuild)
+            {
+                option |= BuildOptions.Development;
+            }
+
+            if (config.CompileOptions.AutoProfile)
+            {
+                option |= BuildOptions.ConnectWithProfiler;
+            }
+
+            if (config.CompileOptions.ScriptOnly)
+            {
+                option |= BuildOptions.BuildScriptsOnly;
+            }
+#if UNITY_2021_2_OR_NEWER
+            if (config.CompileOptions.CleanBuild)
+            {
+                option |= BuildOptions.CleanBuildCache;
+            }
+#endif
+#if TUANJIE_2022_3_OR_NEWER
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.WeixinMiniGame
+#if PLATFORM_PLAYABLEADS
+                && EditorUserBuildSettings.activeBuildTarget != BuildTarget.PlayableAds
+#endif
+                )
+            {
+                UnityEngine.Debug.LogFormat("[Builder] Current target is: {0}, switching to: {1}", EditorUserBuildSettings.activeBuildTarget, BuildTarget.WeixinMiniGame);
+                if (!EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WeixinMiniGame, BuildTarget.WeixinMiniGame))
+                {
+                    UnityEngine.Debug.LogFormat("[Builder] Switching to {0}/{1} failed!", BuildTargetGroup.WeixinMiniGame, BuildTarget.WeixinMiniGame);
+                    return -1;
+                }
+            }
+
+            var projDir = Path.Combine(config.ProjectConf.DST, webglDir);
+#if PLATFORM_PLAYABLEADS
+            var result = BuildPipeline.BuildPlayer(GetScenePaths(), projDir, BuildTarget.PlayableAds, option);
+#else
+            var result = BuildPipeline.BuildPlayer(GetScenePaths(), projDir, BuildTarget.WeixinMiniGame, option);
+#endif
+            if (result.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+            {
+                UnityEngine.Debug.LogFormat("[Builder] BuildPlayer failed. emscriptenArgs:{0}", PlayerSettings.WeixinMiniGame.emscriptenArgs);
+                return -1;
+            }
+#else
+            if (EditorUserBuildSettings.activeBuildTarget != BuildTarget.WebGL)
+            {
+                UnityEngine.Debug.LogFormat("[Builder] Current target is: {0}, switching to: {1}", EditorUserBuildSettings.activeBuildTarget, BuildTarget.WebGL);
+                if (!EditorUserBuildSettings.SwitchActiveBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL))
+                {
+                    UnityEngine.Debug.LogFormat("[Builder] Switching to {0}/{1} failed!", BuildTargetGroup.WebGL, BuildTarget.WebGL);
+                    return -1;
+                }
+            }
+
+            var projDir = Path.Combine(config.ProjectConf.DST, webglDir);
+
+            var result = BuildPipeline.BuildPlayer(GetScenePaths(), projDir, BuildTarget.WebGL, option);
+            if (result.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+            {
+                UnityEngine.Debug.LogFormat("[Builder] BuildPlayer failed. emscriptenArgs:{0}", PlayerSettings.WebGL.emscriptenArgs);
+                return -1;
+            }
+#endif
+            UnityEngine.Debug.LogFormat("[Builder] Done: " + projDir);
+            return 0;
+        }
+
+        private static string GetWebGLDataPath()
+        {
+            if (WXExtEnvDef.GETDEF("UNITY_2020_1_OR_NEWER"))
+            {
+                return Path.Combine(config.ProjectConf.DST, webglDir, "Build", "webgl.data");
+            }
+            else
+            {
+                return Path.Combine(config.ProjectConf.DST, webglDir, "Build", "webgl.data.unityweb");
+            }
+        }
+
+        private static string[] GetWeixinMiniGameFilePath(string key)
+        {
+            var bootJson = Path.Combine(config.ProjectConf.DST, webglDir, "Code", "wwwroot", "_framework", "blazor.boot.json");
+            var boot = JsonMapper.ToObject(File.ReadAllText(bootJson, Encoding.UTF8));
+            // Disable jiterpreter if haven't set
+            if (!boot.ContainsKey("environmentVariables"))
+            {
+                var jd = new JsonData();
+                jd["INTERP_OPTS"] = "-jiterp";
+                boot["environmentVariables"] = jd;
+                JsonWriter writer = new JsonWriter();
+                boot.ToJson(writer);
+                File.WriteAllText(bootJson, writer.TextWriter.ToString());
+                Debug.Log("Env INTERP_OPTS added to blazor.boot.json");
+            }
+            else if (!boot["environmentVariables"].ContainsKey("INTERP_OPTS"))
+            {
+                boot["environmentVariables"]["INTERP_OPTS"] = "-jiterp";
+                JsonWriter writer = new JsonWriter();
+                boot.ToJson(writer);
+                File.WriteAllText(bootJson, writer.TextWriter.ToString());
+                Debug.Log("Env INTERP_OPTS added to blazor.boot.json");
+            }
+            return boot["resources"][key].Keys.Select(file => Path.Combine(config.ProjectConf.DST, webglDir, "Code", "wwwroot", "_framework", file)).ToArray();
+        }
+
+        [DllImport("newstatehooker.dll", EntryPoint = "add_lua_newstate_hook")]
+        private static extern int add_lua_newstate_hook_win(string filename);
+
+        [DllImport("newstatehooker", EntryPoint = "add_lua_newstate_hook")]
+        private static extern int add_lua_newstate_hook_osx(string filename);
+
+        private static int add_lua_newstate_hook(string filename)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return add_lua_newstate_hook_win(filename);
+            }
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                return add_lua_newstate_hook_osx(filename);
+            }
+
+            throw new System.NotSupportedException($"add_lua_newstate_hook not supported on: {RuntimeInformation.OSDescription}");
+        }
+
+        private static void MaybeInstallLuaNewStateHook()
+        {
+            // 当前版本仅支持 win & mac, 不满足时直接跳过.
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && !RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                Debug.LogWarning($"MaybeInstallLuaNewStateHook:: Cannot install lua runtime on {RuntimeInformation.OSDescription}");
+                return;
+            }
+
+            // 没有开启 perf tools, 不引入 newstate hook.
+            if (!config.CompileOptions.enablePerfAnalysis)
+            {
+                return;
+            }
+
+            string codePath = GetWebGLCodePath();
+            try
+            {
+                var ret = add_lua_newstate_hook(codePath);
+                if (ret != 0)
+                {
+                    Debug.LogWarning($"cannot add lua new state hook: {ret}");
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"cannot add lua new state hook: {e}");
+            }
+        }
+
+        private static void finishExport()
+        {
+            MaybeInstallLuaNewStateHook();
+
+            int code = GenerateBinFile();
+            if (code == 0)
+            {
+                if (EnableRenderThread)
+                {
+                    UnityEngine.Debug.Log("[WX] EnableRenderThread=true, calling ConvertForThread");
+                    ConvertForThread();
+                }
+                else
+                {
+                    UnityEngine.Debug.Log("[WX] EnableRenderThread=false, skipping ConvertForThread");
+                }
+                convertDataPackage(false);
+                UnityEngine.Debug.LogFormat("[Converter] All done!");
+                //ShowNotification(new GUIContent("转换完成"));
+                Emit(LifeCycle.exportDone);
+            }
+            else
+            {
+                convertDataPackage(true);
+            }
+        }
+        /// <summary>
+        /// 等brotli之后，统计下资源包加brotli压缩后代码包是否超过了30M（小游戏代码分包总大小限制）
+        /// </summary>
+        private static void convertDataPackage(bool brotliError)
+        {
+            var baseDataFilename = dataMd5 + ".webgl.data.unityweb.bin";
+            var webglDirPath = Path.Combine(config.ProjectConf.DST, webglDir);
+            var minigameDirPath = Path.Combine(config.ProjectConf.DST, miniGameDir);
+            var minigameDataPath = Path.Combine(minigameDirPath, "data-package");
+            // 未压缩的包名
+            var originDataFilename = baseDataFilename + ".txt";
+            var originMinigameDataPath = Path.Combine(minigameDataPath, originDataFilename);
+            var originTempDataPath = Path.Combine(webglDirPath, originDataFilename);
+            // br压缩的资源包名
+            var brDataFilename = baseDataFilename + ".br";
+            var brMinigameDataPath = Path.Combine(minigameDataPath, brDataFilename);
+            var tempDataBrPath = Path.Combine(webglDirPath, brDataFilename);
+
+            // 资源文件名
+            var dataFilename = originDataFilename;
+            // 原始webgl的资源路径，即webgl/build目录下的资源名
+            var sourceDataPath = GetWebGLDataPath();
+            // webgl目录下的资源路径
+            var tempDataPath = originTempDataPath;
+            var dataPackageBrotliRet = 0;
+            // 如果brotli失败，使用CDN加载
+            if (brotliError)
+            {
+                // brotli失败后，因为无法知道wasmcode大小，则得不到最终小游戏总包体大小。不能使用小游戏分包加载资源，还原成cdn的方式。
+                if (config.ProjectConf.assetLoadType == 1)
+                {
+                    UnityEngine.Debug.LogWarning("brotli失败，无法检测文件大小，请上传资源文件到CDN");
+                    config.ProjectConf.assetLoadType = 0;
+                }
+
+                // ShowNotification(new GUIContent("Brotli压缩失败，请到转出目录手动压缩！！！"));
+                Debug.LogError("Brotli压缩失败，请到转出目录手动压缩！");
+            }
+            // 需要压缩资源包
+            if (!!config.ProjectConf.compressDataPackage)
+            {
+                dataFilename = brDataFilename;
+                tempDataPath = tempDataBrPath;
+                UnityEngine.Debug.LogFormat("[Compressing] Starting to compress datapackage");
+                dataPackageBrotliRet = Brotlib(dataFilename, sourceDataPath, tempDataPath);
+                Debug.Log("[Compressing] compress ret = " + dataPackageBrotliRet);
+                // 若压缩资源包失败，回退未压缩状态
+                if (dataPackageBrotliRet != 0)
+                {
+                    config.ProjectConf.compressDataPackage = false;
+                    dataFilename = originDataFilename;
+                    tempDataPath = originTempDataPath;
+                }
+            }
+
+            // 不需要压缩资源包或压缩失败
+            if (!config.ProjectConf.compressDataPackage || dataPackageBrotliRet != 0)
+            {
+                // 将资源包从Build目录复制一份作为未压缩资源
+                File.Copy(sourceDataPath, tempDataPath, true);
+            }
+
+            // 用小游戏分包加载时，需要计算是否未超过20M
+            if (config.ProjectConf.assetLoadType == 1)
+            {
+                // 计算wasm包大小
+                var brcodePath = Path.Combine(minigameDirPath, "wasmcode", codeMd5 + ".webgl.wasm.code.unityweb.wasm.br");
+                var brcodeInfo = new FileInfo(brcodePath);
+                var brcodeSize = brcodeInfo.Length;
+                // 计算首资源包大小
+                var tempDataInfo = new FileInfo(tempDataPath);
+                var tempFileSize = tempDataInfo.Length.ToString();
+                // 胶水层及sdk可能占一定大小，粗略按照1M来算，则剩余29M
+                if (brcodeSize + int.Parse(tempFileSize) > (30 - 1) * 1024 * 1024)
+                {
+                    config.ProjectConf.assetLoadType = 0;
+                    Debug.LogError("资源文件过大，不适宜用放小游戏包内加载，请上传资源文件到CDN");
+                }
+                else
+                {
+                    // 小游戏分包加载时，压缩成功且总大小符合要求，将br文件copy到小游戏目录
+                    File.Copy(tempDataPath, config.ProjectConf.compressDataPackage ? brMinigameDataPath : originMinigameDataPath, true);
+                }
+            }
+            // 设置InstantGame的首资源包路径，上传用
+            FirstBundlePath = tempDataPath;
+
+            convertDataPackageJS();
+        }
+
+        public static void convertDataPackageJS()
+        {
+            if (!isPlayableBuild)
+            {
+                checkNeedRmovePackageParallelPreload();
+            }
+
+            var loadDataFromCdn = config.ProjectConf.assetLoadType == 0;
+            Rule[] rules =
+            {
+                new Rule()
+                {
+                    old = "$DEPLOY_URL",
+                    newStr = config.ProjectConf.CDN,
+                },
+                new Rule()
+                {
+                    old = "$LOAD_DATA_FROM_SUBPACKAGE",
+                    newStr = loadDataFromCdn ? "false" : "true",
+                },
+                new Rule()
+                {
+                    old = "$COMPRESS_DATA_PACKAGE",
+                    newStr = config.ProjectConf.compressDataPackage ? "true" : "false",
+                }
+            };
+            string[] files = { "game.js", "game.json", "project.config.json", "check-version.js" };
+            if (WXRuntimeExtEnvDef.IsPreviewing)
+            {
+                ReplaceFileContent(files, rules, WXRuntimeExtEnvDef.PreviewDst);
+            }
+            else
+            {
+                ReplaceFileContent(files, rules);
+            }
+        }
+
+        private static void checkNeedRmovePackageParallelPreload()
+        {
+            string dst;
+            if (WXRuntimeExtEnvDef.IsPreviewing)
+            {
+                dst = WXRuntimeExtEnvDef.PreviewDst;
+            }
+            else
+            {
+                dst = Path.Combine(config.ProjectConf.DST, miniGameDir);
+            }
+            // cdn下载时不需要填写并行下载配置
+            if (config.ProjectConf.assetLoadType == 0)
+            {
+                var filePath = Path.Combine(dst, "game.json");
+
+                string content = File.ReadAllText(filePath, Encoding.UTF8);
+                JsonData gameJson = JsonMapper.ToObject(content);
+                JsonWriter writer = new JsonWriter();
+                writer.IndentValue = 2;
+                writer.PrettyPrint = true;
+                gameJson["parallelPreloadSubpackages"].Remove(gameJson["parallelPreloadSubpackages"][1]);
+
+                // 将配置写回到文件夹
+                gameJson.ToJson(writer);
+                File.WriteAllText(filePath, writer.TextWriter.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 对文件做内容替换
+        /// </summary>
+        /// <param name="files"></param>
+        /// <param name="replaceList"></param>
+        public static void ReplaceFileContent(string[] files, Rule[] replaceList, string fileDir = null)
+        {
+            if (files.Length != 0 && replaceList.Length != 0)
+            {
+                var dstPath = fileDir != null ? fileDir : Path.Combine(config.ProjectConf.DST, miniGameDir);
+                for (int i = 0; i < files.Length; i++)
+                {
+                    var filePath = Path.Combine(dstPath, files[i]);
+                    string text = File.ReadAllText(filePath, Encoding.UTF8);
+                    for (int j = 0; j < replaceList.Length; j++)
+                    {
+                        var rule = replaceList[j];
+                        text = text.Replace(rule.old, rule.newStr);
+                    }
+
+                    File.WriteAllText(filePath, text, new UTF8Encoding(false));
+                }
+            }
+        }
+
+        private static string GetWebGLCodePath()
+        {
+            if (WXExtEnvDef.GETDEF("UNITY_2020_1_OR_NEWER"))
+            {
+                if (UseIL2CPP)
+                {
+                    return Path.Combine(config.ProjectConf.DST, webglDir, "Build", "webgl.wasm");
+                }
+                else
+                {
+                    return GetWeixinMiniGameFilePath("wasmNative")[0];
+                }
+            }
+            else
+            {
+                return Path.Combine(config.ProjectConf.DST, webglDir, "Build", "webgl.wasm.code.unityweb");
+            }
+        }
+
+        public static string FirstBundlePath = "";
+        public static int GenerateBinFile(bool isFromConvert = false)
+        {
+            UnityEngine.Debug.LogFormat("[Converter] Starting to genarate md5 and copy files");
+
+            var codePath = GetWebGLCodePath();
+            codeMd5 = UnityUtil.BuildFileMd5(codePath);
+            var dataPath = GetWebGLDataPath();
+            dataMd5 = UnityUtil.BuildFileMd5(dataPath);
+            var symbolPath = GetWebGLSymbolPath();
+
+            RemoveOldAssetPackage(Path.Combine(config.ProjectConf.DST, webglDir));
+            RemoveOldAssetPackage(Path.Combine(config.ProjectConf.DST, webglDir + "-min"));
+            var buildTemplate = new BuildTemplate(
+                Path.Combine(UnityUtil.GetWxSDKRootPath(), "Runtime", defaultTemplateDir),
+                Path.Combine(Application.dataPath, "WX-WASM-SDK-V2", "Editor", "template"),
+                Path.Combine(config.ProjectConf.DST, miniGameDir)
+                );
+            buildTemplate.start();
+            // FIX: 2021.2版本生成symbol有bug，导出时生成symbol报错，有symbol才copy
+            // 代码分包需要symbol文件以进行增量更新
+            if (File.Exists(symbolPath))
+            {
+                File.Copy(symbolPath, Path.Combine(config.ProjectConf.DST, miniGameDir, "webgl.wasm.symbols.unityweb"), true);
+                // gen symbols.br
+                Brotlib("webgl.wasm.symbols.unityweb.br", symbolPath, Path.Combine(config.ProjectConf.DST, miniGameDir, "webgl.wasm.symbols.unityweb.br"));
+            }
+
+            var info = new FileInfo(dataPath);
+            dataFileSize = info.Length.ToString();
+            UnityEngine.Debug.LogFormat("[Converter] that to genarate md5 and copy files ended");
+            // 若APPID为快适配小游戏示例，则插入预览盒子
+            if (config.ProjectConf.Appid == "wx7c792ca878775717")
+            {
+                InsertPreviewCode();
+            }
+            ModifyWeChatConfigs(isFromConvert);
+            ModifySDKFile();
+            ClearFriendRelationCode();
+            GameJsPlugins();
+
+            // 如果没有StreamingAssets目录，默认生成
+            if (!Directory.Exists(Path.Combine(config.ProjectConf.DST, webglDir, "StreamingAssets")))
+            {
+                Directory.CreateDirectory(Path.Combine(config.ProjectConf.DST, webglDir, "StreamingAssets"));
+            }
+            return Brotlib(codeMd5 + ".webgl.wasm.code.unityweb.wasm.br", codePath, Path.Combine(config.ProjectConf.DST, miniGameDir, "wasmcode", codeMd5 + ".webgl.wasm.code.unityweb.wasm.br"));
+        }
+
+        private static void InsertPreviewCode()
+        {
+            Debug.LogWarning("[WeChat Preview] InsertPreviewCode Start");
+            Rule[] rules =
+            {
+                // game.json 引入预览插件
+                new Rule()
+                {
+                    old = "\"plugins\": {",
+                    newStr = "\"plugins\": {\n" +
+                    "    \"MiniGamePreviewPlugin\": {\n" +
+                    "      \"version\": \"latest\",\n" + // 这里更改版本号
+                    "      \"provider\": \"wx7c792ca878775717\",\n" +
+                    "      \"contexts\": [\n" +
+                    "        {\n" +
+                    "          \"type\": \"isolatedContext\"\n" +
+                    "        }\n" +
+                    "      ]\n" +
+                    "    },"
+                },
+                // game.js 嵌入：有url启动参数进入预览盒子
+                new Rule()
+                {
+                    old = "const managerConfig = {",
+                    newStr =
+                    "export let minigamePreview;\n" +
+                    "let isStarted = false;\n" +
+                    "wx.onShow((res) => {\n" +
+                    "  console.warn('onShow: ' + JSON.stringify(res));\n" +
+                    "  // res.query.url = 'localhost:8044';\n" +
+                    "  if (!isStarted) {\n" +
+                    "    isStarted = true;\n" +
+                    "    if (res.query.url) {\n" +
+                    "      startPreview(res.query.url);\n" +
+                    "    } else {\n" +
+                    "      startGame();\n" +
+                    "    }\n" +
+                    "  } else if (res.query.url) { // 扫预览码进入\n" +
+                    "    wx.restartMiniProgram({\n" +
+                    "      path: `/?url=${res.query.url}`\n" +
+                    "    });\n" +
+                    "  }\n" +
+                    "})\n" +
+                    "function startPreview(url) {\n" +
+                    "  wx.setEnableDebug({ enableDebug: true });\n" +
+                    "  const [ip, port] = url.split(':');\n" +
+                    "  let MiniGamePreview;\n" +
+                    "  if (requirePlugin) {\n" +
+                    "    try {\n" +
+                    "      MiniGamePreview = requirePlugin('MiniGamePreviewPlugin', {\n" +
+                    "        enableRequireHostModule: true,\n" +
+                    "        customEnv: {\n" +
+                    "          wx,\n" +
+                    "          canvas,\n" +
+                    "          gameGlobal: {...GameGlobal},\n" +
+                    "        },\n" +
+                    "      }).default;\n" +
+                    "    } catch (e) {\n" +
+                    "      console.error(e);\n" +
+                    "    }\n" +
+                    "    minigamePreview = new MiniGamePreview({\n" +
+                    "      ip: ip,\n" +
+                    "      port: port\n" +
+                    "    })\n" +
+                    "    minigamePreview.initStartPage();\n" +
+                    "  }\n" +
+                    "}\n" +
+                    "function startGame() {\n" +
+                    "const managerConfig = {",
+                },
+                // game.js 括号补齐
+                new Rule()
+                {
+                    old = "    }\n});",
+                    newStr = "    }\n});}",
+                },
+                // unity-sdk/module-helper.js 引入预览插件
+                new Rule()
+                {
+                    old = "import { MODULE_NAME } from './conf';",
+                    newStr = "import { MODULE_NAME } from './conf';\n" +
+                    "import { minigamePreview } from '../game';",
+                },
+                // unity-sdk/module-helper.js 预览环境下hookAPI
+                new Rule()
+                {
+                    old = "this._send = GameGlobal.Module.SendMessage;",
+                    newStr = "if (minigamePreview) {\n" +
+                    "        this._send = minigamePreview.getPreviewSend();\n" +
+                    "      } else {\n" +
+                    "        this._send = GameGlobal.Module.SendMessage;\n" +
+                    "      }",
+                }
+            };
+            string[] files = { "game.js", "game.json", "unity-sdk/module-helper.js" };
+            ReplaceFileContent(files, rules);
+            Debug.LogWarning("[WeChat Preview] InsertPreviewCode End");
+        }
+
+        private static int Brotlib(string filename, string sourcePath, string targetPath)
+        {
+            UnityEngine.Debug.LogFormat("[Converter] Starting to generate Brotlib file");
+            var cachePath = Path.Combine(config.ProjectConf.DST, webglDir, filename);
+            var shortFilename = filename.Substring(filename.IndexOf('.') + 1);
+
+            // 如果code没有发生过变化，且压缩方式不变，则不再进行br压缩
+            if (cachePath.Contains("wasm.code") && File.Exists(cachePath) && lastBrotliType == config.CompileOptions.brotliMT)
+            {
+                File.Copy(cachePath, targetPath, true);
+                return 0;
+            }
+            // 删除旧的br压缩文件
+            if (Directory.Exists(Path.Combine(config.ProjectConf.DST, webglDir)))
+            {
+                foreach (string path in Directory.GetFiles(Path.Combine(config.ProjectConf.DST, webglDir)))
+                {
+                    FileInfo fileInfo = new FileInfo(path);
+                    if (fileInfo.Name.Contains(shortFilename))
+                    {
+                        File.Delete(fileInfo.FullName);
+                    }
+                }
+            }
+            if (config.CompileOptions.brotliMT)
+            {
+                MultiThreadBrotliCompress(sourcePath, targetPath);
+            }
+            else
+            {
+                UnityUtil.brotli(sourcePath, targetPath);
+            }
+
+            if (targetPath != cachePath)
+            {
+                File.Copy(targetPath, cachePath, true);
+            }
+            return 0;
+        }
+
+        public static bool MultiThreadBrotliCompress(string sourcePath, string dstPath, int quality = 11, int window = 21, int maxCpuThreads = 0)
+        {
+            if (maxCpuThreads == 0) maxCpuThreads = Environment.ProcessorCount;
+            var sourceBuffer = File.ReadAllBytes(sourcePath);
+            byte[] outputBuffer = new byte[0];
+            int ret = 0;
+            if (sourceBuffer.Length > 50 * 1024 * 1024 && Path.GetExtension(sourcePath) == ".wasm") // 50MB以上的wasm压缩率低了可能导致小游戏包超过20MB，需提高压缩率
+            {
+                ret = BrotliEnc.CompressWasmMT(sourceBuffer, ref outputBuffer, quality, window, maxCpuThreads);
+            }
+            else
+            {
+                ret = BrotliEnc.CompressBufferMT(sourceBuffer, ref outputBuffer, quality, window, maxCpuThreads);
+            }
+
+            if (ret == 0)
+            {
+                using (FileStream fileStream = new FileStream(dstPath, FileMode.Create, FileAccess.Write))
+                {
+                    fileStream.Write(outputBuffer, 0, outputBuffer.Length);
+                }
+                return true;
+            }
+            else
+            {
+                Debug.LogError("CompressWasmMT failed");
+                return false;
+            }
+        }
+
+
+        /// <summary>
+        /// 更新game.json
+        /// </summary>
+        public static void ClearFriendRelationCode()
+        {
+            string dst;
+            if (WXRuntimeExtEnvDef.IsPreviewing)
+            {
+                dst = WXRuntimeExtEnvDef.PreviewDst;
+            }
+            else
+            {
+                dst = Path.Combine(config.ProjectConf.DST, miniGameDir);
+            }
+            var filePath = Path.Combine(dst, "game.json");
+
+            string content = File.ReadAllText(filePath, Encoding.UTF8);
+            JsonData gameJson = JsonMapper.ToObject(content);
+
+            if (!config.SDKOptions.UseFriendRelation || !config.SDKOptions.UseMiniGameChat || config.CompileOptions.autoAdaptScreen)
+            {
+                JsonWriter writer = new JsonWriter();
+                writer.IndentValue = 2;
+                writer.PrettyPrint = true;
+
+                // 将 game.json 里面关系链相关的配置删除
+                // 试玩 game.json 中不含其他配置
+                if (!config.SDKOptions.UseFriendRelation && gameJson.ContainsKey("openDataContext") && gameJson.ContainsKey("plugins"))
+                {
+                    gameJson.Remove("openDataContext");
+                    gameJson["plugins"].Remove("Layout");
+
+                    // 删除 open-data 相应的文件夹
+                    string openDataDir = Path.Combine(dst, "open-data");
+                    UnityUtil.DelectDir(openDataDir);
+                    Directory.Delete(openDataDir, true);
+                }
+
+                if (!config.SDKOptions.UseMiniGameChat && gameJson.ContainsKey("plugins"))
+                {
+                    gameJson["plugins"].Remove("MiniGameChat");
+                    UnityEngine.Debug.Log(gameJson["plugins"]);
+                }
+
+                if (config.CompileOptions.autoAdaptScreen)
+                {
+                    gameJson["displayMode"] = "desktop";
+                }
+
+                // 将配置写回到文件夹
+                gameJson.ToJson(writer);
+                File.WriteAllText(filePath, writer.TextWriter.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 更新game.js
+        /// </summary>
+        public static void GameJsPlugins()
+        {
+            string dst;
+            if (WXRuntimeExtEnvDef.IsPreviewing)
+            {
+                dst = WXRuntimeExtEnvDef.PreviewDst;
+            }
+            else
+            {
+                dst = Path.Combine(config.ProjectConf.DST, miniGameDir);
+            }
+            var filePath = Path.Combine(dst, "game.js");
+
+            string content = File.ReadAllText(filePath, Encoding.UTF8);
+
+            Regex regex = new Regex(@"^import .*;$", RegexOptions.Multiline);
+            MatchCollection matches = regex.Matches(content);
+
+            int lastIndex = 0;
+            if (matches.Count > 0)
+            {
+                lastIndex = matches[matches.Count - 1].Index + matches[matches.Count - 1].Length;
+            }
+
+            bool changed = false;
+            StringBuilder sb = new StringBuilder(content);
+            if (config.ProjectConf.needCheckUpdate)
+            {
+                sb.Insert(lastIndex, Environment.NewLine + "import './plugins/check-update';");
+                changed = true;
+            }
+            else
+            {
+                File.Delete(Path.Combine(dst, "plugins", "check-update.js"));
+            }
+            if (config.CompileOptions.autoAdaptScreen)
+            {
+                sb.Insert(lastIndex, Environment.NewLine + "import './plugins/screen-adapter';");
+                changed = true;
+            }
+            else
+            {
+                File.Delete(Path.Combine(dst, "plugins", "screen-adapter.js"));
+            }
+
+            if (changed)
+            {
+                File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
+            }
+            else
+            {
+                Directory.Delete(Path.Combine(dst, "plugins"), true);
+            }
+        }
+
+
+        public static void ModifySDKFile()
+        {
+            string dst;
+            if (WXRuntimeExtEnvDef.IsPreviewing)
+            {
+                dst = WXRuntimeExtEnvDef.PreviewDst;
+            }
+            else
+            {
+                dst = Path.Combine(config.ProjectConf.DST, miniGameDir);
+            }
+            string content = File.ReadAllText(Path.Combine(UnityUtil.GetWxSDKRootPath(), "Runtime", defaultTemplateDir, "unity-sdk", "index.js"), Encoding.UTF8);
+            content = content.Replace("$unityVersion$", Application.unityVersion);
+            File.WriteAllText(Path.Combine(dst, "unity-sdk", "index.js"), content, Encoding.UTF8);
+            // content = File.ReadAllText(Path.Combine(Application.dataPath, "WX-WASM-SDK-V2", "Runtime", "wechat-default", "unity-sdk", "storage.js"), Encoding.UTF8);
+            if (!isPlayableBuild)
+            {
+                content = File.ReadAllText(Path.Combine(UnityUtil.GetWxSDKRootPath(), "Runtime", defaultTemplateDir, "unity-sdk", "storage.js"), Encoding.UTF8);
+                var PreLoadKeys = config.PlayerPrefsKeys.Count > 0 ? JsonMapper.ToJson(config.PlayerPrefsKeys) : "[]";
+                content = content.Replace("'$PreLoadKeys'", PreLoadKeys);
+                File.WriteAllText(Path.Combine(dst, "unity-sdk", "storage.js"), content, Encoding.UTF8);
+            }
+            // 修改纹理dxt
+            // content = File.ReadAllText(Path.Combine(Application.dataPath, "WX-WASM-SDK-V2", "Runtime", "wechat-default", "unity-sdk", "texture.js"), Encoding.UTF8);
+            content = File.ReadAllText(Path.Combine(UnityUtil.GetWxSDKRootPath(), "Runtime", defaultTemplateDir, "unity-sdk", "texture.js"), Encoding.UTF8);
+            File.WriteAllText(Path.Combine(dst, "unity-sdk", "texture.js"), content, Encoding.UTF8);
+        }
+
+        public static string HandleLoadingImage()
+        {
+            var info = AssetDatabase.LoadAssetAtPath<Texture>(config.ProjectConf.bgImageSrc);
+            var oldFilename = Path.GetFileName(defaultImgSrc);
+            var newFilename = Path.GetFileName(config.ProjectConf.bgImageSrc);
+            if (config.ProjectConf.bgImageSrc != defaultImgSrc)
+            {
+                // 图片宽高不能超过2048
+                if (info.width > 2048 || info.height > 2048)
+                {
+                    throw new Exception("封面图宽高不可超过2048");
+                }
+
+                File.Delete(Path.Combine(config.ProjectConf.DST, miniGameDir, "images", oldFilename));
+                File.Copy(config.ProjectConf.bgImageSrc, Path.Combine(config.ProjectConf.DST, miniGameDir, "images", newFilename), true);
+                return "images/" + Path.GetFileName(config.ProjectConf.bgImageSrc);
+            }
+            else
+            {
+                return "images/" + Path.GetFileName(defaultImgSrc);
+            }
+        }
+        /// <summary>
+        /// 按;分隔字符串，将分隔后每一项作为字符串用,连接
+        /// eg: input "i1;i2;i3" => output: `"i1", "i2", "i3"`
+        /// </summary>
+        /// <param name="inp"></param>
+        /// <returns></returns>
+        public static string GetArrayString(string inp)
+        {
+            var result = string.Empty;
+            var iterms = new List<string>(inp.Split(new char[] { ';' }));
+            iterms.ForEach((iterm) =>
+            {
+                if (!string.IsNullOrEmpty(iterm.Trim()))
+                {
+                    result += "\"" + iterm.Trim() + "\", ";
+                }
+            });
+            if (!string.IsNullOrEmpty(result))
+            {
+                result = result.Substring(0, result.Length - 2);
+            }
+
+            return result;
+        }
+        private class PreloadFile
+        {
+            public PreloadFile(string fn, string rp)
+            {
+                fileName = fn;
+                relativePath = rp;
+            }
+
+            public string fileName;
+            public string relativePath;
+        }
+
+        /// <summary>
+        /// 从webgl目录模糊搜索preloadfiles中的文件，作为预下载的列表
+        /// </summary>
+        private static string GetPreloadList(string strPreloadfiles)
+        {
+            if (strPreloadfiles == string.Empty)
+            {
+                return string.Empty;
+            }
+
+            string preloadList = string.Empty;
+            var streamingAssetsPath = Path.Combine(config.ProjectConf.DST, webglDir + "/StreamingAssets");
+            var fileNames = strPreloadfiles.Split(new char[] { ';' });
+            List<PreloadFile> preloadFiles = new List<PreloadFile>();
+            foreach (var fileName in fileNames)
+            {
+                if (fileName.Trim() == string.Empty)
+                {
+                    continue;
+                }
+
+                preloadFiles.Add(new PreloadFile(fileName, string.Empty));
+            }
+
+            if (Directory.Exists(streamingAssetsPath))
+            {
+                foreach (string path in Directory.GetFiles(streamingAssetsPath, "*", SearchOption.AllDirectories))
+                {
+                    FileInfo fileInfo = new FileInfo(path);
+                    foreach (var preloadFile in preloadFiles)
+                    {
+                        if (fileInfo.Name.Contains(preloadFile.fileName))
+                        {
+                            // 相对于StreamingAssets的路径
+                            var relativePath = path.Substring(streamingAssetsPath.Length + 1).Replace('\\', '/');
+                            preloadFile.relativePath = relativePath;
+                            break;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                UnityEngine.Debug.LogError("没有找到StreamingAssets目录， 无法生成预下载列表");
+            }
+
+            foreach (var preloadFile in preloadFiles)
+            {
+                if (preloadFile.relativePath == string.Empty)
+                {
+                    UnityEngine.Debug.LogError($"并非所有预下载的文件都被找到，剩余：{preloadFile.fileName}");
+                    continue;
+                }
+
+                preloadList += "\"" + preloadFile.relativePath + "\", \r";
+            }
+
+            return preloadList;
+        }
+
+        private static string GetCustomUnicodeRange(string customUnicode)
+        {
+            if (customUnicode == string.Empty)
+            {
+                return "[]";
+            }
+
+            List<int> unicodeCodes = new List<int>();
+            // 将字符串中的每个字符转换为Unicode编码并存储在数组中
+            foreach (char c in customUnicode)
+            {
+                unicodeCodes.Add(char.ConvertToUtf32(c.ToString(), 0));
+            }
+
+            // 对数组进行排序
+            unicodeCodes.Sort();
+
+            // 将连续的编码合并为范围
+            List<Tuple<int, int>> ranges = new List<Tuple<int, int>>();
+            int startRange = unicodeCodes[0];
+            int endRange = unicodeCodes[0];
+
+            for (int i = 1; i < unicodeCodes.Count; i++)
+            {
+                if (unicodeCodes[i] == endRange)
+                {
+                    continue;
+                }
+                else if (unicodeCodes[i] == endRange + 1)
+                {
+                    endRange = unicodeCodes[i];
+                }
+                else
+                {
+                    ranges.Add(Tuple.Create(startRange, endRange));
+                    startRange = endRange = unicodeCodes[i];
+                }
+            }
+            ranges.Add(Tuple.Create(startRange, endRange));
+
+            StringBuilder ret = new StringBuilder();
+            // 输出范围
+            foreach (var range in ranges)
+            {
+                ret.AppendFormat("[0x{0:X}, 0x{1:X}], ", range.Item1, range.Item2);
+            }
+            // 移除字符串末尾的多余", "
+            ret.Length -= 2;
+            ret.Insert(0, "[");
+            ret.Append("]");
+
+            return ret.ToString();
+        }
+
+        /// <summary>
+        /// 生成Unitynamespace下的bootconfig
+        /// </summary>
+        private static string GenerateBootInfo()
+        {
+            StringBuilder sb = new StringBuilder();
+            // 添加player-connection-ip信息
+            try
+            {
+                var ips = Dns.GetHostEntry("").AddressList
+                    .Where(ip => ip.AddressFamily == AddressFamily.InterNetwork)
+                    .Select(ip => ip.ToString())
+                    .ToList();
+
+                // 优先选择局域网IP（192.168.x.x, 10.x.x.x, 172.16.x.x）
+                var localNetworkIps = ips.Where(ip =>
+                    ip.StartsWith("192.168.") ||
+                    ip.StartsWith("10.") ||
+                    (ip.StartsWith("172.") && int.Parse(ip.Split('.')[1]) >= 16 && int.Parse(ip.Split('.')[1]) <= 31))
+                    .ToList();
+
+                // 如果有局域网IP则使用，否则使用其他IP，最后回退到127.0.0.1
+                var selectedIp = localNetworkIps.Any() ? localNetworkIps.First() :
+                               ips.Any() ? ips.First() : "127.0.0.1";
+
+                sb.Append($"player-connection-ip={selectedIp}");
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning("[可选]生成Boot info 失败！错误：" + e.Message);
+            }
+
+
+            return sb.ToString();
+        }
+
+        public static void ModifyWeChatConfigs(bool isFromConvert = false)
+        {
+            UnityEngine.Debug.LogFormat("[Converter] Starting to modify configs");
+
+            var PRELOAD_LIST = GetPreloadList(config.ProjectConf.preloadFiles);
+            // 试玩不存在封面图
+            var imgSrc = isPlayableBuild ? "" : HandleLoadingImage();
+
+            var bundlePathIdentifierStr = GetArrayString(config.ProjectConf.bundlePathIdentifier);
+            var excludeFileExtensionsStr = GetArrayString(config.ProjectConf.bundleExcludeExtensions);
+
+            var screenOrientation = new List<string>() { "portrait", "landscape", "landscapeLeft", "landscapeRight" }[(int)config.ProjectConf.Orientation];
+            // 试玩不支持系统字体
+            var customUnicodeRange = isPlayableBuild ? "[]" : GetCustomUnicodeRange(config.FontOptions.CustomUnicode);
+            Debug.Log("[Converter] customUnicodeRange: " + customUnicodeRange);
+
+            var boolConfigInfo = GenerateBootInfo();
+
+            Rule[] replaceArrayList = ReplaceRules.GenRules(new string[] {
+                config.ProjectConf.projectName == string.Empty ? "webgl" : config.ProjectConf.projectName,
+                config.ProjectConf.Appid,
+                screenOrientation,
+                config.CompileOptions.enableIOSPerformancePlus ? "true" : "false",
+                config.ProjectConf.VideoUrl,
+                codeMd5,
+                dataMd5,
+                config.ProjectConf.StreamCDN,
+                config.ProjectConf.CDN + "/Assets",
+                PRELOAD_LIST,
+                imgSrc,
+                config.ProjectConf.HideAfterCallMain ? "true" : "false",
+                config.ProjectConf.bundleHashLength.ToString(),
+                bundlePathIdentifierStr,
+                excludeFileExtensionsStr,
+                config.CompileOptions.Webgl2 ? "2" : "1",
+                Application.unityVersion,
+                WXExtEnvDef.pluginVersion,
+                config.ProjectConf.dataFileSubPrefix,
+                config.ProjectConf.maxStorage.ToString(),
+                config.ProjectConf.defaultReleaseSize.ToString(),
+                config.ProjectConf.texturesHashLength.ToString(),
+                config.ProjectConf.texturesPath,
+                config.ProjectConf.needCacheTextures ? "true" : "false",
+                config.ProjectConf.loadingBarWidth.ToString(),
+                GetColorSpace(),
+                config.ProjectConf.disableHighPerformanceFallback ? "true" : "false",
+                config.SDKOptions.PreloadWXFont ? "true" : "false",
+                config.CompileOptions.showMonitorSuggestModal ? "true" : "false",
+                config.CompileOptions.enableProfileStats ? "true" : "false",
+                config.CompileOptions.iOSAutoGCInterval.ToString(),
+                dataFileSize,
+                IsInstantGameAutoStreaming() ? "true" : "false",
+                (config.CompileOptions.DevelopBuild && config.CompileOptions.enableRenderAnalysis) ? "true" : "false",
+                config.ProjectConf.IOSDevicePixelRatio.ToString(),
+                UseIL2CPP ? "" : "/framework",
+                UseIL2CPP ? "false" : "true",
+                config.CompileOptions.brotliMT ? "true" : "false",
+                // FontOptions
+                config.FontOptions.CJK_Unified_Ideographs ? "true" : "false",
+                config.FontOptions.C0_Controls_and_Basic_Latin ? "true" : "false",
+                config.FontOptions.CJK_Symbols_and_Punctuation ? "true" : "false",
+                config.FontOptions.General_Punctuation ? "true" : "false",
+                config.FontOptions.Enclosed_CJK_Letters_and_Months ? "true" : "false",
+                config.FontOptions.Vertical_Forms ? "true" : "false",
+                config.FontOptions.CJK_Compatibility_Forms ? "true" : "false",
+                config.FontOptions.Miscellaneous_Symbols ? "true" : "false",
+                config.FontOptions.CJK_Compatibility ? "true" : "false",
+                config.FontOptions.Halfwidth_and_Fullwidth_Forms ? "true" : "false",
+                config.FontOptions.Dingbats ? "true" : "false",
+                config.FontOptions.Letterlike_Symbols ? "true" : "false",
+                config.FontOptions.Enclosed_Alphanumerics ? "true" : "false",
+                config.FontOptions.Number_Forms ? "true" : "false",
+                config.FontOptions.Currency_Symbols ? "true" : "false",
+                config.FontOptions.Arrows ? "true" : "false",
+                config.FontOptions.Geometric_Shapes ? "true" : "false",
+                config.FontOptions.Mathematical_Operators ? "true" : "false",
+                customUnicodeRange,
+                boolConfigInfo,
+                config.CompileOptions.DevelopBuild ? "true" : "false",
+                config.CompileOptions.enablePerfAnalysis ? "true" : "false",
+                config.ProjectConf.MemorySize.ToString(),
+                config.SDKOptions.disableMultiTouch ? "true" : "false",
+                // Perfstream，暂时设为false
+                "false",
+                config.CompileOptions.enableEmscriptenGLX ? "true" : "false",
+                config.CompileOptions.enableiOSMetal ? "true" : "false",
+                EnableRenderThread ? "true" : "false"
+            });
+
+            List<Rule> replaceList = new List<Rule>(replaceArrayList);
+            List<string> files = new List<string> { "game.js", "game.json", "project.config.json", "unity-namespace.js", "check-version.js", "unity-sdk/font/index.js" };
+            if (isPlayableBuild)
+            {
+                files = new List<string> { "game.js", "game.json", "project.config.json", "unity-namespace.js", "check-version.js" };
+            }
+
+            if (WXRuntimeExtEnvDef.IsPreviewing)
+            {
+                ReplaceFileContent(files.ToArray(), replaceList.ToArray(), WXRuntimeExtEnvDef.PreviewDst);
+                BuildTemplate.mergeJSON(
+                    Path.Combine(Application.dataPath, "WX-WASM-SDK-V2", "Editor", "template", "minigame"),
+                    WXRuntimeExtEnvDef.PreviewDst
+                );
+            }
+            else
+            {
+                ReplaceFileContent(files.ToArray(), replaceList.ToArray());
+                BuildTemplate.mergeJSON(
+                    Path.Combine(Application.dataPath, "WX-WASM-SDK-V2", "Editor", "template", "minigame"),
+                    Path.Combine(config.ProjectConf.DST, miniGameDir)
+                );
+            }
+            Emit(LifeCycle.afterBuildTemplate);
+
+            UnityEngine.Debug.LogFormat("[Converter] that to modify configs ended");
+        }
+
+        /// <summary>
+        /// 获取当前工程颜色空间
+        /// </summary>
+        /// <returns></returns>
+        private static string GetColorSpace()
+        {
+            switch (PlayerSettings.colorSpace)
+            {
+                case ColorSpace.Gamma:
+                    return "Gamma";
+                case ColorSpace.Linear:
+                    return "Linear";
+                case ColorSpace.Uninitialized:
+                    return "Uninitialized";
+                default:
+                    return "Unknow";
+            }
+        }
+
+        /// <summary>
+        /// 删掉导出目录webgl目录下旧资源包
+        /// </summary>
+        private static void RemoveOldAssetPackage(string dstDir)
+        {
+            try
+            {
+                if (Directory.Exists(dstDir))
+                {
+                    foreach (string path in Directory.GetFiles(dstDir))
+                    {
+                        FileInfo fileInfo = new FileInfo(path);
+                        if (fileInfo.Name.Contains("webgl.data.unityweb.bin.txt") || fileInfo.Name.Contains("webgl.data.unityweb.bin.br"))
+                        {
+                            File.Delete(fileInfo.FullName);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                UnityEngine.Debug.LogError(ex);
+            }
+        }
+
+        private static string GetWebGLSymbolPath()
+        {
+            if (WXExtEnvDef.GETDEF("UNITY_2020_1_OR_NEWER"))
+            {
+                return Path.Combine(config.ProjectConf.DST, webglDir, "Build", "webgl.symbols.json");
+            }
+            else
+            {
+                return Path.Combine(config.ProjectConf.DST, webglDir, "Build", "webgl.wasm.symbols.unityweb");
+            }
+        }
+
+        private static string[] GetScenePaths()
+        {
+            List<string> scenes = new List<string>();
+            for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
+            {
+                var scene = EditorBuildSettings.scenes[i];
+                UnityEngine.Debug.LogFormat("[Builder] Scenes [{0}]: {1}, [{2}]", i, scene.path, scene.enabled ? "x" : " ");
+
+                if (scene.enabled)
+                {
+                    scenes.Add(scene.path);
+                }
+            }
+
+            return scenes.ToArray();
+        }
+
+        /// <summary>
+        /// 兼容 WebGL1 WebGL2 Linear Gamma 配置 Assets/WX-WASM-SDK/Plugins
+        /// </summary>
+        private static void SettingWXTextureMinJSLib()
+        {
+            string[] jsLibs;
+            string DS = WXAssetsTextTools.DS;
+            if (UnityUtil.GetSDKMode() == UnityUtil.SDKMode.Package)
+            {
+                jsLibs = new string[]
+                {
+                $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}SDK-WX-TextureMin-JS-WEBGL1.jslib",
+                $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}SDK-WX-TextureMin-JS-WEBGL2.jslib",
+                $"Packages{DS}com.qq.weixin.minigame{DS}Runtime{DS}Plugins{DS}SDK-WX-TextureMin-JS-WEBGL2-Linear.jslib",
+                };
+            }
+            else
+            {
+                string jsLibRootDir = $"Assets{DS}WX-WASM-SDK-V2{DS}Runtime{DS}Plugins{DS}";
+
+                // 下方顺序不可变动
+                jsLibs = new string[]
+                {
+                     $"{jsLibRootDir}SDK-WX-TextureMin-JS-WEBGL1.jslib",
+                     $"{jsLibRootDir}SDK-WX-TextureMin-JS-WEBGL2.jslib",
+                     $"{jsLibRootDir}SDK-WX-TextureMin-JS-WEBGL2-Linear.jslib",
+                };
+            }
+            int index = 0;
+            if (config.CompileOptions.Webgl2)
+            {
+                if (PlayerSettings.colorSpace == ColorSpace.Linear)
+                {
+                    index = 2;
+                }
+                else
+                {
+                    index = 1;
+                }
+            }
+
+            for (int i = 0; i < jsLibs.Length; i++)
+            {
+                var importer = AssetImporter.GetAtPath(jsLibs[i]) as PluginImporter;
+                bool value = i == index;
+#if PLATFORM_PLAYABLEADS
+                importer.SetCompatibleWithPlatform(BuildTarget.PlayableAds, value);
+#elif PLATFORM_WEIXINMINIGAME
+                importer.SetCompatibleWithPlatform(BuildTarget.WeixinMiniGame, value);
+#else
+                importer.SetCompatibleWithPlatform(BuildTarget.WebGL, value);
+#endif
+                importer.SaveAndReimport();
+            }
+        }
+
+        public static bool IsInstantGameAutoStreaming()
+        {
+            if (string.IsNullOrEmpty(GetInstantGameAutoStreamingCDN()))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static bool CheckSDK()
+        {
+            string dir = Path.Combine(Application.dataPath, "WX-WASM-SDK");
+            if (Directory.Exists(dir))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static string GetInstantGameAutoStreamingCDN()
+        {
+#if UNITY_INSTANTGAME
+            string cdn = Unity.InstantGame.IGBuildPipeline.GetInstantGameCDNRoot();
+            return cdn;
+#else
+            return "";
+#endif
+        }
+        public static string ReplaceByRegex(string text, Rule[] rules, string file)
+        {
+            for (int i = 0; i < rules.Length; i++)
+            {
+                var rule = rules[i];
+                if (ShowMatchFailedWarning(text, rule.old, file) == false)
+                {
+                    text = Regex.Replace(text, rule.old, rule.newStr);
+                }
+            }
+            return text;
+        }
+        public static bool ShowMatchFailedWarning(string text, string rule, string file)
+        {
+            if (Regex.IsMatch(text, rule) == false)
+            {
+                Debug.Log($"UnMatched {file} rule: {rule}");
+                return true;
+            }
+            return false;
+        }
+        public static void ConvertForThread()
+        {
+            string workerDir = Path.Combine(config.ProjectConf.DST, miniGameDir, "workers", "response");
+            string workerFrameworkPath = Path.Combine(workerDir, frameworkFilename);
+            string workerIndexPath = Path.Combine(workerDir, wasmWorkerIndexFilename);
+
+
+            // 拷贝胶水层到worker里并替换
+            File.Copy(Path.Combine(config.ProjectConf.DST, miniGameDir, frameworkFilename), workerFrameworkPath);
+            string text = File.ReadAllText(workerFrameworkPath, Encoding.UTF8);
+            text = ReplaceByRegex(text, ReplaceRules.WorkerThreadRules(), "WorkerThreadReplaceRules");
+
+            text += ReplaceRules.WorkerThreadFooter;
+            File.WriteAllText(workerFrameworkPath, text);
+
+            // 拷贝worker.js到worker里并替换
+            File.Copy(Path.Combine(config.ProjectConf.DST, webglDir, "Build", wasmWorkerIndexFilename), workerIndexPath);
+            text = File.ReadAllText(workerIndexPath, Encoding.UTF8);
+            text = ReplaceByRegex(text, ReplaceRules.WorkerIndexRules(), "WorkerIndexReplaceRules");
+            text += ReplaceRules.WorkerIndexFooter;
+            File.WriteAllText(workerIndexPath, text);
+        }
+    }
+
+}

@@ -54,8 +54,8 @@ public class MarkComponentEditor : Editor
     public static void Init()
     {
         if (texture == null) texture = AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Editor/ExportComponent/1.png");
-        EditorApplication.hierarchyWindowItemOnGUI -= DrawItemGUI;
-        EditorApplication.hierarchyWindowItemOnGUI += DrawItemGUI;
+        EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= DrawItemGUI;
+        EditorApplication.hierarchyWindowItemByEntityIdOnGUI += DrawItemGUI;
         EditorApplication.playModeStateChanged -= Hide;
         EditorApplication.playModeStateChanged += Hide;
     }
@@ -63,17 +63,17 @@ public class MarkComponentEditor : Editor
     {
         if (state == PlayModeStateChange.EnteredEditMode)
         {
-            EditorApplication.hierarchyWindowItemOnGUI -= DrawItemGUI;
-            EditorApplication.hierarchyWindowItemOnGUI += DrawItemGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= DrawItemGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI += DrawItemGUI;
         }
         else if (state == PlayModeStateChange.EnteredPlayMode)
         {
-            EditorApplication.hierarchyWindowItemOnGUI -= DrawItemGUI;
+            EditorApplication.hierarchyWindowItemByEntityIdOnGUI -= DrawItemGUI;
         }
     }
-    private static void DrawItemGUI(int instanceID, Rect selectionRect)
+    private static void DrawItemGUI(EntityId entityId, Rect selectionRect)
     {
-        var obj = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
+        var obj = EditorUtility.EntityIdToObject(entityId) as GameObject;
         if (obj == null) return;
         var ec = obj.GetComponent<MarkComponent>();
         if (ec) GUI.DrawTexture(new Rect(selectionRect.x - (obj.transform.childCount > 0 ? 26 : 13), selectionRect.y, 16, 16), texture);

@@ -5,7 +5,7 @@ using UnityEngine;
 public class UIPreview : ObjectPreview
 {
     private Texture2D texture;
-    private int id;
+    private EntityId id;
     private Rect rect1 = new Rect(0, 0, 1280f, 720f);
     private float rate1 = 1280f / 720f;
     private float rate2 = 720f / 1280f;
@@ -17,7 +17,7 @@ public class UIPreview : ObjectPreview
         else rect3 = new Rect(r.x, r.y + r.height / 2 - r.width * rate2 / 2, r.width, r.width * rate2);
         rect2 = r;
 
-        int temp = target.GetInstanceID();
+        var temp = target.GetEntityId();
         if (temp == id) return;
         id = temp;
 
