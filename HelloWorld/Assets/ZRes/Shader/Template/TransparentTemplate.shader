@@ -1,27 +1,39 @@
-Shader "URP/Template"
+Shader "URP/TransparentTemplate"
 {
     Properties
     {
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull("Cull", Float) = 2
+        [Enum(Off,0,On,1)] _ZWrite("ZWrite", Float) = 0
+        [Enum(UnityEngine.Rendering.CompareFunction)] _ZTest("ZTest", Float) = 4
+        [Enum(UnityEngine.Rendering.ColorWriteMask)] _ColorMask("Color Mask", Float) = 15
         _MainTex("Sprite Texture", 2D) = "white" {}
         _Color("Tint", Color) = (1,1,1,1)
     }
 
     SubShader
     {
-        Tags { "Queue" = "Transparent" "RenderType" = "Transparent" "RenderPipeline" = "UniversalPipeline" }
+        Tags 
+        {
+            "RenderPipeline" = "UniversalPipeline"
+            "RenderType" = "Transparent"
+            "Queue" = "Transparent"
+        }
 
         Blend SrcAlpha OneMinusSrcAlpha
-        Cull Back
-
+        Cull [_Cull]
+        ZWrite [_ZWrite]
+        ZTest [_ZTest]
+        ColorMask [_ColorMask]
         LOD 100
 
         Pass
         {
+            Name "Default"
+            Tags { "LightMode" = "SRPDefaultUnlit" }
             //Tags { "LightMode" = "UniversalForward" }
 
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-
             #pragma vertex vert
             #pragma fragment frag
 
@@ -29,8 +41,8 @@ Shader "URP/Template"
             SAMPLER(sampler_MainTex);
 
             CBUFFER_START(UnityPerMaterial)
-            float4 _MainTex_ST;
-            float4 _Color;
+                float4 _MainTex_ST;
+                float4 _Color;
             CBUFFER_END
 
             struct Input
@@ -60,6 +72,5 @@ Shader "URP/Template"
             ENDHLSL
         }
     }
-
-    Fallback "Sprites/Default"
+    Fallback Off
 }
