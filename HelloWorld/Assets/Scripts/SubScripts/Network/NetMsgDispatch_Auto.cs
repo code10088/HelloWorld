@@ -41,7 +41,6 @@ public partial class NetMsgDispatch
         }
         catch (Exception e)
         {
-            GameDebug.LogError(e.Message);
             return false;
         }
     }

@@ -44,7 +44,7 @@ public class STCP : SBase
         if (socket.Connected)
         {
             socketevent.Invoke((int)SocketEvent.Connected, 0);
-            connectMark = true;
+            Connected = true;
             connectRetry = 0;
             sendRetry = 0;
             receiveRetry = 0;
@@ -64,9 +64,17 @@ public class STCP : SBase
         base.Close();
         sendThread?.Join();
         receiveThread?.Join();
-        headBuffer.Clear();
-        bodyBuffer.Clear();
+        headBuffer?.Clear();
+        bodyBuffer?.Clear();
         bodyLength = 0;
+    }
+    public override void Dispose()
+    {
+        base.Dispose();
+        UnsafeByteBuffer.Return(headBuffer);
+        headBuffer = null;
+        UnsafeByteBuffer.Return(bodyBuffer);
+        bodyBuffer = null;
     }
     #endregion
 
@@ -75,7 +83,7 @@ public class STCP : SBase
     {
         while (true)
         {
-            if (connectMark == false)
+            if (Connected == false)
             {
                 return;
             }
@@ -85,7 +93,7 @@ public class STCP : SBase
                 while (true)
                 {
                     int count = socket.Send(buffer.Span, buffer.WPos);
-                    if (connectMark == false)
+                    if (Connected == false)
                     {
                         UnsafeByteBuffer.Return(buffer);
                         return;
@@ -115,7 +123,7 @@ public class STCP : SBase
         while (true)
         {
             int count = socket.Receive(receiveBuffer.FullSpan);
-            if (connectMark == false)
+            if (Connected == false)
             {
                 return;
             }

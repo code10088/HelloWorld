@@ -13,7 +13,9 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
         public int type;
         public int param;
     }
-    private Queue<NetMsgItem> msgPool = new Queue<NetMsgItem>();
+    private Queue<NetMsgItem> msgPool1 = new Queue<NetMsgItem>();
+    private Queue<NetMsgItem> msgPool2 = new Queue<NetMsgItem>();
+    private object msgLock = new object();
     private Dictionary<ushort, Action<IDeserialize>> msgAction = new Dictionary<ushort, Action<IDeserialize>>();
     private Queue<SocketEventItem> socketevent = new Queue<SocketEventItem>();
 
@@ -36,17 +38,20 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
     }
     private void HandleMsg(ushort id, IDeserialize msg)
     {
-        lock (msgPool) msgPool.Enqueue(new NetMsgItem() { id = id, msg = msg });
+        lock (msgPool1) msgPool1.Enqueue(new NetMsgItem() { id = id, msg = msg });
     }
     private void Update(float t)
     {
-        while (msgPool.Count > 0)
+        lock (msgLock)
         {
-            lock (msgPool)
-            {
-                NetMsgItem msg = msgPool.Dequeue();
-                if (msgAction.TryGetValue(msg.id, out var action)) action?.Invoke(msg.msg);
-            }
+            var temp = msgPool2;
+            msgPool2 = msgPool1;
+            msgPool1 = temp;
+        }
+        while (msgPool2.Count > 0)
+        {
+            NetMsgItem msg = msgPool2.Dequeue();
+            if (msgAction.TryGetValue(msg.id, out var action)) action?.Invoke(msg.msg);
         }
         while (socketevent.Count > 0)
         {

@@ -36,7 +36,7 @@ public class SBase
     protected HeartHandle heart;
     //连接
     private int connectFlag = 0;
-    protected bool connectMark
+    public bool Connected
     {
         get => Interlocked.CompareExchange(ref connectFlag, 0, 0) == 1;
         set => Interlocked.Exchange(ref connectFlag, value ? 1 : 0);
@@ -62,7 +62,7 @@ public class SBase
     #region 连接
     public void Reconnect()
     {
-        connectMark = false;
+        Connected = false;
         connectRetry = 0;
         Connect();
     }
@@ -72,19 +72,25 @@ public class SBase
     }
     public virtual void Close()
     {
-        connectMark = false;
-        socket.Dispose();
-        heart.Dispose();
+        Connected = false;
+        socket?.Dispose();
+        heart?.Dispose();
         sendQueue.Clear();
         sendRetry = 0;
         receiveRetry = 0;
+    }
+    public virtual void Dispose()
+    {
+        Close();
+        UnsafeByteBuffer.Return(receiveBuffer);
+        receiveBuffer = null;
     }
     #endregion
 
     #region 发送
     public virtual void Send(ushort id, ISerialize msg)
     {
-        if (connectMark)
+        if (Connected)
         {
             heart.RefreshDelay1(id);
             sendQueue.Enqueue(new SendItem(id, msg));

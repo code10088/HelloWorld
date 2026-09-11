@@ -83,7 +83,7 @@ public class SKCP : SBase
                     kcp.SetMtu();
                     next = DateTime.UtcNow;
 
-                    connectMark = true;
+                    Connected = true;
                     connectRetry = 0;
                     sendRetry = 0;
                     receiveRetry = 0;
@@ -134,7 +134,7 @@ public class SKCP : SBase
     {
         while (true)
         {
-            if (connectMark == false)
+            if (Connected == false)
             {
                 return;
             }
@@ -160,7 +160,7 @@ public class SKCP : SBase
     /// </summary>
     private void Send(IMemoryOwner<byte> owner, int length)
     {
-        if (connectMark == false)
+        if (Connected == false)
         {
             owner.Dispose();
             return;
@@ -168,7 +168,7 @@ public class SKCP : SBase
         while (true)
         {
             int count = socket.Send(owner.Memory.Span.Slice(0, length));
-            if (connectMark == false)
+            if (Connected == false)
             {
                 owner.Dispose();
                 return;
@@ -195,7 +195,7 @@ public class SKCP : SBase
         while (true)
         {
             int count = socket.Receive(receiveBuffer.FullSpan);
-            if (connectMark == false)
+            if (Connected == false)
             {
                 return;
             }

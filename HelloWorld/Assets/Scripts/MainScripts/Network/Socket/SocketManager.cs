@@ -6,6 +6,8 @@ public class SocketManager : Singleton<SocketManager>
     private Func<ushort, UnsafeByteBuffer, bool> deserialize;
     private Action<int, int> socketevent;
 
+    public bool Connected => socket != null && socket.Connected;
+
     public void SetFunc(Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
     {
         this.deserialize = deserialize;
@@ -16,12 +18,17 @@ public class SocketManager : Singleton<SocketManager>
     /// </summary>
     public void Create<T>(string ip, ushort port, uint playerId, string token) where T : SBase, new()
     {
+        Dispose();
         socket = new T();
         socket.Init(ip, port, playerId, token, deserialize, socketevent);
     }
     public void Close()
     {
         socket?.Close();
+    }
+    public void Dispose()
+    {
+        socket?.Dispose();
     }
     public void Reconnect()
     {
