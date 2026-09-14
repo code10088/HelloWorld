@@ -69,6 +69,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
                 break;
             case SocketEvent.Connected:
                 UICommonTips.ShowTips("连接服务器成功");
+                EventManager.Instance.Fire(EventType.NetworkConnected);
                 break;
             case SocketEvent.ConnectError:
                 UICommonBoxParam param = new UICommonBoxParam();

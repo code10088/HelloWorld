@@ -7,6 +7,7 @@
     CloseScene,
     NetworkChange,
     RefreshDelay,
+    NetworkConnected,
     SetSceneLoadingBg,
     SetSceneLoadingProgress,
     RefreshGuide,
