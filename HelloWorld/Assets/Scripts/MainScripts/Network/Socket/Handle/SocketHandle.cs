@@ -8,7 +8,7 @@ public class SocketHandle
     private Socket socket;
     private int timeout = 10000;
 
-    public bool Connected => socket.Connected;
+    public bool Connected => socket != null && socket.Connected;
 
     public SocketHandle(string ip, ushort port)
     {

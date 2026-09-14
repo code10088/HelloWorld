@@ -34,6 +34,7 @@ public partial class NetMsgDispatch
                 case NetMsgId.Message_SCGetMailReward: msg = new Message.SCGetMailReward(); break;
                 case NetMsgId.Message_SCGetMailAllReward: msg = new Message.SCGetMailAllReward(); break;
                 case NetMsgId.Message_SCDeleteMail: msg = new Message.SCDeleteMail(); break;
+                default: return true;
             }
             msg.Deserialize(buffer);
             HandleMsg(id, msg);

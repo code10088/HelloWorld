@@ -113,8 +113,8 @@ public class SKCP : SBase
         base.Close();
         kcp?.Dispose();
         kcp = null;
-        sendThread?.Join();
-        receiveThread?.Join();
+        sendThread?.Join(1000);
+        receiveThread?.Join(1000);
     }
     #endregion
 

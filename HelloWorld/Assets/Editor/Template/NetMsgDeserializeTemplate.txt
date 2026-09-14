@@ -20,6 +20,7 @@ public partial class NetMsgDispatch
                 case NetMsgId.{{ msg.name }}: msg = new {{ msg.type }}(); break;
     {{~ end ~}}
 {{~ end ~}}
+                default: return true;
             }
             msg.Deserialize(buffer);
             HandleMsg(id, msg);

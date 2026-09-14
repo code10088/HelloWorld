@@ -62,8 +62,8 @@ public class STCP : SBase
     public override void Close()
     {
         base.Close();
-        sendThread?.Join();
-        receiveThread?.Join();
+        sendThread?.Join(1000);
+        receiveThread?.Join(1000);
         headBuffer?.Clear();
         bodyBuffer?.Clear();
         bodyLength = 0;
