@@ -118,6 +118,14 @@ public class Driver : MonoSingleton<Driver>
     }
     #endregion
 
+    #region ÇÐºóÌ¨
+    public event Action<bool> OnAppPause;
+    private void OnApplicationPause(bool pause)
+    {
+        OnAppPause?.Invoke(pause);
+        if (pause == false) SocketManager.Instance.Reconnect();
+    }
+    #endregion
 
     #region Update
     private Queue<UpdateItem> UpdateCache = new();

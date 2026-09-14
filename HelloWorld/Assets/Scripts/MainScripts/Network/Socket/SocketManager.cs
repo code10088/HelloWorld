@@ -22,10 +22,6 @@ public class SocketManager : Singleton<SocketManager>
         socket = new T();
         socket.Init(ip, port, playerId, token, deserialize, socketevent);
     }
-    public void Close()
-    {
-        socket?.Close();
-    }
     public void Dispose()
     {
         socket?.Dispose();
@@ -33,6 +29,10 @@ public class SocketManager : Singleton<SocketManager>
     public void Reconnect()
     {
         socket?.Reconnect();
+    }
+    public void Close()
+    {
+        socket?.Close();
     }
     public void Send(ushort id, ISerialize msg)
     {
