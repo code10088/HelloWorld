@@ -48,7 +48,11 @@ public class SKCP : SBase
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
-        socket.Connect(SocketType.Dgram, ProtocolType.Udp);
+        if (socket.Connect(SocketType.Dgram, ProtocolType.Udp) == false)
+        {
+            Connect();
+            return;
+        }
         var buffer = kcpConnect.Serialize();
         int retry = 0;
         while (true)

@@ -40,8 +40,7 @@ public class STCP : SBase
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
-        socket.Connect(SocketType.Stream, ProtocolType.Tcp);
-        if (socket.Connected)
+        if (socket.Connect(SocketType.Stream, ProtocolType.Tcp))
         {
             socketevent.Invoke((int)SocketEvent.Connected, 0);
             Connected = true;

@@ -4,30 +4,46 @@ using System.Net.Sockets;
 
 public class SocketHandle
 {
-    private EndPoint endPoint;
+    private string host;
+    private ushort port;
     private Socket socket;
     private int timeout = 10000;
 
     public bool Connected => socket != null && socket.Connected;
 
-    public SocketHandle(string ip, ushort port)
+    public SocketHandle(string host, ushort port)
     {
-        IPAddress address = IPAddress.Parse(ip);
-        endPoint = new IPEndPoint(address, port);
+        this.host = host;
+        this.port = port;
     }
-    public void Connect(SocketType st, ProtocolType pt)
+    public bool Connect(SocketType st, ProtocolType pt)
     {
-        socket = new Socket(AddressFamily.InterNetwork, st, pt);
-        socket.SendTimeout = timeout;
-        socket.ReceiveTimeout = timeout;
+        IPAddress[] addresses;
         try
         {
-            socket.Connect(endPoint);
+            addresses = Dns.GetHostAddresses(host);
         }
         catch
         {
-
+            return false;
         }
+        foreach (var address in addresses)
+        {
+            try
+            {
+                socket = new Socket(address.AddressFamily, st, pt);
+                socket.SendTimeout = timeout;
+                socket.ReceiveTimeout = timeout;
+                if (st == SocketType.Stream) socket.NoDelay = true;
+                socket.Connect(new IPEndPoint(address, port));
+                return true;
+            }
+            catch
+            {
+                socket?.Dispose();
+            }
+        }
+        return false;
     }
     /// <summary>
     /// TCP流式发送
