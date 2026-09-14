@@ -44,10 +44,8 @@ public class SBase
     protected int connectRetry = 0;
     //发送
     protected ConcurrentQueue<SendItem> sendQueue = new ConcurrentQueue<SendItem>();
-    protected int sendRetry = 0;
     //接收
     protected UnsafeByteBuffer receiveBuffer;
-    protected int receiveRetry = 0;
 
     public virtual void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
     {
@@ -76,8 +74,6 @@ public class SBase
         socket?.Dispose();
         heart?.Dispose();
         sendQueue.Clear();
-        sendRetry = 0;
-        receiveRetry = 0;
     }
     public virtual void Dispose()
     {

@@ -46,11 +46,11 @@ public class STCP : SBase
             socketevent.Invoke((int)SocketEvent.Connected, 0);
             Connected = true;
             connectRetry = 0;
-            sendRetry = 0;
-            receiveRetry = 0;
             sendThread = new Thread(Send);
+            sendThread.IsBackground = true;
             sendThread.Start();
             receiveThread = new Thread(Receive);
+            receiveThread.IsBackground = true;
             receiveThread.Start();
             heart.Start();
         }
@@ -81,6 +81,7 @@ public class STCP : SBase
     #region 发送
     private void Send()
     {
+        int retry = 0;
         while (true)
         {
             if (Connected == false)
@@ -101,10 +102,10 @@ public class STCP : SBase
                     if (count == buffer.WPos)
                     {
                         UnsafeByteBuffer.Return(buffer);
-                        sendRetry = 0;
+                        retry = 0;
                         break;
                     }
-                    if (sendRetry++ > 0)
+                    if (retry++ > 0)
                     {
                         UnsafeByteBuffer.Return(buffer);
                         Connect();
@@ -120,6 +121,7 @@ public class STCP : SBase
     #region 接收
     private void Receive()
     {
+        int retry = 0;
         while (true)
         {
             int count = socket.Receive(receiveBuffer.FullSpan);
@@ -127,13 +129,13 @@ public class STCP : SBase
             {
                 return;
             }
-            if (count >= 0 && Deserialize(receiveBuffer, count))
+            if (count > 0 && Deserialize(receiveBuffer, count))
             {
-                receiveRetry = 0;
+                retry = 0;
                 Thread.Sleep(GameSetting.updateTimeSliceMS);
                 continue;
             }
-            if (receiveRetry++ > 0)
+            if (count == 0 || retry++ > 0)
             {
                 Connect();
                 return;

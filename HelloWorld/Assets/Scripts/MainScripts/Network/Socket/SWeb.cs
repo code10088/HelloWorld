@@ -12,6 +12,7 @@ public class SWeb : SBase
     private SemaphoreSlim signal;
     private CancellationTokenSource cts;
     private Task sendTask;
+    private int receiveRetry = 0;
 
     public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
     {
@@ -51,10 +52,8 @@ public class SWeb : SBase
     private void ConnectCallback()
     {
         socketevent.Invoke((int)SocketEvent.Connected, 0);
-        connectMark = true;
+        Connected = true;
         connectRetry = 0;
-        sendRetry = 0;
-        receiveRetry = 0;
         signal = new SemaphoreSlim(0);
         cts = new CancellationTokenSource();
         sendTask = Send(cts.Token);
@@ -87,7 +86,7 @@ public class SWeb : SBase
     #region 发送
     public override void Send(ushort id, ISerialize msg)
     {
-        if (connectMark)
+        if (Connected)
         {
             base.Send(id, msg);
             signal?.Release();
@@ -105,7 +104,7 @@ public class SWeb : SBase
             {
                 return;
             }
-            if (connectMark == false)
+            if (Connected == false)
             {
                 return;
             }
@@ -115,7 +114,7 @@ public class SWeb : SBase
                 var bytes = buffer.Span.ToArray();
                 UnsafeByteBuffer.Return(buffer);
                 await socket.Send(bytes);
-                if (connectMark == false)
+                if (Connected == false)
                 {
                     return;
                 }
@@ -127,7 +126,7 @@ public class SWeb : SBase
     #region 接收
     private void Receive(byte[] data)
     {
-        if (connectMark == false)
+        if (Connected == false)
         {
             return;
         }

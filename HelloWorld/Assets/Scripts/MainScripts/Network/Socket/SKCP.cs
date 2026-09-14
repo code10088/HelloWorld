@@ -50,16 +50,17 @@ public class SKCP : SBase
         }
         socket.Connect(SocketType.Dgram, ProtocolType.Udp);
         var buffer = kcpConnect.Serialize();
+        int retry = 0;
         while (true)
         {
             int count = socket.Send(buffer.Span);
             if (count == buffer.WPos)
             {
                 UnsafeByteBuffer.Return(buffer);
-                sendRetry = 0;
+                retry = 0;
                 break;
             }
-            if (sendRetry++ > 0)
+            if (retry++ > 0)
             {
                 UnsafeByteBuffer.Return(buffer);
                 Connect();
@@ -85,11 +86,11 @@ public class SKCP : SBase
 
                     Connected = true;
                     connectRetry = 0;
-                    sendRetry = 0;
-                    receiveRetry = 0;
                     sendThread = new Thread(Send);
+                    sendThread.IsBackground = true;
                     sendThread.Start();
                     receiveThread = new Thread(Receive);
+                    receiveThread.IsBackground = true;
                     receiveThread.Start();
                     heart.Start();
                     return;
@@ -97,10 +98,10 @@ public class SKCP : SBase
             }
             if (count >= 0)
             {
-                receiveRetry = 0;
+                retry = 0;
                 continue;
             }
-            if (receiveRetry++ > 0)
+            if (retry++ > 0)
             {
                 Connect();
                 return;
@@ -160,6 +161,7 @@ public class SKCP : SBase
     /// </summary>
     private void Send(IMemoryOwner<byte> owner, int length)
     {
+        int retry = 0;
         if (Connected == false)
         {
             owner.Dispose();
@@ -176,10 +178,10 @@ public class SKCP : SBase
             if (count == length)
             {
                 owner.Dispose();
-                sendRetry = 0;
+                retry = 0;
                 break;
             }
-            if (sendRetry++ > 0)
+            if (retry++ > 0)
             {
                 owner.Dispose();
                 Connect();
@@ -192,6 +194,7 @@ public class SKCP : SBase
     #region 接收
     private void Receive()
     {
+        int retry = 0;
         while (true)
         {
             int count = socket.Receive(receiveBuffer.FullSpan);
@@ -201,11 +204,11 @@ public class SKCP : SBase
             }
             if (count >= 0 && Deserialize(receiveBuffer, count))
             {
-                receiveRetry = 0;
+                retry = 0;
                 Thread.Sleep(GameSetting.updateTimeSliceMS);
                 continue;
             }
-            if (receiveRetry++ > 0)
+            if (retry++ > 0)
             {
                 Connect();
                 return;
