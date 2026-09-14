@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 public class HeartHandle
 {
@@ -37,7 +38,7 @@ public class HeartHandle
     {
         int index = recordIndex++ % record1.Length;
         record1[index] = id;
-        record2[index] = DateTime.UtcNow.Ticks;
+        record2[index] = Stopwatch.GetTimestamp();
     }
     public void RefreshDelay2(ushort id)
     {
@@ -46,7 +47,7 @@ public class HeartHandle
         var index = Array.IndexOf(record1, id - 10000);
         if (index < 0) return;
         record1[index] = -1;
-        delay = (int)((DateTime.UtcNow.Ticks - record2[index]) / 10000);
+        delay = (int)((Stopwatch.GetTimestamp() - record2[index]) * 1000L / Stopwatch.Frequency);
         heartInterval = delay > 100 ? 3 : 10;
     }
     public void Dispose()

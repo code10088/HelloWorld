@@ -1,14 +1,15 @@
-﻿using System;
+﻿﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
 {
-    class NetMsgItem
+    struct NetMsgItem
     {
         public ushort id;
         public IDeserialize msg;
     }
-    class SocketEventItem
+    struct SocketEventItem
     {
         public int type;
         public int param;
@@ -17,7 +18,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
     private Queue<NetMsgItem> msgPool2 = new Queue<NetMsgItem>();
     private object msgLock = new object();
     private Dictionary<ushort, Action<IDeserialize>> msgAction = new Dictionary<ushort, Action<IDeserialize>>();
-    private Queue<SocketEventItem> socketevent = new Queue<SocketEventItem>();
+    private ConcurrentQueue<SocketEventItem> socketevent = new ConcurrentQueue<SocketEventItem>();
 
     public void Init()
     {
@@ -34,11 +35,11 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
     }
     private void HandleSocketEvent(int type, int param)
     {
-        socketevent.Enqueue(new SocketEventItem() { type = type, param = param });
+        socketevent.Enqueue(new SocketEventItem { type = type, param = param });
     }
     private void HandleMsg(ushort id, IDeserialize msg)
     {
-        lock (msgPool1) msgPool1.Enqueue(new NetMsgItem() { id = id, msg = msg });
+        lock (msgLock) msgPool1.Enqueue(new NetMsgItem { id = id, msg = msg });
     }
     private void Update(float t)
     {
@@ -53,9 +54,8 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
             NetMsgItem msg = msgPool2.Dequeue();
             if (msgAction.TryGetValue(msg.id, out var action)) action?.Invoke(msg.msg);
         }
-        while (socketevent.Count > 0)
+        while (socketevent.TryDequeue(out var item))
         {
-            var item = socketevent.Dequeue();
             HandleSocketEvent(item);
         }
     }
