@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -501,8 +502,7 @@ public sealed class SafeByteBuffer
 
 public sealed unsafe class UnsafeByteBuffer
 {
-    private static object sync = new object();
-    private static Dictionary<int, Stack<UnsafeByteBuffer>> pool = new();
+    private static ConcurrentDictionary<int, ConcurrentStack<UnsafeByteBuffer>> pool = new();
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int NextPowerOfTwo(int x)
     {
@@ -519,29 +519,18 @@ public sealed unsafe class UnsafeByteBuffer
     {
         int size = NextPowerOfTwo(capacity);
         if (size <= 0) throw new ArgumentOutOfRangeException(nameof(capacity));
-        lock (sync)
-        {
-            if (pool.TryGetValue(size, out Stack<UnsafeByteBuffer> stack) && stack.Count > 0)
-            {
-                return stack.Pop();
-            }
-        }
-        return new UnsafeByteBuffer(size);
+        var stack = pool.GetOrAdd(size, _ => new ConcurrentStack<UnsafeByteBuffer>());
+        if (!stack.TryPop(out var buffer)) buffer = new UnsafeByteBuffer(size);
+        return buffer;
     }
     public static void Return(UnsafeByteBuffer b)
     {
         if (b == null) return;
         b.Clear();
         int key = b.Capacity;
-        lock (sync)
-        {
-            if (!pool.TryGetValue(key, out var stack))
-            {
-                stack = new Stack<UnsafeByteBuffer>();
-                pool.Add(key, stack);
-            }
-            stack.Push(b);
-        }
+        var stack = pool.GetOrAdd(key, _ => new ConcurrentStack<UnsafeByteBuffer>());
+        if (stack.Count >= 64) b.Dispose();
+        else stack.Push(b);
     }
 
 
@@ -610,6 +599,13 @@ public sealed unsafe class UnsafeByteBuffer
     {
         _wpos = 0;
         _rpos = 0;
+    }
+    public void Dispose()
+    {
+        if (_ptr == null) return;
+        Marshal.FreeHGlobal((IntPtr)_ptr);
+        _ptr = null;
+        _capacity = 0;
     }
 
     #region 扩容
