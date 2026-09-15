@@ -3,7 +3,7 @@ using NativeWebSocket;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine.Networking;
+using UnityEngine;
 
 public class SWeb : SBase
 {
@@ -27,21 +27,17 @@ public class SWeb : SBase
     }
     private async Task ConnectAsync()
     {
-        await CloseAsync();
+        await Close();
         if (connectRetry++ > 0)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
         socketevent.Invoke((int)SocketEvent.Reconect, 0);
-        using (UnityWebRequest request = UnityWebRequest.Head("https://www.baidu.com/"))
+        if (Application.internetReachability == NetworkReachability.NotReachable)
         {
-            request.timeout = 3;
-            var operation = request.SendWebRequest();
-            var tcs = new TaskCompletionSource<bool>();
-            operation.completed += a => tcs.SetResult(true);
-            await tcs.Task;
-            if (request.result > UnityWebRequest.Result.Success) return;
+            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            return;
         }
         socket = new WebSocket(ip);
         socket.OnOpen += ConnectCallback;
@@ -51,35 +47,31 @@ public class SWeb : SBase
     }
     private void ConnectCallback()
     {
-        socketevent.Invoke((int)SocketEvent.Connected, 0);
-        Connected = true;
-        connectRetry = 0;
         signal = new SemaphoreSlim(0);
         cts = new CancellationTokenSource();
+        Connected = true;
+        connectRetry = 0;
         sendTask = Send(cts.Token);
         heart.Start();
+        socketevent.Invoke((int)SocketEvent.Connected, 0);
     }
     private void Error(string error)
     {
         GameDebug.LogError(error);
         Connect();
     }
-    public override void Close()
+    public override async Task Close()
     {
-        base.Close();
-        socket?.Close();
-        socket = null;
-        signal?.Release();
-        signal?.Dispose();
-        signal = null;
         cts?.Cancel();
-        cts?.Dispose();
-        cts = null;
-    }
-    private async Task CloseAsync()
-    {
-        Close();
+        signal?.Release();
+        socket?.Close();
+        await base.Close();
         await (sendTask ?? Task.CompletedTask);
+        cts?.Dispose();
+        signal?.Dispose();
+        cts = null;
+        signal = null;
+        socket = null;
     }
     #endregion
 
@@ -98,7 +90,7 @@ public class SWeb : SBase
         {
             try
             {
-                await signal.WaitAsync(token);
+                await signal.WaitAsync(token).ConfigureAwait(false);
             }
             catch
             {
@@ -113,7 +105,7 @@ public class SWeb : SBase
                 var buffer = item.Serialize();
                 var bytes = buffer.Span.ToArray();
                 UnsafeByteBuffer.Return(buffer);
-                await socket.Send(bytes);
+                await socket.Send(bytes).ConfigureAwait(false);
                 if (Connected == false)
                 {
                     return;

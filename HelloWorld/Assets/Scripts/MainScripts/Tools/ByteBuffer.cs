@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -500,7 +501,7 @@ public sealed class SafeByteBuffer
 }
 
 
-public sealed unsafe class UnsafeByteBuffer
+public sealed unsafe class UnsafeByteBuffer : MemoryManager<byte>
 {
     private static ConcurrentDictionary<int, ConcurrentStack<UnsafeByteBuffer>> pool = new();
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -529,7 +530,7 @@ public sealed unsafe class UnsafeByteBuffer
         b.Clear();
         int key = b.Capacity;
         var stack = pool.GetOrAdd(key, _ => new ConcurrentStack<UnsafeByteBuffer>());
-        if (stack.Count >= 64) b.Dispose();
+        if (stack.Count >= 64) b.Dispose(true);
         else stack.Push(b);
     }
 
@@ -564,6 +565,11 @@ public sealed unsafe class UnsafeByteBuffer
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => new Span<byte>(_ptr, _capacity);
     }
+    public Memory<byte> Mem
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => Memory.Slice(0, _wpos);
+    }
 
     public UnsafeByteBuffer(int capacity = 1024)
     {
@@ -595,12 +601,24 @@ public sealed unsafe class UnsafeByteBuffer
         if (pos > _wpos) throw new ArgumentOutOfRangeException(nameof(pos));
         _rpos = pos;
     }
+    public override MemoryHandle Pin(int elementIndex = 0)
+    {
+        if (elementIndex > _capacity) throw new ObjectDisposedException(nameof(UnsafeByteBuffer));
+        return new MemoryHandle(_ptr + elementIndex);
+    }
+    public override void Unpin()
+    {
+    }
+    public override Span<byte> GetSpan()
+    {
+        return FullSpan;
+    }
     public void Clear()
     {
         _wpos = 0;
         _rpos = 0;
     }
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
         if (_ptr == null) return;
         Marshal.FreeHGlobal((IntPtr)_ptr);

@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class SocketHandle
 {
@@ -16,6 +18,14 @@ public class SocketHandle
         this.host = host;
         this.port = port;
     }
+    public void Dispose()
+    {
+        socket?.Close();
+        socket?.Dispose();
+        socket = null;
+    }
+
+    #region 同步
     public bool Connect(SocketType st, ProtocolType pt)
     {
         IPAddress[] addresses;
@@ -45,31 +55,6 @@ public class SocketHandle
         }
         return false;
     }
-    /// <summary>
-    /// TCP流式发送
-    /// </summary>
-    public int Send(ReadOnlySpan<byte> buffer, int length)
-    {
-        int count = 0;
-        while (count < length)
-        {
-            int l = 0;
-            try
-            {
-                l = socket.Send(buffer.Slice(count, length - count), SocketFlags.None);
-            }
-            catch
-            {
-                l = -1;
-            }
-            if (l <= 0)
-            {
-                break;
-            }
-            count += l;
-        }
-        return count;
-    }
     public int Send(ReadOnlySpan<byte> buffer)
     {
         int count = 0;
@@ -96,10 +81,62 @@ public class SocketHandle
         }
         return count;
     }
-    public void Dispose()
+    #endregion
+
+    #region 异步
+    public async Task<int> SendAsync1(ReadOnlyMemory<byte> buffer, CancellationToken token)
     {
-        socket?.Close();
-        socket?.Dispose();
-        socket = null;
+        int count = 0;
+        while (count < buffer.Length)
+        {
+            int l = 0;
+            try
+            {
+                //socket使用CancellationToken，cts?.Cancel导致await无法退出
+                //l = await socket.SendAsync(buffer.Slice(count), SocketFlags.None, token).ConfigureAwait(false);
+                l = await socket.SendAsync(buffer.Slice(count), SocketFlags.None).ConfigureAwait(false);
+            }
+            catch
+            {
+                l = -1;
+            }
+            if (l <= 0)
+            {
+                break;
+            }
+            count += l;
+        }
+        return count;
     }
+    public async Task<int> SendAsync2(ReadOnlyMemory<byte> buffer, CancellationToken token)
+    {
+        int count = 0;
+        try
+        {
+            //socket使用CancellationToken，cts?.Cancel导致await无法退出
+            //count = await socket.SendAsync(buffer, SocketFlags.None, token).ConfigureAwait(false);
+            count = await socket.SendAsync(buffer, SocketFlags.None).ConfigureAwait(false);
+        }
+        catch
+        {
+            count = -1;
+        }
+        return count;
+    }
+    public async Task<int> ReceiveAsync(Memory<byte> buffer, CancellationToken token)
+    {
+        int count = 0;
+        try
+        {
+            //socket使用CancellationToken，cts?.Cancel导致await无法退出
+            //count = await socket.ReceiveAsync(buffer, SocketFlags.None, token).ConfigureAwait(false);
+            count = await socket.ReceiveAsync(buffer, SocketFlags.None).ConfigureAwait(false);
+        }
+        catch
+        {
+            count = -1;
+        }
+        return count;
+    }
+    #endregion
 }

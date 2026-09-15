@@ -173,14 +173,9 @@
 //        app.UseWebSockets();
 //        app.Map(Route, HandleWebSocketAsync);
 
-//        await app.StartAsync();
-
 //        Console.WriteLine($"WebSocket 服务器已启动，监听 ws://localhost:{Port}{Route}");
-//        Console.WriteLine("可直接使用 NativeWebSocket 客户端连接。按任意键停止服务器...");
-//        Console.ReadKey(true);
-
-//        await app.StopAsync();
-//        Console.WriteLine("服务器已停止。");
+//        Console.WriteLine("可直接使用 NativeWebSocket 客户端连接。按 Ctrl+C 停止服务器...");
+//        await app.RunAsync();
 //    }
 
 //    private static async Task HandleWebSocketAsync(HttpContext context)
@@ -209,6 +204,21 @@
 //        }
 //        finally
 //        {
+//            if (webSocket.State is WebSocketState.Open or WebSocketState.CloseReceived)
+//            {
+//                try
+//                {
+//                    await webSocket.CloseAsync(
+//                        WebSocketCloseStatus.NormalClosure,
+//                        "Server closing connection",
+//                        CancellationToken.None);
+//                }
+//                catch (WebSocketException)
+//                {
+//                    webSocket.Abort();
+//                }
+//            }
+
 //            Console.WriteLine($"[Server] 客户端断开连接: {remote}");
 //        }
 //    }
@@ -220,15 +230,18 @@
 //        while (webSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
 //        {
 //            using var stream = new MemoryStream();
-//            WebSocketReceiveResult result;
+//            ValueWebSocketReceiveResult result;
 
 //            do
 //            {
-//                result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationToken);
+//                result = await webSocket.ReceiveAsync(buffer.AsMemory(), cancellationToken);
 
 //                if (result.MessageType == WebSocketMessageType.Close)
 //                {
-//                    await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by client", cancellationToken);
+//                    await webSocket.CloseOutputAsync(
+//                        webSocket.CloseStatus ?? WebSocketCloseStatus.NormalClosure,
+//                        webSocket.CloseStatusDescription,
+//                        CancellationToken.None);
 //                    return;
 //                }
 
@@ -247,7 +260,7 @@
 //            }
 
 //            var response = BitConverter.GetBytes((ushort)10001);
-//            await webSocket.SendAsync(new ArraySegment<byte>(response), WebSocketMessageType.Binary, true, cancellationToken);
+//            await webSocket.SendAsync(response.AsMemory(), WebSocketMessageType.Binary, true, cancellationToken);
 //        }
 //    }
 //}

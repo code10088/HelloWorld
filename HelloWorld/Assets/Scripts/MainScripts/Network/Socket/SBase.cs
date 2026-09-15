@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 public enum SocketEvent
 {
@@ -68,16 +70,16 @@ public class SBase
     {
 
     }
-    public virtual void Close()
+    public virtual async Task Close()
     {
         Connected = false;
         socket?.Dispose();
         heart?.Dispose();
         sendQueue.Clear();
     }
-    public virtual void Dispose()
+    public virtual async Task Dispose()
     {
-        Close();
+        await Close();
         UnsafeByteBuffer.Return(receiveBuffer);
         receiveBuffer = null;
     }

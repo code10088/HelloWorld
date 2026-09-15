@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 public class STCP : SBase
 {
-    private Thread sendThread;
-    private Thread receiveThread;
+    private SemaphoreSlim signal;
+    private CancellationTokenSource cts;
+    private Task sendTask;
+    private Task receiveTask;
     private UnsafeByteBuffer headBuffer;
     private UnsafeByteBuffer bodyBuffer;
     private int headLength = 4;
@@ -28,7 +30,7 @@ public class STCP : SBase
     }
     private async Task ConnectAsync()
     {
-        Close();
+        await Close();
         if (connectRetry++ > 0)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
@@ -42,34 +44,37 @@ public class STCP : SBase
         }
         if (socket.Connect(SocketType.Stream, ProtocolType.Tcp))
         {
-            socketevent.Invoke((int)SocketEvent.Connected, 0);
+            signal = new SemaphoreSlim(0);
+            cts = new CancellationTokenSource();
             Connected = true;
             connectRetry = 0;
-            sendThread = new Thread(Send);
-            sendThread.IsBackground = true;
-            sendThread.Start();
-            receiveThread = new Thread(Receive);
-            receiveThread.IsBackground = true;
-            receiveThread.Start();
+            sendTask = Send(cts.Token);
+            receiveTask = Receive(cts.Token);
             heart.Start();
+            socketevent.Invoke((int)SocketEvent.Connected, 0);
         }
         else
         {
             Connect();
         }
     }
-    public override void Close()
+    public override async Task Close()
     {
-        base.Close();
-        sendThread?.Join(1000);
-        receiveThread?.Join(1000);
+        cts?.Cancel();
+        signal?.Release();
+        await base.Close();
+        await Task.WhenAll(sendTask ?? Task.CompletedTask, receiveTask ?? Task.CompletedTask);
+        cts?.Dispose();
+        signal?.Dispose();
+        cts = null;
+        signal = null;
         headBuffer?.Clear();
         bodyBuffer?.Clear();
         bodyLength = 0;
     }
-    public override void Dispose()
+    public override async Task Dispose()
     {
-        base.Dispose();
+        await base.Dispose();
         UnsafeByteBuffer.Return(headBuffer);
         headBuffer = null;
         UnsafeByteBuffer.Return(bodyBuffer);
@@ -78,11 +83,26 @@ public class STCP : SBase
     #endregion
 
     #region 发送
-    private void Send()
+    public override void Send(ushort id, ISerialize msg)
     {
-        int retry = 0;
+        if (Connected)
+        {
+            base.Send(id, msg);
+            signal?.Release();
+        }
+    }
+    private async Task Send(CancellationToken token)
+    {
         while (true)
         {
+            try
+            {
+                await signal.WaitAsync(token).ConfigureAwait(false);
+            }
+            catch
+            {
+                return;
+            }
             if (Connected == false)
             {
                 return;
@@ -90,40 +110,30 @@ public class STCP : SBase
             while (sendQueue.TryDequeue(out var item))
             {
                 var buffer = item.Serialize(true);
-                while (true)
+                int length = buffer.WPos;
+                int count = await socket.SendAsync1(buffer.Mem, token).ConfigureAwait(false);
+                UnsafeByteBuffer.Return(buffer);
+                if (Connected == false)
                 {
-                    int count = socket.Send(buffer.Span, buffer.WPos);
-                    if (Connected == false)
-                    {
-                        UnsafeByteBuffer.Return(buffer);
-                        return;
-                    }
-                    if (count == buffer.WPos)
-                    {
-                        UnsafeByteBuffer.Return(buffer);
-                        retry = 0;
-                        break;
-                    }
-                    if (retry++ > 0)
-                    {
-                        UnsafeByteBuffer.Return(buffer);
-                        Connect();
-                        return;
-                    }
+                    return;
+                }
+                if (count != length)
+                {
+                    Connect();
+                    return;
                 }
             }
-            Thread.Sleep(GameSetting.updateTimeSliceMS);
         }
     }
     #endregion
 
     #region 接收
-    private void Receive()
+    private async Task Receive(CancellationToken token)
     {
         int retry = 0;
         while (true)
         {
-            int count = socket.Receive(receiveBuffer.FullSpan);
+            int count = await socket.ReceiveAsync(receiveBuffer.Memory, token).ConfigureAwait(false);
             if (Connected == false)
             {
                 return;
@@ -131,7 +141,6 @@ public class STCP : SBase
             if (count > 0 && Deserialize(receiveBuffer, count))
             {
                 retry = 0;
-                Thread.Sleep(GameSetting.updateTimeSliceMS);
                 continue;
             }
             if (count == 0 || retry++ > 0)

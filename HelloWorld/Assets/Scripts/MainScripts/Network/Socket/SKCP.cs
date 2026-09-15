@@ -1,6 +1,7 @@
 #if !UNITY_WEBGL
 using System;
 using System.Buffers;
+using System.Collections.Concurrent;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Net.Sockets.Kcp;
@@ -9,12 +10,16 @@ using System.Threading.Tasks;
 
 public class SKCP : SBase
 {
-    private Thread sendThread;
-    private Thread receiveThread;
+    private SemaphoreSlim signal;
+    private CancellationTokenSource cts;
+    private Task sendTask;
+    private Task updateTask;
+    private Task receiveTask;
     private KcpSend kcpSend;
     private PoolSegManager.Kcp kcp;
     private DateTimeOffset next;
     private SendItem kcpConnect;
+    private ConcurrentQueue<KcpPacket> queue = new ConcurrentQueue<KcpPacket>();
 
     public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
     {
@@ -36,7 +41,7 @@ public class SKCP : SBase
     /// </summary>
     private async Task ConnectAsync()
     {
-        Close();
+        await Close();
         if (connectRetry++ > 0)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
@@ -80,7 +85,6 @@ public class SKCP : SBase
                 receiveBuffer.SetRPos(0);
                 if (receiveBuffer.ReadUShort() == NetMsgId.SCKcpConnect)
                 {
-                    socketevent.Invoke((int)SocketEvent.Connected, 0);
                     var connectId = receiveBuffer.ReadUInt();
                     kcp = new PoolSegManager.Kcp(connectId, kcpSend);
                     kcp.NoDelay(1, 10, 2, 1);
@@ -88,15 +92,15 @@ public class SKCP : SBase
                     kcp.SetMtu();
                     next = DateTime.UtcNow;
 
+                    signal = new SemaphoreSlim(0);
+                    cts = new CancellationTokenSource();
                     Connected = true;
                     connectRetry = 0;
-                    sendThread = new Thread(Send);
-                    sendThread.IsBackground = true;
-                    sendThread.Start();
-                    receiveThread = new Thread(Receive);
-                    receiveThread.IsBackground = true;
-                    receiveThread.Start();
+                    sendTask = Send(cts.Token);
+                    updateTask = Update(cts.Token);
+                    receiveTask = Receive(cts.Token);
                     heart.Start();
+                    socketevent.Invoke((int)SocketEvent.Connected, 0);
                     return;
                 }
             }
@@ -112,13 +116,19 @@ public class SKCP : SBase
             }
         }
     }
-    public override void Close()
+    public override async Task Close()
     {
-        base.Close();
+        cts?.Cancel();
+        signal?.Release();
+        await base.Close();
+        await Task.WhenAll(sendTask ?? Task.CompletedTask, updateTask ?? Task.CompletedTask, receiveTask ?? Task.CompletedTask);
+        cts?.Dispose();
+        signal?.Dispose();
+        cts = null;
+        signal = null;
+        while (queue.TryDequeue(out var item)) item.Dispose();
         kcp?.Dispose();
         kcp = null;
-        sendThread?.Join(1000);
-        receiveThread?.Join(1000);
     }
     #endregion
 
@@ -135,10 +145,26 @@ public class SKCP : SBase
             Out(owner, avalidLength);
         }
     }
-    private void Send()
+    public override void Send(ushort id, ISerialize msg)
+    {
+        if (Connected)
+        {
+            base.Send(id, msg);
+            signal?.Release();
+        }
+    }
+    private async Task Send(CancellationToken token)
     {
         while (true)
         {
+            try
+            {
+                await signal.WaitAsync(token).ConfigureAwait(false);
+            }
+            catch
+            {
+                return;
+            }
             if (Connected == false)
             {
                 return;
@@ -149,15 +175,54 @@ public class SKCP : SBase
                 kcp.Send(buffer.Span);
                 UnsafeByteBuffer.Return(buffer);
             }
-            var current = DateTime.UtcNow;
-            if (current >= next)
+            int retry = 0;
+            while (queue.TryDequeue(out var item))
             {
+                while (true)
+                {
+                    int count = await socket.SendAsync2(item.Datas, token).ConfigureAwait(false);
+                    if (Connected == false)
+                    {
+                        item.Dispose();
+                        return;
+                    }
+                    if (count == item.Length)
+                    {
+                        item.Dispose();
+                        retry = 0;
+                        break;
+                    }
+                    if (retry++ > 0)
+                    {
+                        item.Dispose();
+                        Connect();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    private async Task Update(CancellationToken token)
+    {
+        while (true)
+        {
+            try
+            {
+                var current = DateTime.UtcNow;
                 kcp.Update(current);
                 next = kcp.Check(current);
+                var ms = (next - current).TotalMilliseconds;
+                var delay = (int)Math.Clamp(ms, 1, GameSetting.updateTimeSliceMS);
+                await Task.Delay(delay, token).ConfigureAwait(false);
             }
-            var ms = (next - current).TotalMilliseconds;
-            var delay = (int)Math.Clamp(ms, 1, GameSetting.updateTimeSliceMS);
-            Thread.Sleep(delay);
+            catch
+            {
+                return;
+            }
+            if (Connected == false)
+            {
+                return;
+            }
         }
     }
     /// <summary>
@@ -165,43 +230,41 @@ public class SKCP : SBase
     /// </summary>
     private void Send(IMemoryOwner<byte> owner, int length)
     {
-        int retry = 0;
-        if (Connected == false)
+        if (Connected)
+        {
+            queue.Enqueue(new KcpPacket(owner, length));
+            signal?.Release();
+        }
+        else
         {
             owner.Dispose();
-            return;
         }
-        while (true)
+    }
+    private struct KcpPacket
+    {
+        private IMemoryOwner<byte> owner;
+        private int length;
+        public ReadOnlyMemory<byte> Datas => owner.Memory.Slice(0, length);
+        public int Length => length;
+        public KcpPacket(IMemoryOwner<byte> owner, int length)
         {
-            int count = socket.Send(owner.Memory.Span.Slice(0, length));
-            if (Connected == false)
-            {
-                owner.Dispose();
-                return;
-            }
-            if (count == length)
-            {
-                owner.Dispose();
-                retry = 0;
-                break;
-            }
-            if (retry++ > 0)
-            {
-                owner.Dispose();
-                Connect();
-                return;
-            }
+            this.owner = owner;
+            this.length = length;
+        }
+        public void Dispose()
+        {
+            owner.Dispose();
         }
     }
     #endregion
 
     #region 接收
-    private void Receive()
+    private async Task Receive(CancellationToken token)
     {
         int retry = 0;
         while (true)
         {
-            int count = socket.Receive(receiveBuffer.FullSpan);
+            int count = await socket.ReceiveAsync(receiveBuffer.Memory, token).ConfigureAwait(false);
             if (Connected == false)
             {
                 return;
@@ -209,7 +272,6 @@ public class SKCP : SBase
             if (count >= 0 && Deserialize(receiveBuffer, count))
             {
                 retry = 0;
-                Thread.Sleep(GameSetting.updateTimeSliceMS);
                 continue;
             }
             if (retry++ > 0)
