@@ -74,7 +74,7 @@ public class SBase
     {
         Connected = false;
         socket?.Dispose();
-        heart?.Dispose();
+        await heart?.Dispose();
         sendQueue.Clear();
     }
     public virtual async Task Dispose()

@@ -1,11 +1,13 @@
 using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class HeartHandle
 {
-    private int heartTimerId = 0;
-    private int heartTimer = 0;
-    private int heartInterval = 10;
+    private CancellationTokenSource cts;
+    private Task heartTask;
+    private int heartInterval = 10000;
     private int heartCount = 0;
     private int[] record1 = new int[10];
     private long[] record2 = new long[10];
@@ -24,15 +26,23 @@ public class HeartHandle
     }
     public void Start()
     {
-        heartTimerId = Driver.Instance.StartTimer(0, 1, UpdateHeart);
+        cts = new CancellationTokenSource();
+        heartTask = UpdateHeart(cts.Token);
     }
-    public void UpdateHeart(float t)
+    private async Task UpdateHeart(CancellationToken token)
     {
-        heartTimer++;
-        if (heartTimer < heartInterval) return;
-        heartTimer = 0;
-        if (heartCount++ > 0) connect();
-        else send(NetMsgId.CSHeart, heart);
+        try
+        {
+            while (true)
+            {
+                await Task.Delay(heartInterval, token).ConfigureAwait(false);
+                if (heartCount++ > 0) connect();
+                else send(NetMsgId.CSHeart, heart);
+            }
+        }
+        catch
+        {
+        }
     }
     public void RefreshDelay1(ushort id)
     {
@@ -42,18 +52,19 @@ public class HeartHandle
     }
     public void RefreshDelay2(ushort id)
     {
-        heartTimer = 0;
         if (id == NetMsgId.SCHeart) heartCount = 0;
         var index = Array.IndexOf(record1, id - 10000);
         if (index < 0) return;
         record1[index] = -1;
         delay = (int)((Stopwatch.GetTimestamp() - record2[index]) * 1000L / Stopwatch.Frequency);
-        heartInterval = delay > 100 ? 3 : 10;
+        heartInterval = delay > 100000 ? 3000 : 10000;
     }
-    public void Dispose()
+    public async Task Dispose()
     {
-        Driver.Instance.Remove(heartTimerId);
-        heartTimer = 0;
+        cts?.Cancel();
+        await (heartTask ?? Task.CompletedTask);
+        cts?.Dispose();
+        cts = null;
         heartCount = 0;
         recordIndex = 0;
         delay = 0;
