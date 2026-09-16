@@ -58,20 +58,18 @@ public class SKCP : SBase
             Connect();
             return;
         }
-        var buffer = kcpConnect.Serialize();
+        kcpConnect.Serialize(sendBuffer);
         int retry = 0;
         while (true)
         {
-            int count = socket.Send(buffer.Span);
-            if (count == buffer.WPos)
+            int count = socket.Send(sendBuffer.Span);
+            if (count == sendBuffer.WPos)
             {
-                UnsafeByteBuffer.Return(buffer);
                 retry = 0;
                 break;
             }
             if (retry++ > 0)
             {
-                UnsafeByteBuffer.Return(buffer);
                 Connect();
                 return;
             }
@@ -126,6 +124,9 @@ public class SKCP : SBase
         signal?.Dispose();
         cts = null;
         signal = null;
+        sendTask = null;
+        updateTask = null;
+        receiveTask = null;
         while (queue.TryDequeue(out var item)) item.Dispose();
         kcp?.Dispose();
         kcp = null;
@@ -171,9 +172,8 @@ public class SKCP : SBase
             }
             while (sendQueue.TryDequeue(out var item))
             {
-                var buffer = item.Serialize();
-                kcp.Send(buffer.Span);
-                UnsafeByteBuffer.Return(buffer);
+                item.Serialize(sendBuffer);
+                kcp.Send(sendBuffer.Span);
             }
             int retry = 0;
             while (queue.TryDequeue(out var item))
@@ -212,7 +212,7 @@ public class SKCP : SBase
                 kcp.Update(current);
                 next = kcp.Check(current);
                 var ms = (next - current).TotalMilliseconds;
-                var delay = (int)Math.Clamp(ms, 1, GameSetting.updateTimeSliceMS);
+                var delay = (int)Math.Clamp(ms, 1, 10);
                 await Task.Delay(delay, token).ConfigureAwait(false);
             }
             catch
@@ -283,16 +283,23 @@ public class SKCP : SBase
     }
     private bool Deserialize(UnsafeByteBuffer buffer, int length)
     {
-        kcp.Input(buffer.FullSpan.Slice(0, length));
-        while (true)
+        try
         {
-            int size = kcp.PeekSize();
-            if (size <= 0) return true;
-            size = kcp.Recv(buffer.FullSpan);
-            if (size <= 0) return true;
-            buffer.SetWPos(size);
-            buffer.SetRPos(0);
-            if (!Receive(buffer)) return false;
+            kcp.Input(buffer.FullSpan.Slice(0, length));
+            while (true)
+            {
+                int size = kcp.PeekSize();
+                if (size <= 0) return true;
+                size = kcp.Recv(buffer.FullSpan);
+                if (size <= 0) return true;
+                buffer.SetWPos(size);
+                buffer.SetRPos(0);
+                if (!Receive(buffer)) return false;
+            }
+        }
+        catch
+        {
+            return false;
         }
     }
     #endregion

@@ -68,6 +68,8 @@ public class STCP : SBase
         signal?.Dispose();
         cts = null;
         signal = null;
+        sendTask = null;
+        receiveTask = null;
         headBuffer?.Clear();
         bodyBuffer?.Clear();
         bodyLength = 0;
@@ -109,10 +111,9 @@ public class STCP : SBase
             }
             while (sendQueue.TryDequeue(out var item))
             {
-                var buffer = item.Serialize(true);
-                int length = buffer.WPos;
-                int count = await socket.SendAsync1(buffer.Mem, token).ConfigureAwait(false);
-                UnsafeByteBuffer.Return(buffer);
+                item.Serialize(sendBuffer, true);
+                int length = sendBuffer.WPos;
+                int count = await socket.SendAsync1(sendBuffer.Mem, token).ConfigureAwait(false);
                 if (Connected == false)
                 {
                     return;
@@ -164,7 +165,7 @@ public class STCP : SBase
                 {
                     headBuffer.SetRPos(0);
                     bodyLength = headBuffer.ReadInt();
-                    if (bodyLength < 0 || bodyLength > bodyBuffer.Capacity)
+                    if (bodyLength < 2 || bodyLength > bodyBuffer.Capacity)
                     {
                         headBuffer.Clear();
                         bodyBuffer.Clear();

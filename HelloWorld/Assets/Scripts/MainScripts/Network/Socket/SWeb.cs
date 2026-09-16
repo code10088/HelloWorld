@@ -72,6 +72,7 @@ public class SWeb : SBase
         cts = null;
         signal = null;
         socket = null;
+        sendTask = null;
     }
     #endregion
 
@@ -102,9 +103,8 @@ public class SWeb : SBase
             }
             while (sendQueue.TryDequeue(out var item))
             {
-                var buffer = item.Serialize();
-                var bytes = buffer.Span.ToArray();
-                UnsafeByteBuffer.Return(buffer);
+                item.Serialize(sendBuffer);
+                var bytes = sendBuffer.Span.ToArray();
                 await socket.Send(bytes).ConfigureAwait(false);
                 if (Connected == false)
                 {

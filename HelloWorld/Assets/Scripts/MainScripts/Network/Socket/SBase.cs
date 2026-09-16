@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -20,14 +19,13 @@ public struct SendItem
         this.id = id;
         this.msg = msg;
     }
-    public UnsafeByteBuffer Serialize(bool writelength = false)
+    public void Serialize(UnsafeByteBuffer buffer, bool writelength = false)
     {
-        var buffer = UnsafeByteBuffer.Rent(256);
+        buffer.SetWPos(0);
         if (writelength) buffer.WriteInt(0);
         buffer.WriteUShort(id);
         msg.Serialize(buffer);
         if (writelength) buffer.WriteValueAt(0, buffer.WPos - 4);
-        return buffer;
     }
 }
 public class SBase
@@ -46,6 +44,7 @@ public class SBase
     protected int connectRetry = 0;
     //发送
     protected ConcurrentQueue<SendItem> sendQueue = new ConcurrentQueue<SendItem>();
+    protected UnsafeByteBuffer sendBuffer;
     //接收
     protected UnsafeByteBuffer receiveBuffer;
 
@@ -55,6 +54,7 @@ public class SBase
         this.socketevent = socketevent;
         socket = new SocketHandle(ip, port);
         heart = new HeartHandle(Connect, Send);
+        sendBuffer = UnsafeByteBuffer.Rent(2048);
         receiveBuffer = UnsafeByteBuffer.Rent(2048);
         Connect();
     }
@@ -80,6 +80,8 @@ public class SBase
     public virtual async Task Dispose()
     {
         await Close();
+        UnsafeByteBuffer.Return(sendBuffer);
+        sendBuffer = null;
         UnsafeByteBuffer.Return(receiveBuffer);
         receiveBuffer = null;
     }
@@ -102,7 +104,7 @@ public class SBase
         var id = buffer.ReadUShort();
         var b = deserialize(id, buffer);
         heart.RefreshDelay2(id);
-        socketevent.Invoke((int)SocketEvent.RefreshDelay, heart.Delay);
+        if (id == NetMsgId.SCHeart) socketevent.Invoke((int)SocketEvent.RefreshDelay, heart.Delay);
         return b;
     }
     #endregion

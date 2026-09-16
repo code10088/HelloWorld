@@ -57,7 +57,7 @@ public class HeartHandle
         if (index < 0) return;
         record1[index] = -1;
         delay = (int)((Stopwatch.GetTimestamp() - record2[index]) * 1000L / Stopwatch.Frequency);
-        heartInterval = delay > 100000 ? 3000 : 10000;
+        heartInterval = delay > 10000 ? 3000 : 10000;
     }
     public async Task Dispose()
     {

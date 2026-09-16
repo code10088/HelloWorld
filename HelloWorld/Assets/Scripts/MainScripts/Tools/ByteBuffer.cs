@@ -618,6 +618,10 @@ public sealed unsafe class UnsafeByteBuffer : MemoryManager<byte>
         _wpos = 0;
         _rpos = 0;
     }
+    public void Dispose()
+    {
+        Dispose(true);
+    }
     protected override void Dispose(bool disposing)
     {
         if (_ptr == null) return;
