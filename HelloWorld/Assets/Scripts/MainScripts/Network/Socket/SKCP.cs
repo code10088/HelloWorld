@@ -32,16 +32,11 @@ public class SKCP : SBase
     }
 
     #region 连接
-    protected override void Connect()
-    {
-        Task.Run(ConnectAsync);
-    }
     /// <summary>
     /// UDP无连接协议，BeginConnect仅记录目标地址和端口
     /// </summary>
-    private async Task ConnectAsync()
+    protected override async Task ConnectTask()
     {
-        await Close();
         if (connectRetry++ > 0)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
@@ -92,7 +87,7 @@ public class SKCP : SBase
 
                     signal = new SemaphoreSlim(0);
                     cts = new CancellationTokenSource();
-                    Connected = true;
+                    State = ConnectState.Connected;
                     connectRetry = 0;
                     sendTask = Send(cts.Token);
                     updateTask = Update(cts.Token);
@@ -114,11 +109,11 @@ public class SKCP : SBase
             }
         }
     }
-    public override async Task Close()
+    protected override async Task CloseTask()
     {
         cts?.Cancel();
         signal?.Release();
-        await base.Close();
+        await base.CloseTask();
         await Task.WhenAll(sendTask ?? Task.CompletedTask, updateTask ?? Task.CompletedTask, receiveTask ?? Task.CompletedTask);
         cts?.Dispose();
         signal?.Dispose();
@@ -148,7 +143,7 @@ public class SKCP : SBase
     }
     public override void Send(ushort id, ISerialize msg)
     {
-        if (Connected)
+        if (State == ConnectState.Connected)
         {
             base.Send(id, msg);
             signal?.Release();
@@ -166,7 +161,7 @@ public class SKCP : SBase
             {
                 return;
             }
-            if (Connected == false)
+            if (State != ConnectState.Connected)
             {
                 return;
             }
@@ -181,7 +176,7 @@ public class SKCP : SBase
                 while (true)
                 {
                     int count = await socket.SendAsync2(item.Datas, token).ConfigureAwait(false);
-                    if (Connected == false)
+                    if (State != ConnectState.Connected)
                     {
                         item.Dispose();
                         return;
@@ -219,7 +214,7 @@ public class SKCP : SBase
             {
                 return;
             }
-            if (Connected == false)
+            if (State != ConnectState.Connected)
             {
                 return;
             }
@@ -230,7 +225,7 @@ public class SKCP : SBase
     /// </summary>
     private void Send(IMemoryOwner<byte> owner, int length)
     {
-        if (Connected)
+        if (State == ConnectState.Connected)
         {
             queue.Enqueue(new KcpPacket(owner, length));
             signal?.Release();
@@ -265,7 +260,7 @@ public class SKCP : SBase
         while (true)
         {
             int count = await socket.ReceiveAsync(receiveBuffer.Memory, token).ConfigureAwait(false);
-            if (Connected == false)
+            if (State != ConnectState.Connected)
             {
                 return;
             }

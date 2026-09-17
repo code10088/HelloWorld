@@ -21,13 +21,8 @@ public class SWeb : SBase
     }
 
     #region 连接
-    protected override void Connect()
+    protected override async Task ConnectTask()
     {
-        ConnectAsync();
-    }
-    private async Task ConnectAsync()
-    {
-        await Close();
         if (connectRetry++ > 0)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
@@ -49,7 +44,7 @@ public class SWeb : SBase
     {
         signal = new SemaphoreSlim(0);
         cts = new CancellationTokenSource();
-        Connected = true;
+        State = ConnectState.Connected;
         connectRetry = 0;
         sendTask = Send(cts.Token);
         heart.Start();
@@ -60,12 +55,12 @@ public class SWeb : SBase
         GameDebug.LogError(error);
         Connect();
     }
-    public override async Task Close()
+    protected override async Task CloseTask()
     {
         cts?.Cancel();
         signal?.Release();
         socket?.Close();
-        await base.Close();
+        await base.CloseTask();
         await (sendTask ?? Task.CompletedTask);
         cts?.Dispose();
         signal?.Dispose();
@@ -79,7 +74,7 @@ public class SWeb : SBase
     #region 发送
     public override void Send(ushort id, ISerialize msg)
     {
-        if (Connected)
+        if (State == ConnectState.Connected)
         {
             base.Send(id, msg);
             signal?.Release();
@@ -97,7 +92,7 @@ public class SWeb : SBase
             {
                 return;
             }
-            if (Connected == false)
+            if (State != ConnectState.Connected)
             {
                 return;
             }
@@ -106,7 +101,7 @@ public class SWeb : SBase
                 item.Serialize(sendBuffer);
                 var bytes = sendBuffer.Span.ToArray();
                 await socket.Send(bytes).ConfigureAwait(false);
-                if (Connected == false)
+                if (State != ConnectState.Connected)
                 {
                     return;
                 }
@@ -118,7 +113,7 @@ public class SWeb : SBase
     #region 接收
     private void Receive(byte[] data)
     {
-        if (Connected == false)
+        if (State != ConnectState.Connected)
         {
             return;
         }

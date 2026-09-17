@@ -24,13 +24,8 @@ public class STCP : SBase
     }
 
     #region 连接
-    protected override void Connect()
+    protected override async Task ConnectTask()
     {
-        Task.Run(ConnectAsync);
-    }
-    private async Task ConnectAsync()
-    {
-        await Close();
         if (connectRetry++ > 0)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
@@ -46,7 +41,7 @@ public class STCP : SBase
         {
             signal = new SemaphoreSlim(0);
             cts = new CancellationTokenSource();
-            Connected = true;
+            State = ConnectState.Connected;
             connectRetry = 0;
             sendTask = Send(cts.Token);
             receiveTask = Receive(cts.Token);
@@ -58,11 +53,11 @@ public class STCP : SBase
             Connect();
         }
     }
-    public override async Task Close()
+    protected override async Task CloseTask()
     {
         cts?.Cancel();
         signal?.Release();
-        await base.Close();
+        await base.CloseTask();
         await Task.WhenAll(sendTask ?? Task.CompletedTask, receiveTask ?? Task.CompletedTask);
         cts?.Dispose();
         signal?.Dispose();
@@ -74,9 +69,9 @@ public class STCP : SBase
         bodyBuffer?.Clear();
         bodyLength = 0;
     }
-    public override async Task Dispose()
+    protected override async Task DisposeTask()
     {
-        await base.Dispose();
+        await base.DisposeTask();
         UnsafeByteBuffer.Return(headBuffer);
         headBuffer = null;
         UnsafeByteBuffer.Return(bodyBuffer);
@@ -87,7 +82,7 @@ public class STCP : SBase
     #region 发送
     public override void Send(ushort id, ISerialize msg)
     {
-        if (Connected)
+        if (State == ConnectState.Connected)
         {
             base.Send(id, msg);
             signal?.Release();
@@ -105,7 +100,7 @@ public class STCP : SBase
             {
                 return;
             }
-            if (Connected == false)
+            if (State != ConnectState.Connected)
             {
                 return;
             }
@@ -114,7 +109,7 @@ public class STCP : SBase
                 item.Serialize(sendBuffer, true);
                 int length = sendBuffer.WPos;
                 int count = await socket.SendAsync1(sendBuffer.Mem, token).ConfigureAwait(false);
-                if (Connected == false)
+                if (State != ConnectState.Connected)
                 {
                     return;
                 }
@@ -135,7 +130,7 @@ public class STCP : SBase
         while (true)
         {
             int count = await socket.ReceiveAsync(receiveBuffer.Memory, token).ConfigureAwait(false);
-            if (Connected == false)
+            if (State != ConnectState.Connected)
             {
                 return;
             }

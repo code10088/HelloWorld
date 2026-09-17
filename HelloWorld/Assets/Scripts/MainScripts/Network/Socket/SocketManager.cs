@@ -6,7 +6,7 @@ public class SocketManager : Singleton<SocketManager>
     private Func<ushort, UnsafeByteBuffer, bool> deserialize;
     private Action<int, int> socketevent;
 
-    public bool Connected => socket != null && socket.Connected;
+    public ConnectState State => socket?.State ?? ConnectState.Idle;
 
     public void SetFunc(Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
     {
