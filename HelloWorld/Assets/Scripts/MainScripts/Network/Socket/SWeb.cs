@@ -28,17 +28,20 @@ public class SWeb : SBase
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
-        socketevent.Invoke((int)SocketEvent.Reconect, 0);
-        if (Application.internetReachability == NetworkReachability.NotReachable)
+        socketevent.Invoke((int)SocketEvent.Reconnect, 0);
+        await Driver.Instance.RunOnMainThread(() =>
         {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
-            return;
-        }
-        socket = new WebSocket(ip);
-        socket.OnOpen += ConnectCallback;
-        socket.OnMessage += Receive;
-        socket.OnError += Error;
-        socket.Connect();
+            if (Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+                return;
+            }
+            socket = new WebSocket(ip);
+            socket.OnOpen += ConnectCallback;
+            socket.OnMessage += Receive;
+            socket.OnError += Error;
+            socket.Connect();
+        });
     }
     private void ConnectCallback()
     {
@@ -59,7 +62,7 @@ public class SWeb : SBase
     {
         cts?.Cancel();
         signal?.Release();
-        socket?.Close();
+        await Driver.Instance.RunOnMainThread(() => socket?.Close());
         await base.CloseTask();
         await (sendTask ?? Task.CompletedTask);
         cts?.Dispose();

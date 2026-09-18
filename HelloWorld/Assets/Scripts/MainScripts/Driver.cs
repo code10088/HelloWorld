@@ -8,6 +8,11 @@ using YooAsset;
 
 public class Driver : MonoSingleton<Driver>
 {
+    private void Awake()
+    {
+        context = SynchronizationContext.Current;
+    }
+
     #region Driver
     private ArrayEx<DriverItem> array1 = new ArrayEx<DriverItem>(100);//不切片列表
     private ArrayEx<DriverItem> array2 = new ArrayEx<DriverItem>(10000);//切片列表
@@ -118,6 +123,7 @@ public class Driver : MonoSingleton<Driver>
     }
     #endregion
 
+
     #region 切后台
     public event Action<bool> OnAppPause;
     private void OnApplicationPause(bool pause)
@@ -126,6 +132,7 @@ public class Driver : MonoSingleton<Driver>
         if (pause == false) SocketManager.Instance.Reconnect();
     }
     #endregion
+
 
     #region Update
     private Queue<UpdateItem> UpdateCache = new();
@@ -294,6 +301,7 @@ public class Driver : MonoSingleton<Driver>
     #region Task
     private int taskCount = 0;
     private List<TaskItem> taskWait = new();
+    private SynchronizationContext context;
     /// <summary>
     /// priority=0/1，值越小优先级越高，更高优先级单独开线程
     /// 这里线程不保证立刻执行
@@ -329,6 +337,23 @@ public class Driver : MonoSingleton<Driver>
             taskCount++;
             Add(temp, temp.ignoreFrameTime);
         }
+    }
+    public Task RunOnMainThread(Action action)
+    {
+        var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        context.Post(_ =>
+        {
+            try
+            {
+                action();
+                tcs.TrySetResult(true);
+            }
+            catch (Exception e)
+            {
+                tcs.TrySetException(e);
+            }
+        }, null);
+        return tcs.Task;
     }
 
     private class TaskItem : DriverItem
