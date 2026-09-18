@@ -65,6 +65,7 @@ public class HeartHandle
         await (heartTask ?? Task.CompletedTask);
         cts?.Dispose();
         cts = null;
+        heartTask = null;
         heartCount = 0;
         recordIndex = 0;
         delay = 0;

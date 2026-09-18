@@ -64,7 +64,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
     {
         switch ((SocketEvent)item.type)
         {
-            case SocketEvent.Reconect:
+            case SocketEvent.Reconnect:
                 UICommonTips.ShowTips("尝试连接服务器");
                 break;
             case SocketEvent.Connected:

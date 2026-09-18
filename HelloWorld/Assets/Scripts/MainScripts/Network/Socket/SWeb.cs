@@ -38,7 +38,7 @@ public class SWeb : SBase
         socket.OnOpen += ConnectCallback;
         socket.OnMessage += Receive;
         socket.OnError += Error;
-        await socket.Connect();
+        socket.Connect();
     }
     private void ConnectCallback()
     {
@@ -66,8 +66,8 @@ public class SWeb : SBase
         signal?.Dispose();
         cts = null;
         signal = null;
-        socket = null;
         sendTask = null;
+        socket = null;
     }
     #endregion
 

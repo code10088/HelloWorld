@@ -530,7 +530,7 @@ public sealed unsafe class UnsafeByteBuffer : MemoryManager<byte>
         b.Clear();
         int key = b.Capacity;
         var stack = pool.GetOrAdd(key, _ => new ConcurrentStack<UnsafeByteBuffer>());
-        if (stack.Count >= 64) b.Dispose(true);
+        if (stack.Count >= 32) b.Dispose(true);
         else stack.Push(b);
     }
 

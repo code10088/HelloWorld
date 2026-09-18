@@ -42,7 +42,7 @@ public class SKCP : SBase
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);
             return;
         }
-        socketevent.Invoke((int)SocketEvent.Reconect, 0);
+        socketevent.Invoke((int)SocketEvent.Reconnect, 0);
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
             socketevent.Invoke((int)SocketEvent.ConnectError, 0);

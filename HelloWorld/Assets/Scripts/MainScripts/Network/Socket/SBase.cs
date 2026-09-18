@@ -13,7 +13,7 @@ public enum ConnectState
 }
 public enum SocketEvent
 {
-    Reconect,
+    Reconnect,
     Connected,
     ConnectError,
     RefreshDelay,
@@ -36,14 +36,14 @@ public struct SendItem
         if (writelength) buffer.WriteValueAt(0, buffer.WPos - 4);
     }
 }
-public class SBase
+public abstract class SBase
 {
     private Func<ushort, UnsafeByteBuffer, bool> deserialize;
     protected Action<int, int> socketevent;
     protected SocketHandle socket;
     protected HeartHandle heart;
     //连接
-    protected int state = (int)ConnectState.Idle;
+    private int state = (int)ConnectState.Idle;
     public ConnectState State
     {
         get => (ConnectState)Volatile.Read(ref state);
@@ -90,7 +90,7 @@ public class SBase
     {
         SetState(ConnectState.Dispose);
     }
-    protected void SetState(ConnectState target)
+    private void SetState(ConnectState target)
     {
         if (State == ConnectState.Dispose) return;
         stateQueue.Enqueue(target);
@@ -143,14 +143,11 @@ public class SBase
                 break;
         }
     }
-    protected virtual async Task ConnectTask()
-    {
-
-    }
+    protected abstract Task ConnectTask();
     protected virtual async Task CloseTask()
     {
         socket?.Dispose();
-        await heart?.Dispose();
+        await heart.Dispose();
         sendQueue.Clear();
     }
     protected virtual async Task DisposeTask()
@@ -167,6 +164,8 @@ public class SBase
         sendBuffer = null;
         UnsafeByteBuffer.Return(receiveBuffer);
         receiveBuffer = null;
+        deserialize = null;
+        socketevent = null;
     }
     #endregion
 
