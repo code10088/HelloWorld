@@ -664,7 +664,7 @@ public sealed unsafe class UnsafeByteBuffer : MemoryManager<byte>
     public void WriteValueAt<T>(int offset, T value) where T : unmanaged
     {
         int size = sizeof(T);
-        EnsureCapacity(offset + size);
+        EnsureCapacity(offset - _wpos + size);
         Unsafe.WriteUnaligned(_ptr + offset, value);
         if (offset + size > _wpos) _wpos = offset + size;
     }
