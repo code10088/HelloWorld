@@ -38,19 +38,14 @@ public struct SendItem
 public abstract class TransportBase
 {
     protected IDispatch dispatch;
-    protected HeartHandle heart;
+    private HeartHandle heart;
     //连接
     private int state = (int)ConnectState.Idle;
-    public ConnectState State
-    {
-        get => (ConnectState)Volatile.Read(ref state);
-        set => Volatile.Write(ref state, (int)value);
-    }
+    public ConnectState State => (ConnectState)Volatile.Read(ref state);
     private ConcurrentQueue<ConnectState> stateQueue = new ConcurrentQueue<ConnectState>();
     private SemaphoreSlim signal = new SemaphoreSlim(0);
     private CancellationTokenSource cts = new CancellationTokenSource();
-    private Task stateTask;
-    protected int connectRetry = 0;
+    private int retry = 0;
     //发送
     protected ConcurrentQueue<SendItem> sendQueue = new ConcurrentQueue<SendItem>();
     protected UnsafeByteBuffer sendBuffer;
@@ -63,32 +58,32 @@ public abstract class TransportBase
         heart = new HeartHandle(Connect, Send);
         sendBuffer = UnsafeByteBuffer.Rent(2048);
         receiveBuffer = UnsafeByteBuffer.Rent(2048);
-        stateTask = Process(cts.Token);
+        Process(cts.Token);
         Connect();
     }
 
     #region 连接
     protected void Connect()
     {
-        SetState(ConnectState.Connect);
+        if (State == ConnectState.Dispose) return;
+        stateQueue.Enqueue(ConnectState.Connect);
+        signal.Release();
     }
     public void Reconnect()
     {
-        connectRetry = 0;
-        SetState(ConnectState.Connect);
+        retry = 0;
+        Connect();
     }
     public void Close()
     {
-        SetState(ConnectState.Close);
+        if (State == ConnectState.Dispose) return;
+        stateQueue.Enqueue(ConnectState.Close);
+        signal.Release();
     }
     public void Dispose()
     {
-        SetState(ConnectState.Dispose);
-    }
-    private void SetState(ConnectState target)
-    {
         if (State == ConnectState.Dispose) return;
-        stateQueue.Enqueue(target);
+        stateQueue.Enqueue(ConnectState.Dispose);
         signal.Release();
     }
     private async Task Process(CancellationToken token)
@@ -97,7 +92,7 @@ public abstract class TransportBase
         {
             try
             {
-                await signal.WaitAsync(token).ConfigureAwait(false); ;
+                await signal.WaitAsync(token).ConfigureAwait(false);
             }
             catch
             {
@@ -107,38 +102,56 @@ public abstract class TransportBase
             {
                 try
                 {
-                    await Process(target).ConfigureAwait(false);
+                    Volatile.Write(ref state, (int)target);
+                    switch (target)
+                    {
+                        case ConnectState.Idle:
+                            break;
+                        case ConnectState.Connect:
+                            await CloseTask();
+                            if (retry++ > 0)
+                            {
+                                dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
+                                return;
+                            }
+                            var success = await TestTask();
+                            if (!success)
+                            {
+                                dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
+                                return;
+                            }
+                            dispatch.HandleSocketEvent(SocketEvent.Reconnect, 0);
+                            success = await ConnectTask();
+                            if (!success)
+                            {
+                                Connect();
+                                return;
+                            }
+                            Volatile.Write(ref state, (int)ConnectState.Connected);
+                            retry = 0;
+                            heart.Start();
+                            dispatch.HandleSocketEvent(SocketEvent.Connected, 0);
+                            break;
+                        case ConnectState.Connected:
+                            break;
+                        case ConnectState.Close:
+                            await CloseTask();
+                            Volatile.Write(ref state, (int)ConnectState.Idle);
+                            break;
+                        case ConnectState.Dispose:
+                            await DisposeTask();
+                            break;
+                    }
                 }
                 catch
                 {
-                    State = ConnectState.Idle;
+                    Volatile.Write(ref state, (int)ConnectState.Idle);
                 }
             }
         }
     }
-    private async Task Process(ConnectState target)
-    {
-        State = target;
-        switch (target)
-        {
-            case ConnectState.Idle:
-                break;
-            case ConnectState.Connect:
-                await CloseTask();
-                await ConnectTask();
-                break;
-            case ConnectState.Connected:
-                break;
-            case ConnectState.Close:
-                await CloseTask();
-                State = ConnectState.Idle;
-                break;
-            case ConnectState.Dispose:
-                await DisposeTask();
-                break;
-        }
-    }
-    protected abstract Task ConnectTask();
+    protected abstract Task<bool> TestTask();
+    protected abstract Task<bool> ConnectTask();
     protected virtual async Task CloseTask()
     {
         await heart.Dispose();

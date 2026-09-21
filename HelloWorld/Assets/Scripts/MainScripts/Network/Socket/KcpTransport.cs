@@ -34,26 +34,18 @@ public class KcpTransport : TransportBase
     }
 
     #region 连接
+    protected override async Task<bool> TestTask()
+    {
+        return NetworkInterface.GetIsNetworkAvailable();
+    }
     /// <summary>
     /// UDP无连接协议，BeginConnect仅记录目标地址和端口
     /// </summary>
-    protected override async Task ConnectTask()
+    protected override async Task<bool> ConnectTask()
     {
-        if (connectRetry++ > 0)
-        {
-            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
-            return;
-        }
-        dispatch.HandleSocketEvent(SocketEvent.Reconnect, 0);
-        if (NetworkInterface.GetIsNetworkAvailable() == false)
-        {
-            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
-            return;
-        }
         if (socket.Connect(SocketType.Dgram, ProtocolType.Udp) == false)
         {
-            Connect();
-            return;
+            return false;
         }
         kcpConnect.Serialize(sendBuffer);
         int retry = 0;
@@ -67,8 +59,7 @@ public class KcpTransport : TransportBase
             }
             if (retry++ > 0)
             {
-                Connect();
-                return;
+                return false;
             }
         }
         while (true)
@@ -89,14 +80,10 @@ public class KcpTransport : TransportBase
 
                     signal = new SemaphoreSlim(0);
                     cts = new CancellationTokenSource();
-                    State = ConnectState.Connected;
-                    connectRetry = 0;
                     sendTask = Send(cts.Token);
                     updateTask = Update(cts.Token);
                     receiveTask = Receive(cts.Token);
-                    heart.Start();
-                    dispatch.HandleSocketEvent(SocketEvent.Connected, 0);
-                    return;
+                    return true;
                 }
             }
             if (count >= 0)
@@ -106,8 +93,7 @@ public class KcpTransport : TransportBase
             }
             if (retry++ > 0)
             {
-                Connect();
-                return;
+                return false;
             }
         }
     }

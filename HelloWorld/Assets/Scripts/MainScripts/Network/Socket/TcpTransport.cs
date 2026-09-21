@@ -26,33 +26,23 @@ public class TcpTransport : TransportBase
     }
 
     #region 连接
-    protected override async Task ConnectTask()
+    protected override async Task<bool> TestTask()
     {
-        if (connectRetry++ > 0)
-        {
-            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
-            return;
-        }
-        dispatch.HandleSocketEvent(SocketEvent.Reconnect, 0);
-        if (NetworkInterface.GetIsNetworkAvailable() == false)
-        {
-            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
-            return;
-        }
+        return NetworkInterface.GetIsNetworkAvailable();
+    }
+    protected override async Task<bool> ConnectTask()
+    {
         if (socket.Connect(SocketType.Stream, ProtocolType.Tcp))
         {
             signal = new SemaphoreSlim(0);
             cts = new CancellationTokenSource();
-            State = ConnectState.Connected;
-            connectRetry = 0;
             sendTask = Send(cts.Token);
             receiveTask = Receive(cts.Token);
-            heart.Start();
-            dispatch.HandleSocketEvent(SocketEvent.Connected, 0);
+            return true;
         }
         else
         {
-            Connect();
+            return false;
         }
     }
     protected override async Task CloseTask()

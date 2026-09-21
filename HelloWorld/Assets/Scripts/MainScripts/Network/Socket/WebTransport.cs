@@ -10,6 +10,7 @@ public class WebTransport : TransportBase
     private WebSocket socket;
     private SemaphoreSlim signal;
     private CancellationTokenSource cts;
+    private TaskCompletionSource<bool> tcs;
     private Task sendTask;
     private int receiveRetry = 0;
 
@@ -20,42 +21,40 @@ public class WebTransport : TransportBase
     }
 
     #region 连接
-    protected override async Task ConnectTask()
+    protected override async Task<bool> TestTask()
     {
-        if (connectRetry++ > 0)
-        {
-            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
-            return;
-        }
-        dispatch.HandleSocketEvent(SocketEvent.Reconnect, 0);
-        await Driver.Instance.RunOnMainThread(() =>
-        {
-            if (Application.internetReachability == NetworkReachability.NotReachable)
-            {
-                dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
-                return;
-            }
-            socket = new WebSocket(ip);
-            socket.OnOpen += ConnectCallback;
-            socket.OnMessage += Receive;
-            socket.OnError += Error;
-            socket.Connect();
-        });
+        var result = false;
+        await Driver.Instance.RunOnMainThread(() => result = Application.internetReachability > NetworkReachability.NotReachable);
+        return result;
     }
-    private void ConnectCallback()
+    protected override async Task<bool> ConnectTask()
+    {
+        socket = new WebSocket(ip);
+        socket.OnOpen += OnOpen;
+        socket.OnMessage += Receive;
+        socket.OnClose += OnClose;
+        socket.OnError += OnError;
+        tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        await Driver.Instance.RunOnMainThread(() => socket.Connect());
+        await tcs.Task.ConfigureAwait(false);
+        return tcs.Task.Result;
+    }
+    private void OnOpen()
     {
         signal = new SemaphoreSlim(0);
         cts = new CancellationTokenSource();
-        State = ConnectState.Connected;
-        connectRetry = 0;
         sendTask = Send(cts.Token);
-        heart.Start();
-        dispatch.HandleSocketEvent(SocketEvent.Connected, 0);
+        tcs.TrySetResult(true);
     }
-    private void Error(string error)
+    private void OnClose(WebSocketCloseCode closeCode)
+    {
+        GameDebug.LogError(closeCode);
+        tcs.TrySetResult(false);
+    }
+    private void OnError(string error)
     {
         GameDebug.LogError(error);
-        Connect();
+        tcs.TrySetResult(false);
     }
     protected override async Task CloseTask()
     {
