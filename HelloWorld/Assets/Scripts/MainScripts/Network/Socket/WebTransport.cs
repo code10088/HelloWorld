@@ -29,13 +29,16 @@ public class WebTransport : TransportBase
     }
     protected override async Task<bool> ConnectTask()
     {
-        socket = new WebSocket(ip);
-        socket.OnOpen += OnOpen;
-        socket.OnMessage += Receive;
-        socket.OnClose += OnClose;
-        socket.OnError += OnError;
         tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        await Driver.Instance.RunOnMainThread(() => socket.Connect());
+        await Driver.Instance.RunOnMainThread(() =>
+        {
+            socket = new WebSocket(ip);
+            socket.OnOpen += OnOpen;
+            socket.OnMessage += Receive;
+            socket.OnClose += OnClose;
+            socket.OnError += OnError;
+            socket.Connect();
+        });
         await tcs.Task.ConfigureAwait(false);
         return tcs.Task.Result;
     }
