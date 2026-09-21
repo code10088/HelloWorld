@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
+public partial class NetMsgDispatch : Singleton<NetMsgDispatch>, SingletonInterface, IDispatch
 {
     struct NetMsgItem
     {
@@ -11,7 +11,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
     }
     struct SocketEventItem
     {
-        public int type;
+        public SocketEvent type;
         public int param;
     }
     private Queue<NetMsgItem> msgPool1 = new Queue<NetMsgItem>();
@@ -22,7 +22,6 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
 
     public void Init()
     {
-        SocketManager.Instance.SetFunc(Deserialize, HandleSocketEvent);
         Driver.Instance.StartUpdate(Update);
     }
     public void Register(ushort id, Action<IDeserialize> action)
@@ -33,7 +32,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
     {
         msgAction.Remove(id);
     }
-    private void HandleSocketEvent(int type, int param)
+    public void HandleSocketEvent(SocketEvent type, int param)
     {
         socketevent.Enqueue(new SocketEventItem { type = type, param = param });
     }
@@ -62,7 +61,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>
 
     private void HandleSocketEvent(SocketEventItem item)
     {
-        switch ((SocketEvent)item.type)
+        switch (item.type)
         {
             case SocketEvent.Reconnect:
                 UICommonTips.ShowTips("尝试连接服务器");

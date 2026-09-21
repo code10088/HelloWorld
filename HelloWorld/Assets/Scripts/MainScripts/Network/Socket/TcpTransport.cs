@@ -5,8 +5,9 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class STCP : SBase
+public class TcpTransport : TransportBase
 {
+    private SocketHandle socket;
     private SemaphoreSlim signal;
     private CancellationTokenSource cts;
     private Task sendTask;
@@ -16,11 +17,12 @@ public class STCP : SBase
     private int headLength = 4;
     private int bodyLength = 0;
 
-    public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
+    public override void Init(string ip, ushort port, uint playerId, string token, IDispatch dispatch)
     {
+        socket = new SocketHandle(ip, port);
         headBuffer = UnsafeByteBuffer.Rent(4);
         bodyBuffer = UnsafeByteBuffer.Rent(2048);
-        base.Init(ip, port, playerId, token, deserialize, socketevent);
+        base.Init(ip, port, playerId, token, dispatch);
     }
 
     #region 连接
@@ -28,13 +30,13 @@ public class STCP : SBase
     {
         if (connectRetry++ > 0)
         {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
             return;
         }
-        socketevent.Invoke((int)SocketEvent.Reconnect, 0);
+        dispatch.HandleSocketEvent(SocketEvent.Reconnect, 0);
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
             return;
         }
         if (socket.Connect(SocketType.Stream, ProtocolType.Tcp))
@@ -46,7 +48,7 @@ public class STCP : SBase
             sendTask = Send(cts.Token);
             receiveTask = Receive(cts.Token);
             heart.Start();
-            socketevent.Invoke((int)SocketEvent.Connected, 0);
+            dispatch.HandleSocketEvent(SocketEvent.Connected, 0);
         }
         else
         {
@@ -57,6 +59,7 @@ public class STCP : SBase
     {
         cts?.Cancel();
         signal?.Release();
+        socket?.Dispose();
         await base.CloseTask();
         await Task.WhenAll(sendTask ?? Task.CompletedTask, receiveTask ?? Task.CompletedTask);
         cts?.Dispose();

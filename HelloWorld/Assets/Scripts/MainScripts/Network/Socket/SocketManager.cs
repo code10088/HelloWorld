@@ -1,41 +1,37 @@
-using System;
-
+public interface IDispatch
+{
+    public bool Deserialize(ushort id, UnsafeByteBuffer buffer);
+    public void HandleSocketEvent(SocketEvent type, int code);
+}
 public class SocketManager : Singleton<SocketManager>
 {
-    private SBase socket;
-    private Func<ushort, UnsafeByteBuffer, bool> deserialize;
-    private Action<int, int> socketevent;
+    private TransportBase socket;
 
     public ConnectState State => socket?.State ?? ConnectState.Idle;
 
-    public void SetFunc(Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
-    {
-        this.deserialize = deserialize;
-        this.socketevent = socketevent;
-    }
     /// <summary>
     /// 创建自动连接
     /// </summary>
-    public void Create<T>(string ip, ushort port, uint playerId, string token) where T : SBase, new()
+    public void Create<T>(string ip, ushort port, uint playerId, string token, IDispatch dispatch) where T : TransportBase, new()
     {
         Dispose();
         socket = new T();
-        socket.Init(ip, port, playerId, token, deserialize, socketevent);
-    }
-    public void Dispose()
-    {
-        socket?.Dispose();
+        socket.Init(ip, port, playerId, token, dispatch);
     }
     public void Reconnect()
     {
         socket?.Reconnect();
     }
+    public void Send(ushort id, ISerialize msg)
+    {
+        socket?.Send(id, msg);
+    }
     public void Close()
     {
         socket?.Close();
     }
-    public void Send(ushort id, ISerialize msg)
+    public void Dispose()
     {
-        socket?.Send(id, msg);
+        socket?.Dispose();
     }
 }

@@ -8,8 +8,9 @@ using System.Net.Sockets.Kcp;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class SKCP : SBase
+public class KcpTransport : TransportBase
 {
+    private SocketHandle socket;
     private SemaphoreSlim signal;
     private CancellationTokenSource cts;
     private Task sendTask;
@@ -21,14 +22,15 @@ public class SKCP : SBase
     private SendItem kcpConnect;
     private ConcurrentQueue<KcpPacket> queue = new ConcurrentQueue<KcpPacket>();
 
-    public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
+    public override void Init(string ip, ushort port, uint playerId, string token, IDispatch dispatch)
     {
+        socket = new SocketHandle(ip, port);
         kcpSend = new KcpSend(Send);
         var msg = new CS_KcpConnect();
         msg.playerId = playerId;
         msg.token = token;
         kcpConnect = new SendItem(NetMsgId.CSKcpConnect, msg);
-        base.Init(ip, port, playerId, token, deserialize, socketevent);
+        base.Init(ip, port, playerId, token, dispatch);
     }
 
     #region 连接
@@ -39,13 +41,13 @@ public class SKCP : SBase
     {
         if (connectRetry++ > 0)
         {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
             return;
         }
-        socketevent.Invoke((int)SocketEvent.Reconnect, 0);
+        dispatch.HandleSocketEvent(SocketEvent.Reconnect, 0);
         if (NetworkInterface.GetIsNetworkAvailable() == false)
         {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
             return;
         }
         if (socket.Connect(SocketType.Dgram, ProtocolType.Udp) == false)
@@ -93,7 +95,7 @@ public class SKCP : SBase
                     updateTask = Update(cts.Token);
                     receiveTask = Receive(cts.Token);
                     heart.Start();
-                    socketevent.Invoke((int)SocketEvent.Connected, 0);
+                    dispatch.HandleSocketEvent(SocketEvent.Connected, 0);
                     return;
                 }
             }
@@ -113,6 +115,7 @@ public class SKCP : SBase
     {
         cts?.Cancel();
         signal?.Release();
+        socket?.Dispose();
         await base.CloseTask();
         await Task.WhenAll(sendTask ?? Task.CompletedTask, updateTask ?? Task.CompletedTask, receiveTask ?? Task.CompletedTask);
         cts?.Dispose();

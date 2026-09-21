@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,11 +35,9 @@ public struct SendItem
         if (writelength) buffer.WriteValueAt(0, buffer.WPos - 4);
     }
 }
-public abstract class SBase
+public abstract class TransportBase
 {
-    private Func<ushort, UnsafeByteBuffer, bool> deserialize;
-    protected Action<int, int> socketevent;
-    protected SocketHandle socket;
+    protected IDispatch dispatch;
     protected HeartHandle heart;
     //连接
     private int state = (int)ConnectState.Idle;
@@ -60,11 +57,9 @@ public abstract class SBase
     //接收
     protected UnsafeByteBuffer receiveBuffer;
 
-    public virtual void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
+    public virtual void Init(string ip, ushort port, uint playerId, string token, IDispatch dispatch)
     {
-        this.deserialize = deserialize;
-        this.socketevent = socketevent;
-        socket = new SocketHandle(ip, port);
+        this.dispatch = dispatch;
         heart = new HeartHandle(Connect, Send);
         sendBuffer = UnsafeByteBuffer.Rent(2048);
         receiveBuffer = UnsafeByteBuffer.Rent(2048);
@@ -146,7 +141,6 @@ public abstract class SBase
     protected abstract Task ConnectTask();
     protected virtual async Task CloseTask()
     {
-        socket?.Dispose();
         await heart.Dispose();
         sendQueue.Clear();
     }
@@ -164,8 +158,7 @@ public abstract class SBase
         sendBuffer = null;
         UnsafeByteBuffer.Return(receiveBuffer);
         receiveBuffer = null;
-        deserialize = null;
-        socketevent = null;
+        dispatch = null;
     }
     #endregion
 
@@ -184,9 +177,9 @@ public abstract class SBase
     protected bool Receive(UnsafeByteBuffer buffer)
     {
         var id = buffer.ReadUShort();
-        var b = deserialize(id, buffer);
+        var b = dispatch.Deserialize(id, buffer);
         heart.RefreshDelay2(id);
-        if (id == NetMsgId.SCHeart) socketevent.Invoke((int)SocketEvent.RefreshDelay, heart.Delay);
+        if (id == NetMsgId.SCHeart) dispatch.HandleSocketEvent(SocketEvent.RefreshDelay, heart.Delay);
         return b;
     }
     #endregion

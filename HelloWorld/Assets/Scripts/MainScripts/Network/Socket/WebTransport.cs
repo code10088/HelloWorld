@@ -1,23 +1,22 @@
 ﻿#if UNITY_WEBGL
 using NativeWebSocket;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class SWeb : SBase
+public class WebTransport : TransportBase
 {
     private string ip;
-    private new WebSocket socket;
+    private WebSocket socket;
     private SemaphoreSlim signal;
     private CancellationTokenSource cts;
     private Task sendTask;
     private int receiveRetry = 0;
 
-    public override void Init(string ip, ushort port, uint playerId, string token, Func<ushort, UnsafeByteBuffer, bool> deserialize, Action<int, int> socketevent)
+    public override void Init(string ip, ushort port, uint playerId, string token, IDispatch dispatch)
     {
         this.ip = $"ws://{ip}:{port}/client";
-        base.Init(ip, port, playerId, token, deserialize, socketevent);
+        base.Init(ip, port, playerId, token, dispatch);
     }
 
     #region 连接
@@ -25,15 +24,15 @@ public class SWeb : SBase
     {
         if (connectRetry++ > 0)
         {
-            socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+            dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
             return;
         }
-        socketevent.Invoke((int)SocketEvent.Reconnect, 0);
+        dispatch.HandleSocketEvent(SocketEvent.Reconnect, 0);
         await Driver.Instance.RunOnMainThread(() =>
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
-                socketevent.Invoke((int)SocketEvent.ConnectError, 0);
+                dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
                 return;
             }
             socket = new WebSocket(ip);
@@ -51,7 +50,7 @@ public class SWeb : SBase
         connectRetry = 0;
         sendTask = Send(cts.Token);
         heart.Start();
-        socketevent.Invoke((int)SocketEvent.Connected, 0);
+        dispatch.HandleSocketEvent(SocketEvent.Connected, 0);
     }
     private void Error(string error)
     {

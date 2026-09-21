@@ -20,7 +20,7 @@ public class NetMsgId
 }
 public partial class NetMsgDispatch
 {
-    private bool Deserialize(ushort id, UnsafeByteBuffer buffer)
+    public bool Deserialize(ushort id, UnsafeByteBuffer buffer)
     {
         try
         {
