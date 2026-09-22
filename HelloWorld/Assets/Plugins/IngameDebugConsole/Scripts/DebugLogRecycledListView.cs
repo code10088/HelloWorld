@@ -237,7 +237,7 @@ namespace IngameDebugConsole
 
 			if( visibleLogItems.Count == 0 )
 			{
-				currentTopIndex = -1;
+				currentTopIndex = currentBottomIndex = - 1;
 
 				if( !manager.SnapToBottom )
 					transformComponent.anchoredPosition = Vector2.zero;
@@ -446,7 +446,7 @@ namespace IngameDebugConsole
 			{
 				// There is nothing to show but some log items are still visible; pool them
 				visibleLogItems.TrimStart( visibleLogItems.Count, poolLogItemAction );
-				currentTopIndex = -1;
+				currentTopIndex = currentBottomIndex = -1;
 			}
 		}
 

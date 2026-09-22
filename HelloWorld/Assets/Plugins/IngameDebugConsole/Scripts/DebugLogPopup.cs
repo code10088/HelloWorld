@@ -55,8 +55,8 @@ namespace IngameDebugConsole
 
         private Vector2 SavedNormalizedPosition
         {
-            get => UnityEngine.PlayerPrefs.HasKey("IDGPPos") ? JsonUtility.FromJson<Vector2>(UnityEngine.PlayerPrefs.GetString("IDGPPos", "{}")) : new Vector2(0.5f, 0f); // Right edge by default
-            set => UnityEngine.PlayerPrefs.SetString("IDGPPos", JsonUtility.ToJson(value));
+            get => PlayerPrefs.HasKey("IDGPPos") ? JsonUtility.FromJson<Vector2>(PlayerPrefs.GetString("IDGPPos", "{}")) : new Vector2(0.5f, 0f); // Right edge by default
+            set => PlayerPrefs.SetString("IDGPPos", JsonUtility.ToJson(value));
         }
 
 		private void Awake()
@@ -70,6 +70,12 @@ namespace IngameDebugConsole
 			halfSize = popupTransform.sizeDelta * 0.5f;
             normalizedPosition = SavedNormalizedPosition;
 		}
+
+        protected void OnApplicationFocus(bool focus)
+        {
+            if (!focus)
+                SavedNormalizedPosition = normalizedPosition;
+        }
 
         protected void OnDestroy()
         {
