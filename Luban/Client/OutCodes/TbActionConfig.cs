@@ -31,8 +31,8 @@ public partial class TbActionConfig
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, ActionConfig> DataMap => _dataMap;
-    public System.Collections.Generic.List<ActionConfig> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, ActionConfig> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<ActionConfig> DataList => _dataList;
 
     public ActionConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public ActionConfig Get(int key) => _dataMap[key];

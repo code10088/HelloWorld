@@ -31,8 +31,8 @@ public partial class TbSceneConfig
         }
     }
 
-    public System.Collections.Generic.Dictionary<SceneType, SceneConfig> DataMap => _dataMap;
-    public System.Collections.Generic.List<SceneConfig> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<SceneType, SceneConfig> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<SceneConfig> DataList => _dataList;
 
     public SceneConfig GetOrDefault(SceneType key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public SceneConfig Get(SceneType key) => _dataMap[key];

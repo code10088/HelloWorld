@@ -31,8 +31,8 @@ public partial class TbGuide
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, Guide> DataMap => _dataMap;
-    public System.Collections.Generic.List<Guide> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, Guide> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<Guide> DataList => _dataList;
 
     public Guide GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public Guide Get(int key) => _dataMap[key];

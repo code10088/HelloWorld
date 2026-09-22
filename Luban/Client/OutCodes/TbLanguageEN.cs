@@ -31,8 +31,8 @@ public partial class TbLanguageEN
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, LanguageEN> DataMap => _dataMap;
-    public System.Collections.Generic.List<LanguageEN> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, LanguageEN> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<LanguageEN> DataList => _dataList;
 
     public LanguageEN GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public LanguageEN Get(int key) => _dataMap[key];

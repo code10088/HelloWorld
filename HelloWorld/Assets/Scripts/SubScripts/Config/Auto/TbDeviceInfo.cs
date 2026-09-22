@@ -31,8 +31,8 @@ public partial class TbDeviceInfo
         }
     }
 
-    public System.Collections.Generic.Dictionary<string, DeviceInfo> DataMap => _dataMap;
-    public System.Collections.Generic.List<DeviceInfo> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<string, DeviceInfo> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<DeviceInfo> DataList => _dataList;
 
     public DeviceInfo GetOrDefault(string key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public DeviceInfo Get(string key) => _dataMap[key];

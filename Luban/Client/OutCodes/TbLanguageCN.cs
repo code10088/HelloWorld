@@ -31,8 +31,8 @@ public partial class TbLanguageCN
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, LanguageCN> DataMap => _dataMap;
-    public System.Collections.Generic.List<LanguageCN> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, LanguageCN> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<LanguageCN> DataList => _dataList;
 
     public LanguageCN GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public LanguageCN Get(int key) => _dataMap[key];

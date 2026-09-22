@@ -31,8 +31,8 @@ public partial class TbTrigger
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, Trigger> DataMap => _dataMap;
-    public System.Collections.Generic.List<Trigger> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, Trigger> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<Trigger> DataList => _dataList;
 
     public Trigger GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public Trigger Get(int key) => _dataMap[key];

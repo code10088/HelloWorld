@@ -31,8 +31,8 @@ public partial class TbPlayerAvatarPart
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, PlayerAvatarPart> DataMap => _dataMap;
-    public System.Collections.Generic.List<PlayerAvatarPart> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, PlayerAvatarPart> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<PlayerAvatarPart> DataList => _dataList;
 
     public PlayerAvatarPart GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public PlayerAvatarPart Get(int key) => _dataMap[key];

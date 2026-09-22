@@ -31,8 +31,8 @@ public partial class TbLink
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, Link> DataMap => _dataMap;
-    public System.Collections.Generic.List<Link> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, Link> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<Link> DataList => _dataList;
 
     public Link GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public Link Get(int key) => _dataMap[key];

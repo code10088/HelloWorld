@@ -31,8 +31,8 @@ public partial class TbItems
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, Items> DataMap => _dataMap;
-    public System.Collections.Generic.List<Items> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, Items> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<Items> DataList => _dataList;
 
     public Items GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public Items Get(int key) => _dataMap[key];

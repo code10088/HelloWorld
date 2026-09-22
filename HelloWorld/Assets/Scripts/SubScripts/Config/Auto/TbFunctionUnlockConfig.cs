@@ -31,8 +31,8 @@ public partial class TbFunctionUnlockConfig
         }
     }
 
-    public System.Collections.Generic.Dictionary<FunctionUnlockType, FunctionUnlockConfig> DataMap => _dataMap;
-    public System.Collections.Generic.List<FunctionUnlockConfig> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<FunctionUnlockType, FunctionUnlockConfig> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<FunctionUnlockConfig> DataList => _dataList;
 
     public FunctionUnlockConfig GetOrDefault(FunctionUnlockType key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public FunctionUnlockConfig Get(FunctionUnlockType key) => _dataMap[key];

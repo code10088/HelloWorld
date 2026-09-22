@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export DOTNET_ROLL_FORWARD=Major
 LUBAN_DLL=Tools/Luban/Luban.dll
 
 dotnet $LUBAN_DLL \

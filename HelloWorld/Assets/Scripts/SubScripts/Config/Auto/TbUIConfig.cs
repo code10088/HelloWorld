@@ -31,8 +31,8 @@ public partial class TbUIConfig
         }
     }
 
-    public System.Collections.Generic.Dictionary<UIType, UIConfig> DataMap => _dataMap;
-    public System.Collections.Generic.List<UIConfig> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<UIType, UIConfig> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<UIConfig> DataList => _dataList;
 
     public UIConfig GetOrDefault(UIType key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public UIConfig Get(UIType key) => _dataMap[key];

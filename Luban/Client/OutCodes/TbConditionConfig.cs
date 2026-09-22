@@ -31,8 +31,8 @@ public partial class TbConditionConfig
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, ConditionConfig> DataMap => _dataMap;
-    public System.Collections.Generic.List<ConditionConfig> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, ConditionConfig> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<ConditionConfig> DataList => _dataList;
 
     public ConditionConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public ConditionConfig Get(int key) => _dataMap[key];

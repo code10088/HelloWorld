@@ -31,8 +31,8 @@ public partial class TbBuff
         }
     }
 
-    public System.Collections.Generic.Dictionary<int, Buff> DataMap => _dataMap;
-    public System.Collections.Generic.List<Buff> DataList => _dataList;
+    public System.Collections.Generic.IReadOnlyDictionary<int, Buff> DataMap => _dataMap;
+    public System.Collections.Generic.IReadOnlyList<Buff> DataList => _dataList;
 
     public Buff GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : default;
     public Buff Get(int key) => _dataMap[key];
