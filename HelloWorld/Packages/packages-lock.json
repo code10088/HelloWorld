@@ -56,12 +56,6 @@
       },
       "hash": "30b568a4814888d2b95e9f307a690c6ba0117e17"
     },
-    "com.qq.weixin.minigame": {
-      "version": "file:com.qq.weixin.minigame",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
