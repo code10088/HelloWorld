@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "e4def761d69b27b7b51a5de0f6d272861416a2d6"
+      "hash": "fd32708e7f5106f0ffa375bcfe43342ee594c1e5"
     },
     "com.code-philosophy.luban": {
       "version": "https://github.com/focus-creative-games/luban_unity.git",
@@ -19,7 +19,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "977779c8b7ca9e4367aa19eab505f8392a92fbbe"
+      "hash": "0b6b8a92c06cf5bd35c2b34ed595356e1219c938"
     },
     "com.code-philosophy.obfuz4hybridclr": {
       "version": "https://github.com/focus-creative-games/obfuz4hybridclr.git",
@@ -33,14 +33,14 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "522f0c3f5c2ef7273737707effaa840c65e20e98"
+      "hash": "c612a4fef60f2ae57614b73202d2d261ba56aa3e"
     },
     "com.esotericsoftware.spine.spine-csharp": {
       "version": "https://github.com/EsotericSoftware/spine-runtimes.git?path=spine-csharp/src#4.3",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "30b568a4814888d2b95e9f307a690c6ba0117e17"
+      "hash": "93125de9cf9b0f230b1c6b68625a2133a26d727b"
     },
     "com.esotericsoftware.spine.spine-unity": {
       "version": "https://github.com/EsotericSoftware/spine-runtimes.git?path=spine-unity/Assets/Spine#4.3",
@@ -54,7 +54,7 @@
         "com.esotericsoftware.spine.spine-csharp": "4.3.36",
         "com.unity.2d.sprite": "1.0.0"
       },
-      "hash": "30b568a4814888d2b95e9f307a690c6ba0117e17"
+      "hash": "93125de9cf9b0f230b1c6b68625a2133a26d727b"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -63,7 +63,7 @@
       "dependencies": {}
     },
     "com.unity.ai.navigation": {
-      "version": "2.0.13",
+      "version": "2.0.14",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -113,7 +113,7 @@
       "dependencies": {}
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.27",
+      "version": "2.0.28",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -206,7 +206,7 @@
       }
     },
     "com.unity.scriptablebuildpipeline": {
-      "version": "2.6.1",
+      "version": "2.6.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
