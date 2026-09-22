@@ -10,7 +10,7 @@ public enum ConnectState
     Close,
     Dispose,
 }
-public enum SocketEvent
+public enum NetEvent
 {
     Reconnect,
     Connected,
@@ -111,16 +111,16 @@ public abstract class TransportBase
                             await CloseTask();
                             if (retry++ > 0)
                             {
-                                dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
+                                dispatch.HandleNetEvent(NetEvent.ConnectError, 0);
                                 return;
                             }
                             var success = await TestTask();
                             if (!success)
                             {
-                                dispatch.HandleSocketEvent(SocketEvent.ConnectError, 0);
+                                dispatch.HandleNetEvent(NetEvent.ConnectError, 0);
                                 return;
                             }
-                            dispatch.HandleSocketEvent(SocketEvent.Reconnect, 0);
+                            dispatch.HandleNetEvent(NetEvent.Reconnect, 0);
                             success = await ConnectTask();
                             if (!success)
                             {
@@ -130,7 +130,7 @@ public abstract class TransportBase
                             Volatile.Write(ref state, (int)ConnectState.Connected);
                             retry = 0;
                             heart.Start();
-                            dispatch.HandleSocketEvent(SocketEvent.Connected, 0);
+                            dispatch.HandleNetEvent(NetEvent.Connected, 0);
                             break;
                         case ConnectState.Connected:
                             break;
@@ -192,7 +192,7 @@ public abstract class TransportBase
         var id = buffer.ReadUShort();
         var b = dispatch.Deserialize(id, buffer);
         heart.RefreshDelay2(id);
-        if (id == NetMsgId.SCHeart) dispatch.HandleSocketEvent(SocketEvent.RefreshDelay, heart.Delay);
+        if (id == NetMsgId.SCHeart) dispatch.HandleNetEvent(NetEvent.RefreshDelay, heart.Delay);
         return b;
     }
     #endregion

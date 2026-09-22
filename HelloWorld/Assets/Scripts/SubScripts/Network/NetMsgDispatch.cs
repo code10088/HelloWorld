@@ -11,7 +11,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>, SingletonInterf
     }
     struct SocketEventItem
     {
-        public SocketEvent type;
+        public NetEvent type;
         public int param;
     }
     private Queue<NetMsgItem> msgPool1 = new Queue<NetMsgItem>();
@@ -32,7 +32,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>, SingletonInterf
     {
         msgAction.Remove(id);
     }
-    public void HandleSocketEvent(SocketEvent type, int param)
+    public void HandleNetEvent(NetEvent type, int param)
     {
         socketevent.Enqueue(new SocketEventItem { type = type, param = param });
     }
@@ -63,22 +63,22 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>, SingletonInterf
     {
         switch (item.type)
         {
-            case SocketEvent.Reconnect:
+            case NetEvent.Reconnect:
                 UICommonTips.ShowTips("尝试连接服务器");
                 break;
-            case SocketEvent.Connected:
+            case NetEvent.Connected:
                 UICommonTips.ShowTips("连接服务器成功");
                 EventManager.Instance.Fire(EventType.NetworkConnected);
                 break;
-            case SocketEvent.ConnectError:
+            case NetEvent.ConnectError:
                 UICommonBoxParam param = new UICommonBoxParam();
                 param.type = UICommonBoxType.Sure;
                 param.title = "网络异常";
                 param.content = "网络连接已断开，请检查网络设置";
-                param.sure = a => SocketManager.Instance.Reconnect();
+                param.sure = a => NetClient.Instance.Reconnect();
                 UICommonBox.OpenCommonBox(param);
                 break;
-            case SocketEvent.RefreshDelay:
+            case NetEvent.RefreshDelay:
                 EventManager.Instance.Fire(EventType.RefreshDelay, item.param);
                 break;
         }

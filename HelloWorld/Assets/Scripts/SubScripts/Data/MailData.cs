@@ -45,7 +45,7 @@ public class MailData : DataBase
 
     public void CSMail()
     {
-        SocketManager.Instance.Send(NetMsgId.Message_CSMail, new CSMail());
+        NetClient.Instance.Send(NetMsgId.Message_CSMail, new CSMail());
     }
     private void SCMail(IDeserialize msg)
     {
@@ -58,7 +58,7 @@ public class MailData : DataBase
     /// </summary>
     public void CSReadMail()
     {
-        SocketManager.Instance.Send(NetMsgId.Message_CSReadMail, new CSReadMail { lists = readList.ToArray() });
+        NetClient.Instance.Send(NetMsgId.Message_CSReadMail, new CSReadMail { lists = readList.ToArray() });
 
         //≤‚ ‘
         foreach (var mail in readList)
@@ -73,7 +73,7 @@ public class MailData : DataBase
     /// <param name="id"></param>
     public void CSGetMailReward(uint id)
     {
-        SocketManager.Instance.Send(NetMsgId.Message_CSGetMailReward, new CSGetMailReward { mailId = id });
+        NetClient.Instance.Send(NetMsgId.Message_CSGetMailReward, new CSGetMailReward { mailId = id });
 
         //≤‚ ‘
         var data = all.Find(a => a.mailId == id);
@@ -102,7 +102,7 @@ public class MailData : DataBase
     /// </summary>
     public void CSGetMailAllReward()
     {
-        SocketManager.Instance.Send(NetMsgId.Message_CSGetMailAllReward, new CSGetMailAllReward());
+        NetClient.Instance.Send(NetMsgId.Message_CSGetMailAllReward, new CSGetMailAllReward());
 
         //≤‚ ‘
         List<RewardInfo> rewards = new();
@@ -141,7 +141,7 @@ public class MailData : DataBase
     /// <param name="id"></param>
     public void CSDeleteMail(uint id)
     {
-        SocketManager.Instance.Send(NetMsgId.Message_CSDeleteMail, new CSDeleteMail { mailId = id });
+        NetClient.Instance.Send(NetMsgId.Message_CSDeleteMail, new CSDeleteMail { mailId = id });
 
         //≤‚ ‘
         var index = all.FindIndex(a => a.mailId == id);
@@ -170,7 +170,7 @@ public class MailData : DataBase
     /// <param name="msg"></param>
     public void CSDeleteAllMail()
     {
-        SocketManager.Instance.Send(NetMsgId.Message_CSDeleteAllMail, new CSDeleteAllMail());
+        NetClient.Instance.Send(NetMsgId.Message_CSDeleteAllMail, new CSDeleteAllMail());
 
         //≤‚ ‘
         all.Clear();

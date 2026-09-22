@@ -1,13 +1,13 @@
 public interface IDispatch
 {
     public bool Deserialize(ushort id, UnsafeByteBuffer buffer);
-    public void HandleSocketEvent(SocketEvent type, int code);
+    public void HandleNetEvent(NetEvent type, int code);
 }
-public class SocketManager : Singleton<SocketManager>
+public class NetClient : Singleton<NetClient>
 {
-    private TransportBase socket;
+    private TransportBase transport;
 
-    public ConnectState State => socket?.State ?? ConnectState.Idle;
+    public ConnectState State => transport?.State ?? ConnectState.Idle;
 
     /// <summary>
     /// 创建自动连接
@@ -15,23 +15,23 @@ public class SocketManager : Singleton<SocketManager>
     public void Create<T>(string ip, ushort port, uint playerId, string token, IDispatch dispatch) where T : TransportBase, new()
     {
         Dispose();
-        socket = new T();
-        socket.Init(ip, port, playerId, token, dispatch);
+        transport = new T();
+        transport.Init(ip, port, playerId, token, dispatch);
     }
     public void Reconnect()
     {
-        socket?.Reconnect();
+        transport?.Reconnect();
     }
     public void Send(ushort id, ISerialize msg)
     {
-        socket?.Send(id, msg);
+        transport?.Send(id, msg);
     }
     public void Close()
     {
-        socket?.Close();
+        transport?.Close();
     }
     public void Dispose()
     {
-        socket?.Dispose();
+        transport?.Dispose();
     }
 }
