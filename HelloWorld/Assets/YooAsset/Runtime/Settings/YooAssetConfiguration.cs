@@ -51,7 +51,7 @@ namespace YooAsset
         /// <summary>
         /// 获取资源包裹的根文件夹名称
         /// </summary>
-        /// <returns>文件夹名称。如果未配置则返回默认值 "yoo"。</returns>
+        /// <returns>文件夹名称。如果未配置则返回默认值 "yoo"</returns>
         public static string GetYooFolderName()
         {
             return GetSettings().YooFolderName;
@@ -95,26 +95,6 @@ namespace YooAsset
                 return $"{packageName}_{packageVersion}.bytes";
             else
                 return $"{settings.PackageFilePrefix}_{packageName}_{packageVersion}.bytes";
-        }
-
-        /// <summary>
-        /// 获取清单 JSON 文件的文件名
-        /// </summary>
-        /// <param name="packageName">包裹名称</param>
-        /// <param name="packageVersion">包裹版本号</param>
-        /// <returns>包含 .json 扩展名的文件名</returns>
-        public static string GetManifestJsonFileName(string packageName, string packageVersion)
-        {
-            if (string.IsNullOrEmpty(packageName))
-                throw new ArgumentNullException(nameof(packageName));
-            if (string.IsNullOrEmpty(packageVersion))
-                throw new ArgumentNullException(nameof(packageVersion));
-
-            var settings = GetSettings();
-            if (string.IsNullOrEmpty(settings.PackageFilePrefix))
-                return $"{packageName}_{packageVersion}.json";
-            else
-                return $"{settings.PackageFilePrefix}_{packageName}_{packageVersion}.json";
         }
 
         /// <summary>
@@ -244,6 +224,20 @@ namespace YooAsset
 #else
             return GetMobileCacheRoot();
 #endif
+        }
+
+        /// <summary>
+        /// 获取默认的缓存包裹根目录
+        /// </summary>
+        /// <param name="packageName">包裹名称</param>
+        /// <returns>缓存包裹根目录的绝对路径</returns>
+        internal static string GetDefaultCacheRoot(string packageName)
+        {
+            if (string.IsNullOrEmpty(packageName))
+                throw new ArgumentNullException(nameof(packageName));
+
+            string cacheRoot = GetDefaultCacheRoot();
+            return PathUtility.Combine(cacheRoot, packageName);
         }
 
         /// <summary>

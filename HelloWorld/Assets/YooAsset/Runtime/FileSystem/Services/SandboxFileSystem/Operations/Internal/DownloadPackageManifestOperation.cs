@@ -77,12 +77,14 @@ namespace YooAsset
                     _downloadFileRequest.SendRequest();
                 }
 
+                Progress = _downloadFileRequest.DownloadProgress;
                 if (_downloadFileRequest.IsDone == false)
                     return;
 
                 if (_downloadFileRequest.Status == EDownloadRequestStatus.Succeeded)
                 {
                     _steps = ESteps.VerifyFile;
+                    _fileSystem.DownloadUrlPolicy.OnRequestSucceeded(_downloadFileRequest.Url);
                 }
                 else
                 {

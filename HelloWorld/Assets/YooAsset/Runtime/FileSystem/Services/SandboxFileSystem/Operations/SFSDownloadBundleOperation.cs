@@ -23,6 +23,7 @@ namespace YooAsset
         private readonly DownloadRetryController _downloadRetryController;
         private IReadOnlyList<string> _candidateUrls;
         private DownloadFileBaseOperation _downloadFileOp;
+        private bool _continueDownloadInBackground = false;
         private ESteps _steps = ESteps.None;
 
         internal SFSDownloadBundleOperation(SandboxFileSystem fileSystem, FSDownloadBundleOptions options) : base(options.Bundle)
@@ -85,6 +86,9 @@ namespace YooAsset
                 {
                     if (_downloadFileOp is DownloadAndCacheFileOperation)
                     {
+                        // 注意：同步加载无法等待远端下载时，允许下载任务在后台继续执行。
+                        _continueDownloadInBackground = true;
+
                         _steps = ESteps.Done;
                         SetError($"Attempting to load bundle '{Bundle.BundleName}' from remote: '{_downloadFileOp.Url}'.");
                         return;
@@ -102,7 +106,6 @@ namespace YooAsset
 
                 if (_downloadFileOp.Status == EOperationStatus.Succeeded)
                 {
-                    _fileSystem.DownloadUrlPolicy.OnRequestSucceeded(_downloadFileOp.Url);
                     _steps = ESteps.Done;
                     SetResult();
                 }
@@ -120,7 +123,6 @@ namespace YooAsset
                         string url = _downloadFileOp.Url;
                         long httpCode = _downloadFileOp.LatestReport.HttpCode;
                         string httpError = _downloadFileOp.LatestReport.HttpError;
-                        _fileSystem.DownloadUrlPolicy.OnRequestFailed(url, httpCode, httpError);
                         if (IsWaitForCompletion == false && _downloadRetryController.CanRetryRequest(url, httpCode, httpError))
                         {
                             _downloadRetryController.StartRetryDelay();
@@ -157,14 +159,15 @@ namespace YooAsset
         {
             ExecuteBatch();
         }
-        protected override void InternalAbort()
+        protected override void InternalDispose()
         {
-            // 注意：取消下载任务的时候引用计数减一
-            if (_steps != ESteps.Done)
+            // 注意：同步加载失败后保留下载引用，使后台任务继续执行。
+            if (_continueDownloadInBackground == false)
             {
                 if (_downloadFileOp != null)
                 {
                     _downloadFileOp.Release();
+                    _downloadFileOp = null;
                 }
             }
         }
@@ -176,7 +179,7 @@ namespace YooAsset
         {
             if (_candidateUrls == null)
                 _candidateUrls = _fileSystem.RemoteService.GetRemoteUrls(fileName);
-            
+
             return _fileSystem.DownloadUrlPolicy.SelectUrl(_candidateUrls);
         }
     }

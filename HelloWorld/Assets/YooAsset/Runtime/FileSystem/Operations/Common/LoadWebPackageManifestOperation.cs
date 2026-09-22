@@ -52,13 +52,14 @@ namespace YooAsset
                     _downloadBytesRequest.SendRequest();
                 }
 
-                Progress = _downloadBytesRequest.DownloadProgress;
+                Progress = CalculateMultiStageProgress(0, 2, _downloadBytesRequest.DownloadProgress);
                 if (_downloadBytesRequest.IsDone == false)
                     return;
 
                 if (_downloadBytesRequest.Status == EDownloadRequestStatus.Succeeded)
                 {
                     _steps = ESteps.VerifyFileData;
+                    _options.DownloadUrlPolicy.OnRequestSucceeded(_downloadBytesRequest.Url);
                 }
                 else
                 {
@@ -91,7 +92,7 @@ namespace YooAsset
                 }
 
                 _deserializeManifestOp.UpdateOperation();
-                Progress = _deserializeManifestOp.Progress;
+                Progress = CalculateMultiStageProgress(1, 2, _deserializeManifestOp.Progress);
                 if (_deserializeManifestOp.IsDone == false)
                     return;
 

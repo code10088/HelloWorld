@@ -1,7 +1,7 @@
 {
     "name": "com.tuyoogame.yooasset",
     "displayName": "YooAsset",
-    "version": "3.0.2-beta",
+    "version": "3.0.6",
     "unity": "2019.4",
     "description": "unity3d resources management system.",
     "author": {
@@ -11,28 +11,28 @@
     "samples": [
         {
             "displayName": "Space Shooter",
-            "description": "YooAsset runtime sample, Include resource update, resource download, resource loading and other functions.",
+            "description": "A complete demo game that shows the full workflow of resource update, resource download and resource loading.",
             "path": "Samples~/Space Shooter"
         },
         {
             "displayName": "Mini Game",
-            "description": "YooAsset extension file system, Include wechat file system, tiktok file system.",
+            "description": "File system implementations for mini game platforms, including Wechat, Tiktok, Alipay, Taptap, Oppo, Vivo, KuaiShou and Google Play.",
             "path": "Samples~/Mini Game"
         },
         {
-            "displayName": "Extension Sample",
-            "description": "YooAsset extension sample, Include patcher combine, patcher compare, patcher importer and other functions.",
-            "path": "Samples~/Extension Sample"
+            "displayName": "Extension",
+            "description": "Runtime and editor extension examples, including asset reference, bundle encryption, custom operation, sprite atlas loader, shader variant collector and package tools.",
+            "path": "Samples~/Extension"
         },
         {
-            "displayName": "UniTask Sample",
-            "description": "UniTask sample, Please Read the README documentation in the sample .",
-            "path": "Samples~/UniTask Sample"
+            "displayName": "UniTask",
+            "description": "UniTask integration example, please read the README documentation in the sample.",
+            "path": "Samples~/UniTask"
         },
         {
-            "displayName": "Test Sample",
-            "description": "Test sample, Include unit test cases .",
-            "path": "Samples~/Test Sample"            
+            "displayName": "Tests",
+            "description": "Unit test cases, including asset loading, encryption and file system tests.",
+            "path": "Samples~/Tests"
         }
     ],
     "repository": {

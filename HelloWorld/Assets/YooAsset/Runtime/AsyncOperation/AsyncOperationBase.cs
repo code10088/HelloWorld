@@ -30,7 +30,7 @@ namespace YooAsset
         /// <summary>
         /// 是否正处于同步等待状态
         /// </summary>
-        internal bool IsWaitForCompletion { get; private set; }
+        protected bool IsWaitForCompletion { get; private set; }
 
         /// <summary>
         /// 当前帧时间切片是否已用完
@@ -171,18 +171,37 @@ namespace YooAsset
             {
                 IsWaitForCompletion = true;
 
-                if (IsDone == false)
-                    InternalWaitForCompletion();
-
-                if (IsDone == false)
+                try
                 {
-                    _error = $"Operation '{GetType().Name}' did not complete during synchronous wait.";
-                    _status = EOperationStatus.Failed;
-                    YooLogger.LogError(_error);
-                }
+                    if (IsDone == false)
+                        InternalWaitForCompletion();
 
-                // 注意：强制收尾，确保Task能完成
-                CompleteOperation();
+                    if (IsDone == false)
+                    {
+                        _error = $"Operation '{GetType().Name}' did not complete during synchronous wait.";
+                        _status = EOperationStatus.Failed;
+                        YooLogger.LogError(_error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // 注意：如果同步等待已经通知到了业务层，那么无需再设置失败状态。
+                    if (IsCompleted)
+                    {
+                        UnityEngine.Debug.LogException(ex);
+                    }
+                    else
+                    {
+                        _error = ex.ToString();
+                        _status = EOperationStatus.Failed;
+                        YooLogger.LogError($"Exception in {GetType().Name}.InternalWaitForCompletion: {ex}.");
+                    }
+                }
+                finally
+                {
+                    // 注意：强制收尾，确保Task能完成
+                    CompleteOperation();
+                }
             }
         }
 
@@ -258,17 +277,19 @@ namespace YooAsset
         /// </summary>
         internal void AbortOperation()
         {
+            // 终止所有子任务
             if (_children != null)
             {
                 for (int i = _children.Count - 1; i >= 0; i--)
                 {
-                    _children[i].AbortOperation();
+                    var child = _children[i];
+                    if (child.IsCompleted == false)
+                        child.AbortOperation();
                 }
             }
 
             if (IsDone == false)
             {
-                InternalAbort();
                 _error = "Operation was aborted.";
                 _status = EOperationStatus.Failed;
                 YooLogger.LogWarning($"Async operation '{GetType().Name}' has been aborted.");
@@ -288,13 +309,6 @@ namespace YooAsset
         /// 内部更新方法（子类必须实现）
         /// </summary>
         protected abstract void InternalUpdate();
-
-        /// <summary>
-        /// 内部中止方法（子类可选实现）
-        /// </summary>
-        protected virtual void InternalAbort()
-        {
-        }
 
         /// <summary>
         /// 内部释放方法（子类可选实现）
@@ -361,6 +375,22 @@ namespace YooAsset
             if (total <= 0)
                 return (stageIndex + 1f) / stageCount;
             float stageProgress = 1f - remaining / (float)total;
+            return (stageIndex + stageProgress) / stageCount;
+        }
+
+        /// <summary>
+        /// 计算多阶段操作的整体进度
+        /// </summary>
+        /// <param name="stageIndex">当前阶段索引（从0开始）</param>
+        /// <param name="stageCount">阶段总数</param>
+        /// <param name="stageProgress">当前阶段进度（0-1）</param>
+        /// <returns>返回归一化的整体进度值（0-1）</returns>
+        protected float CalculateMultiStageProgress(int stageIndex, int stageCount, float stageProgress)
+        {
+            if (stageProgress < 0f)
+                stageProgress = 0f;
+            else if (stageProgress > 1f)
+                stageProgress = 1f;
             return (stageIndex + stageProgress) / stageCount;
         }
 
@@ -473,6 +503,9 @@ namespace YooAsset
         /// <summary>
         /// 完成异步任务（触发回调和Task完成）
         /// </summary>
+        /// <remarks>
+        /// TODO : 失败的任务不要终止子任务，避免一些共享任务被意外杀死。
+        /// </remarks>
         private void CompleteOperation()
         {
             if (IsCompleted == false)

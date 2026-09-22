@@ -147,6 +147,7 @@ public class BuildEditor
         buildParameters.PackageNote = string.Empty;
         buildParameters.ClearBuildCacheFiles = false;
         buildParameters.UseAssetDependencyDB = true;
+        buildParameters.EnableAssetPathValidation = true;
         buildParameters.EnableSharePackRule = false;
         buildParameters.SingleReferencedPackAlone = true;
         buildParameters.VerifyBuildingResult = true;

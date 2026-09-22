@@ -19,7 +19,6 @@ namespace YooAsset
         /// </summary>
         /// <remarks>设为空则不添加前缀</remarks>
         public string PackageFilePrefix = string.Empty;
-        
 
         /// <summary>
         /// 构建输出文件夹名称

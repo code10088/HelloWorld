@@ -319,7 +319,7 @@ namespace YooAsset
             PackageName = packageName;
 
             if (string.IsNullOrEmpty(packageRoot))
-                _packageRoot = GetDefaultCachePackageRoot(packageName);
+                _packageRoot = YooAssetConfiguration.GetDefaultCacheRoot(packageName);
             else
                 _packageRoot = packageRoot;
 
@@ -396,15 +396,6 @@ namespace YooAsset
         }
 
         #region 内部方法
-        /// <summary>
-        /// 获取默认的缓存包裹根目录
-        /// </summary>
-        public string GetDefaultCachePackageRoot(string packageName)
-        {
-            string rootDirectory = YooAssetConfiguration.GetDefaultCacheRoot();
-            return PathUtility.Combine(rootDirectory, packageName);
-        }
-
         /// <summary>
         /// 获取缓存清单文件的根目录
         /// </summary>
