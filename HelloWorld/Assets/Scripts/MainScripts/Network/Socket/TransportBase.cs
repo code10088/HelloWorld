@@ -37,7 +37,7 @@ public struct SendItem
 }
 public abstract class TransportBase
 {
-    protected IDispatch dispatch;
+    private IDispatch dispatch;
     private HeartHandle heart;
     //连接
     private int state = (int)ConnectState.Idle;
