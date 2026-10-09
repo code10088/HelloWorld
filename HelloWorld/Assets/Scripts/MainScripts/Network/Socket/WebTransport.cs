@@ -53,6 +53,7 @@ public class WebTransport : TransportBase
     {
         GameDebug.LogError(closeCode);
         tcs.TrySetResult(false);
+        if (State == ConnectState.Connected) Connect();
     }
     private void OnError(string error)
     {

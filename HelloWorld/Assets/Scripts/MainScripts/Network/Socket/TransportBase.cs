@@ -112,20 +112,20 @@ public abstract class TransportBase
                             if (retry++ > 0)
                             {
                                 dispatch.HandleNetEvent(NetEvent.ConnectError, 0);
-                                return;
+                                break;
                             }
                             var success = await TestTask();
                             if (!success)
                             {
                                 dispatch.HandleNetEvent(NetEvent.ConnectError, 0);
-                                return;
+                                break;
                             }
                             dispatch.HandleNetEvent(NetEvent.Reconnect, 0);
                             success = await ConnectTask();
                             if (!success)
                             {
                                 Connect();
-                                return;
+                                break;
                             }
                             Volatile.Write(ref state, (int)ConnectState.Connected);
                             retry = 0;
