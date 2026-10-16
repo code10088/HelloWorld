@@ -215,6 +215,7 @@ public class AssetManager : Singleton<AssetManager>
                     loaders.Add(loadId, action);
                     break;
                 case LoadState.LoadFinish:
+                    loaders.Add(loadId, null);
                     action?.Invoke(loadId, ah.AssetObject);
                     break;
             }
