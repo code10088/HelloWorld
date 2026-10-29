@@ -1,26 +1,4 @@
 <module name="">
-    <enum name="UIType">
-        <var name="UITest" value="1"/>
-        <var name="UICommonBox" value="2"/>
-		<var name="UIHotUpdateRes" value="3"/>
-		<var name="UIMain" value="4"/>
-		<var name="UISetting" value="5"/>
-		<var name="UICommonTips" value="6"/>
-		<var name="UISceneLoading" value="7"/>
-		<var name="UIGuide" value="8"/>
-		<var name="UIMail" value="9"/>
-		<var name="UIShowReward" value="10"/>
-    </enum>
-	<enum name="UIWindowType">
-        <var name="Normal" value="0"/>
-        <var name="Tips" value="1"/>
-		<var name="Guide" value="2"/>
-    </enum>
-	<enum name="SceneType">
-        <var name="SceneBase" value="1"/>
-		<var name="TestScene" value="2"/>
-		<var name="BattleScene_Test" value="3"/>
-    </enum>
 	<enum name="PlayerAvatarPartType">
         <var name="Hair" value="1"/>
         <var name="Head" value="2"/>

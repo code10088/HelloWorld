@@ -28,17 +28,8 @@ public sealed partial class UIConfig : Luban.BeanBase
     }
 
     public readonly UIType UIType;
-    /// <summary>
-    /// 名字
-    /// </summary>
     public readonly string Name;
-    /// <summary>
-    /// 资源名字
-    /// </summary>
     public readonly string PrefabPath;
-    /// <summary>
-    /// 窗口类型
-    /// </summary>
     public readonly UIWindowType UIWindowType;
    
     public const int __ID__ = 202324726;

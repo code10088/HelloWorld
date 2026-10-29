@@ -1,0 +1,16 @@
+<module name="">
+    <enum name="SceneType">
+        <var name="SceneBase" value="1"/>
+        <var name="TestScene" value="2"/>
+        <var name="BattleScene_Test" value="3"/>
+    </enum>
+    <bean name="SceneConfig">
+        <var name="SceneType" type="SceneType"/>
+        <var name="Name" type="string"/>
+        <var name="PrefabPath" type="string"/>
+        <var name="SkyBoxPath" type="string"/>
+        <var name="CameraPos" type="vec3"/>
+        <var name="CameraEuler" type="vec3"/>
+    </bean>
+    <table name="TbSceneConfig" value="SceneConfig" input="*@Json/SceneConfig.json" mode="map" index="SceneType"/>
+</module>

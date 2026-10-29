@@ -1,0 +1,18 @@
+[
+    {
+        "SceneType": "TestScene",
+        "Name": "TestScene",
+        "PrefabPath": "Assets/ZRes/Scene/Prefab/TestScene/TestScene.prefab",
+        "SkyBoxPath": "Assets/ZRes/Scene/Skybox/Material/BlueSkybox.mat",
+        "CameraPos": { "x": 0, "y": 3, "z": -3 },
+        "CameraEuler": { "x": 30, "y": 0, "z": 0 }
+    },
+    {
+        "SceneType": "BattleScene_Test",
+        "Name": "BattleScene_Test",
+        "PrefabPath": "Assets/ZRes/Scene/Prefab/BattleScene_Test/BattleScene_Test.prefab",
+        "SkyBoxPath": "Assets/ZRes/Scene/Skybox/Material/BlueSkybox.mat",
+        "CameraPos": { "x": 0, "y": 0, "z": -30 },
+        "CameraEuler": { "x": 0, "y": 0, "z": 0 }
+    }
+]

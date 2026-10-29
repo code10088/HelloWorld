@@ -14,10 +14,10 @@ namespace cfg
 public partial class Tables
 {
     public TbConstConfig TbConstConfig {get; }
-    public TbLink TbLink {get; }
-    public TbUIConfig TbUIConfig {get; }
-    public TbDeviceInfo TbDeviceInfo {get; }
     public TbSceneConfig TbSceneConfig {get; }
+    public TbUIConfig TbUIConfig {get; }
+    public TbLink TbLink {get; }
+    public TbDeviceInfo TbDeviceInfo {get; }
     public TbPlayerAvatarPart TbPlayerAvatarPart {get; }
     public TbTrigger TbTrigger {get; }
     public TbConditionConfig TbConditionConfig {get; }
@@ -33,10 +33,10 @@ public partial class Tables
     public Tables(System.Func<string, ByteBuf> loader)
     {
         TbConstConfig = new TbConstConfig(loader("tbconstconfig"));
-        TbLink = new TbLink(loader("tblink"));
-        TbUIConfig = new TbUIConfig(loader("tbuiconfig"));
-        TbDeviceInfo = new TbDeviceInfo(loader("tbdeviceinfo"));
         TbSceneConfig = new TbSceneConfig(loader("tbsceneconfig"));
+        TbUIConfig = new TbUIConfig(loader("tbuiconfig"));
+        TbLink = new TbLink(loader("tblink"));
+        TbDeviceInfo = new TbDeviceInfo(loader("tbdeviceinfo"));
         TbPlayerAvatarPart = new TbPlayerAvatarPart(loader("tbplayeravatarpart"));
         TbTrigger = new TbTrigger(loader("tbtrigger"));
         TbConditionConfig = new TbConditionConfig(loader("tbconditionconfig"));
@@ -54,10 +54,10 @@ public partial class Tables
     private void ResolveRef()
     {
         TbConstConfig.ResolveRef(this);
-        TbLink.ResolveRef(this);
-        TbUIConfig.ResolveRef(this);
-        TbDeviceInfo.ResolveRef(this);
         TbSceneConfig.ResolveRef(this);
+        TbUIConfig.ResolveRef(this);
+        TbLink.ResolveRef(this);
+        TbDeviceInfo.ResolveRef(this);
         TbPlayerAvatarPart.ResolveRef(this);
         TbTrigger.ResolveRef(this);
         TbConditionConfig.ResolveRef(this);

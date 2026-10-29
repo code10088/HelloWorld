@@ -30,25 +30,10 @@ public sealed partial class SceneConfig : Luban.BeanBase
     }
 
     public readonly SceneType SceneType;
-    /// <summary>
-    /// 名字
-    /// </summary>
     public readonly string Name;
-    /// <summary>
-    /// 资源名字
-    /// </summary>
     public readonly string PrefabPath;
-    /// <summary>
-    /// 天空盒
-    /// </summary>
     public readonly string SkyBoxPath;
-    /// <summary>
-    /// 相机位置
-    /// </summary>
     public readonly UnityEngine.Vector3 CameraPos;
-    /// <summary>
-    /// 相机位置
-    /// </summary>
     public readonly UnityEngine.Vector3 CameraEuler;
    
     public const int __ID__ = 935827150;

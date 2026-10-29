@@ -7,5 +7,5 @@
 		<var name="BrushInterval" type="float"/>
     </bean>
 	
-	<table name="TbConstConfig" value="ConstConfig" input="Json"/> 
+	<table name="TbConstConfig" value="ConstConfig" input="Json/ConstConfig.json"/> 
 </module>

@@ -1,0 +1,62 @@
+[
+    {
+        "UIType": "UITest",
+        "Name": "UITest",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UITest/UITest.prefab",
+        "UIWindowType": "Normal"
+    },
+    {
+        "UIType": "UICommonBox",
+        "Name": "UICommonBox",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UICommonBox/UICommonBox.prefab",
+        "UIWindowType": "Tips"
+    },
+    {
+        "UIType": "UIHotUpdateRes",
+        "Name": "UIHotUpdateRes",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIHotUpdateRes/UIHotUpdateRes.prefab",
+        "UIWindowType": "Normal"
+    },
+    {
+        "UIType": "UIMain",
+        "Name": "UIMain",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIMain/UIMain.prefab",
+        "UIWindowType": "Normal"
+    },
+    {
+        "UIType": "UISetting",
+        "Name": "UISetting",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UISetting/UISetting.prefab",
+        "UIWindowType": "Normal"
+    },
+    {
+        "UIType": "UICommonTips",
+        "Name": "UICommonTips",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UICommonTips/UICommonTips.prefab",
+        "UIWindowType": "Tips"
+    },
+    {
+        "UIType": "UISceneLoading",
+        "Name": "UISceneLoading",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UISceneLoading/UISceneLoading.prefab",
+        "UIWindowType": "Tips"
+    },
+    {
+        "UIType": "UIGuide",
+        "Name": "UIGuide",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIGuide/UIGuide.prefab",
+        "UIWindowType": "Guide"
+    },
+    {
+        "UIType": "UIMail",
+        "Name": "UIMail",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIMail/UIMail.prefab",
+        "UIWindowType": "Normal"
+    },
+    {
+        "UIType": "UIShowReward",
+        "Name": "UIShowReward",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIShowReward/UIShowReward.prefab",
+        "UIWindowType": "Normal"
+    }
+]

@@ -3,10 +3,10 @@
 public partial class ConfigManager
 {
     private TbConstConfig tbconstconfig;
-    private TbLink tblink;
-    private TbUIConfig tbuiconfig;
-    private TbDeviceInfo tbdeviceinfo;
     private TbSceneConfig tbsceneconfig;
+    private TbUIConfig tbuiconfig;
+    private TbLink tblink;
+    private TbDeviceInfo tbdeviceinfo;
     private TbPlayerAvatarPart tbplayeravatarpart;
     private TbTrigger tbtrigger;
     private TbConditionConfig tbconditionconfig;
@@ -20,10 +20,10 @@ public partial class ConfigManager
     private TbLanguageEN tblanguageen;
 
     public TbConstConfig TbConstConfig => tbconstconfig;
-    public TbLink TbLink => tblink;
-    public TbUIConfig TbUIConfig => tbuiconfig;
-    public TbDeviceInfo TbDeviceInfo => tbdeviceinfo;
     public TbSceneConfig TbSceneConfig => tbsceneconfig;
+    public TbUIConfig TbUIConfig => tbuiconfig;
+    public TbLink TbLink => tblink;
+    public TbDeviceInfo TbDeviceInfo => tbdeviceinfo;
     public TbPlayerAvatarPart TbPlayerAvatarPart => tbplayeravatarpart;
     public TbTrigger TbTrigger => tbtrigger;
     public TbConditionConfig TbConditionConfig => tbconditionconfig;
