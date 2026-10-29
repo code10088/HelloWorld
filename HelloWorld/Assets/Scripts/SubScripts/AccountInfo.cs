@@ -72,11 +72,6 @@ public class AccountInfo : Singleton<AccountInfo>
     }
     public void LoginWithCode(LoginPlatform platform, string authCode)
     {
-        if (string.IsNullOrEmpty(authCode))
-        {
-            UICommonTips.ShowTips(LanguageManager.Instance.Get(10008));
-            return;
-        }
         var request = new LoginRequest
         {
             platform = (int)platform,
@@ -92,6 +87,7 @@ public class AccountInfo : Singleton<AccountInfo>
         if (data == null || data.Length == 0)
         {
             UICommonTips.ShowTips(LanguageManager.Instance.Get(10008));
+            UIManager.Instance.OpenUI(UIType.UILogin);
             return;
         }
         LoginResponse response;
@@ -102,11 +98,13 @@ public class AccountInfo : Singleton<AccountInfo>
         catch (Exception exception)
         {
             UICommonTips.ShowTips(exception.Message);
+            UIManager.Instance.OpenUI(UIType.UILogin);
             return;
         }
         if (response == null || response.code != 1)
         {
             UICommonTips.ShowTips(LanguageManager.Instance.Get(response.code));
+            UIManager.Instance.OpenUI(UIType.UILogin);
             return;
         }
         AccessToken = response.accessToken;

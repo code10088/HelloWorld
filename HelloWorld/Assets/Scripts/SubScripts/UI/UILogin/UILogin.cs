@@ -26,6 +26,15 @@ public class UILogin : UIBase
     }
     private void OnQQAuthCode(string authCode)
     {
-        AccountInfo.Instance.LoginWithCode(LoginPlatform.QQ, authCode);
+        login = false;
+        if (string.IsNullOrEmpty(authCode))
+        {
+            UICommonTips.ShowTips(LanguageManager.Instance.Get(10008));
+        }
+        else
+        {
+            AccountInfo.Instance.LoginWithCode(LoginPlatform.QQ, authCode);
+            OnClose();
+        }
     }
 }

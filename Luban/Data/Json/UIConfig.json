@@ -63,6 +63,6 @@
         "UIType": "UILogin",
         "Name": "UILogin",
         "PrefabPath": "Assets/ZRes/UI/Prefab/UILogin/UILogin.prefab",
-        "UIWindowType": "Normal"
+        "UIWindowType": "Tips"
     }
 ]
