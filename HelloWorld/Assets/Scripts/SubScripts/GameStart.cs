@@ -12,6 +12,7 @@ public class GameStart
         Process.Add(new ActionProcessItem(OpenUIHotUpdateRes));
         Process.Add(new ActionProcessItem(HotUpdate));
         Process.Add(new ActionProcessItem(OpenUILoading));
+        Process.Add(new ActionProcessItem(Login));
         Process.Add(new ActionProcessItem(InitConfig));
         Process.Add(new ActionProcessItem(InitSetting));
         Process.Add(new ActionProcessItem(WarmUpShader));
@@ -41,6 +42,10 @@ public class GameStart
     private void OpenUILoading()
     {
         UIManager.Instance.OpenUI(UIType.UISceneLoading, a => Process.Next());
+    }
+    private void Login()
+    {
+        AccountInfo.Instance.Login(Process.Next);
     }
     private void InitConfig()
     {

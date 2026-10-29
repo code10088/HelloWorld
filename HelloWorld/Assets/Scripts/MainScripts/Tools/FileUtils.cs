@@ -19,15 +19,15 @@ public static class FileUtils
     private static List<FileItem> queue = new List<FileItem>();
     private static int count = 0;
 
-    public static void Read(string path, Action<byte[]> finish)
+    public static void Read(string path, Action<UnsafeByteBuffer> finish)
     {
         FileItem item = new FileItem(FileAccess.Read, path, null, finish);
         queue.Add(item);
         Check();
     }
-    public static void Write(string path, byte[] bytes, Action<byte[]> finish)
+    public static void Write(string path, UnsafeByteBuffer buffer, Action<UnsafeByteBuffer> finish = null)
     {
-        FileItem item = new FileItem(FileAccess.Write, path, bytes, finish);
+        FileItem item = new FileItem(FileAccess.Write, path, buffer, finish);
         queue.Add(item);
         Check();
     }
@@ -45,14 +45,14 @@ public static class FileUtils
     {
         private FileAccess fa;
         private string path;
-        private byte[] bytes;
-        private Action<byte[]> finish;
+        private UnsafeByteBuffer buffer;
+        private Action<UnsafeByteBuffer> finish;
 
-        public FileItem(FileAccess _fa, string _path, byte[] _bytes, Action<byte[]> _finish)
+        public FileItem(FileAccess _fa, string _path, UnsafeByteBuffer _buffer, Action<UnsafeByteBuffer> _finish)
         {
             fa = _fa;
             path = _path;
-            bytes = _bytes;
+            buffer = _buffer;
             finish = _finish;
         }
         public void Start()
@@ -62,26 +62,43 @@ public static class FileUtils
         }
         private void Read(object o)
         {
-            if (File.Exists(path))
+            if (!File.Exists(path)) return;
+            FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+            if (fs.Length <= 0)
             {
-                //当把一个对象放到using()中的时候，当超出using的作用于范围后，会自动调用该对象的Dispose()方法
-                //Dispose自动调用Close和Flush方法
-                FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-                bytes = new byte[fs.Length];
-                fs.Read(bytes, 0, bytes.Length);
                 fs.Dispose();
+                return;
             }
+            int total = 0;
+            buffer = UnsafeByteBuffer.Rent((int)fs.Length);
+            while (total < fs.Length)
+            {
+                int read = fs.Read(buffer.FullSpan.Slice(total));
+                if (read <= 0) break;
+                total += read;
+            }
+            buffer.SetWPos(total);
+            fs.Dispose();
         }
         private void Write(object o)
         {
-            FileStream fs = new FileStream(path, FileMode.OpenOrCreate, FileAccess.Write);
-            fs.Write(bytes, 0, bytes.Length);
+            FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write);
+            fs.Write(buffer.Span);
             fs.Dispose();
         }
         private void Finish()
         {
-            finish?.Invoke(bytes);
-            Check();
+            try
+            {
+                finish?.Invoke(buffer);
+            }
+            finally
+            {
+                UnsafeByteBuffer.Return(buffer);
+                buffer = null;
+                finish = null;
+                Check();
+            }
         }
     }
     #endregion

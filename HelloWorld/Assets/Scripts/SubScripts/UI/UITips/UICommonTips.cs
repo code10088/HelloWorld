@@ -31,7 +31,7 @@ public class UICommonTips : UIBase
         Show();
     }
 
-    public static void Show()
+    private static void Show()
     {
         if (items.Count == 0) return;
         if (commonTipsQueue.Count == 0) return;

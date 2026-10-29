@@ -5,17 +5,23 @@ public static class GameSetting
 {
     public static float updateTimeSliceS = 1.0f / 60;
     public static int updateTimeSliceMS = 1000 / 60;
-    public static int gcTimeIntervalS = 600;//GC¼ä¸ô
+    public static int gcTimeIntervalS = 600;//GCé—´éš”
     public static int taskLimit = 6;
-    public static int httpLimit = 3;//Ð¡ÓÚthreadLimit
-    public static int downloadLimit = 5;//Ð¡ÓÚthreadLimit
-    public static int writeLimit = 3;//Ð¡ÓÚthreadLimit
+    public static int httpLimit = 3;//å°äºŽthreadLimit
+    public static int downloadLimit = 5;//å°äºŽthreadLimit
+    public static int writeLimit = 3;//å°äºŽthreadLimit
     public static int recycleTimeS = 30;
     public static float recycleTimeMinS = 10;
     public static float recycleTimeMaxS = 120;
     public static int retryTime = 3;
-    public static int timeoutS = 10;//Ãë
+    public static int timeoutS = 10;//ç§’
     public static string HotUpdateConfigPath = "Assets/ZRes/GameConfig/HotUpdateConfig.txt";
+
+    public static string LoginUrl =>
+#if SHENHE
+#else
+        "https://112.126.84.17/";
+#endif
 
     private static string CDN => "https://assets-1321503079.cos.ap-beijing.myqcloud.com";
     public static string CDNPlatform =>

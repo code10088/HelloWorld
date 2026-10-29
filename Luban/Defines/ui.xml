@@ -10,6 +10,7 @@
         <var name="UIGuide" value="8"/>
         <var name="UIMail" value="9"/>
         <var name="UIShowReward" value="10"/>
+        <var name="UILogin" value="11"/>
     </enum>
     <enum name="UIWindowType">
         <var name="Normal" value="0"/>

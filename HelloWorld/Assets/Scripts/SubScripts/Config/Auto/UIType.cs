@@ -23,6 +23,7 @@ namespace cfg
         UIGuide = 8,
         UIMail = 9,
         UIShowReward = 10,
+        UILogin = 11,
     }
 
 } 
