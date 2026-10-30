@@ -19,18 +19,13 @@ public class KcpTransport : TransportBase
     private KcpSend kcpSend;
     private PoolSegManager.Kcp kcp;
     private DateTimeOffset next;
-    private SendItem kcpConnect;
     private ConcurrentQueue<KcpPacket> queue = new ConcurrentQueue<KcpPacket>();
 
-    public override void Init(string ip, ushort port, uint playerId, string token, IDispatch dispatch)
+    public override void Init(string ip, ushort port, IDispatch dispatch)
     {
         socket = new SocketHandle(ip, port);
         kcpSend = new KcpSend(Send);
-        var msg = new CS_KcpConnect();
-        msg.playerId = playerId;
-        msg.token = token;
-        kcpConnect = new SendItem(NetMsgId.CSKcpConnect, msg);
-        base.Init(ip, port, playerId, token, dispatch);
+        base.Init(ip, port, dispatch);
     }
 
     #region 连接
@@ -47,6 +42,8 @@ public class KcpTransport : TransportBase
         {
             return false;
         }
+        var msg = new CS_KcpConnect() { token = Token };
+        var kcpConnect = new SendItem(NetMsgId.CSKcpConnect, msg);
         kcpConnect.Serialize(sendBuffer);
         int retry = 0;
         while (true)

@@ -14,10 +14,10 @@ public class WebTransport : TransportBase
     private Task sendTask;
     private int receiveRetry = 0;
 
-    public override void Init(string ip, ushort port, uint playerId, string token, IDispatch dispatch)
+    public override void Init(string ip, ushort port, IDispatch dispatch)
     {
         this.ip = $"ws://{ip}:{port}/client";
-        base.Init(ip, port, playerId, token, dispatch);
+        base.Init(ip, port, dispatch);
     }
 
     #region 连接

@@ -14,6 +14,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>, SingletonInterf
         public NetEvent type;
         public int param;
     }
+    public string Token => AccountInfo.Instance.AccessToken;
     private Queue<NetMsgItem> msgPool1 = new Queue<NetMsgItem>();
     private Queue<NetMsgItem> msgPool2 = new Queue<NetMsgItem>();
     private object msgLock = new object();

@@ -17,12 +17,12 @@ public class TcpTransport : TransportBase
     private int headLength = 4;
     private int bodyLength = 0;
 
-    public override void Init(string ip, ushort port, uint playerId, string token, IDispatch dispatch)
+    public override void Init(string ip, ushort port, IDispatch dispatch)
     {
         socket = new SocketHandle(ip, port);
         headBuffer = UnsafeByteBuffer.Rent(4);
         bodyBuffer = UnsafeByteBuffer.Rent(2048);
-        base.Init(ip, port, playerId, token, dispatch);
+        base.Init(ip, port, dispatch);
     }
 
     #region 连接

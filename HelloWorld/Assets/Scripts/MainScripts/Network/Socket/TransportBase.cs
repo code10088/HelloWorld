@@ -51,8 +51,9 @@ public abstract class TransportBase
     protected UnsafeByteBuffer sendBuffer;
     //接收
     protected UnsafeByteBuffer receiveBuffer;
+    protected string Token => dispatch?.Token;
 
-    public virtual void Init(string ip, ushort port, uint playerId, string token, IDispatch dispatch)
+    public virtual void Init(string ip, ushort port, IDispatch dispatch)
     {
         this.dispatch = dispatch;
         heart = new HeartHandle(Connect, Send);

@@ -15,12 +15,10 @@ public interface IDeserialize
 }
 public class CS_KcpConnect : ISerialize
 {
-    public uint playerId;
     public string token;
 
     public void Serialize(UnsafeByteBuffer buffer)
     {
-        buffer.WriteUInt(playerId);
         buffer.WriteString(token);
     }
 }
