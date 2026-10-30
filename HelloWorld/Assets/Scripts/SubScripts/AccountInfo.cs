@@ -6,6 +6,13 @@ public enum LoginPlatform
 {
     QQ,
 }
+public enum LoginCode
+{
+    Unknown = -1,
+    Success,
+    Maintenance = 10010,
+    Banned = 10011,
+}
 [Serializable]
 public class LoginRequest
 {
@@ -107,12 +114,33 @@ public class AccountInfo : Singleton<AccountInfo>
             UIManager.Instance.OpenUI(UIType.UILogin);
             return;
         }
-        AccessToken = response.accessToken;
-        RefreshToken = response.refreshToken;
-        UserId = response.userId;
-        ServerId = response.serverId;
-        SaveAccount();
-        loginCallback?.Invoke();
+        switch ((LoginCode)response.code)
+        {
+            case LoginCode.Unknown:
+                UICommonTips.ShowTips(LanguageManager.Instance.Get(response.code));
+                UIManager.Instance.OpenUI(UIType.UILogin);
+                break;
+            case LoginCode.Success:
+                AccessToken = response.accessToken;
+                RefreshToken = response.refreshToken;
+                UserId = response.userId;
+                ServerId = response.serverId;
+                SaveAccount();
+                loginCallback?.Invoke();
+                break;
+            case LoginCode.Maintenance:
+                UICommonBoxParam param = new UICommonBoxParam();
+                param.type = UICommonBoxType.Sure;
+                param.title = "Tips";
+                param.content = LanguageManager.Instance.Get(response.code);
+                param.sure = a => UIManager.Instance.OpenUI(UIType.UILogin);
+                UICommonBox.OpenCommonBox(param);
+                break;
+            case LoginCode.Banned:
+                UICommonTips.ShowTips(LanguageManager.Instance.Get(response.code));
+                UIManager.Instance.OpenUI(UIType.UILogin);
+                break;
+        }
     }
     private void SaveAccount()
     {
