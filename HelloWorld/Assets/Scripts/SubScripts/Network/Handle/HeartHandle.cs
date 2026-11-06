@@ -1,3 +1,4 @@
+using Message;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -15,7 +16,7 @@ public class HeartHandle
     private int delay = 0;
     private Action connect;
     private Action<ushort, ISerialize> send;
-    private CS_Heart heart = new CS_Heart();
+    private CSHeart heart = new CSHeart();
 
     public int Delay => delay;
 
@@ -37,7 +38,7 @@ public class HeartHandle
             {
                 await Task.Delay(heartInterval, token).ConfigureAwait(false);
                 if (heartCount++ > 0) connect();
-                else send(NetMsgId.CSHeart, heart);
+                else send(NetMsgId.Message_CSHeart, heart);
             }
         }
         catch
@@ -52,7 +53,7 @@ public class HeartHandle
     }
     public void RefreshDelay2(ushort id)
     {
-        if (id == NetMsgId.SCHeart) heartCount = 0;
+        if (id == NetMsgId.Message_SCHeart) heartCount = 0;
         var index = Array.IndexOf(record1, id - 10000);
         if (index < 0) return;
         record1[index] = -1;

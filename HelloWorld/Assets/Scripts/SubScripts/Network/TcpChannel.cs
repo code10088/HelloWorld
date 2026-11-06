@@ -55,12 +55,8 @@ public class TcpChannel : ChannelInterface
         signal = new SemaphoreSlim(0);
         cts = new CancellationTokenSource();
         sendQueue = new ConcurrentQueue<SendItem>();
-        var send = UnsafeByteBuffer.Rent(2048);
-        var recv = UnsafeByteBuffer.Rent(2048);
-        var head = UnsafeByteBuffer.Rent(4);
-        var body = UnsafeByteBuffer.Rent(2048);
-        _ = SendTask(v, send, cts.Token);
-        _ = RecvTask(v, recv, head, body, cts.Token);
+        _ = SendTask(v, cts.Token);
+        _ = RecvTask(v, cts.Token);
         Volatile.Write(ref state, (int)ConnectState.Connected);
         dispatch.HandleNetEvent(NetEvent.Connected, 0);
     }
@@ -92,8 +88,9 @@ public class TcpChannel : ChannelInterface
             signal?.Release();
         }
     }
-    private async Task SendTask(int v, UnsafeByteBuffer buffer, CancellationToken token)
+    private async Task SendTask(int v, CancellationToken token)
     {
+        var buffer = UnsafeByteBuffer.Rent(2048);
         while (true)
         {
             try
@@ -132,8 +129,11 @@ public class TcpChannel : ChannelInterface
     #endregion
 
     #region 接收
-    private async Task RecvTask(int v, UnsafeByteBuffer recv, UnsafeByteBuffer head, UnsafeByteBuffer body, CancellationToken token)
+    private async Task RecvTask(int v, CancellationToken token)
     {
+        var recv = UnsafeByteBuffer.Rent(2048);
+        var head = UnsafeByteBuffer.Rent(4);
+        var body = UnsafeByteBuffer.Rent(2048);
         int l = 0;
         while (true)
         {

@@ -1,7 +1,7 @@
 ﻿using cfg;
 using UnityEngine;
 
-public class GameStart
+public class GameStart : Singleton<GameStart>
 {
     private ProcessControl Process = new ProcessControl();
 
@@ -15,8 +15,6 @@ public class GameStart
         Process.Add(new ActionProcessItem(Login));
         Process.Add(new ActionProcessItem(InitConfig));
         Process.Add(new ActionProcessItem(InitSetting));
-        Process.Add(new ActionProcessItem(WarmUpShader));
-        Process.Add(new ActionProcessItem(EnterMainScene));
         Process.Start();
     }
     private void InitLanguage()
@@ -45,7 +43,8 @@ public class GameStart
     }
     private void Login()
     {
-        AccountInfo.Instance.Login(Process.Next);
+        AccountInfo.Instance.SetCallback(Process.Next);
+        AccountInfo.Instance.LoginWithAuto();
     }
     private void InitConfig()
     {
@@ -55,7 +54,10 @@ public class GameStart
     private void InitSetting()
     {
         DPUtil.Init();
+        WarmUpShader();
         Process.Next();
+        Process = null;
+        Connect();
     }
     private void WarmUpShader()
     {
@@ -65,13 +67,30 @@ public class GameStart
             var svc = b as ShaderVariantCollection;
             svc.WarmUp();
             AssetManager.Instance.Unload(ref loadId);
-            Process.Next();
         });
+    }
+    private void Connect()
+    {
+        EventManager.Instance.Register(EventType.RefreshPlayerData, EnterMainScene);
+        var host = AccountInfo.Instance.Host;
+        var port = AccountInfo.Instance.Port;
+        NetClient.Instance.Create<TcpChannel>(host, port, NetMsgDispatch.Instance);
+        NetClient.Instance.Connect();
     }
     private void EnterMainScene()
     {
+        EventManager.Instance.Unregister(EventType.RefreshPlayerData, EnterMainScene);
         UIManager.Instance.OpenUI(UIType.UIMain, a => UIManager.Instance.CloseUI(UIType.UISceneLoading));
-        Process.Next();
-        Process = null;
+    }
+
+    public void Restart()
+    {
+        NetClient.Instance.Dispose();
+        SceneManager.Instance.CloseAll();
+        UIManager.Instance.CloseAll();
+        DataManager.Instance.Clear();
+
+        AccountInfo.Instance.SetCallback(Connect);
+        UIManager.Instance.OpenUI(UIType.UILogin);
     }
 }

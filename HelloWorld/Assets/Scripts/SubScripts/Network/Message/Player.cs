@@ -1,6 +1,6 @@
 namespace Message
 {
-    public class BasePlayerInfo : ISerialize, IDeserialize
+    public class BasePlayerData : ISerialize, IDeserialize
     {
         public uint playerId;
         public string nickName;
@@ -24,16 +24,16 @@ namespace Message
         }
     }
 
-    public class SCPlayerInfo : IDeserialize
+    public class SCPlayerData : IDeserialize
     {
-        public BasePlayerInfo info;
+        public BasePlayerData data;
         public long registerTime;
         public uint mail;
 
         public void Deserialize(UnsafeByteBuffer buffer)
         {
-            info = new BasePlayerInfo();
-            info.Deserialize(buffer);
+            data = new BasePlayerData();
+            data.Deserialize(buffer);
             registerTime = buffer.ReadLong();
             mail = buffer.ReadUInt();
         }

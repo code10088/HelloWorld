@@ -128,6 +128,30 @@ public partial class SceneManager : Singleton<SceneManager>, SingletonInterface
         if (tempIndex >= 0) return true;
         return false;
     }
+    public void CloseAll()
+    {
+        for (int i = loadScene.Count - 1; i >= 0; i--)
+        {
+            SceneItem item = loadScene[i];
+            item.Disable();
+            item.OpenActionInvoke(false);
+            loadScene.RemoveAt(i);
+            cacheScene.Add(item);
+        }
+        for (int i = curScene.Count - 1; i >= 0; i--)
+        {
+            SceneItem item = curScene[i];
+            item.Disable();
+            curScene.RemoveAt(i);
+            cacheScene.Add(item);
+            EventManager.Instance.Fire(EventType.CloseScene, item.Type);
+        }
+        if (timerId >= 0)
+        {
+            Driver.Instance.Remove(timerId);
+            timerId = -1;
+        }
+    }
 
     public void UpdateProgress(float f)
     {

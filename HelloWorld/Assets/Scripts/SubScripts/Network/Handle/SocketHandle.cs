@@ -25,6 +25,11 @@ public class SocketHandle
         socket = null;
     }
 
+    public bool Poll(int microSeconds, SelectMode mode)
+    {
+        return socket.Poll(microSeconds, mode);
+    }
+
     #region 同步
     public bool Connect(SocketType st, ProtocolType pt)
     {

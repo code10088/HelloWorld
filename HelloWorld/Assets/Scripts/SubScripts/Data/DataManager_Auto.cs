@@ -96,11 +96,18 @@ public partial class DataManager
     public void Clear()
     {
         activityData?.Clear();
+        activityData = null;
         guideData?.Clear();
+        guideData = null;
         hotUpdateResData?.Clear();
+        hotUpdateResData = null;
         mailData?.Clear();
+        mailData = null;
         playerData?.Clear();
+        playerData = null;
         showRewardData?.Clear();
+        showRewardData = null;
         testData?.Clear();
+        testData = null;
     }
 }

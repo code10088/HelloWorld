@@ -23,6 +23,7 @@ public partial class DataManager
     {
 {{~ for item in items ~}}
         {{ item.field }}?.Clear();
+        {{ item.field }} = null;
 {{~ end ~}}
     }
 }

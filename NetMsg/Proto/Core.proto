@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option csharp_namespace = "Message";
+
+message CSSession
+{
+	string token = 1;
+	int32 version = 2;
+}
+message SCSession
+{
+	int32 code = 1;
+	uint32 conv = 2;
+}
+message CSAuth
+{
+	string token = 1;
+}
+message SCAuth
+{
+	int32 code = 1;
+	int64 time = 2;
+}
+message CSHeart
+{
+}
+message SCHeart
+{
+	int64 time = 1;
+}

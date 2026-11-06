@@ -10,17 +10,16 @@ public class PlayerData : DataBase
 
     public void Init()
     {
-        NetMsgDispatch.Instance.Register(NetMsgId.Message_SCPlayerInfo, SCPlayerInfo);
     }
     public void Clear()
     {
-        NetMsgDispatch.Instance.UnRegister(NetMsgId.Message_SCPlayerInfo);
     }
 
-    private void SCPlayerInfo(IDeserialize msg)
+    public void SCPlayerInfo(IDeserialize msg)
     {
-        var info = (SCPlayerInfo)msg;
-        playerId = info.info.playerId;
-        lv = info.info.level;
+        var info = (SCPlayerData)msg;
+        playerId = info.data.playerId;
+        lv = info.data.level;
+        EventManager.Instance.Fire(EventType.RefreshPlayerData);
     }
 }

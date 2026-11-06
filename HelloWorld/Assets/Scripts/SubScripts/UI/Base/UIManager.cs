@@ -130,6 +130,26 @@ public partial class UIManager : Singleton<UIManager>, SingletonInterface
         if (tempIndex >= 0) return true;
         return false;
     }
+    public void CloseAll()
+    {
+        for (int i = loadUI.Count - 1; i >= 0; i--)
+        {
+            UIItem item = loadUI[i];
+            item.Disable();
+            item.OpenActionInvoke(false);
+            loadUI.RemoveAt(i);
+            cacheUI.Add(item);
+            SetEventSystemState((int)item.Type, true);
+        }
+        for (int i = curUI.Count - 1; i >= 0; i--)
+        {
+            UIItem item = curUI[i];
+            item.Disable();
+            curUI.RemoveAt(i);
+            cacheUI.Add(item);
+            EventManager.Instance.Fire(EventType.CloseUI, item.Type);
+        }
+    }
 
     public void SetEventSystemState(int id, bool state)
     {

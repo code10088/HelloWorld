@@ -13,7 +13,7 @@ using WeChatWASM;
 using TTSDK;
 #endif
 
-public class GameStart : Singleton<GameStart>
+public class GameBoot : Singleton<GameBoot>
 {
     private ProcessControl Process = new ProcessControl();
     private HotUpdateConfig config;
@@ -69,8 +69,8 @@ public class GameStart : Singleton<GameStart>
     {
 #if UNITY_EDITOR && !HotUpdateDebug
         var hotAssembly = AppDomain.CurrentDomain.GetAssemblies().First(a => a.FullName.Contains("HotAssembly"));
-        var obj = hotAssembly.CreateInstance("GameStart");
         var t = hotAssembly.GetType("GameStart");
+        var obj = t.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
         t.GetMethod("Init").Invoke(obj, null);
 #else
         int loadId = -1;
@@ -87,8 +87,8 @@ public class GameStart : Singleton<GameStart>
             AssetManager.Instance.Unload(ref loadId);
 
             var hotAssembly = GameDebug.GDebug ? Assembly.Load(dll, pdb) : Assembly.Load(dll);
-            var obj = hotAssembly.CreateInstance("GameStart");
             var t = hotAssembly.GetType("GameStart");
+            var obj = t.GetProperty("Instance", BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy).GetValue(null);
             t.GetMethod("Init").Invoke(obj, null);
 
             Process.Next();

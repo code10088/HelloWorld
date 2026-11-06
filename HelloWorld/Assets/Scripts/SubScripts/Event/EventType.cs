@@ -10,6 +10,7 @@
     NetworkConnected,
     SetSceneLoadingBg,
     SetSceneLoadingProgress,
+    RefreshPlayerData,
     RefreshGuide,
     RefreshActivity,
     EndActivity,

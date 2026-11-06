@@ -129,7 +129,6 @@ public class Driver : MonoSingleton<Driver>
     private void OnApplicationPause(bool pause)
     {
         OnAppPause?.Invoke(pause);
-        if (pause == false) NetClient.Instance.Reconnect();
     }
     #endregion
 

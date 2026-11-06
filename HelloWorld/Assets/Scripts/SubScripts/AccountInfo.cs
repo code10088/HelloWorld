@@ -8,7 +8,7 @@ public enum LoginPlatform
 }
 public enum LoginCode
 {
-    Unknown = -1,
+    Unknown,
     Success,
     Maintenance = 10010,
     Banned = 10011,
@@ -29,6 +29,8 @@ public class LoginResponse
     public string refreshToken;
     public string userId;
     public string serverId;
+    public string host;
+    public string port;
 }
 [Serializable]
 public class RefreshTokenRequest
@@ -44,38 +46,40 @@ public class AccountInfo : Singleton<AccountInfo>
     public string RefreshToken { get; private set; }
     public string UserId { get; private set; }
     public string ServerId { get; private set; }
+    public string Host { get; private set; }
+    public ushort Port { get; private set; }
 
-    public void Login(Action loginCallback)
+    public void SetCallback(Action loginCallback)
     {
         this.loginCallback = loginCallback;
-        FileUtils.Read(FileUtils.PlatformPath + "account.data", Login);
     }
-    private void Login(UnsafeByteBuffer buffer)
+    public void LoginWithAuto()
     {
-        AccessToken = string.Empty;
-        RefreshToken = string.Empty;
-        UserId = string.Empty;
-        ServerId = string.Empty;
-        if (buffer == null || buffer.WPos == 0)
+        FileUtils.Read(FileUtils.PlatformPath + "account.data", buffer =>
         {
-            UIManager.Instance.OpenUI(UIType.UILogin);
-            return;
-        }
-        if (buffer.ReadInt() == AccountDataVersion)
-        {
-            AccessToken = buffer.ReadString();
-            RefreshToken = buffer.ReadString();
-            UserId = buffer.ReadString();
-            ServerId = buffer.ReadString();
-        }
-        if (string.IsNullOrEmpty(RefreshToken))
-        {
-            UIManager.Instance.OpenUI(UIType.UILogin);
-            return;
-        }
-        var request = new RefreshTokenRequest { refreshToken = RefreshToken };
-        var bytes = System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(request));
-        HttpManager.Instance.Post($"{GameSetting.LoginUrl}auth/refresh", bytes, LoginHandle, GameSetting.timeoutS);
+            AccessToken = string.Empty;
+            RefreshToken = string.Empty;
+            UserId = string.Empty;
+            if (buffer == null || buffer.WPos == 0)
+            {
+                UIManager.Instance.OpenUI(UIType.UILogin);
+                return;
+            }
+            if (buffer.ReadInt() == AccountDataVersion)
+            {
+                AccessToken = buffer.ReadString();
+                RefreshToken = buffer.ReadString();
+                UserId = buffer.ReadString();
+            }
+            if (string.IsNullOrEmpty(RefreshToken))
+            {
+                UIManager.Instance.OpenUI(UIType.UILogin);
+                return;
+            }
+            var request = new RefreshTokenRequest { refreshToken = RefreshToken };
+            var bytes = System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(request));
+            HttpManager.Instance.Post($"{GameSetting.LoginUrl}auth/refresh", bytes, LoginHandle, GameSetting.timeoutS);
+        });
     }
     public void LoginWithCode(LoginPlatform platform, string authCode)
     {
@@ -125,6 +129,8 @@ public class AccountInfo : Singleton<AccountInfo>
                 RefreshToken = response.refreshToken;
                 UserId = response.userId;
                 ServerId = response.serverId;
+                Host = response.host;
+                Port = ushort.Parse(response.port);
                 SaveAccount();
                 loginCallback?.Invoke();
                 break;
@@ -149,7 +155,70 @@ public class AccountInfo : Singleton<AccountInfo>
         buffer.WriteString(AccessToken);
         buffer.WriteString(RefreshToken);
         buffer.WriteString(UserId);
-        buffer.WriteString(ServerId);
         FileUtils.Write(FileUtils.PlatformPath + "account.data", buffer);
+    }
+    /// <summary>
+    /// ÓÎÏ·ÖÐ¼øÈ¨
+    /// </summary>
+    public void RefreshAuth()
+    {
+        var request = new RefreshTokenRequest { refreshToken = RefreshToken };
+        var bytes = System.Text.Encoding.UTF8.GetBytes(JsonUtility.ToJson(request));
+        HttpManager.Instance.Post($"{GameSetting.LoginUrl}auth/refresh", bytes, RefreshAuthHandle, GameSetting.timeoutS);
+    }
+    private void RefreshAuthHandle(byte[] data)
+    {
+        if (data == null || data.Length == 0)
+        {
+            UICommonTips.ShowTips(LanguageManager.Instance.Get(10012));
+            GameStart.Instance.Restart();
+            return;
+        }
+        LoginResponse response;
+        try
+        {
+            response = JsonUtility.FromJson<LoginResponse>(System.Text.Encoding.UTF8.GetString(data));
+        }
+        catch (Exception exception)
+        {
+            UICommonTips.ShowTips(exception.Message);
+            GameStart.Instance.Restart();
+            return;
+        }
+        if (response == null || response.code != 1)
+        {
+            UICommonTips.ShowTips(LanguageManager.Instance.Get(response.code));
+            GameStart.Instance.Restart();
+            return;
+        }
+        switch ((LoginCode)response.code)
+        {
+            case LoginCode.Unknown:
+                UICommonTips.ShowTips(LanguageManager.Instance.Get(response.code));
+                GameStart.Instance.Restart();
+                break;
+            case LoginCode.Success:
+                AccessToken = response.accessToken;
+                RefreshToken = response.refreshToken;
+                UserId = response.userId;
+                ServerId = response.serverId;
+                Host = response.host;
+                Port = ushort.Parse(response.port);
+                SaveAccount();
+                NetClient.Instance.Connect();
+                break;
+            case LoginCode.Maintenance:
+                UICommonBoxParam param = new UICommonBoxParam();
+                param.type = UICommonBoxType.Sure;
+                param.title = "Tips";
+                param.content = LanguageManager.Instance.Get(response.code);
+                param.sure = a => GameStart.Instance.Restart();
+                UICommonBox.OpenCommonBox(param);
+                break;
+            case LoginCode.Banned:
+                UICommonTips.ShowTips(LanguageManager.Instance.Get(response.code));
+                GameStart.Instance.Restart();
+                break;
+        }
     }
 }

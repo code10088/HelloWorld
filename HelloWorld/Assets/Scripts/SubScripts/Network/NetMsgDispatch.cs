@@ -1,4 +1,5 @@
-﻿﻿using System;
+﻿using Message;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
@@ -24,6 +25,7 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>, SingletonInterf
     public void Init()
     {
         Driver.Instance.StartUpdate(Update);
+        Preregister();
     }
     public void Register(ushort id, Action<IDeserialize> action)
     {
@@ -76,12 +78,28 @@ public partial class NetMsgDispatch : Singleton<NetMsgDispatch>, SingletonInterf
                 param.type = UICommonBoxType.Sure;
                 param.title = "网络异常";
                 param.content = "网络连接已断开，请检查网络设置";
-                param.sure = a => NetClient.Instance.Reconnect();
+                param.sure = a => NetClient.Instance.Connect();
                 UICommonBox.OpenCommonBox(param);
                 break;
-            case NetEvent.RefreshDelay:
-                EventManager.Instance.Fire(EventType.RefreshDelay, item.param);
+            case NetEvent.InvalidToken:
+                UICommonTips.ShowTips("鉴权失败");
+                AccountInfo.Instance.RefreshAuth();
                 break;
         }
+    }
+
+    private void Preregister()
+    {
+        Register(NetMsgId.Message_SCHeart, SCHeart);
+        Register(NetMsgId.Message_SCPlayerData, SCPlayerInfo);
+    }
+    private void SCHeart(IDeserialize msg)
+    {
+        var heart = (SCHeart)msg;
+        ServerTime.Instance.SetTime(heart.time);
+    }
+    private void SCPlayerInfo(IDeserialize msg)
+    {
+        DataManager.Instance.PlayerData.SCPlayerInfo(msg);
     }
 }
