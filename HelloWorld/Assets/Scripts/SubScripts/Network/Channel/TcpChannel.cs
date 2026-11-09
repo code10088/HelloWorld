@@ -32,20 +32,21 @@ public class TcpChannel : ChannelInterface
     }
     public void Dispose()
     {
-        Close();
+        content?.Dispose();
     }
     public void Send(ushort id, ISerialize msg)
     {
         content?.Send(id, msg);
     }
 
-    public class TcpContent
+
+    private class TcpContent
     {
         private TcpChannel channel;
         private SocketHandle socket;
-        private SemaphoreSlim signal;
-        private CancellationTokenSource cts;
-        private ConcurrentQueue<SendItem> sendQueue;
+        private SemaphoreSlim signal = new SemaphoreSlim(0);
+        private CancellationTokenSource cts = new CancellationTokenSource();
+        private ConcurrentQueue<SendItem> sendQueue = new ConcurrentQueue<SendItem>();
         private int state = (int)ConnectState.Idle;
 
         public ConnectState State => (ConnectState)Volatile.Read(ref state);
@@ -81,9 +82,6 @@ public class TcpChannel : ChannelInterface
                 return;
             }
             this.socket = socket;
-            signal = new SemaphoreSlim(0);
-            cts = new CancellationTokenSource();
-            sendQueue = new ConcurrentQueue<SendItem>();
             _ = SendTask(cts.Token);
             _ = RecvTask(cts.Token);
             Volatile.Write(ref state, (int)ConnectState.Connected);
@@ -106,11 +104,8 @@ public class TcpChannel : ChannelInterface
         #region 发送
         public void Send(ushort id, ISerialize msg)
         {
-            if (State == ConnectState.Connected)
-            {
-                sendQueue?.Enqueue(new SendItem(id, msg));
-                signal?.Release();
-            }
+            sendQueue?.Enqueue(new SendItem(id, msg));
+            signal?.Release();
         }
         private async Task SendTask(CancellationToken token)
         {
