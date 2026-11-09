@@ -92,8 +92,8 @@ public class KcpChannel : ChannelInterface
         conv = 0;
         var sw = Stopwatch.StartNew();
         var stamp = sw.ElapsedMilliseconds;
-        var send = UnsafeByteBuffer.Rent(2048);
-        var recv = UnsafeByteBuffer.Rent(2048);
+        var send = UnsafeByteBuffer.Rent(10240);
+        var recv = UnsafeByteBuffer.Rent(10240);
         send.SetWPos(0);
         send.WriteUShort(NetMsgId.Message_CSSession);
         send.WriteString(dispatch.Token);
@@ -213,7 +213,7 @@ public class KcpChannel : ChannelInterface
     }
     private async Task SendTask(int v, CancellationToken token)
     {
-        var buffer = UnsafeByteBuffer.Rent(2048);
+        var buffer = UnsafeByteBuffer.Rent(10240);
         int fail = 0;
         while (true)
         {
@@ -320,7 +320,7 @@ public class KcpChannel : ChannelInterface
     #region 接收
     private async Task RecvTask(int v, CancellationToken token)
     {
-        var buffer = UnsafeByteBuffer.Rent(2048);
+        var buffer = UnsafeByteBuffer.Rent(10240);
         while (true)
         {
             int count = await socket.ReceiveAsync(buffer.Memory, token).ConfigureAwait(false);

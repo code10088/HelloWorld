@@ -27,7 +27,14 @@ public class SocketHandle
 
     public bool Poll(int microSeconds, SelectMode mode)
     {
-        return socket.Poll(microSeconds, mode);
+        try
+        {
+            return socket.Poll(microSeconds, mode);
+        }
+        catch
+        {
+            return true;
+        }
     }
 
     #region 同步
