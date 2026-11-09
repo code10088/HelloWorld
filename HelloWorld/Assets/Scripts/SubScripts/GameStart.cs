@@ -74,7 +74,7 @@ public class GameStart : Singleton<GameStart>
         EventManager.Instance.Register(EventType.RefreshPlayerData, EnterMainScene);
         var host = AccountInfo.Instance.Host;
         var port = AccountInfo.Instance.Port;
-        NetClient.Instance.Create<TcpChannel>(host, port, NetMsgDispatch.Instance);
+        NetClient.Instance.Create<TcpChannel>(host, port);
         NetClient.Instance.Connect();
     }
     private void EnterMainScene()

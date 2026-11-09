@@ -6,7 +6,7 @@ public class NetMsgId
     public const ushort {{ msg.name }} = {{ msg.id }};
 {{~ end ~}}
 }
-public partial class NetMsgDispatch
+public partial class NetMsgHandle
 {
     public bool Deserialize(ushort id, UnsafeByteBuffer buffer)
     {
@@ -23,7 +23,7 @@ public partial class NetMsgDispatch
                 default: return true;
             }
             msg.Deserialize(buffer);
-            HandleMsg(id, msg);
+            Handle(id, msg);
             return true;
         }
         catch (Exception e)

@@ -8,21 +8,21 @@ using System.Net.Sockets.Kcp;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class KcpChannel : ChannelInterface
+public class KcpChannel : IChannel
 {
     private string ip;
     private ushort port;
-    private IDispatch dispatch;
+    private IChannelHandle handle;
     private KcpContent content;
     private int version;
 
     public ConnectState State => content?.State ?? ConnectState.Idle;
 
-    public void Init(string ip, ushort port, IDispatch dispatch)
+    public void Init(string ip, ushort port, IChannelHandle handle)
     {
         this.ip = ip;
         this.port = port;
-        this.dispatch = dispatch;
+        this.handle = handle;
     }
     public void Connect()
     {
@@ -74,7 +74,7 @@ public class KcpChannel : ChannelInterface
         {
             if (!NetworkInterface.GetIsNetworkAvailable())
             {
-                channel.dispatch.HandleNetEvent(NetEvent.ConnectError, 0);
+                channel.handle.HandleEvent(NetEvent.ConnectError, 0);
                 return;
             }
             var socket = new SocketHandle(channel.ip, channel.port);
@@ -87,7 +87,7 @@ public class KcpChannel : ChannelInterface
             if (!success)
             {
                 socket.Dispose();
-                channel.dispatch.HandleNetEvent(NetEvent.ConnectError, 0);
+                channel.handle.HandleEvent(NetEvent.ConnectError, 0);
                 return;
             }
             var send = UnsafeByteBuffer.Rent(10240);
@@ -105,7 +105,7 @@ public class KcpChannel : ChannelInterface
                 UnsafeByteBuffer.Return(send);
                 UnsafeByteBuffer.Return(recv);
                 socket.Dispose();
-                channel.dispatch.HandleNetEvent(NetEvent.ConnectError, 0);
+                channel.handle.HandleEvent(NetEvent.ConnectError, 0);
                 return;
             }
             if (conv == 0)
@@ -113,7 +113,7 @@ public class KcpChannel : ChannelInterface
                 UnsafeByteBuffer.Return(send);
                 UnsafeByteBuffer.Return(recv);
                 socket.Dispose();
-                channel.dispatch.HandleNetEvent(NetEvent.InvalidToken, 0);
+                channel.handle.HandleEvent(NetEvent.InvalidToken, 0);
                 return;
             }
             this.socket = socket;
@@ -127,7 +127,7 @@ public class KcpChannel : ChannelInterface
             _ = UpdateTask(cts.Token);
             _ = RecvTask(recv, cts.Token);
             Volatile.Write(ref state, (int)ConnectState.Connected);
-            channel.dispatch.HandleNetEvent(NetEvent.Connected, 0);
+            channel.handle.HandleEvent(NetEvent.Connected, 0);
         }
         private bool Handshake(SocketHandle socket, UnsafeByteBuffer send, UnsafeByteBuffer recv, out uint conv)
         {
@@ -137,7 +137,7 @@ public class KcpChannel : ChannelInterface
             var stamp = sw.ElapsedMilliseconds;
             send.SetWPos(0);
             send.WriteUShort(NetMsgId.Message_CSSession);
-            send.WriteString(channel.dispatch.Token);
+            send.WriteString(channel.handle.Token);
             send.WriteInt(channel.version);
             while (true)
             {
@@ -332,7 +332,7 @@ public class KcpChannel : ChannelInterface
                     if (size <= 0) return true;
                     buffer.SetWPos(size);
                     buffer.SetRPos(0);
-                    if (!channel.dispatch.Deserialize(buffer)) return false;
+                    if (!channel.handle.Deserialize(buffer)) return false;
                 }
             }
             catch

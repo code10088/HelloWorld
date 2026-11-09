@@ -143,7 +143,7 @@ public class GameEditorTools
             UnityEngine.Debug.LogError("模板渲染异常：" + ex.Message);
             return;
         }
-        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Network/NetMsgDispatch_Auto.cs", result);
+        File.WriteAllText($"{Application.dataPath}/Scripts/SubScripts/Network/Handle/NetMsgHandle_Auto.cs", result);
         AssetDatabase.Refresh();
     }
     private class NetMessage

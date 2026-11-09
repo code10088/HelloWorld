@@ -5,20 +5,20 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class TcpChannel : ChannelInterface
+public class TcpChannel : IChannel
 {
     private string ip;
     private ushort port;
-    private IDispatch dispatch;
+    private IChannelHandle handle;
     private TcpContent content;
 
     public ConnectState State => content?.State ?? ConnectState.Idle;
 
-    public void Init(string ip, ushort port, IDispatch dispatch)
+    public void Init(string ip, ushort port, IChannelHandle handle)
     {
         this.ip = ip;
         this.port = port;
-        this.dispatch = dispatch;
+        this.handle = handle;
     }
     public void Connect()
     {
@@ -65,7 +65,7 @@ public class TcpChannel : ChannelInterface
         {
             if (!NetworkInterface.GetIsNetworkAvailable())
             {
-                channel.dispatch.HandleNetEvent(NetEvent.ConnectError, 0);
+                channel.handle.HandleEvent(NetEvent.ConnectError, 0);
                 return;
             }
             var socket = new SocketHandle(channel.ip, channel.port);
@@ -78,14 +78,14 @@ public class TcpChannel : ChannelInterface
             if (!success)
             {
                 socket.Dispose();
-                channel.dispatch.HandleNetEvent(NetEvent.ConnectError, 0);
+                channel.handle.HandleEvent(NetEvent.ConnectError, 0);
                 return;
             }
             this.socket = socket;
             _ = SendTask(cts.Token);
             _ = RecvTask(cts.Token);
             Volatile.Write(ref state, (int)ConnectState.Connected);
-            channel.dispatch.HandleNetEvent(NetEvent.Connected, 0);
+            channel.handle.HandleEvent(NetEvent.Connected, 0);
         }
         public void Dispose()
         {
@@ -204,7 +204,7 @@ public class TcpChannel : ChannelInterface
                     pos += l;
                     if (body.WPos == count)
                     {
-                        var b = channel.dispatch.Deserialize(body);
+                        var b = channel.handle.Deserialize(body);
                         head.Clear();
                         body.Clear();
                         count = 0;

@@ -12,14 +12,20 @@ public enum NetEvent
     ConnectError,
     InvalidToken,
 }
-public interface ChannelInterface
+public interface IChannel
 {
     public ConnectState State { get; }
-    public void Init(string ip, ushort port, IDispatch dispatch);
+    public void Init(string ip, ushort port, IChannelHandle handle);
     public void Connect();
     public void Close();
     public void Dispose();
     public void Send(ushort id, ISerialize msg);
+}
+public interface IChannelHandle
+{
+    public string Token { get; }
+    public void HandleEvent(NetEvent type, int param);
+    public bool Deserialize(UnsafeByteBuffer buffer);
 }
 public struct SendItem
 {

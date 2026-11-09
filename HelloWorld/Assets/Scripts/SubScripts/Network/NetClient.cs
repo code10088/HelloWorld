@@ -1,19 +1,14 @@
-public interface IDispatch
-{
-    public string Token { get; }
-    public bool Deserialize(UnsafeByteBuffer buffer);
-    public void HandleNetEvent(NetEvent type, int code);
-}
 public class NetClient : Singleton<NetClient>
 {
-    private ChannelInterface channel;
+    private IChannel channel;
+    private ChannelHandle handle = new ChannelHandle();
 
     public ConnectState State => channel?.State ?? ConnectState.Idle;
 
-    public void Create<T>(string ip, ushort port, IDispatch dispatch) where T : ChannelInterface, new()
+    public void Create<T>(string ip, ushort port) where T : IChannel, new()
     {
         channel = new T();
-        channel.Init(ip, port, dispatch);
+        channel.Init(ip, port, handle);
     }
     public void Connect()
     {

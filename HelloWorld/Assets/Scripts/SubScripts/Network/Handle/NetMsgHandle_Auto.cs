@@ -20,7 +20,7 @@ public class NetMsgId
     public const ushort Message_SCGetMailAllReward = 10103;
     public const ushort Message_SCDeleteMail = 10104;
 }
-public partial class NetMsgDispatch
+public partial class NetMsgHandle
 {
     public bool Deserialize(UnsafeByteBuffer buffer)
     {
@@ -39,7 +39,7 @@ public partial class NetMsgDispatch
                 default: return true;
             }
             msg.Deserialize(buffer);
-            HandleMsg(id, msg);
+            Handle(id, msg);
             return true;
         }
         catch (Exception e)
