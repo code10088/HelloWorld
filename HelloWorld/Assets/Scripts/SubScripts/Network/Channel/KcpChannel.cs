@@ -178,18 +178,6 @@ public class KcpChannel : IChannel
         #endregion
 
         #region 发送
-        private class KcpSend : IKcpCallback
-        {
-            private Action<IMemoryOwner<byte>, int> Out;
-            public KcpSend(Action<IMemoryOwner<byte>, int> _out)
-            {
-                Out = _out;
-            }
-            public void Output(IMemoryOwner<byte> owner, int avalidLength)
-            {
-                Out(owner, avalidLength);
-            }
-        }
         public void Send(ushort id, ISerialize msg)
         {
             sendQueue1?.Enqueue(new SendItem(id, msg));
@@ -280,6 +268,18 @@ public class KcpChannel : IChannel
             else
             {
                 owner.Dispose();
+            }
+        }
+        private class KcpSend : IKcpCallback
+        {
+            private Action<IMemoryOwner<byte>, int> Out;
+            public KcpSend(Action<IMemoryOwner<byte>, int> _out)
+            {
+                Out = _out;
+            }
+            public void Output(IMemoryOwner<byte> owner, int avalidLength)
+            {
+                Out(owner, avalidLength);
             }
         }
         private struct KcpPacket
