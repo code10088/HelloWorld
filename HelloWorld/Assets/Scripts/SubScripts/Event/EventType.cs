@@ -15,4 +15,5 @@
     RefreshActivity,
     EndActivity,
     RefreshMail,
+    CrossDay,
 }
