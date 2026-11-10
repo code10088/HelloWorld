@@ -9,7 +9,6 @@ public class GameStart : Singleton<GameStart>
     {
         Process.Add(new ActionProcessItem(InitLanguage));
         Process.Add(new ActionProcessItem(InitUIConfig));
-        Process.Add(new ActionProcessItem(OpenUIHotUpdateRes));
         Process.Add(new ActionProcessItem(HotUpdate));
         Process.Add(new ActionProcessItem(Login));
         Process.Add(new ActionProcessItem(InitConfig));
@@ -24,22 +23,14 @@ public class GameStart : Singleton<GameStart>
     {
         ConfigManager.Instance.InitUIConfig(Process.Next);
     }
-    private void OpenUIHotUpdateRes()
-    {
-        UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, a =>
-        {
-            UIHotUpdateCode.Instance.Destroy();
-            Process.Next();
-        });
-    }
     private void HotUpdate()
     {
+        UIManager.Instance.OpenUI(UIType.UIHotUpdateRes, a => UIHotUpdateCode.Instance?.Destroy());
         DataManager.Instance.HotUpdateResData.StartUpdate(Process.Next);
     }
     private void Login()
     {
-        UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
-        UIManager.Instance.OpenUI(UIType.UISceneLoading);
+        UIManager.Instance.OpenUI(UIType.UISceneLoading, a => UIManager.Instance.CloseUI(UIType.UIHotUpdateRes));
         AccountInfo.Instance.SetCallback(Process.Next);
         AccountInfo.Instance.LoginWithAuto();
     }

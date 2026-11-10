@@ -71,8 +71,8 @@ public class HotUpdateResData : DataBase
     private void Downloading(DownloadProgressChangedEventArgs args)
     {
         var hotUpdateRes = UIManager.Instance.GetUI(UIType.UIHotUpdateRes) as UIHotUpdateRes;
-        hotUpdateRes.SetText($"HotUpdateRes£º{args.CurrentDownloadBytes}/{args.TotalDownloadBytes}");
-        hotUpdateRes.SetSlider(args.Progress);
+        hotUpdateRes?.SetText($"HotUpdateRes£º{args.CurrentDownloadBytes}/{args.TotalDownloadBytes}");
+        hotUpdateRes?.SetSlider(args.Progress);
     }
     private void DownloadError(DownloadErrorEventArgs args)
     {
