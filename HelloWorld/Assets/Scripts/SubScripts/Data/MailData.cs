@@ -1,4 +1,4 @@
-using Message;
+ï»¿using Message;
 using System.Collections.Generic;
 
 public class MailData : DataBase
@@ -14,26 +14,6 @@ public class MailData : DataBase
         NetClient.Instance.Register(NetMsgId.Message_SCGetMailReward, SCGetMailReward);
         NetClient.Instance.Register(NetMsgId.Message_SCGetMailAllReward, SCGetMailAllReward);
         NetClient.Instance.Register(NetMsgId.Message_SCDeleteMail, SCDeleteMail);
-
-        //²âÊÔ
-        all = new()
-        {
-            new MailDetail() { mailId = 1, title = "1", time = 1767710843 },
-            new MailDetail() { mailId = 2, title = "2", time = 1767710843 },
-            new MailDetail() { mailId = 3, title = "3", time = 1767710843 },
-            new MailDetail() { mailId = 4, title = "4", time = 1767710843 },
-            new MailDetail() { mailId = 5, title = "5", time = 1767710843 },
-            new MailDetail() { mailId = 6, title = "6", time = 1767710843 },
-            new MailDetail() { mailId = 7, title = "7", time = 1767710843 },
-            new MailDetail() { mailId = 8, title = "8", time = 1767710843 },
-            new MailDetail() { mailId = 9, title = "9", time = 1767710843 },
-            new MailDetail() { mailId = 10, title = "10", time = 1767710843 },
-        };
-        foreach (var item in all)
-        {
-            item.rewards.Add(new RewardInfo { itemId = 1, count = 10 });
-        }
-        EventManager.Instance.Fire(EventType.RefreshMail);
     }
     public void Clear()
     {
@@ -54,37 +34,19 @@ public class MailData : DataBase
         EventManager.Instance.Fire(EventType.RefreshMail);
     }
     /// <summary>
-    /// ¹Ø±Õ½çÃæÊ±µ÷ÓÃ£¬ÅúÁ¿±ê¼ÇÒÑ¶Á
+    /// å…³é—­ç•Œé¢æ—¶è°ƒç”¨ï¼Œå‘é€å·²è¯»æ¶ˆæ¯
     /// </summary>
     public void CSReadMail()
     {
         NetClient.Instance.Send(NetMsgId.Message_CSReadMail, new CSReadMail { lists = readList.ToArray() });
-
-        //²âÊÔ
-        foreach (var mail in readList)
-        {
-            var data = all.Find(a => a.mailId == mail);
-            if (data != null && data.status == 0) data.status = 1;
-        }
     }
     /// <summary>
-    /// µ¥¸öÁìÈ¡½±Àø
+    /// é¢†å–å•å°é‚®ä»¶å¥–åŠ±
     /// </summary>
-    /// <param name="id"></param>
     public void CSGetMailReward(uint id)
     {
         NetClient.Instance.Send(NetMsgId.Message_CSGetMailReward, new CSGetMailReward { mailId = id });
-
-        //²âÊÔ
-        var data = all.Find(a => a.mailId == id);
-        data.status = 2;
-        EventManager.Instance.Fire(EventType.RefreshMail);
-        DataManager.Instance.ShowRewardData.ShowRewards(data.rewards);
     }
-    /// <summary>
-    /// µ¥¸öÁìÈ¡½±Àø
-    /// </summary>
-    /// <param name="msg"></param>
     private void SCGetMailReward(IDeserialize msg)
     {
         var mail = (SCGetMailReward)msg;
@@ -98,31 +60,14 @@ public class MailData : DataBase
         DataManager.Instance.ShowRewardData.ShowRewards(data.rewards);
     }
     /// <summary>
-    /// Ò»¼üÁìÈ¡ËùÓĞ½±Àø
+    /// ä¸€é”®é¢†å–æ‰€æœ‰å¥–åŠ±
     /// </summary>
     public void CSGetMailAllReward()
     {
         NetClient.Instance.Send(NetMsgId.Message_CSGetMailAllReward, new CSGetMailAllReward());
-
-        //²âÊÔ
-        List<RewardInfo> rewards = new();
-        foreach (var item in all)
-        {
-            if (item.status < 2 && item.rewards.Count > 0)
-            {
-                item.status = 2;
-                rewards.AddRange(item.rewards);
-            }
-        }
-        EventManager.Instance.Fire(EventType.RefreshMail);
-        DataManager.Instance.ShowRewardData.ShowRewards(rewards);
     }
-    /// <summary>
-    /// Ò»¼üÁìÈ¡ËùÓĞ½±Àø
-    /// </summary>
     private void SCGetMailAllReward(IDeserialize msg)
     {
-        var mail = (SCGetMailAllReward)msg;
         List<RewardInfo> rewards = new();
         foreach (var item in all)
         {
@@ -136,21 +81,12 @@ public class MailData : DataBase
         DataManager.Instance.ShowRewardData.ShowRewards(rewards);
     }
     /// <summary>
-    /// µ¥¸öÉ¾³ıÓÊ¼ş
+    /// åˆ é™¤å•å°é‚®ä»¶
     /// </summary>
-    /// <param name="id"></param>
     public void CSDeleteMail(uint id)
     {
         NetClient.Instance.Send(NetMsgId.Message_CSDeleteMail, new CSDeleteMail { mailId = id });
-
-        //²âÊÔ
-        var index = all.FindIndex(a => a.mailId == id);
-        all.RemoveAt(index);
-        EventManager.Instance.Fire(EventType.RefreshMail);
     }
-    /// <summary>
-    /// µ¥¸öÉ¾³ıÓÊ¼ş
-    /// </summary>
     private void SCDeleteMail(IDeserialize msg)
     {
         var mail = (SCDeleteMail)msg;
@@ -165,18 +101,12 @@ public class MailData : DataBase
         }
     }
     /// <summary>
-    /// É¾³ıÒÑ¶ÁÓÊ¼ş
+    /// åˆ é™¤å·²è¯»é‚®ä»¶
     /// </summary>
-    /// <param name="msg"></param>
     public void CSDeleteAllMail()
     {
         NetClient.Instance.Send(NetMsgId.Message_CSDeleteAllMail, new CSDeleteAllMail());
-
-        //²âÊÔ
-        all.Clear();
-        EventManager.Instance.Fire(EventType.RefreshMail);
     }
-
 
     public void SetRead(uint id)
     {

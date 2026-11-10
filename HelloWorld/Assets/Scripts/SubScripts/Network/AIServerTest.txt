@@ -8,6 +8,8 @@
 //      服务器 -> 客户端：[uint16 10000][int32 1][uint32 conv]
 // 5. KCP 版是单客户端测试服务器；多客户端需要按 RemoteEndPoint 维护多个 Kcp 实例。
 // 6. KCP 需要引用工程内 Plugins/Kcp 的源码或程序集。
+// 7. 鉴权流程：收到 CSAuth(1) -> 返回 SCAuth(10001) code=1 + time，然后下发 SCPlayerData。
+//    如果要测试鉴权失败，把 SCAuth 的 code 改成 0。
 
 #region tcp
 // using System;
@@ -24,6 +26,7 @@
 //     private const int Port = 8088;
 //     private const int MaxBodyLength = 16 * 1024;
 //
+//     private const ushort Message_CSAuth = 1;
 //     private const ushort Message_CSHeart = 2;
 //     private const ushort Message_CSMail = 100;
 //     private const ushort Message_CSReadMail = 101;
@@ -32,12 +35,28 @@
 //     private const ushort Message_CSDeleteMail = 104;
 //     private const ushort Message_CSDeleteAllMail = 105;
 //
+//     private const ushort Message_SCAuth = 10001;
 //     private const ushort Message_SCHeart = 10002;
 //     private const ushort Message_SCPlayerData = 10003;
 //     private const ushort Message_SCMail = 10100;
 //     private const ushort Message_SCGetMailReward = 10102;
 //     private const ushort Message_SCGetMailAllReward = 10103;
 //     private const ushort Message_SCDeleteMail = 10104;
+//
+//     class TestMail
+//     {
+//         public uint id;
+//         public uint status;
+//         public string title;
+//         public string content;
+//         public List<TestReward> rewards = new List<TestReward>();
+//     }
+//
+//     class TestReward
+//     {
+//         public uint itemId;
+//         public uint count;
+//     }
 //
 //     static async Task Main()
 //     {
@@ -62,20 +81,10 @@
 //         {
 //             var head = new byte[4];
 //             var body = new byte[MaxBodyLength];
+//             var mails = CreateMails();
 //
 //             try
 //             {
-//                 // 客户端连上后先下发玩家数据，触发 RefreshPlayerData -> 进入主界面
-//                 await SendFrameAsync(stream, Message_SCPlayerData, b =>
-//                 {
-//                     WriteUInt(b, 10001);                   // playerId
-//                     WriteString(b, "TestPlayer");          // nickName
-//                     WriteString(b, "avatar_01");           // avatar
-//                     WriteUInt(b, 1);                       // level
-//                     WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds()); // registerTime
-//                     WriteUInt(b, 0);                       // mail
-//                 });
-//
 //                 while (true)
 //                 {
 //                     await ReadExactAsync(stream, head, 0, 4);
@@ -93,51 +102,94 @@
 //
 //                     switch (id)
 //                     {
+//                         case Message_CSAuth:
+//                             {
+//                                 string token = ReadString(body, 2, bodyLength);
+//                                 Console.WriteLine($"鉴权 token={token}");
+//
+//                                 // 测试鉴权失败：把 code 改成 0
+//                                 await SendFrameAsync(stream, Message_SCAuth, b =>
+//                                 {
+//                                     WriteInt(b, 1);              // code: 1=成功
+//                                     WriteLong(b, NowMs());       // 服务器时间
+//                                 });
+//
+//                                 // 鉴权成功后再下发玩家数据，触发 RefreshPlayerData
+//                                 await SendFrameAsync(stream, Message_SCPlayerData, WritePlayerData);
+//                             }
+//                             break;
+//
 //                         case Message_CSHeart:
 //                             await SendFrameAsync(stream, Message_SCHeart, b =>
-//                                 WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
+//                                 WriteLong(b, NowMs()));
 //                             break;
 //
 //                         case Message_CSMail:
-//                             await SendFrameAsync(stream, Message_SCMail, WriteSampleMail);
+//                             await SendFrameAsync(stream, Message_SCMail, b =>
+//                                 WriteMailList(b, mails));
 //                             break;
 //
 //                         case Message_CSReadMail:
-//                             // 简化处理：读完邮件后重新下发一次邮件列表
-//                             await SendFrameAsync(stream, Message_SCMail, WriteSampleMail);
+//                             {
+//                                 int count = bodyLength >= 6 ? ReadInt(body, 2) : 0;
+//                                 for (int i = 0; i < count; i++)
+//                                 {
+//                                     int offset = 6 + i * 4;
+//                                     if (offset + 4 > bodyLength) break;
+//
+//                                     uint mailId = ReadUInt(body, offset);
+//                                     var mail = mails.Find(m => m.id == mailId);
+//                                     if (mail != null && mail.status == 0)
+//                                         mail.status = 1;
+//                                 }
+//
+//                                 await SendFrameAsync(stream, Message_SCMail, b =>
+//                                     WriteMailList(b, mails));
+//                             }
 //                             break;
 //
 //                         case Message_CSGetMailReward:
 //                             {
-//                                 uint mailId = bodyLength >= 6
-//                                     ? BinaryPrimitives.ReadUInt32LittleEndian(body.AsSpan(2, 4))
-//                                     : 0;
+//                                 uint mailId = bodyLength >= 6 ? ReadUInt(body, 2) : 0;
+//                                 var mail = mails.Find(m => m.id == mailId);
+//                                 if (mail != null)
+//                                     mail.status = 2;
+//
 //                                 await SendFrameAsync(stream, Message_SCGetMailReward, b =>
 //                                 {
-//                                     WriteInt(b, 1);       // status
+//                                     WriteInt(b, 0);          // 0=成功
 //                                     WriteUInt(b, mailId);
 //                                 });
 //                             }
 //                             break;
 //
 //                         case Message_CSGetMailAllReward:
-//                             await SendFrameAsync(stream, Message_SCGetMailAllReward, null);
+//                             {
+//                                 foreach (var mail in mails)
+//                                 {
+//                                     if (mail.status < 2)
+//                                         mail.status = 2;
+//                                 }
+//
+//                                 await SendFrameAsync(stream, Message_SCGetMailAllReward, null);
+//                             }
 //                             break;
 //
 //                         case Message_CSDeleteMail:
 //                             {
-//                                 uint mailId = bodyLength >= 6
-//                                     ? BinaryPrimitives.ReadUInt32LittleEndian(body.AsSpan(2, 4))
-//                                     : 0;
+//                                 uint mailId = bodyLength >= 6 ? ReadUInt(body, 2) : 0;
+//                                 mails.RemoveAll(m => m.id == mailId);
+//
 //                                 await SendFrameAsync(stream, Message_SCDeleteMail, b =>
 //                                 {
-//                                     WriteInt(b, 1);       // status
+//                                     WriteInt(b, 0);          // 0=成功
 //                                     WriteUInt(b, mailId);
 //                                 });
 //                             }
 //                             break;
 //
 //                         case Message_CSDeleteAllMail:
+//                             mails.Clear();
 //                             await SendFrameAsync(stream, Message_SCMail, b => WriteInt(b, 0));
 //                             break;
 //
@@ -153,6 +205,65 @@
 //             }
 //         }
 //     }
+//
+//     static List<TestMail> CreateMails()
+//     {
+//         return new List<TestMail>
+//         {
+//             new TestMail
+//             {
+//                 id = 1,
+//                 status = 0,
+//                 title = "测试邮件1",
+//                 content = "欢迎来到游戏",
+//                 rewards = new List<TestReward>
+//                 {
+//                     new TestReward { itemId = 1001, count = 10 },
+//                 },
+//             },
+//             new TestMail
+//             {
+//                 id = 2,
+//                 status = 0,
+//                 title = "测试邮件2",
+//                 content = "这是一封测试邮件",
+//                 rewards = new List<TestReward>(),
+//             },
+//         };
+//     }
+//
+//     static void WriteMailList(List<byte> b, List<TestMail> mails)
+//     {
+//         WriteInt(b, mails.Count);
+//         foreach (var mail in mails)
+//         {
+//             WriteUInt(b, mail.id);
+//             WriteInt(b, 0);                        // type
+//             WriteUInt(b, mail.status);
+//             WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+//             WriteString(b, mail.title);
+//             WriteString(b, mail.content);
+//             WriteInt(b, mail.rewards.Count);
+//
+//             foreach (var reward in mail.rewards)
+//             {
+//                 WriteUInt(b, reward.itemId);
+//                 WriteUInt(b, reward.count);
+//             }
+//         }
+//     }
+//
+//     static void WritePlayerData(List<byte> b)
+//     {
+//         WriteUInt(b, 10001);                       // playerId
+//         WriteString(b, "TestPlayer");              // nickName
+//         WriteString(b, "avatar_01");               // avatar
+//         WriteUInt(b, 1);                           // level
+//         WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds()); // registerTime
+//         WriteUInt(b, 0);                           // mail
+//     }
+//
+//     static long NowMs() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 //
 //     static async Task ReadExactAsync(NetworkStream stream, byte[] buffer, int offset, int count)
 //     {
@@ -178,19 +289,20 @@
 //         await stream.WriteAsync(packet, 0, packet.Length);
 //     }
 //
-//     static void WriteSampleMail(List<byte> b)
+//     static string ReadString(byte[] body, int offset, int bodyLength)
 //     {
-//         WriteInt(b, 1);                                // 邮件数量
-//         WriteUInt(b, 1);                               // mailId
-//         WriteInt(b, 0);                                // type
-//         WriteUInt(b, 0);                               // status
-//         WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-//         WriteString(b, "测试邮件");
-//         WriteString(b, "这是一封测试邮件");
-//         WriteInt(b, 1);                                // 奖励数量
-//         WriteUInt(b, 1001);                            // itemId
-//         WriteUInt(b, 10);                              // count
+//         if (offset + 2 > bodyLength) return string.Empty;
+//         int length = BinaryPrimitives.ReadUInt16LittleEndian(body.AsSpan(offset, 2));
+//         offset += 2;
+//         if (offset + length > bodyLength) return string.Empty;
+//         return Encoding.UTF8.GetString(body, offset, length);
 //     }
+//
+//     static int ReadInt(byte[] body, int offset)
+//         => BinaryPrimitives.ReadInt32LittleEndian(body.AsSpan(offset, 4));
+//
+//     static uint ReadUInt(byte[] body, int offset)
+//         => BinaryPrimitives.ReadUInt32LittleEndian(body.AsSpan(offset, 4));
 //
 //     static void WriteUShort(List<byte> b, ushort v)
 //     {
@@ -251,6 +363,7 @@
 // {
 //     private const ushort Message_CSSession = 0;
 //     private const ushort Message_SCSession = 10000;
+//     private const ushort Message_CSAuth = 1;
 //     private const ushort Message_CSHeart = 2;
 //     private const ushort Message_CSMail = 100;
 //     private const ushort Message_CSReadMail = 101;
@@ -258,12 +371,28 @@
 //     private const ushort Message_CSGetMailAllReward = 103;
 //     private const ushort Message_CSDeleteMail = 104;
 //     private const ushort Message_CSDeleteAllMail = 105;
+//     private const ushort Message_SCAuth = 10001;
 //     private const ushort Message_SCHeart = 10002;
 //     private const ushort Message_SCPlayerData = 10003;
 //     private const ushort Message_SCMail = 10100;
 //     private const ushort Message_SCGetMailReward = 10102;
 //     private const ushort Message_SCGetMailAllReward = 10103;
 //     private const ushort Message_SCDeleteMail = 10104;
+//
+//     class TestMail
+//     {
+//         public uint id;
+//         public uint status;
+//         public string title;
+//         public string content;
+//         public List<TestReward> rewards = new List<TestReward>();
+//     }
+//
+//     class TestReward
+//     {
+//         public uint itemId;
+//         public uint count;
+//     }
 //
 //     private readonly UdpClient udp;
 //     private readonly object gate = new object();
@@ -272,6 +401,7 @@
 //     private uint conv;
 //     private int convSeed;
 //     private int lastVersion;
+//     private List<TestMail> mails = CreateMails();
 //
 //     public KcpServer(int port)
 //     {
@@ -381,7 +511,7 @@
 //         string token = Encoding.UTF8.GetString(data, 4, tokenLength);
 //         int version = BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(4 + tokenLength, 4));
 //
-//         Console.WriteLine($"KCP 握手: version={version}, endpoint={endpoint}");
+//         Console.WriteLine($"KCP 握手: token={token}, version={version}, endpoint={endpoint}");
 //
 //         lock (gate)
 //         {
@@ -405,8 +535,7 @@
 //
 //             SendHandshakeResponse(endpoint, conv);
 //
-//             // 客户端进入 Connected 后需要 SCPlayerData 才会触发进主界面
-//             SendPlayerData();
+//             // 不在握手阶段下发业务数据，等客户端 CSAuth 后再下发
 //         }
 //     }
 //
@@ -437,17 +566,50 @@
 //
 //         switch (id)
 //         {
+//             case Message_CSAuth:
+//                 {
+//                     string token = ReadString(message, 2);
+//                     Console.WriteLine($"鉴权 token={token}");
+//
+//                     // 测试鉴权失败：把 code 改成 0
+//                     Send(Message_SCAuth, b =>
+//                     {
+//                         WriteInt(b, 1);                  // code: 1=成功
+//                         WriteLong(b, NowMs());           // 服务器时间
+//                     });
+//
+//                     // 鉴权成功后再下发玩家数据，触发 RefreshPlayerData
+//                     SendPlayerData();
+//                 }
+//                 break;
+//
 //             case Message_CSHeart:
 //                 Send(Message_SCHeart, b =>
-//                     WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
+//                     WriteLong(b, NowMs()));
 //                 break;
 //
 //             case Message_CSMail:
-//                 Send(Message_SCMail, WriteSampleMail);
+//                 Send(Message_SCMail, b => WriteMailList(b, mails));
 //                 break;
 //
 //             case Message_CSReadMail:
-//                 Send(Message_SCMail, WriteSampleMail);
+//                 {
+//                     int count = message.Length >= 6
+//                         ? BinaryPrimitives.ReadInt32LittleEndian(message.AsSpan(2, 4))
+//                         : 0;
+//                     for (int i = 0; i < count; i++)
+//                     {
+//                         int offset = 6 + i * 4;
+//                         if (offset + 4 > message.Length) break;
+//
+//                         uint mailId = BinaryPrimitives.ReadUInt32LittleEndian(message.AsSpan(offset, 4));
+//                         var mail = mails.Find(m => m.id == mailId);
+//                         if (mail != null && mail.status == 0)
+//                             mail.status = 1;
+//                     }
+//
+//                     Send(Message_SCMail, b => WriteMailList(b, mails));
+//                 }
 //                 break;
 //
 //             case Message_CSGetMailReward:
@@ -455,16 +617,28 @@
 //                     uint mailId = message.Length >= 6
 //                         ? BinaryPrimitives.ReadUInt32LittleEndian(message.AsSpan(2, 4))
 //                         : 0;
+//                     var mail = mails.Find(m => m.id == mailId);
+//                     if (mail != null)
+//                         mail.status = 2;
+//
 //                     Send(Message_SCGetMailReward, b =>
 //                     {
-//                         WriteInt(b, 1);       // status
+//                         WriteInt(b, 0);                  // 0=成功
 //                         WriteUInt(b, mailId);
 //                     });
 //                 }
 //                 break;
 //
 //             case Message_CSGetMailAllReward:
-//                 Send(Message_SCGetMailAllReward, null);
+//                 {
+//                     foreach (var mail in mails)
+//                     {
+//                         if (mail.status < 2)
+//                             mail.status = 2;
+//                     }
+//
+//                     Send(Message_SCGetMailAllReward, null);
+//                 }
 //                 break;
 //
 //             case Message_CSDeleteMail:
@@ -472,15 +646,18 @@
 //                     uint mailId = message.Length >= 6
 //                         ? BinaryPrimitives.ReadUInt32LittleEndian(message.AsSpan(2, 4))
 //                         : 0;
+//                     mails.RemoveAll(m => m.id == mailId);
+//
 //                     Send(Message_SCDeleteMail, b =>
 //                     {
-//                         WriteInt(b, 1);       // status
+//                         WriteInt(b, 0);                  // 0=成功
 //                         WriteUInt(b, mailId);
 //                     });
 //                 }
 //                 break;
 //
 //             case Message_CSDeleteAllMail:
+//                 mails.Clear();
 //                 Send(Message_SCMail, b => WriteInt(b, 0));
 //                 break;
 //
@@ -514,19 +691,63 @@
 //             Console.WriteLine($"KCP Send 失败: {result}, id={id}");
 //     }
 //
-//     private static void WriteSampleMail(List<byte> b)
+//     private static List<TestMail> CreateMails()
 //     {
-//         WriteInt(b, 1);                                // 邮件数量
-//         WriteUInt(b, 1);                               // mailId
-//         WriteInt(b, 0);                                // type
-//         WriteUInt(b, 0);                               // status
-//         WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-//         WriteString(b, "测试邮件");
-//         WriteString(b, "这是一封测试邮件");
-//         WriteInt(b, 1);                                // 奖励数量
-//         WriteUInt(b, 1001);                            // itemId
-//         WriteUInt(b, 10);                              // count
+//         return new List<TestMail>
+//         {
+//             new TestMail
+//             {
+//                 id = 1,
+//                 status = 0,
+//                 title = "测试邮件1",
+//                 content = "欢迎来到游戏",
+//                 rewards = new List<TestReward>
+//                 {
+//                     new TestReward { itemId = 1001, count = 10 },
+//                 },
+//             },
+//             new TestMail
+//             {
+//                 id = 2,
+//                 status = 0,
+//                 title = "测试邮件2",
+//                 content = "这是一封测试邮件",
+//                 rewards = new List<TestReward>(),
+//             },
+//         };
 //     }
+//
+//     private static void WriteMailList(List<byte> b, List<TestMail> mails)
+//     {
+//         WriteInt(b, mails.Count);
+//         foreach (var mail in mails)
+//         {
+//             WriteUInt(b, mail.id);
+//             WriteInt(b, 0);                        // type
+//             WriteUInt(b, mail.status);
+//             WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+//             WriteString(b, mail.title);
+//             WriteString(b, mail.content);
+//             WriteInt(b, mail.rewards.Count);
+//
+//             foreach (var reward in mail.rewards)
+//             {
+//                 WriteUInt(b, reward.itemId);
+//                 WriteUInt(b, reward.count);
+//             }
+//         }
+//     }
+//
+//     private static string ReadString(byte[] data, int offset)
+//     {
+//         if (offset + 2 > data.Length) return string.Empty;
+//         int length = BinaryPrimitives.ReadUInt16LittleEndian(data.AsSpan(offset, 2));
+//         offset += 2;
+//         if (offset + length > data.Length) return string.Empty;
+//         return Encoding.UTF8.GetString(data, offset, length);
+//     }
+//
+//     private static long NowMs() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 //
 //     private static void WriteUShort(List<byte> b, ushort v)
 //     {
