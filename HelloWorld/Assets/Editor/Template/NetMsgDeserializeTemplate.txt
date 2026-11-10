@@ -8,10 +8,11 @@ public class NetMsgId
 }
 public partial class NetMsgHandle
 {
-    public bool Deserialize(ushort id, UnsafeByteBuffer buffer)
+    public bool Deserialize(UnsafeByteBuffer buffer)
     {
         try
         {
+            var id = buffer.ReadUShort();
             IDeserialize msg = null;
             switch (id)
             {

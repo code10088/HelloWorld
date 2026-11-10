@@ -34,3 +34,9 @@
 
 /SDK/.gradle
 /SDK/.idea
+
+/NetMsg/Net/Out/
+/NetMsg/Net/NetMsgGen/bin/
+/NetMsg/Net/NetMsgGen/obj/
+/NetMsg/Net/NetMsgGen/.vs/
+/NetMsg/Net/NetMsgGen/publish/*.pdb

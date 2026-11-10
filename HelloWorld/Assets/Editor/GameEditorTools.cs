@@ -104,6 +104,34 @@ public class GameEditorTools
     public static void CopyMsg()
     {
         string path = CustomerPreference.GetConfig<string>(CustomerPreferenceEnum.MsgPath);
+        Process process = new Process();
+        ProcessStartInfo startInfo = process.StartInfo;
+        startInfo.FileName = $"{path}/Net/gen.bat";
+        startInfo.WorkingDirectory = path;
+        startInfo.CreateNoWindow = true;
+        startInfo.UseShellExecute = false;
+        startInfo.RedirectStandardOutput = true;
+        startInfo.RedirectStandardError = true;
+        process.StartInfo = startInfo;
+        process.Start();
+        string log = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        int code = process.ExitCode;
+        process.Close();
+        if (code == 0) UnityEngine.Debug.Log("bye~");
+        else UnityEngine.Debug.LogError(log);
+        List<FileInfo> list = new List<FileInfo>();
+        FileUtils.GetAllFilePath($"{Application.dataPath}/Scripts/SubScripts/Network/Message", list, ".cs");
+        for (int i = 0; i < list.Count; i++) File.Delete(list[i].FullName);
+        list.Clear();
+        FileUtils.GetAllFilePath($"{path}/Net/Out", list, ".cs");
+        for (int i = 0; i < list.Count; i++)
+        {
+            string target = $"{Application.dataPath}/Scripts/SubScripts/Network/Message/{list[i].Name}";
+            File.Copy(list[i].FullName, target, true);
+        }
+        list.Clear();
+
         var messages = new List<NetMessage>();
         string[] lines = File.ReadAllLines($"{path}/Proto/AConfig.txt");
         for (int i = 0; i < lines.Length; i++)
