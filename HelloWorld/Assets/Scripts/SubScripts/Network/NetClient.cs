@@ -28,10 +28,12 @@ public class NetClient : Singleton<NetClient>
     public void Close()
     {
         channel?.Close();
+        heartHandle.Stop();
     }
     public void Dispose()
     {
         channel?.Dispose();
+        heartHandle.Stop();
     }
     #endregion
 
@@ -40,7 +42,7 @@ public class NetClient : Singleton<NetClient>
     public void Register(ushort id, Action<IDeserialize> action) => msgHandle.Register(id, action);
     public void Unregister(ushort id) => msgHandle.Unregister(id);
     public bool Deserialize(UnsafeByteBuffer buffer) => msgHandle.Deserialize(buffer);
-    public void StartHeart() => heartHandle.Start(channel);
+    public void StartHeart() => heartHandle.Start();
     public void StopHeart() => heartHandle.Stop();
     public void RefreshDelay(ushort id) => heartHandle.RefreshDelay2(id);
     #endregion

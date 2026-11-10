@@ -30,6 +30,8 @@ public partial class NetMsgHandle
             IDeserialize msg = null;
             switch (id)
             {
+                case NetMsgId.Message_SCSession: msg = new Message.SCSession(); break;
+                case NetMsgId.Message_SCAuth: msg = new Message.SCAuth(); break;
                 case NetMsgId.Message_SCHeart: msg = new Message.SCHeart(); break;
                 case NetMsgId.Message_SCPlayerData: msg = new Message.SCPlayerData(); break;
                 case NetMsgId.Message_SCMail: msg = new Message.SCMail(); break;

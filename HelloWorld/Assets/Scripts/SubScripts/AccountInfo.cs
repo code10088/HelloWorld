@@ -1,4 +1,5 @@
 using cfg;
+using Message;
 using System;
 using UnityEngine;
 
@@ -37,7 +38,7 @@ public class RefreshTokenRequest
 {
     public string refreshToken;
 }
-public class AccountInfo : Singleton<AccountInfo>
+public class AccountInfo : Singleton<AccountInfo>, SingletonInterface
 {
     private const int AccountDataVersion = 1;
     private Action loginCallback;
@@ -48,6 +49,11 @@ public class AccountInfo : Singleton<AccountInfo>
     public string ServerId { get; private set; }
     public string Host { get; private set; }
     public ushort Port { get; private set; }
+
+    public void Init()
+    {
+        NetClient.Instance.Register(NetMsgId.Message_SCAuth, SCAuth);
+    }
 
     public void SetCallback(Action loginCallback)
     {
@@ -219,6 +225,29 @@ public class AccountInfo : Singleton<AccountInfo>
                 UICommonTips.ShowTips(LanguageManager.Instance.Get(response.code));
                 GameStart.Instance.Restart();
                 break;
+        }
+    }
+    /// <summary>
+    /// 发送鉴权消息
+    /// </summary>
+    public void CSAuth()
+    {
+        var msg = new CSAuth();
+        msg.token = AccessToken;
+        NetClient.Instance.Send(NetMsgId.Message_CSAuth, msg);
+    }
+    private void SCAuth(IDeserialize msg)
+    {
+        var auth = (SCAuth)msg;
+        if (auth.code == 1)
+        {
+            ServerTime.Instance.SetTime(auth.time);
+            EventManager.Instance.Fire(EventType.NetworkConnected);
+        }
+        else
+        {
+            NetClient.Instance.Close();
+            RefreshAuth();
         }
     }
 }

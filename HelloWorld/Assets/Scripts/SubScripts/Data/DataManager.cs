@@ -6,9 +6,14 @@ public interface DataBase
     void Init();
     void Clear();
 }
-public partial class DataManager : Singleton<DataManager>
+public partial class DataManager : Singleton<DataManager>, SingletonInterface
 {
     private Dictionary<Type, DataBase> dataMap = new Dictionary<Type, DataBase>();
+
+    public void Init()
+    {
+        _ = PlayerData;
+    }
 
     [Obsolete("DataManager_Auto中自动生成相关Data")]
     public T GetData<T>() where T : class, DataBase, new()

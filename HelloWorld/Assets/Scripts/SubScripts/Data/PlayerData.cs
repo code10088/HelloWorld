@@ -10,12 +10,14 @@ public class PlayerData : DataBase
 
     public void Init()
     {
+        NetClient.Instance.Register(NetMsgId.Message_SCPlayerData, SCPlayerInfo);
     }
     public void Clear()
     {
+        NetClient.Instance.Unregister(NetMsgId.Message_SCPlayerData);
     }
 
-    public void SCPlayerInfo(IDeserialize msg)
+    private void SCPlayerInfo(IDeserialize msg)
     {
         var info = (SCPlayerData)msg;
         playerId = info.data.playerId;

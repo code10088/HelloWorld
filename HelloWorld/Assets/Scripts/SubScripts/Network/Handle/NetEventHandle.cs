@@ -24,14 +24,13 @@ public class NetEventHandle
         {
             switch (item.type)
             {
-                case NetEvent.Reconnect:
-                    UICommonTips.ShowTips("尝试连接服务器");
-                    break;
                 case NetEvent.Connected:
+                    AccountInfo.Instance.CSAuth();
+                    NetClient.Instance.StartHeart();
                     UICommonTips.ShowTips("连接服务器成功");
-                    EventManager.Instance.Fire(EventType.NetworkConnected);
                     break;
                 case NetEvent.ConnectError:
+                    NetClient.Instance.StopHeart();
                     UICommonBoxParam param = new UICommonBoxParam();
                     param.type = UICommonBoxType.Sure;
                     param.title = "网络异常";
@@ -40,8 +39,9 @@ public class NetEventHandle
                     UICommonBox.OpenCommonBox(param);
                     break;
                 case NetEvent.InvalidToken:
-                    UICommonTips.ShowTips("鉴权失败");
+                    NetClient.Instance.StopHeart();
                     AccountInfo.Instance.RefreshAuth();
+                    UICommonTips.ShowTips("鉴权失败");
                     break;
             }
         }

@@ -13,14 +13,14 @@ public class HeartHandle
     private long[] record2 = new long[10];
     private int recordIndex = 0;
     private int delay = 0;
-    private IChannel channel;
     private CSHeart heart = new CSHeart();
 
     public int Delay => delay;
 
-    public void Start(IChannel channel)
+    public void Start()
     {
-        this.channel = channel;
+        timer = 0;
+        heartCount = 0;
         NetClient.Instance.Register(NetMsgId.Message_SCHeart, SCHeart);
         if (updateId < 0) updateId = Driver.Instance.StartUpdate(Update);
     }
@@ -30,8 +30,8 @@ public class HeartHandle
         if (timer < heartInterval) return;
         timer = 0;
 
-        if (heartCount++ > 0) channel?.Connect();
-        else channel?.Send(NetMsgId.Message_CSHeart, heart);
+        if (heartCount++ > 0) NetClient.Instance.Connect();
+        else NetClient.Instance.Send(NetMsgId.Message_CSHeart, heart);
     }
     private void SCHeart(IDeserialize msg)
     {

@@ -1,13 +1,11 @@
 public enum ConnectState
 {
     Idle,
-    Connect,
     Connected,
     Close,
 }
 public enum NetEvent
 {
-    Reconnect,
     Connected,
     ConnectError,
     InvalidToken,
