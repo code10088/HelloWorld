@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-public partial class NetMsgHandle : Singleton<NetMsgHandle>, SingletonInterface
+public partial class NetMsgHandle
 {
     struct NetMsgItem
     {

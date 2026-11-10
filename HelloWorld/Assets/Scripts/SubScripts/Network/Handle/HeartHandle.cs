@@ -1,49 +1,36 @@
-using Message;
+﻿using Message;
 using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
+using UnityEngine;
 
 public class HeartHandle
 {
-    private CancellationTokenSource cts;
-    private Task heartTask;
+    private int updateId = -1;
+    private float timer = 0;
     private int heartInterval = 10000;
     private int heartCount = 0;
     private int[] record1 = new int[10];
     private long[] record2 = new long[10];
     private int recordIndex = 0;
     private int delay = 0;
-    private Action connect;
-    private Action<ushort, ISerialize> send;
+    private IChannel channel;
     private CSHeart heart = new CSHeart();
 
     public int Delay => delay;
 
-    public HeartHandle(Action connect, Action<ushort, ISerialize> send)
+    public void Start(IChannel channel)
     {
-        this.connect = connect;
-        this.send = send;
+        this.channel = channel;
+        if (updateId < 0) updateId = Driver.Instance.StartUpdate(Update);
     }
-    public void Start()
+    private void Update(float t)
     {
-        cts = new CancellationTokenSource();
-        heartTask = UpdateHeart(cts.Token);
-    }
-    private async Task UpdateHeart(CancellationToken token)
-    {
-        try
-        {
-            while (true)
-            {
-                await Task.Delay(heartInterval, token).ConfigureAwait(false);
-                if (heartCount++ > 0) connect();
-                else send(NetMsgId.Message_CSHeart, heart);
-            }
-        }
-        catch
-        {
-        }
+        timer += Time.deltaTime;
+        if (timer < heartInterval) return;
+        timer = 0;
+
+        if (heartCount++ > 0) channel?.Connect();
+        else channel?.Send(NetMsgId.Message_CSHeart, heart);
     }
     public void RefreshDelay1(ushort id)
     {
@@ -60,14 +47,14 @@ public class HeartHandle
         delay = (int)((Stopwatch.GetTimestamp() - record2[index]) * 1000L / Stopwatch.Frequency);
         heartInterval = delay > 10000 ? 3000 : 10000;
     }
-    public async Task Dispose()
+    public void Stop()
     {
-        cts?.Cancel();
-        await (heartTask ?? Task.CompletedTask);
-        cts?.Dispose();
-        cts = null;
-        heartTask = null;
+        Driver.Instance.Remove(updateId);
+        updateId = -1;
+        timer = 0;
         heartCount = 0;
+        Array.Clear(record1, 0, record1.Length);
+        Array.Clear(record2, 0, record2.Length);
         recordIndex = 0;
         delay = 0;
     }

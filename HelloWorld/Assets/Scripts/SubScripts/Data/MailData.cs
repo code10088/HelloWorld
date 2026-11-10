@@ -10,10 +10,10 @@ public class MailData : DataBase
 
     public void Init()
     {
-        NetMsgHandle.Instance.Register(NetMsgId.Message_SCMail, SCMail);
-        NetMsgHandle.Instance.Register(NetMsgId.Message_SCGetMailReward, SCGetMailReward);
-        NetMsgHandle.Instance.Register(NetMsgId.Message_SCGetMailAllReward, SCGetMailAllReward);
-        NetMsgHandle.Instance.Register(NetMsgId.Message_SCDeleteMail, SCDeleteMail);
+        NetClient.Instance.Register(NetMsgId.Message_SCMail, SCMail);
+        NetClient.Instance.Register(NetMsgId.Message_SCGetMailReward, SCGetMailReward);
+        NetClient.Instance.Register(NetMsgId.Message_SCGetMailAllReward, SCGetMailAllReward);
+        NetClient.Instance.Register(NetMsgId.Message_SCDeleteMail, SCDeleteMail);
 
         //≤‚ ‘
         all = new()
@@ -37,10 +37,10 @@ public class MailData : DataBase
     }
     public void Clear()
     {
-        NetMsgHandle.Instance.UnRegister(NetMsgId.Message_SCMail);
-        NetMsgHandle.Instance.UnRegister(NetMsgId.Message_SCGetMailReward);
-        NetMsgHandle.Instance.UnRegister(NetMsgId.Message_SCGetMailAllReward);
-        NetMsgHandle.Instance.UnRegister(NetMsgId.Message_SCDeleteMail);
+        NetClient.Instance.UnRegister(NetMsgId.Message_SCMail);
+        NetClient.Instance.UnRegister(NetMsgId.Message_SCGetMailReward);
+        NetClient.Instance.UnRegister(NetMsgId.Message_SCGetMailAllReward);
+        NetClient.Instance.UnRegister(NetMsgId.Message_SCDeleteMail);
     }
 
     public void CSMail()
