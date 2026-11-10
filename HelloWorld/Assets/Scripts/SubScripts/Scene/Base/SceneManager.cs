@@ -48,10 +48,10 @@ public partial class SceneManager : Singleton<SceneManager>, SingletonInterface
     {
         while (loadScene.Count > 0 && loadScene[0].State)
         {
-            loadScene[0].Init();
-            var t = loadScene[0].Type;
+            var item = loadScene[0];
             loadScene.RemoveAt(0);
-            EventManager.Instance.Fire(EventType.OpenScene, t);
+            item.Init();
+            EventManager.Instance.Fire(EventType.OpenScene, item.Type);
         }
     }
     public void CloseScene(int id)

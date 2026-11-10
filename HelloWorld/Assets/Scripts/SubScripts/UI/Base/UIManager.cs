@@ -82,10 +82,10 @@ public partial class UIManager : Singleton<UIManager>, SingletonInterface
     {
         while (loadUI.Count > 0 && loadUI[0].State)
         {
-            loadUI[0].Init();
-            var t = loadUI[0].Type;
+            var item = loadUI[0];
             loadUI.RemoveAt(0);
-            EventManager.Instance.Fire(EventType.OpenUI, t);
+            item.Init();
+            EventManager.Instance.Fire(EventType.OpenUI, item.Type);
         }
     }
     public void CloseUI(UIType type)

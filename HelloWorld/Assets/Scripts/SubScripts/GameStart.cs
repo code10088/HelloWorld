@@ -11,7 +11,6 @@ public class GameStart : Singleton<GameStart>
         Process.Add(new ActionProcessItem(InitUIConfig));
         Process.Add(new ActionProcessItem(OpenUIHotUpdateRes));
         Process.Add(new ActionProcessItem(HotUpdate));
-        Process.Add(new ActionProcessItem(OpenUILoading));
         Process.Add(new ActionProcessItem(Login));
         Process.Add(new ActionProcessItem(InitConfig));
         Process.Add(new ActionProcessItem(InitSetting));
@@ -37,18 +36,15 @@ public class GameStart : Singleton<GameStart>
     {
         DataManager.Instance.HotUpdateResData.StartUpdate(Process.Next);
     }
-    private void OpenUILoading()
-    {
-        UIManager.Instance.OpenUI(UIType.UISceneLoading, a => Process.Next());
-    }
     private void Login()
     {
+        UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
+        UIManager.Instance.OpenUI(UIType.UISceneLoading);
         AccountInfo.Instance.SetCallback(Process.Next);
         AccountInfo.Instance.LoginWithAuto();
     }
     private void InitConfig()
     {
-        UIManager.Instance.CloseUI(UIType.UIHotUpdateRes);
         ConfigManager.Instance.Init(Process.Next);
     }
     private void InitSetting()
