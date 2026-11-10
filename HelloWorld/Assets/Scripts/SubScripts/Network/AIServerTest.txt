@@ -1,267 +1,564 @@
-﻿#region tcp
+﻿// 测试服务器说明：
+// 1. TCP 与 KCP 二选一，不能同时保留两个 Program / Main。
+// 2. 默认端口 8088。
+// 3. TCP 帧格式：[int32 bodyLength][uint16 id][payload]
+//    KCP 消息格式：[uint16 id][payload]（KCP 自己保证消息边界）
+// 4. KCP 握手使用原始 UDP：
+//      客户端 -> 服务器：[uint16 0][uint16 tokenLength][token][int32 version]
+//      服务器 -> 客户端：[uint16 10000][int32 1][uint32 conv]
+// 5. KCP 版是单客户端测试服务器；多客户端需要按 RemoteEndPoint 维护多个 Kcp 实例。
+// 6. KCP 需要引用工程内 Plugins/Kcp 的源码或程序集。
+
+#region tcp
 // using System;
+// using System.Buffers.Binary;
+// using System.Collections.Generic;
+// using System.IO;
 // using System.Net;
 // using System.Net.Sockets;
+// using System.Text;
+// using System.Threading.Tasks;
+
+// class Program
+// {
+//     private const int Port = 8088;
+//     private const int MaxBodyLength = 16 * 1024;
+//
+//     private const ushort Message_CSHeart = 2;
+//     private const ushort Message_CSMail = 100;
+//     private const ushort Message_CSReadMail = 101;
+//     private const ushort Message_CSGetMailReward = 102;
+//     private const ushort Message_CSGetMailAllReward = 103;
+//     private const ushort Message_CSDeleteMail = 104;
+//     private const ushort Message_CSDeleteAllMail = 105;
+//
+//     private const ushort Message_SCHeart = 10002;
+//     private const ushort Message_SCPlayerData = 10003;
+//     private const ushort Message_SCMail = 10100;
+//     private const ushort Message_SCGetMailReward = 10102;
+//     private const ushort Message_SCGetMailAllReward = 10103;
+//     private const ushort Message_SCDeleteMail = 10104;
+//
+//     static async Task Main()
+//     {
+//         Console.OutputEncoding = Encoding.UTF8;
+//         var listener = new TcpListener(IPAddress.Any, Port);
+//         listener.Start();
+//         Console.WriteLine($"TCP 服务器已启动，端口 {Port}");
+//
+//         while (true)
+//         {
+//             var client = await listener.AcceptTcpClientAsync();
+//             client.NoDelay = true;
+//             Console.WriteLine($"客户端已连接: {client.Client.RemoteEndPoint}");
+//             _ = Task.Run(() => HandleClientAsync(client));
+//         }
+//     }
+//
+//     static async Task HandleClientAsync(TcpClient client)
+//     {
+//         using (client)
+//         using (var stream = client.GetStream())
+//         {
+//             var head = new byte[4];
+//             var body = new byte[MaxBodyLength];
+//
+//             try
+//             {
+//                 // 客户端连上后先下发玩家数据，触发 RefreshPlayerData -> 进入主界面
+//                 await SendFrameAsync(stream, Message_SCPlayerData, b =>
+//                 {
+//                     WriteUInt(b, 10001);                   // playerId
+//                     WriteString(b, "TestPlayer");          // nickName
+//                     WriteString(b, "avatar_01");           // avatar
+//                     WriteUInt(b, 1);                       // level
+//                     WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds()); // registerTime
+//                     WriteUInt(b, 0);                       // mail
+//                 });
+//
+//                 while (true)
+//                 {
+//                     await ReadExactAsync(stream, head, 0, 4);
+//                     int bodyLength = BinaryPrimitives.ReadInt32LittleEndian(head.AsSpan(0, 4));
+//                     if (bodyLength < 2 || bodyLength > MaxBodyLength)
+//                     {
+//                         Console.WriteLine($"非法包长: {bodyLength}");
+//                         return;
+//                     }
+//
+//                     await ReadExactAsync(stream, body, 0, bodyLength);
+//
+//                     ushort id = BinaryPrimitives.ReadUInt16LittleEndian(body.AsSpan(0, 2));
+//                     Console.WriteLine($"收到 TCP 消息 id={id}, bodyLength={bodyLength}");
+//
+//                     switch (id)
+//                     {
+//                         case Message_CSHeart:
+//                             await SendFrameAsync(stream, Message_SCHeart, b =>
+//                                 WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
+//                             break;
+//
+//                         case Message_CSMail:
+//                             await SendFrameAsync(stream, Message_SCMail, WriteSampleMail);
+//                             break;
+//
+//                         case Message_CSReadMail:
+//                             // 简化处理：读完邮件后重新下发一次邮件列表
+//                             await SendFrameAsync(stream, Message_SCMail, WriteSampleMail);
+//                             break;
+//
+//                         case Message_CSGetMailReward:
+//                             {
+//                                 uint mailId = bodyLength >= 6
+//                                     ? BinaryPrimitives.ReadUInt32LittleEndian(body.AsSpan(2, 4))
+//                                     : 0;
+//                                 await SendFrameAsync(stream, Message_SCGetMailReward, b =>
+//                                 {
+//                                     WriteInt(b, 1);       // status
+//                                     WriteUInt(b, mailId);
+//                                 });
+//                             }
+//                             break;
+//
+//                         case Message_CSGetMailAllReward:
+//                             await SendFrameAsync(stream, Message_SCGetMailAllReward, null);
+//                             break;
+//
+//                         case Message_CSDeleteMail:
+//                             {
+//                                 uint mailId = bodyLength >= 6
+//                                     ? BinaryPrimitives.ReadUInt32LittleEndian(body.AsSpan(2, 4))
+//                                     : 0;
+//                                 await SendFrameAsync(stream, Message_SCDeleteMail, b =>
+//                                 {
+//                                     WriteInt(b, 1);       // status
+//                                     WriteUInt(b, mailId);
+//                                 });
+//                             }
+//                             break;
+//
+//                         case Message_CSDeleteAllMail:
+//                             await SendFrameAsync(stream, Message_SCMail, b => WriteInt(b, 0));
+//                             break;
+//
+//                         default:
+//                             Console.WriteLine($"未处理的 TCP 消息 id={id}");
+//                             break;
+//                     }
+//                 }
+//             }
+//             catch (Exception e)
+//             {
+//                 Console.WriteLine($"连接结束: {e.Message}");
+//             }
+//         }
+//     }
+//
+//     static async Task ReadExactAsync(NetworkStream stream, byte[] buffer, int offset, int count)
+//     {
+//         while (count > 0)
+//         {
+//             int n = await stream.ReadAsync(buffer, offset, count);
+//             if (n <= 0) throw new EndOfStreamException();
+//             offset += n;
+//             count -= n;
+//         }
+//     }
+//
+//     static async Task SendFrameAsync(NetworkStream stream, ushort id, Action<List<byte>> writePayload)
+//     {
+//         var body = new List<byte>();
+//         WriteUShort(body, id);
+//         writePayload?.Invoke(body);
+//
+//         var packet = new byte[4 + body.Count];
+//         BinaryPrimitives.WriteInt32LittleEndian(packet.AsSpan(0, 4), body.Count);
+//         body.CopyTo(packet, 4);
+//
+//         await stream.WriteAsync(packet, 0, packet.Length);
+//     }
+//
+//     static void WriteSampleMail(List<byte> b)
+//     {
+//         WriteInt(b, 1);                                // 邮件数量
+//         WriteUInt(b, 1);                               // mailId
+//         WriteInt(b, 0);                                // type
+//         WriteUInt(b, 0);                               // status
+//         WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+//         WriteString(b, "测试邮件");
+//         WriteString(b, "这是一封测试邮件");
+//         WriteInt(b, 1);                                // 奖励数量
+//         WriteUInt(b, 1001);                            // itemId
+//         WriteUInt(b, 10);                              // count
+//     }
+//
+//     static void WriteUShort(List<byte> b, ushort v)
+//     {
+//         b.Add((byte)v);
+//         b.Add((byte)(v >> 8));
+//     }
+//     static void WriteInt(List<byte> b, int v)
+//     {
+//         var tmp = new byte[4];
+//         BinaryPrimitives.WriteInt32LittleEndian(tmp, v);
+//         b.AddRange(tmp);
+//     }
+//     static void WriteUInt(List<byte> b, uint v)
+//     {
+//         var tmp = new byte[4];
+//         BinaryPrimitives.WriteUInt32LittleEndian(tmp, v);
+//         b.AddRange(tmp);
+//     }
+//     static void WriteLong(List<byte> b, long v)
+//     {
+//         var tmp = new byte[8];
+//         BinaryPrimitives.WriteInt64LittleEndian(tmp, v);
+//         b.AddRange(tmp);
+//     }
+//     static void WriteString(List<byte> b, string value)
+//     {
+//         var bytes = Encoding.UTF8.GetBytes(value ?? string.Empty);
+//         WriteUShort(b, (ushort)bytes.Length);
+//         b.AddRange(bytes);
+//     }
+// }
+#endregion
+
+#region kcp
+// using System;
+// using System.Buffers;
+// using System.Buffers.Binary;
+// using System.Collections.Generic;
+// using System.Net;
+// using System.Net.Sockets;
+// using System.Net.Sockets.Kcp;
+// using System.Text;
 // using System.Threading;
 // using System.Threading.Tasks;
 
 // class Program
 // {
-//    static async Task Main(string[] args)
-//    {
-//        int port = 8088; // 端口号可根据你的 STCP 配置修改
-//        var listener = new TcpListener(IPAddress.Any, port);
-//        listener.Start();
-//        Console.WriteLine($"TCP服务器已启动，监听端口 {port}");
-
-//        while (true)
-//        {
-//            var client = await listener.AcceptTcpClientAsync();
-//            Console.WriteLine("客户端已连接");
-//            _ = HandleClient(client);
-//        }
-//    }
-
-//    static async Task HandleClient(TcpClient client)
-//    {
-//        using (client)
-//        using (var stream = client.GetStream())
-//        {
-//            byte[] headBuffer = new byte[4];
-//            while (true)
-//            {
-//                // 读取包头（4字节，表示包体长度）
-//                int headRead = 0;
-//                while (headRead < 4)
-//                {
-//                    int n = await stream.ReadAsync(headBuffer, headRead, 4 - headRead);
-//                    if (n == 0) return; // 断开
-//                    headRead += n;
-//                }
-//                int bodyLength = BitConverter.ToInt32(headBuffer, 0);
-//                if (bodyLength < 0 || bodyLength > 0x2800)
-//                {
-//                    Console.WriteLine($"非法包长: {bodyLength}");
-//                    return;
-//                }
-
-//                // 读取包体
-//                byte[] bodyBuffer = new byte[bodyLength];
-//                int bodyRead = 0;
-//                while (bodyRead < bodyLength)
-//                {
-//                    int n = await stream.ReadAsync(bodyBuffer, bodyRead, bodyLength - bodyRead);
-//                    if (n == 0) return;
-//                    bodyRead += n;
-//                }
-
-//                Console.WriteLine($"收到包，长度: {bodyLength}");
-
-//                // 这里可以根据需要处理包体内容
-//                // 示例：原样回显
-//                await stream.WriteAsync(headBuffer, 0, 4);
-//                bodyBuffer = BitConverter.GetBytes(10001);
-//                await stream.WriteAsync(bodyBuffer, 0, bodyLength);
-//            }
-//        }
-//    }
+//     static void Main()
+//     {
+//         Console.OutputEncoding = Encoding.UTF8;
+//         var server = new KcpServer(8088);
+//         Console.WriteLine("KCP 服务器已启动，端口 8088，单客户端模式");
+//         Console.ReadLine();
+//     }
 // }
-#endregion
-
-#region kcp
-//using System;
-//using System.Buffers;
-//using System.Buffers.Binary;
-//using System.Drawing;
-//using System.Net;
-//using System.Net.Sockets;
-//using System.Net.Sockets.Kcp;
-//using System.Threading.Tasks;
-//using static System.Runtime.InteropServices.JavaScript.JSType;
-
-//class KcpServer : IKcpCallback
-//{
-//    private readonly UdpClient udp;
-//    private readonly IPEndPoint listenEndPoint;
-//    private PoolSegManager.Kcp kcp;
-//    private IPEndPoint remoteEndPoint;
-//    private uint conv = 0;
-
-//    public KcpServer(int port)
-//    {
-//        listenEndPoint = new IPEndPoint(IPAddress.Any, port);
-//        udp = new UdpClient(listenEndPoint);
-//        kcp = new PoolSegManager.Kcp(conv, this);
-//        StartReceive();
-//    }
-
-//    public void Output(IMemoryOwner<byte> buffer, int avalidLength)
-//    {
-//        if (remoteEndPoint != null)
-//        {
-//            var data = buffer.Memory.Span.Slice(0, avalidLength).ToArray();
-//            Console.WriteLine(data.Length);
-//            udp.SendAsync(data, data.Length, remoteEndPoint);
-//        }
-//        buffer.Dispose();
-//    }
-
-//    private async void StartReceive()
-//    {
-//        while (true)
-//        {
-//            kcp.Update(DateTime.UtcNow);
-//            var result = await udp.ReceiveAsync();
-//            remoteEndPoint = result.RemoteEndPoint;
-//            var id = BitConverter.ToUInt16(result.Buffer, 4);
-//            if (id == 0)
-//            {
-//                byte[] a = new byte[6];
-//                BinaryPrimitives.WriteUInt16LittleEndian(a.AsSpan(0, 2), 10000);
-//                BinaryPrimitives.WriteUInt32LittleEndian(a.AsSpan(2, 4), ++conv);
-//                kcp = new PoolSegManager.Kcp(conv, this);
-//                udp.Send(a, a.Length, remoteEndPoint);
-//                continue;
-//            }
-//            kcp.Input(result.Buffer);
-//            // 这里可以根据需要处理收到的数据
-//            // 例如：自动回显
-//            var (recvBuffer, recvLen) = kcp.TryRecv();
-//            if (recvBuffer != null && recvLen > 0)
-//            {
-//                // 回显收到的数据
-//                byte[] a = BitConverter.GetBytes((ushort)10001);
-//                kcp.Send(a);
-//                recvBuffer.Dispose();
-//            }
-//        }
-//    }
-//}
-
-//class Program
-//{
-//    static void Main(string[] args)
-//    {
-//        Console.WriteLine("KCP服务器启动，监听端口: 8088");
-//        var server = new KcpServer(8088);
-//        Console.ReadLine();
-//    }
-//}
-#endregion
-
-#region websocket
-//using System.Net.WebSockets;
-//using System.Text;
-//using Microsoft.AspNetCore.Builder;
-//using Microsoft.AspNetCore.Hosting;
-//using Microsoft.AspNetCore.Http;
-//using Microsoft.Extensions.Hosting;
-
-//namespace SimpleWebSocketServer;
-
-//internal sealed class Program
-//{
-//    private const int Port = 8088;
-//    private const string Route = "/client";
-
-//    private static async Task Main(string[] args)
-//    {
-//        var builder = WebApplication.CreateSlimBuilder(args);
-//        builder.WebHost.UseUrls($"http://0.0.0.0:{Port}");
-
-//        var app = builder.Build();
-//        app.UseWebSockets();
-//        app.Map(Route, HandleWebSocketAsync);
-
-//        Console.WriteLine($"WebSocket 服务器已启动，监听 ws://localhost:{Port}{Route}");
-//        Console.WriteLine("可直接使用 NativeWebSocket 客户端连接。按 Ctrl+C 停止服务器...");
-//        await app.RunAsync();
-//    }
-
-//    private static async Task HandleWebSocketAsync(HttpContext context)
-//    {
-//        if (!context.WebSockets.IsWebSocketRequest)
-//        {
-//            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-//            await context.Response.WriteAsync("WebSocket request expected.");
-//            return;
-//        }
-
-//        using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-//        var remote = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-//        Console.WriteLine($"[Server] 客户端已连接: {remote}");
-
-//        try
-//        {
-//            await ReceiveLoopAsync(webSocket, remote, context.RequestAborted);
-//        }
-//        catch (OperationCanceledException)
-//        {
-//        }
-//        catch (WebSocketException ex)
-//        {
-//            Console.WriteLine($"[Server] WebSocket 错误: {ex.Message}");
-//        }
-//        finally
-//        {
-//            if (webSocket.State is WebSocketState.Open or WebSocketState.CloseReceived)
-//            {
-//                try
-//                {
-//                    await webSocket.CloseAsync(
-//                        WebSocketCloseStatus.NormalClosure,
-//                        "Server closing connection",
-//                        CancellationToken.None);
-//                }
-//                catch (WebSocketException)
-//                {
-//                    webSocket.Abort();
-//                }
-//            }
-
-//            Console.WriteLine($"[Server] 客户端断开连接: {remote}");
-//        }
-//    }
-
-//    private static async Task ReceiveLoopAsync(WebSocket webSocket, string remote, CancellationToken cancellationToken)
-//    {
-//        var buffer = new byte[4096];
-
-//        while (webSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
-//        {
-//            using var stream = new MemoryStream();
-//            ValueWebSocketReceiveResult result;
-
-//            do
-//            {
-//                result = await webSocket.ReceiveAsync(buffer.AsMemory(), cancellationToken);
-
-//                if (result.MessageType == WebSocketMessageType.Close)
-//                {
-//                    await webSocket.CloseOutputAsync(
-//                        webSocket.CloseStatus ?? WebSocketCloseStatus.NormalClosure,
-//                        webSocket.CloseStatusDescription,
-//                        CancellationToken.None);
-//                    return;
-//                }
-
-//                stream.Write(buffer, 0, result.Count);
-//            }
-//            while (!result.EndOfMessage);
-
-//            var payload = stream.ToArray();
-//            if (result.MessageType == WebSocketMessageType.Text)
-//            {
-//                Console.WriteLine($"[Server] 收到来自 {remote} 的文本消息: {Encoding.UTF8.GetString(payload)}");
-//            }
-//            else
-//            {
-//                Console.WriteLine($"[Server] 收到来自 {remote} 的二进制消息，长度: {payload.Length}");
-//            }
-
-//            var response = BitConverter.GetBytes((ushort)10001);
-//            await webSocket.SendAsync(response.AsMemory(), WebSocketMessageType.Binary, true, cancellationToken);
-//        }
-//    }
-//}
+//
+// class KcpServer : IKcpCallback
+// {
+//     private const ushort Message_CSSession = 0;
+//     private const ushort Message_SCSession = 10000;
+//     private const ushort Message_CSHeart = 2;
+//     private const ushort Message_CSMail = 100;
+//     private const ushort Message_CSReadMail = 101;
+//     private const ushort Message_CSGetMailReward = 102;
+//     private const ushort Message_CSGetMailAllReward = 103;
+//     private const ushort Message_CSDeleteMail = 104;
+//     private const ushort Message_CSDeleteAllMail = 105;
+//     private const ushort Message_SCHeart = 10002;
+//     private const ushort Message_SCPlayerData = 10003;
+//     private const ushort Message_SCMail = 10100;
+//     private const ushort Message_SCGetMailReward = 10102;
+//     private const ushort Message_SCGetMailAllReward = 10103;
+//     private const ushort Message_SCDeleteMail = 10104;
+//
+//     private readonly UdpClient udp;
+//     private readonly object gate = new object();
+//     private IPEndPoint remote;
+//     private PoolSegManager.Kcp kcp;
+//     private uint conv;
+//     private int convSeed;
+//     private int lastVersion;
+//
+//     public KcpServer(int port)
+//     {
+//         udp = new UdpClient(new IPEndPoint(IPAddress.Any, port));
+//         _ = Task.Run(ReceiveLoopAsync);
+//         _ = Task.Run(UpdateLoopAsync);
+//     }
+//
+//     public void Output(IMemoryOwner<byte> owner, int avalidLength)
+//     {
+//         try
+//         {
+//             if (remote != null && avalidLength > 0)
+//             {
+//                 byte[] data = owner.Memory.Slice(0, avalidLength).ToArray();
+//                 udp.Send(data, data.Length, remote); // 同步发送，保证 KCP 输出顺序
+//             }
+//         }
+//         catch (Exception e)
+//         {
+//             Console.WriteLine($"UDP 发送失败: {e.Message}");
+//         }
+//         finally
+//         {
+//             owner.Dispose();
+//         }
+//     }
+//
+//     private async Task ReceiveLoopAsync()
+//     {
+//         while (true)
+//         {
+//             try
+//             {
+//                 var result = await udp.ReceiveAsync();
+//                 byte[] data = result.Buffer;
+//
+//                 if (IsHandshake(data))
+//                 {
+//                     HandleHandshake(result.RemoteEndPoint, data);
+//                     continue;
+//                 }
+//
+//                 lock (gate)
+//                 {
+//                     if (kcp == null) continue;
+//
+//                     kcp.Input(data);
+//
+//                     while (true)
+//                     {
+//                         var (buffer, length) = kcp.TryRecv();
+//                         if (buffer == null || length <= 0) break;
+//
+//                         try
+//                         {
+//                             byte[] message = buffer.Memory.Slice(0, length).ToArray();
+//                             HandleMessage(message);
+//                         }
+//                         finally
+//                         {
+//                             buffer.Dispose();
+//                         }
+//                     }
+//                 }
+//             }
+//             catch (Exception e)
+//             {
+//                 Console.WriteLine($"KCP 接收异常: {e.Message}");
+//             }
+//         }
+//     }
+//
+//     private async Task UpdateLoopAsync()
+//     {
+//         while (true)
+//         {
+//             try
+//             {
+//                 lock (gate)
+//                 {
+//                     kcp?.Update(DateTimeOffset.UtcNow);
+//                 }
+//             }
+//             catch (Exception e)
+//             {
+//                 Console.WriteLine($"KCP Update 异常: {e.Message}");
+//             }
+//
+//             await Task.Delay(10);
+//         }
+//     }
+//
+//     private static bool IsHandshake(byte[] data)
+//     {
+//         if (data.Length < 8) return false;
+//         if (BinaryPrimitives.ReadUInt16LittleEndian(data.AsSpan(0, 2)) != Message_CSSession)
+//             return false;
+//
+//         int tokenLength = BinaryPrimitives.ReadUInt16LittleEndian(data.AsSpan(2, 2));
+//         return data.Length == 4 + tokenLength + 4;
+//     }
+//
+//     private void HandleHandshake(IPEndPoint endpoint, byte[] data)
+//     {
+//         int tokenLength = BinaryPrimitives.ReadUInt16LittleEndian(data.AsSpan(2, 2));
+//         string token = Encoding.UTF8.GetString(data, 4, tokenLength);
+//         int version = BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(4 + tokenLength, 4));
+//
+//         Console.WriteLine($"KCP 握手: version={version}, endpoint={endpoint}");
+//
+//         lock (gate)
+//         {
+//             // 客户端等待握手响应期间会每秒重发，version 不变。
+//             // 同版本重发只回同一个 conv，不重建 KCP，避免把已经建立的会话重置。
+//             if (kcp != null && remote != null && remote.Equals(endpoint) && version == lastVersion)
+//             {
+//                 SendHandshakeResponse(endpoint, conv);
+//                 return;
+//             }
+//
+//             remote = endpoint;
+//             lastVersion = version;
+//             conv = NextConv();
+//
+//             kcp?.Dispose();
+//             kcp = new PoolSegManager.Kcp(conv, this);
+//             kcp.NoDelay(1, 10, 2, 1);
+//             kcp.WndSize();
+//             kcp.SetMtu();
+//
+//             SendHandshakeResponse(endpoint, conv);
+//
+//             // 客户端进入 Connected 后需要 SCPlayerData 才会触发进主界面
+//             SendPlayerData();
+//         }
+//     }
+//
+//     private void SendHandshakeResponse(IPEndPoint endpoint, uint sessionConv)
+//     {
+//         // 必须 10 字节：[ushort 10000][int32 1][uint32 conv]
+//         byte[] response = new byte[10];
+//         BinaryPrimitives.WriteUInt16LittleEndian(response.AsSpan(0, 2), Message_SCSession);
+//         BinaryPrimitives.WriteInt32LittleEndian(response.AsSpan(2, 4), 1);
+//         BinaryPrimitives.WriteUInt32LittleEndian(response.AsSpan(6, 4), sessionConv);
+//         udp.Send(response, response.Length, endpoint);
+//     }
+//
+//     private uint NextConv()
+//     {
+//         uint value = unchecked((uint)Interlocked.Increment(ref convSeed));
+//         if (value == 0)
+//             value = unchecked((uint)Interlocked.Increment(ref convSeed));
+//         return value;
+//     }
+//
+//     private void HandleMessage(byte[] message)
+//     {
+//         if (message.Length < 2) return;
+//
+//         ushort id = BinaryPrimitives.ReadUInt16LittleEndian(message.AsSpan(0, 2));
+//         Console.WriteLine($"收到 KCP 消息 id={id}, length={message.Length}");
+//
+//         switch (id)
+//         {
+//             case Message_CSHeart:
+//                 Send(Message_SCHeart, b =>
+//                     WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
+//                 break;
+//
+//             case Message_CSMail:
+//                 Send(Message_SCMail, WriteSampleMail);
+//                 break;
+//
+//             case Message_CSReadMail:
+//                 Send(Message_SCMail, WriteSampleMail);
+//                 break;
+//
+//             case Message_CSGetMailReward:
+//                 {
+//                     uint mailId = message.Length >= 6
+//                         ? BinaryPrimitives.ReadUInt32LittleEndian(message.AsSpan(2, 4))
+//                         : 0;
+//                     Send(Message_SCGetMailReward, b =>
+//                     {
+//                         WriteInt(b, 1);       // status
+//                         WriteUInt(b, mailId);
+//                     });
+//                 }
+//                 break;
+//
+//             case Message_CSGetMailAllReward:
+//                 Send(Message_SCGetMailAllReward, null);
+//                 break;
+//
+//             case Message_CSDeleteMail:
+//                 {
+//                     uint mailId = message.Length >= 6
+//                         ? BinaryPrimitives.ReadUInt32LittleEndian(message.AsSpan(2, 4))
+//                         : 0;
+//                     Send(Message_SCDeleteMail, b =>
+//                     {
+//                         WriteInt(b, 1);       // status
+//                         WriteUInt(b, mailId);
+//                     });
+//                 }
+//                 break;
+//
+//             case Message_CSDeleteAllMail:
+//                 Send(Message_SCMail, b => WriteInt(b, 0));
+//                 break;
+//
+//             default:
+//                 Console.WriteLine($"未处理的 KCP 消息 id={id}");
+//                 break;
+//         }
+//     }
+//
+//     private void SendPlayerData()
+//     {
+//         Send(Message_SCPlayerData, b =>
+//         {
+//             WriteUInt(b, 10001);                       // playerId
+//             WriteString(b, "TestPlayer");              // nickName
+//             WriteString(b, "avatar_01");               // avatar
+//             WriteUInt(b, 1);                           // level
+//             WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds()); // registerTime
+//             WriteUInt(b, 0);                           // mail
+//         });
+//     }
+//
+//     private void Send(ushort id, Action<List<byte>> writePayload)
+//     {
+//         var body = new List<byte>();
+//         WriteUShort(body, id);
+//         writePayload?.Invoke(body);
+//
+//         int result = kcp.Send(body.ToArray());
+//         if (result < 0)
+//             Console.WriteLine($"KCP Send 失败: {result}, id={id}");
+//     }
+//
+//     private static void WriteSampleMail(List<byte> b)
+//     {
+//         WriteInt(b, 1);                                // 邮件数量
+//         WriteUInt(b, 1);                               // mailId
+//         WriteInt(b, 0);                                // type
+//         WriteUInt(b, 0);                               // status
+//         WriteLong(b, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+//         WriteString(b, "测试邮件");
+//         WriteString(b, "这是一封测试邮件");
+//         WriteInt(b, 1);                                // 奖励数量
+//         WriteUInt(b, 1001);                            // itemId
+//         WriteUInt(b, 10);                              // count
+//     }
+//
+//     private static void WriteUShort(List<byte> b, ushort v)
+//     {
+//         Span<byte> tmp = stackalloc byte[2];
+//         BinaryPrimitives.WriteUInt16LittleEndian(tmp, v);
+//         b.Add(tmp[0]);
+//         b.Add(tmp[1]);
+//     }
+//     private static void WriteInt(List<byte> b, int v)
+//     {
+//         Span<byte> tmp = stackalloc byte[4];
+//         BinaryPrimitives.WriteInt32LittleEndian(tmp, v);
+//         b.Add(tmp[0]); b.Add(tmp[1]); b.Add(tmp[2]); b.Add(tmp[3]);
+//     }
+//     private static void WriteUInt(List<byte> b, uint v)
+//     {
+//         Span<byte> tmp = stackalloc byte[4];
+//         BinaryPrimitives.WriteUInt32LittleEndian(tmp, v);
+//         b.Add(tmp[0]); b.Add(tmp[1]); b.Add(tmp[2]); b.Add(tmp[3]);
+//     }
+//     private static void WriteLong(List<byte> b, long v)
+//     {
+//         Span<byte> tmp = stackalloc byte[8];
+//         BinaryPrimitives.WriteInt64LittleEndian(tmp, v);
+//         b.Add(tmp[0]); b.Add(tmp[1]); b.Add(tmp[2]); b.Add(tmp[3]);
+//         b.Add(tmp[4]); b.Add(tmp[5]); b.Add(tmp[6]); b.Add(tmp[7]);
+//     }
+//     private static void WriteString(List<byte> b, string value)
+//     {
+//         byte[] bytes = Encoding.UTF8.GetBytes(value ?? string.Empty);
+//         WriteUShort(b, (ushort)bytes.Length);
+//         b.AddRange(bytes);
+//     }
+// }
 #endregion
