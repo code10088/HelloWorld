@@ -23,6 +23,7 @@ public class NetClient : Singleton<NetClient>
     public void Send(ushort id, ISerialize msg)
     {
         channel?.Send(id, msg);
+        heartHandle.RefreshDelay1(id);
     }
     public void Close()
     {
@@ -37,9 +38,10 @@ public class NetClient : Singleton<NetClient>
     #region 接口
     public void HandleEvent(NetEvent type, int param) => eventHandle.Handle(type, param);
     public void Register(ushort id, Action<IDeserialize> action) => msgHandle.Register(id, action);
-    public void UnRegister(ushort id) => msgHandle.UnRegister(id);
+    public void Unregister(ushort id) => msgHandle.Unregister(id);
     public bool Deserialize(UnsafeByteBuffer buffer) => msgHandle.Deserialize(buffer);
     public void StartHeart() => heartHandle.Start(channel);
     public void StopHeart() => heartHandle.Stop();
+    public void RefreshDelay(ushort id) => heartHandle.RefreshDelay2(id);
     #endregion
 }

@@ -21,6 +21,7 @@ public class HeartHandle
     public void Start(IChannel channel)
     {
         this.channel = channel;
+        NetClient.Instance.Register(NetMsgId.Message_SCHeart, SCHeart);
         if (updateId < 0) updateId = Driver.Instance.StartUpdate(Update);
     }
     private void Update(float t)
@@ -31,6 +32,11 @@ public class HeartHandle
 
         if (heartCount++ > 0) channel?.Connect();
         else channel?.Send(NetMsgId.Message_CSHeart, heart);
+    }
+    private void SCHeart(IDeserialize msg)
+    {
+        var heart = (SCHeart)msg;
+        ServerTime.Instance.SetTime(heart.time);
     }
     public void RefreshDelay1(ushort id)
     {
@@ -57,5 +63,6 @@ public class HeartHandle
         Array.Clear(record2, 0, record2.Length);
         recordIndex = 0;
         delay = 0;
+        NetClient.Instance.Unregister(NetMsgId.Message_SCHeart);
     }
 }

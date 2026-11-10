@@ -37,10 +37,10 @@ public class MailData : DataBase
     }
     public void Clear()
     {
-        NetClient.Instance.UnRegister(NetMsgId.Message_SCMail);
-        NetClient.Instance.UnRegister(NetMsgId.Message_SCGetMailReward);
-        NetClient.Instance.UnRegister(NetMsgId.Message_SCGetMailAllReward);
-        NetClient.Instance.UnRegister(NetMsgId.Message_SCDeleteMail);
+        NetClient.Instance.Unregister(NetMsgId.Message_SCMail);
+        NetClient.Instance.Unregister(NetMsgId.Message_SCGetMailReward);
+        NetClient.Instance.Unregister(NetMsgId.Message_SCGetMailAllReward);
+        NetClient.Instance.Unregister(NetMsgId.Message_SCDeleteMail);
     }
 
     public void CSMail()

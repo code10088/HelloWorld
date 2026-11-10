@@ -1,5 +1,4 @@
-﻿using Message;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 public partial class NetMsgHandle
@@ -15,7 +14,7 @@ public partial class NetMsgHandle
     private Queue<NetMsgItem> msgPool2 = new Queue<NetMsgItem>();
     private Dictionary<ushort, Action<IDeserialize>> msgAction = new Dictionary<ushort, Action<IDeserialize>>();
 
-    public void Init()
+    public NetMsgHandle()
     {
         Driver.Instance.StartUpdate(Update);
         Preregister();
@@ -24,7 +23,7 @@ public partial class NetMsgHandle
     {
         msgAction[id] = action;
     }
-    public void UnRegister(ushort id)
+    public void Unregister(ushort id)
     {
         msgAction.Remove(id);
     }
@@ -46,19 +45,14 @@ public partial class NetMsgHandle
         while (msgPool2.Count > 0)
         {
             NetMsgItem msg = msgPool2.Dequeue();
+            NetClient.Instance.RefreshDelay(msg.id);
             if (msgAction.TryGetValue(msg.id, out var action)) action?.Invoke(msg.msg);
         }
     }
 
     private void Preregister()
     {
-        Register(NetMsgId.Message_SCHeart, SCHeart);
         Register(NetMsgId.Message_SCPlayerData, SCPlayerInfo);
-    }
-    private void SCHeart(IDeserialize msg)
-    {
-        var heart = (SCHeart)msg;
-        ServerTime.Instance.SetTime(heart.time);
     }
     private void SCPlayerInfo(IDeserialize msg)
     {
