@@ -1,15 +1,17 @@
 # 快速开始
 1. 切换到对应平台<br>
-　小游戏建议使用：[unity2022工程地址](https://gitee.com/code10088/game)<br>
+　小游戏使用：[unity2022工程地址](https://gitee.com/code10088/game)<br>
 　微信小游戏需要在Player中添加宏：WEIXINMINIGAME<br>
 　抖音小游戏需要在Player中添加宏：DOUYINMINIGAME<br>
 　注意：抖音小游戏需要移除微信导出插件，否则运行报错卡死；微信小游戏不要移除抖音导出插件，运行有报错但不影响；<br>
 2. 安装HybridCLR<br>
-3. 执行Tools/BuildBundles<br>
+3. 执行Tools/Build/BuildBundles<br>
 4. 导出工程：<br>
 　修改Assets/Scripts/MainScripts/GameSetting.cs中的CDN<br>
-　配置Preferences/Customer BuildPlayer路径<br>
-　执行Tools/BuildProject<br><br>
+　配置Preferences/Customer中的BuildPlayerPath<br>
+　执行Tools/Build/BuildProject<br>
+5. 配置登录服：修改Assets/Scripts/MainScripts/GameSetting.cs中的LoginUrl<br>
+6. 启动登录服和游戏服，服务器部署参考[Server/README.md](./Server/README.md)<br><br>
 
 # 后续开发内容
 　背包<br>
@@ -40,8 +42,6 @@
 　Scripts：MainScripts：Aot代码    SubScripts：热更代码<br>
 　StreamingAssets：首包资源<br>
 　TextMesh Pro<br>
-　WebGLTemplates：微信导出工具<br>
-　WX-WASM-SDK-V2：微信导出工具<br>
 　YooAsset<br>
 　ZRes：所有资源（Z没有意义，为了使文件夹在最后，便于查找）<br>
 
@@ -111,7 +111,7 @@
 　![image](./Readme/6.png)<br>
 　HybridCLRGenerate：执行Hybrid GenerateAll并copy热更代码<br>
 　YooAssetBuild：bundle打包<br>
-　UnloadBundles2CDN：上传bundle到cdn（当前使用腾讯储存桶，需要配置Preferences/Customer腾讯储存桶）<br>
+　UploadBundles2CDN：上传bundle到cdn（当前使用腾讯储存桶，需要配置Preferences/Customer腾讯储存桶）<br>
 　　　cdn目录结构<br>
 　　　　WebGL<br>
 　　　　　　VersionConfig.txt(Build目录中)<br>
@@ -121,7 +121,7 @@
 　　　　　　VersionConfig.txt(Build目录中)<br>
 　　　　　　1.2.0<br>
 　　　　　　　　xxx.bundle<br>
-　BuildBundles = HybridCLRGenerate + YooAssetBuild + UnloadBundles2CDN<br>
+　BuildBundles = HybridCLRGenerate + YooAssetBuild + UploadBundles2CDN<br>
 　BuildProject：导出apk、ipa、微信小游戏工程、抖音小游戏工程<br>
 
 　Jenkins配置：<br>
@@ -168,15 +168,12 @@
 　　每个场景都支持可以打开多个，需要根据id卸载<br>
 
 ## 网络
-　SocketManager：创建、断开链接<br>
-　SKCP：udp网络，继承于SBase<br>
-　STCP：tcp网络，继承于SBase<br>
-　SWeb：websocket网络，继承于SBase<br>
-　三种都实现了心跳、断线重连、粘包处理<br>
-　序列化/反序列化：UnsafeByteBuffer兼容多平台<br>
-　NetMsgDispatch：解析后的网络消息加入队列在主线程中分发到各个模块<br>
+　KcpChannel（当前默认通道）：基于UDP + KCP，实现握手、消息边界、重发、断线重连<br>
+　TcpChannel：基于TCP，实现粘包处理、断线重连<br>
+　心跳（Handle/HeartHandle.cs）：默认每10秒发送CSHeart(2)，服务器返回SCHeart(10002)并携带服务器时间<br>
+　消息分发（Handle/NetMsgHandle.cs、Handle/NetMsgHandle_Auto.cs）：收到的消息先入队，由Driver在主线程分发，避免多线程访问Unity API<br>
 　![image](./Readme/8.png)<br>
-　Unity工具中执行Tools/CopyMsg会自动执行导出脚本并复制代码到工程中，需要配置Preferences/Customer Msg路径<br>
+　Unity中执行Tools/CopyMsg，自动导出代码并生成NetMsgHandle_Auto.cs，需要配置Preferences/Customer中的MsgPath<br>
 
 ## 多语言
 　Luban/Datas/Language.xls：多语言配置<br>
