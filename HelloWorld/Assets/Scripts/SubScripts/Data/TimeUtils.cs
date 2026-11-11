@@ -2,10 +2,6 @@ using System;
 
 public class TimeUtils
 {
-	private static float serverTime;
-
-	public static float ServerTime => UnityEngine.Time.time;
-
     /// <summary>
     /// 秒 转 天时分秒
     /// </summary>

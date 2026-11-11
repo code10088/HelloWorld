@@ -39,7 +39,7 @@ public class ActivityData : DataBase
         else
         {
             temp.Refresh(data.startTime, data.endTime);
-            if (TimeUtils.ServerTime > temp.EndTime)
+            if (ServerTime.Instance.Time > temp.EndTime)
             {
                 temp.End();
                 datas.Remove(temp);
@@ -50,7 +50,7 @@ public class ActivityData : DataBase
     {
         for (int i = datas.Count - 1; i >= 0; i--)
         {
-            if (TimeUtils.ServerTime > datas[i].EndTime)
+            if (ServerTime.Instance.Time > datas[i].EndTime)
             {
                 datas[i].End();
                 datas.RemoveAt(i);

@@ -1,5 +1,4 @@
 using cfg;
-using UnityEngine;
 
 public class Action_Debug : ActionBase
 {
@@ -7,6 +6,6 @@ public class Action_Debug : ActionBase
 
 	public override void Excute(params object[] param)
 	{
-		GameDebug.Log("Action: " + TimeUtils.ServerTime);
+		GameDebug.Log("Action: " + ServerTime.Instance.Time);
 	}
 }

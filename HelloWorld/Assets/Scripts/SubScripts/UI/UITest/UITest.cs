@@ -195,7 +195,7 @@ public class UITest : UIBase
     }
     private void OnOpenTips()
     {
-        UICommonTips.ShowTips(TimeUtils.ServerTime.ToString());
+        UICommonTips.ShowTips(ServerTime.Instance.Now.ToString("yyyy-MM-dd HH:mm:ss"));
     }
     private void OnOpenSub()
     {
