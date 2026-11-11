@@ -7,7 +7,7 @@ public class HeartHandle
 {
     private int updateId = -1;
     private float timer = 0;
-    private int heartInterval = 10000;
+    private int heartInterval = 10;
     private int heartCount = 0;
     private int[] record1 = new int[10];
     private long[] record2 = new long[10];
@@ -26,7 +26,7 @@ public class HeartHandle
     }
     private void Update(float t)
     {
-        timer += Time.deltaTime;
+        timer += Time.unscaledDeltaTime;
         if (timer < heartInterval) return;
         timer = 0;
 
@@ -51,7 +51,8 @@ public class HeartHandle
         if (index < 0) return;
         record1[index] = -1;
         delay = (int)((Stopwatch.GetTimestamp() - record2[index]) * 1000L / Stopwatch.Frequency);
-        heartInterval = delay > 10000 ? 3000 : 10000;
+        heartInterval = delay > 10000 ? 3 : 10;
+        EventManager.Instance.Fire(EventType.RefreshDelay, delay);
     }
     public void Stop()
     {

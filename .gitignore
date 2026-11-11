@@ -40,3 +40,7 @@
 /NetMsg/Net/NetMsgGen/obj/
 /NetMsg/Net/NetMsgGen/.vs/
 /NetMsg/Net/NetMsgGen/publish/*.pdb
+
+/Server/**/bin/
+/Server/**/obj/
+/Server/publish/

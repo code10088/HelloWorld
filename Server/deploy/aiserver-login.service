@@ -1,0 +1,22 @@
+[Unit]
+Description=HelloWorld test login server (HTTP behind nginx)
+After=network.target
+
+[Service]
+Type=simple
+User=aiserver
+Group=aiserver
+WorkingDirectory=/opt/aiserver/login
+ExecStart=/opt/aiserver/login/LoginServer
+# 只监听本机，由 nginx 对外提供 443
+Environment=LOGIN_LISTEN=http://127.0.0.1:5080
+# 登录成功后下发给客户端的游戏服地址，必须是公网可达地址
+Environment=GAME_HOST=112.126.84.17
+Environment=GAME_PORT=8088
+Environment=SERVER_ID=test-server-1
+Environment=DOTNET_gcServer=0
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

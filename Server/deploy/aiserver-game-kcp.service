@@ -1,0 +1,18 @@
+[Unit]
+Description=HelloWorld test KCP game server (UDP)
+After=network.target
+
+[Service]
+Type=simple
+User=aiserver
+Group=aiserver
+WorkingDirectory=/opt/aiserver/game-kcp
+ExecStart=/opt/aiserver/game-kcp/GameServerKcp
+Environment=KCP_PORT=8088
+Environment=DOTNET_gcServer=0
+Restart=always
+RestartSec=3
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
