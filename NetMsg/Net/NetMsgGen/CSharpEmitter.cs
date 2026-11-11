@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace NetMsgGen;
 
@@ -24,9 +25,10 @@ public static class CSharpEmitter
 
     public static string Emit(ProtoFile file, Model model)
     {
-        var w = new CodeWriter();
+        Validate(file, model);
 
-        bool usesList = file.Messages.Any(m => m.Fields.Any(f => f.Repeated && !Scalars.ContainsKey(f.Type)));
+        var w = new CodeWriter();
+        var usesList = file.Messages.Any(m => m.Fields.Any(f => f.Repeated && !Scalars.ContainsKey(f.Type)));
         if (usesList)
         {
             w.Line("using System.Collections.Generic;");
@@ -36,20 +38,20 @@ public static class CSharpEmitter
         w.Line("namespace " + model.NamespaceOf(file));
         w.Open();
 
-        bool first = true;
+        var first = true;
         foreach (var e in file.Enums)
         {
             if (!first) w.Blank();
             first = false;
             EmitEnum(w, e);
         }
-        foreach (var m in file.Messages.Where(m => !Model.IsProtocol(m.Name)))
+        foreach (var m in file.Messages.Where(a => !Model.IsProtocol(a.Name)))
         {
             if (!first) w.Blank();
             first = false;
             EmitMessage(w, m, model);
         }
-        foreach (var m in file.Messages.Where(m => Model.IsProtocol(m.Name)))
+        foreach (var m in file.Messages.Where(a => Model.IsProtocol(a.Name)))
         {
             if (!first) w.Blank();
             first = false;
@@ -60,35 +62,61 @@ public static class CSharpEmitter
         return w.ToString();
     }
 
+    private static void Validate(ProtoFile file, Model model)
+    {
+        foreach (var m in file.Messages)
+        {
+            foreach (var f in m.Fields)
+            {
+                if (Scalars.ContainsKey(f.Type))
+                {
+                    if (f.Repeated && f.Type == "bytes") throw Error(file, m, f, "repeated bytes is not supported");
+                    continue;
+                }
+                if (f.Type == "bool" || f.Type == "uint64")
+                    throw Error(file, m, f, "type " + f.Type + " is not supported by UnsafeByteBuffer");
+                if (model.EnumNames.Contains(f.Type))
+                {
+                    if (f.Repeated) throw Error(file, m, f, "repeated enum is not supported");
+                    continue;
+                }
+                if (model.MessageNames.Contains(f.Type)) continue;
+                throw Error(file, m, f, "unknown type " + f.Type);
+            }
+        }
+    }
+
+    private static Exception Error(ProtoFile file, MessageDecl m, FieldDecl f, string message)
+    {
+        return new Exception($"{file.Name}.proto: {m.Name}.{f.Name}: {message}");
+    }
+
     private static void EmitEnum(CodeWriter w, EnumDecl e)
     {
         w.Line($"public enum {e.Name}");
         w.Open();
-        foreach (var (name, value) in e.Values)
-            w.Line($"{Pascal(name)} = {value},");
+        foreach (var (name, value) in e.Values) w.Line($"{Pascal(name)} = {value},");
         w.Close();
     }
 
     private static void EmitMessage(CodeWriter w, MessageDecl m, Model model)
     {
-        bool cs = m.Name.StartsWith("CS");
-        bool sc = m.Name.StartsWith("SC");
-        string interfaces = cs ? "ISerialize" : sc ? "IDeserialize" : "ISerialize, IDeserialize";
+        var cs = m.Name.StartsWith("CS");
+        var sc = m.Name.StartsWith("SC");
+        var face = cs ? "ISerialize" : sc ? "IDeserialize" : "ISerialize, IDeserialize";
 
-        w.Line($"public class {m.Name} : {interfaces}");
+        w.Line($"public class {m.Name} : {face}");
         w.Open();
 
         if (m.Fields.Count > 0)
         {
-            foreach (var f in m.Fields)
-                w.Line($"public {FieldType(f)} {Name(f)}{Initializer(f)};");
+            foreach (var f in m.Fields) w.Line($"public {FieldType(f)} {Name(f)}{Initializer(f)};");
             w.Blank();
         }
 
         if (!sc) EmitSerialize(w, m, model);
         if (!sc && !cs) w.Blank();
         if (!cs) EmitDeserialize(w, m, model);
-
         w.Close();
     }
 
@@ -168,4 +196,32 @@ public static class CSharpEmitter
     private static string Pascal(string name)
         => string.Concat(name.ToLowerInvariant().Split('_', StringSplitOptions.RemoveEmptyEntries)
             .Select(p => char.ToUpperInvariant(p[0]) + p[1..]));
+
+    private class CodeWriter
+    {
+        private readonly StringBuilder builder = new();
+        private int indent;
+
+        public void Line(string text = "")
+        {
+            if (text.Length > 0) builder.Append(' ', indent * 4);
+            builder.Append(text).Append("\r\n");
+        }
+
+        public void Blank() => builder.Append("\r\n");
+
+        public void Open()
+        {
+            Line("{");
+            indent++;
+        }
+
+        public void Close()
+        {
+            indent--;
+            Line("}");
+        }
+
+        public override string ToString() => builder.ToString();
+    }
 }

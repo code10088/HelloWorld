@@ -7,8 +7,63 @@ using System.Text.RegularExpressions;
 
 namespace NetMsgGen;
 
+public class ProtoFile
+{
+    public string Path;
+    public string Name;
+    public string Namespace;
+    public string Package;
+    public int? IdBase;
+    public readonly List<MessageDecl> Messages = new();
+    public readonly List<EnumDecl> Enums = new();
+}
+
+public class MessageDecl
+{
+    public string Name;
+    public int? ExplicitId;
+    public readonly List<FieldDecl> Fields = new();
+}
+
+public class FieldDecl
+{
+    public string Type;
+    public string Name;
+    public bool Repeated;
+    public int Number;
+}
+
+public class EnumDecl
+{
+    public string Name;
+    public readonly List<(string Name, int Value)> Values = new();
+}
+
+public class Model
+{
+    public readonly HashSet<string> EnumNames = new();
+    public readonly HashSet<string> MessageNames = new();
+
+    public Model(List<ProtoFile> files)
+    {
+        foreach (var file in files)
+        {
+            foreach (var e in file.Enums) EnumNames.Add(e.Name);
+            foreach (var m in file.Messages) MessageNames.Add(m.Name);
+        }
+    }
+
+    public string NamespaceOf(ProtoFile file) => file.Namespace ?? file.Package ?? "Message";
+
+    public static bool IsProtocol(string name) => name.StartsWith("CS") || name.StartsWith("SC");
+}
+
 public static class ProtoParser
 {
+    private static readonly Regex IdBasePattern = new(@"//\s*@id-base\s+(\d+)", RegexOptions.Compiled);
+    private static readonly Regex IdLinePattern = new(@"^\s*//\s*@id\s+(\d+)\s*$", RegexOptions.Compiled);
+    private static readonly Regex MessageLinePattern = new(@"^\s*message\s+(\w+)", RegexOptions.Compiled);
+
     public static List<ProtoFile> ParseDirectory(string dir)
     {
         return Directory.GetFiles(dir, "*.proto")
@@ -19,143 +74,233 @@ public static class ProtoParser
 
     public static ProtoFile Parse(string path)
     {
-        var text = File.ReadAllText(path);
-        var file = new ProtoFile
+        return new Parser(path).Run();
+    }
+
+    private class Token
+    {
+        public string Text;
+        public int Line;
+    }
+
+    private class Parser
+    {
+        private readonly ProtoFile file;
+        private readonly List<Token> token;
+        private readonly Dictionary<string, int> ids;
+        private int pos;
+
+        public Parser(string path)
         {
-            Path = path,
-            Name = Path.GetFileNameWithoutExtension(path),
-            IdBase = MatchInt(text, @"//\s*@id-base\s+(\d+)"),
-        };
-        var token = Tokenize(text);
-        var explicitIds = ParseExplicitIds(text);
-        int p = 0;
-        while (p < token.Count)
-        {
-            switch (token[p].Text)
+            file = new ProtoFile
             {
-                case "syntax":
-                case "import":
-                    p = SkipToSemicolon(token, p);
-                    break;
-                case "package":
-                    file.Package = token[p + 1].Text;
-                    p = SkipToSemicolon(token, p);
-                    break;
-                case "option":
-                    if (token[p + 1].Text == "csharp_namespace")
-                        file.Namespace = token[p + 3].Text;
-                    p = SkipToSemicolon(token, p);
-                    break;
-                case "message":
-                    p = ParseMessage(token, p, file, explicitIds);
-                    break;
-                case "enum":
-                    p = ParseEnum(token, p, file);
-                    break;
-                default:
-                    p++;
-                    break;
-            }
+                Path = path,
+                Name = Path.GetFileNameWithoutExtension(path),
+            };
+            var text = File.ReadAllText(path);
+            var match = IdBasePattern.Match(text);
+            if (match.Success) file.IdBase = int.Parse(match.Groups[1].Value);
+            ids = ParseExplicitIds(text);
+            token = Tokenize(file.Name + ".proto", text);
         }
-        return file;
-    }
 
-    private static int ParseMessage(List<Token> t, int p, ProtoFile file, Dictionary<string, int> explicitIds)
-    {
-        var msg = new MessageDecl { Name = t[p + 1].Text };
-        if (explicitIds.TryGetValue(msg.Name, out var id))
-            msg.ExplicitId = id;
-
-        p += 2;
-        while (t[p].Text != "{") p++;
-        p++;
-        while (t[p].Text != "}")
+        public ProtoFile Run()
         {
-            var word = t[p].Text;
-            if (word == "message" || word == "enum" || word == "oneof" || word == "service")
+            while (pos < token.Count)
             {
-                p = SkipBlock(t, p);
-                continue;
+                switch (Peek().Text)
+                {
+                    case ";":
+                        pos++;
+                        break;
+                    case "syntax":
+                    case "import":
+                        SkipToSemicolon();
+                        break;
+                    case "package":
+                        pos++;
+                        file.Package = Next().Text;
+                        SkipToSemicolon();
+                        break;
+                    case "option":
+                        ParseOption();
+                        break;
+                    case "message":
+                        ParseMessage();
+                        break;
+                    case "enum":
+                        ParseEnum();
+                        break;
+                    default:
+                        throw Error("unsupported token '" + Peek().Text + "'");
+                }
             }
-            if (word == "option" || word == "reserved" || word == "extensions")
-            {
-                p = SkipToSemicolon(t, p);
-                continue;
-            }
-
-            bool repeated = false;
-            if (word == "repeated" || word == "optional" || word == "required")
-            {
-                repeated = word == "repeated";
-                p++;
-            }
-            msg.Fields.Add(new FieldDecl { Type = t[p].Text, Name = t[p + 1].Text, Repeated = repeated });
-            p += 2;
-            p = SkipToSemicolon(t, p);
+            return file;
         }
-        p++;
-        file.Messages.Add(msg);
-        return p;
-    }
 
-    private static int ParseEnum(List<Token> t, int p, ProtoFile file)
-    {
-        var decl = new EnumDecl { Name = t[p + 1].Text };
-        p += 2;
-        while (t[p].Text != "{") p++;
-        p++;
-        while (t[p].Text != "}")
+        private void ParseOption()
         {
-            if (t[p].Text == "option" || t[p].Text == "reserved")
-            {
-                p = SkipToSemicolon(t, p);
-                continue;
-            }
-            var name = t[p].Text;
-            p++;
-            if (t[p].Text == "=") p++;
-            var value = int.Parse(t[p].Text);
-            p = SkipToSemicolon(t, p);
-            decl.Values.Add((name, value));
+            pos++;
+            var name = Next().Text;
+            while (pos < token.Count && token[pos].Text != "=") pos++;
+            if (pos >= token.Count) throw Error("missing '=' in option");
+            pos++;
+            var value = Next().Text;
+            if (name == "csharp_namespace" && file.Namespace == null) file.Namespace = value;
+            SkipToSemicolon();
         }
-        p++;
-        file.Enums.Add(decl);
-        return p;
-    }
 
-    private static int SkipToSemicolon(List<Token> t, int p)
-    {
-        while (t[p].Text != ";") p++;
-        return p + 1;
-    }
-
-    private static int SkipBlock(List<Token> t, int p)
-    {
-        while (t[p].Text != "{") p++;
-        int depth = 0;
-        do
+        private void ParseMessage()
         {
-            if (t[p].Text == "{") depth++;
-            else if (t[p].Text == "}") depth--;
-            p++;
-        } while (depth > 0);
-        return p;
+            pos++;
+            var message = new MessageDecl { Name = Next().Text };
+            if (ids.TryGetValue(message.Name, out var id)) message.ExplicitId = id;
+            Expect("{");
+
+            var names = new HashSet<string>(StringComparer.Ordinal);
+            var last = 0;
+            while (true)
+            {
+                var head = Peek().Text;
+                if (head == "}")
+                {
+                    pos++;
+                    break;
+                }
+                if (head == "oneof") throw Error("oneof is not supported");
+                if (head == "message" || head == "enum") throw Error("nested type is not supported");
+                if (head == "option" || head == "reserved" || head == "extensions")
+                {
+                    SkipToSemicolon();
+                    continue;
+                }
+                if (head == ";")
+                {
+                    pos++;
+                    continue;
+                }
+
+                var repeated = false;
+                if (head == "repeated" || head == "optional" || head == "required")
+                {
+                    repeated = head == "repeated";
+                    pos++;
+                }
+
+                var type = Next().Text;
+                if (type == ".") throw Error("fully qualified field type is not supported");
+                if (type == "map") throw Error("map is not supported");
+
+                var name = Next().Text;
+                Expect("=");
+                var number = ParseInt(Next(), "field number");
+                if (number <= last)
+                    throw Error($"field '{name}' number {number} must be greater than {last}, fields are written in declaration order");
+                last = number;
+
+                if (Peek().Text == "[") SkipTo("]");
+                Expect(";");
+
+                if (!names.Add(name)) throw Error("duplicate field '" + name + "'");
+                message.Fields.Add(new FieldDecl { Type = type, Name = name, Repeated = repeated, Number = number });
+            }
+
+            file.Messages.Add(message);
+        }
+
+        private void ParseEnum()
+        {
+            pos++;
+            var decl = new EnumDecl { Name = Next().Text };
+            Expect("{");
+
+            var names = new HashSet<string>(StringComparer.Ordinal);
+            while (true)
+            {
+                var head = Peek().Text;
+                if (head == "}")
+                {
+                    pos++;
+                    break;
+                }
+                if (head == "option" || head == "reserved")
+                {
+                    SkipToSemicolon();
+                    continue;
+                }
+                if (head == ";")
+                {
+                    pos++;
+                    continue;
+                }
+
+                var name = Next().Text;
+                Expect("=");
+                var value = ParseInt(Next(), "enum value");
+                if (Peek().Text == "[") SkipTo("]");
+                Expect(";");
+
+                if (!names.Add(name)) throw Error("duplicate enum value '" + name + "'");
+                decl.Values.Add((name, value));
+            }
+
+            file.Enums.Add(decl);
+        }
+
+        private int ParseInt(Token value, string what)
+        {
+            if (!int.TryParse(value.Text, out var result)) throw Error("invalid " + what + " '" + value.Text + "'");
+            return result;
+        }
+
+        private Token Peek()
+        {
+            if (pos >= token.Count) throw Error("unexpected end of file");
+            return token[pos];
+        }
+
+        private Token Next()
+        {
+            var value = Peek();
+            pos++;
+            return value;
+        }
+
+        private void Expect(string text)
+        {
+            if (Next().Text != text) throw Error("expected '" + text + "'");
+        }
+
+        private void SkipTo(string text)
+        {
+            while (pos < token.Count && token[pos].Text != text) pos++;
+            if (pos >= token.Count) throw Error("missing '" + text + "'");
+            pos++;
+        }
+
+        private void SkipToSemicolon() => SkipTo(";");
+
+        private Exception Error(string message)
+        {
+            var line = token.Count == 0 ? 0 : token[Math.Min(pos, token.Count - 1)].Line;
+            return new Exception($"{file.Name}.proto:{line}: {message}");
+        }
     }
 
     private static Dictionary<string, int> ParseExplicitIds(string text)
     {
-        var map = new Dictionary<string, int>();
+        var map = new Dictionary<string, int>(StringComparer.Ordinal);
         var lines = text.Split('\n');
         for (int i = 0; i < lines.Length; i++)
         {
-            var m = Regex.Match(lines[i], @"^\s*//\s*@id\s+(\d+)\s*$");
-            if (!m.Success) continue;
+            var match = IdLinePattern.Match(lines[i]);
+            if (!match.Success) continue;
             for (int j = i + 1; j < lines.Length; j++)
             {
-                var n = Regex.Match(lines[j], @"^\s*message\s+(\w+)");
-                if (n.Success)
+                var name = MessageLinePattern.Match(lines[j]);
+                if (name.Success)
                 {
-                    map[n.Groups[1].Value] = int.Parse(m.Groups[1].Value);
+                    map[name.Groups[1].Value] = int.Parse(match.Groups[1].Value);
                     break;
                 }
                 if (lines[j].Trim().Length != 0) break;
@@ -164,70 +309,81 @@ public static class ProtoParser
         return map;
     }
 
-    private static int? MatchInt(string text, string pattern)
+    private static List<Token> Tokenize(string name, string text)
     {
-        var m = Regex.Match(text, pattern);
-        return m.Success ? int.Parse(m.Groups[1].Value) : null;
-    }
-
-    private sealed class Token
-    {
-        public string Text;
-    }
-
-    private static List<Token> Tokenize(string s)
-    {
-        var tokens = new List<Token>();
-        int i = 0;
-        while (i < s.Length)
+        var list = new List<Token>();
+        var line = 1;
+        var i = 0;
+        while (i < text.Length)
         {
-            char c = s[i];
+            var c = text[i];
+            if (c == '\n')
+            {
+                line++;
+                i++;
+                continue;
+            }
             if (char.IsWhiteSpace(c))
             {
                 i++;
+                continue;
             }
-            else if (c == '/' && i + 1 < s.Length && s[i + 1] == '/')
+            if (c == '/' && i + 1 < text.Length && text[i + 1] == '/')
             {
-                while (i < s.Length && s[i] != '\n') i++;
+                while (i < text.Length && text[i] != '\n') i++;
+                continue;
             }
-            else if (c == '/' && i + 1 < s.Length && s[i + 1] == '*')
+            if (c == '/' && i + 1 < text.Length && text[i + 1] == '*')
             {
+                var start = line;
                 i += 2;
-                while (i + 1 < s.Length && !(s[i] == '*' && s[i + 1] == '/')) i++;
-                i += 2;
-            }
-            else if (c == '"')
-            {
-                i++;
-                var sb = new StringBuilder();
-                while (s[i] != '"')
+                while (i + 1 < text.Length && !(text[i] == '*' && text[i + 1] == '/'))
                 {
-                    if (s[i] == '\\') i++;
-                    sb.Append(s[i]);
+                    if (text[i] == '\n') line++;
                     i++;
                 }
-                i++;
-                tokens.Add(new Token { Text = sb.ToString() });
+                if (i + 1 >= text.Length) throw new Exception($"{name}:{start}: unterminated block comment");
+                i += 2;
+                continue;
             }
-            else if (char.IsLetter(c) || c == '_')
+            if (c == '"')
             {
-                int start = i;
-                while (i < s.Length && (char.IsLetterOrDigit(s[i]) || s[i] == '_' || s[i] == '.')) i++;
-                tokens.Add(new Token { Text = s.Substring(start, i - start) });
-            }
-            else if (char.IsDigit(c) || (c == '-' && i + 1 < s.Length && char.IsDigit(s[i + 1])))
-            {
-                int start = i;
+                var start = line;
                 i++;
-                while (i < s.Length && char.IsDigit(s[i])) i++;
-                tokens.Add(new Token { Text = s.Substring(start, i - start) });
+                var builder = new StringBuilder();
+                while (true)
+                {
+                    if (i >= text.Length) throw new Exception($"{name}:{start}: unterminated string");
+                    if (text[i] == '"')
+                    {
+                        i++;
+                        break;
+                    }
+                    if (text[i] == '\\' && i + 1 < text.Length) i++;
+                    builder.Append(text[i]);
+                    i++;
+                }
+                list.Add(new Token { Text = builder.ToString(), Line = start });
+                continue;
             }
-            else
+            if (char.IsLetter(c) || c == '_')
             {
-                tokens.Add(new Token { Text = c.ToString() });
-                i++;
+                var start = i;
+                while (i < text.Length && (char.IsLetterOrDigit(text[i]) || text[i] == '_' || text[i] == '.')) i++;
+                list.Add(new Token { Text = text.Substring(start, i - start), Line = line });
+                continue;
             }
+            if (char.IsDigit(c) || (c == '-' && i + 1 < text.Length && char.IsDigit(text[i + 1])))
+            {
+                var start = i;
+                i++;
+                while (i < text.Length && char.IsDigit(text[i])) i++;
+                list.Add(new Token { Text = text.Substring(start, i - start), Line = line });
+                continue;
+            }
+            list.Add(new Token { Text = c.ToString(), Line = line });
+            i++;
         }
-        return tokens;
+        return list;
     }
 }
