@@ -237,7 +237,7 @@ internal static class Program
                 content = "欢迎来到游戏",
                 rewards = new List<TestReward>
                 {
-                    new TestReward { itemId = 1001, count = 10 },
+                    new TestReward { itemId = 1, count = 10 },
                 },
             },
             new TestMail

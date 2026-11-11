@@ -522,7 +522,6 @@ KCP 服务端已经作为独立进程部署，和 TCP 版**同时监听 8088**�
 
 ```text
 Server/GameServerKcp/         KCP 游戏服，直接引用 Assets/Plugins/Kcp 源码
-Server/KcpTestClient/         最小 KCP 测试客户端（握手 + CSAuth + SCPlayerData）
 Server/deploy/aiserver-game-kcp.service
 ```
 
@@ -530,7 +529,6 @@ Server/deploy/aiserver-game-kcp.service
 
 ```text
 /opt/aiserver/game-kcp/       GameServerKcp
-/opt/aiserver/kcp-test/       KcpTestClient
 ```
 
 ### 10.2 安全组
@@ -575,29 +573,21 @@ ss -lnup | grep 8088     # UDP: GameServerKcp
 
 ### 10.5 测试
 
-服务器本机：
+加 `USE_KCP` 出包后启动客户端，在服务器上看日志：
 
 ```bash
-/opt/aiserver/kcp-test/KcpTestClient 127.0.0.1 8088
+journalctl -u aiserver-game-kcp -f
 ```
 
-Windows 本机（需要 .NET 8 运行时，或用 `DOTNET_ROLL_FORWARD=Major`）：
-
-```powershell
-dotnet run --project Server\KcpTestClient -- 112.126.84.17 8088
-```
-
-期望输出：
+正常应该依次出现：
 
 ```text
-握手响应 id=10000, code=1, conv=1
-握手成功 conv=1
-收到 KCP 消息 id=10001, length=14
-SCAuth code=1
-收到 KCP 消息 id=10003, length=45
-SCPlayerData 已收到
-KCP TEST OK
+KCP 握手: token=..., version=1, endpoint=...
+收到 KCP 消息 id=1, length=21
+鉴权 token=...
 ```
+
+能进主场景、邮件能正常刷新，就说明 KCP 通道是通的。
 
 ### 10.6 当前限制
 
