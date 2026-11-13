@@ -222,7 +222,7 @@
 　　在ProjectSetting/Player中加入宏DOUYINMINIGAME切换到抖音小游戏模式<br>
 
 　Sdk：<br>
-　　Android：sdk测试代码<br>
+　　Android：QQ登录<br>
 　　微信：开放域数据、排行榜、各种广告<br>
 　　抖音：TT初始化、登录、跳转导航栏、排行榜、各种广告<br>
 
