@@ -6,7 +6,7 @@
 
     <application>
         <activity
-            android:name="com.qs.HelloWorld.QQLoginActivity"
+            android:name="com.qs.helloworld.sdk.QQLoginActivity"
             android:exported="false"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"

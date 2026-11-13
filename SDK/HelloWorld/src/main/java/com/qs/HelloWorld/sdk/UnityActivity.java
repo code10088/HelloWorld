@@ -1,4 +1,4 @@
-package com.qs.HelloWorld;
+package com.qs.helloworld.sdk;
 
 import android.app.Activity;
 

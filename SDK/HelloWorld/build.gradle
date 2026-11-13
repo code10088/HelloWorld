@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace 'com.qs.HelloWorld'
+    namespace 'com.qs.helloworld.sdk'
     compileSdk 35
 
     defaultConfig {
@@ -19,6 +19,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    // QQ SDK 的 login(Fragment) 重载引用了旧 support 库，仅编译期需要
+    // QQ SDK's login(Fragment) overload references the old support library, compile-time only
     compileOnly 'com.android.support:support-fragment:28.0.0'
 }

@@ -17,7 +17,7 @@ public class SDK : MonoSingleton<SDK>
     public void QQLogin(Action<string> callBack)
     {
         qqLoginCallback = callBack;
-        using (var cls = new AndroidJavaClass("com.qs.HelloWorld.UnityActivity"))
+        using (var cls = new AndroidJavaClass("com.qs.helloworld.sdk.UnityActivity"))
         {
             cls.CallStatic("QQLogin");
         }
