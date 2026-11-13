@@ -32,8 +32,10 @@
 /HelloWorld/Assets/ZRes/Assembly
 /HelloWorld/Assets/ZRes/DataConfig/*.meta
 
-/SDK/.gradle
-/SDK/.idea
+/SDK/HelloWorld/.gradle
+/SDK/HelloWorld/.idea
+/SDK/HelloWorld/build
+/SDK/HelloWorld/local.properties
 
 /NetMsg/Net/Out/
 /NetMsg/Net/NetMsgGen/bin/

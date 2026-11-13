@@ -1,0 +1,2 @@
+-keep class com.tencent.** { *; }
+-dontwarn com.tencent.**

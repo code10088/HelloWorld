@@ -48,7 +48,6 @@ public class UITest : UIBase
         comp.languageBtnUIButton.onClick.AddListener(SetText);
 
         //Function
-        comp.openSDKBtnUIButton.onClick.AddListener(SDKInit);
         comp.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
         comp.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
         comp.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
@@ -241,12 +240,6 @@ public class UITest : UIBase
     #endregion
 
     #region Function
-    private void SDKInit()
-    {
-#if UNITY_ANDROID
-        SDK.Instance.InitSDK();
-#endif
-    }
     private void TestCoroutine()
     {
         var a = _TestCoroutine();

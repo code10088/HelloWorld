@@ -12,42 +12,20 @@ using TTSDK.UNBridgeLib.LitJson;
 public class SDK : MonoSingleton<SDK>
 {
 #if UNITY_ANDROID
-    private AndroidJavaObject androidActivity;
-    private bool initResult = false;
-    public void InitSDK()
-    {
-        androidActivity = new AndroidJavaObject("com.qs.HelloWorld.UnityActivity");
-        initResult = androidActivity.Call<bool>("Init");
-    }
+    private Action<string> qqLoginCallback;
 
-    private Action<string> wechatLoginCallback;
-    public void OnOpenWechatLogin(Action<string> callBack)
+    public void QQLogin(Action<string> callBack)
     {
-        if (!initResult)
+        qqLoginCallback = callBack;
+        using (var cls = new AndroidJavaClass("com.qs.HelloWorld.UnityActivity"))
         {
-            InitSDK();
+            cls.CallStatic("QQLogin");
         }
-        if (!initResult)
-        {
-            //content="-1" sdk初始化失败
-            callBack("-1");
-            return;
-        }
-        wechatLoginCallback = callBack;
-        bool result = androidActivity.Call<bool>("WeChatLogin");
-        //content="-2" 微信初始化失败
-        if (!result) callBack("-2");
     }
-    public void WXLoginCallback_Android(string content)
+    public void QQLoginCallback(string content)
     {
-        //content="-3" 用户拒绝
-        //content="-4" 用户取消
-        wechatLoginCallback?.Invoke(content);
-    }
-
-    public void Log(string s)
-    {
-        GameDebug.LogError(s);
+        qqLoginCallback?.Invoke(content);
+        qqLoginCallback = null;
     }
 #endif
 

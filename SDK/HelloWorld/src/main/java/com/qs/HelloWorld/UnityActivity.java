@@ -2,52 +2,30 @@ package com.qs.HelloWorld;
 
 import android.app.Activity;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 public class UnityActivity {
 
-    public static Activity unityActivity;
-
-    public boolean Init() {
+    public static Activity CurrentActivity() {
         try {
-            Class<?> classtype = Class.forName("com.unity3d.player.UnityPlayer");
-            Activity activity = (Activity) classtype.getDeclaredField("currentActivity").get(classtype);
-            unityActivity = activity;
-            CallUnity("Log", "SDKInitSuccess");
-            return true;
-        } catch (ClassNotFoundException e) {
-            CallUnity("Log", e.toString());
-            return false;
-        } catch (IllegalAccessException e) {
-            CallUnity("Log", e.toString());
-            return false;
-        } catch (NoSuchFieldException e) {
-            CallUnity("Log", e.toString());
-            return false;
+            Class<?> cls = Class.forName("com.unity3d.player.UnityPlayer");
+            return (Activity) cls.getDeclaredField("currentActivity").get(cls);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    public static boolean CallUnity(String functionName, String args) {
+    public static void CallUnity(String functionName, String args) {
         try {
-            Class<?> classtype = Class.forName("com.unity3d.player.UnityPlayer");
-            Method method = classtype.getMethod("UnitySendMessage", String.class, String.class, String.class);
-            method.invoke(classtype, "SDK", functionName, args);
-            return true;
-        } catch (ClassNotFoundException e) {
-            CallUnity("Log", e.toString());
-        } catch (NoSuchMethodException e) {
-            CallUnity("Log", e.toString());
-        } catch (IllegalAccessException e) {
-            CallUnity("Log", e.toString());
-        } catch (InvocationTargetException e) {
-            CallUnity("Log", e.toString());
+            Class<?> cls = Class.forName("com.unity3d.player.UnityPlayer");
+            cls.getMethod("UnitySendMessage", String.class, String.class, String.class)
+                    .invoke(cls, "SDK", functionName, args);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return false;
     }
 
-    //微信登录
-    public boolean WeChatLogin() {
-        return WeChatSDK.WechatLogin();
+    //QQ登录
+    public static void QQLogin() {
+        QQSDK.Login(CurrentActivity());
     }
 }
