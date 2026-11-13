@@ -21,19 +21,25 @@ public class UILogin : UIBase
         else
         {
             login = true;
-            OnQQAuthCode("1");
+#if UNITY_EDITOR
+            OnQQLogin("0|0|0|0");
+#else
+            SDK.Instance.QQLogin(OnQQLogin);
+#endif
         }
     }
-    private void OnQQAuthCode(string authCode)
+    private void OnQQLogin(string content)
     {
         login = false;
-        if (string.IsNullOrEmpty(authCode))
+        //成功 "0|openid|access_token|expires_in"，取消 "-3"，失败 "-4|code|msg"
+        if (string.IsNullOrEmpty(content) || content[0] != '0')
         {
             UICommonTips.ShowTips(LanguageManager.Instance.Get(10008));
         }
         else
         {
-            AccountInfo.Instance.LoginWithCode(LoginPlatform.QQ, authCode);
+            var args = content.Split('|');
+            AccountInfo.Instance.LoginWithCode(LoginPlatform.QQ, args[2]);
             OnClose();
         }
     }
