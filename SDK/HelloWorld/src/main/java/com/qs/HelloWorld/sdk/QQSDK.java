@@ -8,7 +8,7 @@ import com.tencent.tauth.Tencent;
 
 public class QQSDK {
 
-    public static final String APP_ID = "1906400524";
+    public static final String APP_ID = "1906400845";
 
     private static Tencent mTencent;
 
