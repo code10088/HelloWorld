@@ -15,7 +15,7 @@ namespace Message
         public long time;
         public string title;
         public string content;
-        public List<RewardInfo> rewards = new List<RewardInfo>();
+        public List<RewardInfo> rewards;
 
         public void Serialize(UnsafeByteBuffer buffer)
         {
@@ -41,6 +41,7 @@ namespace Message
             title = buffer.ReadString();
             content = buffer.ReadString();
             int rewardCount = buffer.ReadInt();
+            rewards = new List<RewardInfo>();
             for (int i = 0; i < rewardCount; i++)
             {
                 var reward = new RewardInfo();
@@ -59,12 +60,12 @@ namespace Message
 
     public class SCMail : IDeserialize
     {
-        public List<MailDetail> details = new List<MailDetail>();
+        public List<MailDetail> details;
 
         public void Deserialize(UnsafeByteBuffer buffer)
         {
             int count = buffer.ReadInt();
-            details.Clear();
+            details = new List<MailDetail>();
             for (int i = 0; i < count; i++)
             {
                 var detail = new MailDetail();

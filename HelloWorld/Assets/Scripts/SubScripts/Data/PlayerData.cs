@@ -22,6 +22,7 @@ public class PlayerData : DataBase
         var info = (SCPlayerData)msg;
         playerId = info.data.playerId;
         lv = info.data.level;
+        DataManager.Instance.BagData.SetData(info.items, info.equips);
         EventManager.Instance.Fire(EventType.RefreshPlayerData);
     }
 }

@@ -53,13 +53,13 @@ namespace Message
 
     public class SCBag : IDeserialize
     {
-        public List<BagData> items = new List<BagData>();
-        public List<EquipData> equips = new List<EquipData>();
+        public List<BagData> items;
+        public List<EquipData> equips;
 
         public void Deserialize(UnsafeByteBuffer buffer)
         {
             int itemCount = buffer.ReadInt();
-            items.Clear();
+            items = new List<BagData>();
             for (int i = 0; i < itemCount; i++)
             {
                 var item = new BagData();
@@ -67,7 +67,7 @@ namespace Message
                 items.Add(item);
             }
             int equipCount = buffer.ReadInt();
-            equips.Clear();
+            equips = new List<EquipData>();
             for (int i = 0; i < equipCount; i++)
             {
                 var equip = new EquipData();

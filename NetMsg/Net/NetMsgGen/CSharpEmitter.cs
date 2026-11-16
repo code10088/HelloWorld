@@ -110,7 +110,7 @@ public static class CSharpEmitter
 
         if (m.Fields.Count > 0)
         {
-            foreach (var f in m.Fields) w.Line($"public {FieldType(f)} {Name(f)}{Initializer(f)};");
+            foreach (var f in m.Fields) w.Line($"public {FieldType(f)} {Name(f)}{Initializer(f, cs)};");
             w.Blank();
         }
 
@@ -161,7 +161,7 @@ public static class CSharpEmitter
                 var count = m.Fields.Count == 1 ? "count" : Singular(n) + "Count";
                 var item = Singular(n);
                 w.Line($"int {count} = buffer.ReadInt();");
-                if (Model.IsProtocol(m.Name)) w.Line($"{n}.Clear();");
+                w.Line($"{n} = new List<{f.Type}>();");
                 w.Line($"for (int i = 0; i < {count}; i++)");
                 w.Open();
                 w.Line($"var {item} = new {f.Type}();");
@@ -184,8 +184,8 @@ public static class CSharpEmitter
         return f.Repeated ? $"List<{f.Type}>" : f.Type;
     }
 
-    private static string Initializer(FieldDecl f)
-        => f.Repeated && !Scalars.ContainsKey(f.Type) ? $" = new List<{f.Type}>()" : "";
+    private static string Initializer(FieldDecl f, bool serializeOnly)
+        => serializeOnly && f.Repeated && !Scalars.ContainsKey(f.Type) ? $" = new List<{f.Type}>()" : "";
 
     private static string Name(FieldDecl f)
         => f.Repeated && !f.Name.EndsWith('s') ? f.Name + "s" : f.Name;
