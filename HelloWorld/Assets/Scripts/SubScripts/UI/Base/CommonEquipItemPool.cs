@@ -73,6 +73,7 @@ public class CommonEquipItem : ObjectPoolItem
         if (obj == null || cfg == null) return;
         obj.SetActive(active);
         obj.transform.parent = parent ? parent : CommonEquipItemPool.Instance.transform;
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition3D = Vector2.zero;
         obj.transform.localRotation = Quaternion.identity;
         obj.transform.localScale = Vector3.one;
@@ -96,6 +97,7 @@ public class CommonEquipItem : ObjectPoolItem
         if (obj)
         {
             obj.transform.parent = parent;
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
             rt.anchoredPosition3D = Vector2.zero;
             obj.transform.localRotation = Quaternion.identity;
             obj.transform.localScale = Vector3.one;
