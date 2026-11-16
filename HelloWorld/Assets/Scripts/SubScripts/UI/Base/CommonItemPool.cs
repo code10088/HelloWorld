@@ -80,7 +80,7 @@ public class CommonItem : ObjectPoolItem
         AtlasManager.Instance.LoadSprite(ref atlasId, ZResConst.ResUIAtlasItemPath, cfg.Quality.ToString(), sprite => comp.qualityImage.sprite = sprite);
         AtlasManager.Instance.LoadSprite(ref atlasId, ZResConst.ResUIAtlasItemPath, cfg.Icon, sprite => comp.iconImage.sprite = sprite);
         comp.numTextMeshProUGUI.text = count.ToString();
-        comp.nameTextMeshProUGUI.text = cfg.ItemNameKey;
+        comp.nameTextMeshProUGUI.text = LanguageManager.Instance.Get(cfg.ItemNameKey);
         if (DataManager.Instance.PlayerData.Lv > cfg.UseLevel)
         {
             comp.lockGameObject.SetActive(true);

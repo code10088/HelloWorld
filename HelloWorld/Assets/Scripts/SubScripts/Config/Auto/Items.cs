@@ -18,8 +18,8 @@ public sealed partial class Items : Luban.BeanBase
     {
         ID = _buf.ReadInt();
         ItemType = (ItemType)_buf.ReadInt();
-        ItemNameKey = _buf.ReadString();
-        ItemDesKey = _buf.ReadString();
+        ItemNameKey = _buf.ReadInt();
+        ItemDesKey = _buf.ReadInt();
         Icon = _buf.ReadString();
         Quality = (ItemQualityType)_buf.ReadInt();
         UseLevel = _buf.ReadInt();
@@ -42,11 +42,11 @@ public sealed partial class Items : Luban.BeanBase
     /// <summary>
     /// 名字多语言
     /// </summary>
-    public readonly string ItemNameKey;
+    public readonly int ItemNameKey;
     /// <summary>
     /// 描述多语言
     /// </summary>
-    public readonly string ItemDesKey;
+    public readonly int ItemDesKey;
     /// <summary>
     /// 图标
     /// </summary>

@@ -742,14 +742,14 @@ MonoBehaviour:
   - mItemPrefab: {fileID: 9164200426966141231, guid: 70529b18b57f1d744b95cf2753027920, type: 3}
     mInitCreateCount: 0
   mArrangeType: 0
-  mFixedRowOrColumnCount: 10
+  mFixedRowOrColumnCount: 8
   mPadding:
-    m_Left: 10
-    m_Right: 10
-    m_Top: 10
-    m_Bottom: 10
-  mItemPadding: {x: 10, y: 10}
-  mItemSize: {x: 140, y: 180}
+    m_Left: 6
+    m_Right: 6
+    m_Top: 6
+    m_Bottom: 6
+  mItemPadding: {x: 6, y: 6}
+  mItemSize: {x: 200, y: 200}
   mItemRecycleDistance: {x: 50, y: 50}
   mItemSnapEnable: 0
   mGridFixedType: 0

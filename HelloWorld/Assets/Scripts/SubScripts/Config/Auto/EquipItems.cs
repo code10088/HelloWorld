@@ -17,8 +17,8 @@ public sealed partial class EquipItems : Luban.BeanBase
     public EquipItems(ByteBuf _buf) 
     {
         ID = _buf.ReadInt();
-        NameKey = _buf.ReadString();
-        DesKey = _buf.ReadString();
+        NameKey = _buf.ReadInt();
+        DesKey = _buf.ReadInt();
         Icon = _buf.ReadString();
         Quality = (ItemQualityType)_buf.ReadInt();
         EquipType = (EquipType)_buf.ReadInt();
@@ -40,11 +40,11 @@ public sealed partial class EquipItems : Luban.BeanBase
     /// <summary>
     /// 名字
     /// </summary>
-    public readonly string NameKey;
+    public readonly int NameKey;
     /// <summary>
     /// 描述
     /// </summary>
-    public readonly string DesKey;
+    public readonly int DesKey;
     /// <summary>
     /// 图标
     /// </summary>
