@@ -14,7 +14,6 @@
 6. 启动登录服和游戏服，服务器部署参考[Server/README.md](./Server/README.md)<br><br>
 
 # 后续开发内容
-　背包<br>
 　聊天<br>
 　好友<br>
 　英雄展示<br>
@@ -274,3 +273,6 @@
 　恭喜获得奖励展示：<br>
 　　UIShowReward：奖励展示界面<br>
 　　ShowRewardData：奖励展示队列<br>
+
+　背包：<br>
+　　UIBag：通用道具、装备(唯一id)<br>

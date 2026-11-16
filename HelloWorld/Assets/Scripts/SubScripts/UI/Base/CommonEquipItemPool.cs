@@ -25,6 +25,7 @@ public class CommonEquipItemPool : MonoSingleton<CommonEquipItemPool>, Singleton
 public class CommonEquipItem : ObjectPoolItem
 {
     private CommonEquipItemComponent comp;
+    private RectTransform rt;
     private Transform parent;
 
     private static int atlasId = -1;
@@ -36,6 +37,7 @@ public class CommonEquipItem : ObjectPoolItem
     {
         base.Finish(obj);
         comp ??= obj?.GetComponent<CommonEquipItemComponent>();
+        rt ??= obj?.GetComponent<RectTransform>();
         Refresh();
     }
     public override void Disable()
@@ -56,6 +58,7 @@ public class CommonEquipItem : ObjectPoolItem
         this.obj = obj;
         parent = obj.transform.parent;
         comp ??= obj?.GetComponent<CommonEquipItemComponent>();
+        rt ??= obj?.GetComponent<RectTransform>();
     }
     /// <summary>
     /// 刷新装备数据
@@ -67,13 +70,10 @@ public class CommonEquipItem : ObjectPoolItem
     }
     private void Refresh()
     {
-        if (obj == null || cfg == null)
-        {
-            return;
-        }
+        if (obj == null || cfg == null) return;
         obj.SetActive(active);
         obj.transform.parent = parent ? parent : CommonEquipItemPool.Instance.transform;
-        obj.transform.localPosition = Vector3.zero;
+        rt.anchoredPosition3D = Vector2.zero;
         obj.transform.localRotation = Quaternion.identity;
         obj.transform.localScale = Vector3.one;
         AtlasManager.Instance.LoadSprite(ref atlasId, ZResConst.ResUIAtlasItemPath, cfg.Quality.ToString(), sprite => comp.qualityImage.sprite = sprite);
@@ -96,7 +96,7 @@ public class CommonEquipItem : ObjectPoolItem
         if (obj)
         {
             obj.transform.parent = parent;
-            obj.transform.localPosition = Vector3.zero;
+            rt.anchoredPosition3D = Vector2.zero;
             obj.transform.localRotation = Quaternion.identity;
             obj.transform.localScale = Vector3.one;
         }
