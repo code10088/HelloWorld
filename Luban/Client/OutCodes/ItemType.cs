@@ -14,9 +14,7 @@ namespace cfg
     public enum ItemType
     {
         Normal = 1,
-        Equip = 2,
-        Weapon = 3,
-        Box = 4,
+        Box = 2,
     }
 
 } 

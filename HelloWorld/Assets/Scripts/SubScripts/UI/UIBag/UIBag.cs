@@ -29,8 +29,6 @@ public class UIBag : UIBase
         comp.closeBtnUIButton.onClick.AddListener(OnClose);
         comp.itemTabBtnUIButton.onClick.AddListener(SwitchItem);
         comp.equipTabBtnUIButton.onClick.AddListener(SwitchEquip);
-        comp.itemTabUIText.SetText(10101);
-        comp.equipTabUIText.SetText(10102);
         comp.scrollViewLoopGridView.InitGridView(0, OnGetItemByIndex);
     }
 
@@ -101,14 +99,14 @@ public class UIBag : UIBase
 public class UIBagItem : LoopItemData
 {
     private static List<UIBagItem> items = new List<UIBagItem>();
-    private GameObject slot;
+    private GameObject obj;
     private CommonItem item;
     private CommonEquipItem equip;
     private int index;
 
     public void Init(GameObject obj)
     {
-        slot = obj;
+        this.obj = obj;
         items.Add(this);
     }
     public void SetData(UIBag.Entry entry, int index)
@@ -120,7 +118,7 @@ public class UIBagItem : LoopItemData
                 if (item == null)
                 {
                     item = CommonItemPool.Instance.Get();
-                    item.SetParent(slot.transform);
+                    item.SetParent(obj.transform);
                 }
                 if (equip != null)
                 {
@@ -140,7 +138,7 @@ public class UIBagItem : LoopItemData
                 if (equip == null)
                 {
                     equip = CommonEquipItemPool.Instance.Get();
-                    equip.SetParent(slot.transform);
+                    equip.SetParent(obj.transform);
                 }
                 equip.SetActive(true);
                 equip.Refresh((int)entry.Id);

@@ -42,9 +42,7 @@
     </enum>
 	<enum name="ItemType">
         <var name="Normal" value="1"/>
-        <var name="Equip" value="2"/>
-        <var name="Weapon" value="3"/>
-        <var name="Box" value="4"/>
+        <var name="Box" value="2"/>
     </enum>
 	<enum name="ItemQualityType">
         <var name="White" value="1"/>

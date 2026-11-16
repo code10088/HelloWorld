@@ -184,7 +184,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8097285199064789539}
   - component: {fileID: 7051066690734717377}
-  - component: {fileID: 5528483107730681023}
   - component: {fileID: 1151503804341626756}
   m_Layer: 5
   m_Name: ItemTab
@@ -220,21 +219,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3305187223423006043}
   m_CullTransparentMesh: 1
---- !u!114 &5528483107730681023
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3305187223423006043}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: MainAssembly::MarkComponent
-  isArray: 0
-  components:
-  - {fileID: 1151503804341626756}
 --- !u!114 &1151503804341626756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,7 +239,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u9053\u5177"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4b826f91e4cd4c74a95e9c183b8585e1, type: 2}
   m_sharedMaterial: {fileID: -7110287386475080168, guid: 4b826f91e4cd4c74a95e9c183b8585e1, type: 2}
@@ -961,7 +945,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5239798295620703091}
   - component: {fileID: 1358548979543811640}
-  - component: {fileID: 8511644177069087701}
   - component: {fileID: 8616915032925150947}
   m_Layer: 5
   m_Name: EquipTab
@@ -997,21 +980,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7343077024649000805}
   m_CullTransparentMesh: 1
---- !u!114 &8511644177069087701
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7343077024649000805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5dcc48756f405c42bbbb8f6a581b28e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: MainAssembly::MarkComponent
-  isArray: 0
-  components:
-  - {fileID: 8616915032925150947}
 --- !u!114 &8616915032925150947
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1032,7 +1000,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u88C5\u5907"
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4b826f91e4cd4c74a95e9c183b8585e1, type: 2}
   m_sharedMaterial: {fileID: -7110287386475080168, guid: 4b826f91e4cd4c74a95e9c183b8585e1, type: 2}
@@ -1623,7 +1591,5 @@ MonoBehaviour:
   bgRectTransform: {fileID: 302027862665563635}
   closeBtnUIButton: {fileID: 1777730621771746616}
   itemTabBtnUIButton: {fileID: 5027613983735920892}
-  itemTabUIText: {fileID: 1151503804341626756}
   equipTabBtnUIButton: {fileID: 1008702140231656714}
-  equipTabUIText: {fileID: 8616915032925150947}
   scrollViewLoopGridView: {fileID: 3722772197213803304}
