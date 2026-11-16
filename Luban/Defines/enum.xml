@@ -60,4 +60,9 @@
         <var name="BindOnEquip" value="3"/>
         <var name="BindOnUse" value="4"/>
     </enum>
+	<enum name="EquipType">
+        <var name="Weapon" value="1"/>
+        <var name="Armor" value="2"/>
+        <var name="Boots" value="3"/>
+    </enum>
 </module>

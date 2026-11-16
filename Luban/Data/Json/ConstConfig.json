@@ -1,6 +1,10 @@
 {
-	"ID":0,
+	"ID": 0,
 	"BattleConst": {
 		"BrushInterval": 1.0
+	},
+	"BagConst": {
+		"ItemCapacity": 100,
+		"EquipCapacity": 50
 	}
 }

@@ -24,6 +24,7 @@ namespace cfg
         UIMail = 9,
         UIShowReward = 10,
         UILogin = 11,
+        UIBag = 12,
     }
 
 } 

@@ -10,6 +10,7 @@ public class UIMain : UIBase
         comp = component as UIMainComponent;
         comp.uIMailBtnUIButton.onClick.AddListener(OnClickMail);
         comp.uITestBtnUIButton.onClick.AddListener(OnClickTest);
+        comp.uIBagBtnUIButton.onClick.AddListener(OnClickBag);
     }
     public override void OnEnable(params object[] param)
     {
@@ -34,5 +35,9 @@ public class UIMain : UIBase
     private void OnClickTest()
     {
         UIManager.Instance.OpenUI(UIType.UITest);
+    }
+    private void OnClickBag()
+    {
+        UIManager.Instance.OpenUI(UIType.UIBag);
     }
 }

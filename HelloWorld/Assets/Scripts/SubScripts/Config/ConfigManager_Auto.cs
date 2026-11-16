@@ -1,4 +1,4 @@
-﻿using cfg;
+using cfg;
 
 public partial class ConfigManager
 {
@@ -18,6 +18,7 @@ public partial class ConfigManager
     private TbItems tbitems;
     private TbLanguageCN tblanguagecn;
     private TbLanguageEN tblanguageen;
+    private TbEquipItems tbequipitems;
 
     public TbConstConfig TbConstConfig => tbconstconfig;
     public TbSceneConfig TbSceneConfig => tbsceneconfig;
@@ -35,4 +36,5 @@ public partial class ConfigManager
     public TbItems TbItems => tbitems;
     public TbLanguageCN TbLanguageCN => tblanguagecn;
     public TbLanguageEN TbLanguageEN => tblanguageen;
+    public TbEquipItems TbEquipItems => tbequipitems;
 }

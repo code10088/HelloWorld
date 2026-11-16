@@ -15,5 +15,6 @@
     RefreshActivity,
     EndActivity,
     RefreshMail,
+    RefreshBag,
     CrossDay,
 }

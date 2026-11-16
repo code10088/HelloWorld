@@ -2,9 +2,14 @@
     <bean name="ConstConfig">
 		<var name="ID" type="int"/>
 		<var name="BattleConst" type="BattleConst"/>
+		<var name="BagConst" type="BagConst"/>
     </bean>
 	<bean name="BattleConst">
 		<var name="BrushInterval" type="float"/>
+    </bean>
+	<bean name="BagConst">
+		<var name="ItemCapacity" type="int"/>
+		<var name="EquipCapacity" type="int"/>
     </bean>
 	
 	<table name="TbConstConfig" value="ConstConfig" input="Json/ConstConfig.json"/> 

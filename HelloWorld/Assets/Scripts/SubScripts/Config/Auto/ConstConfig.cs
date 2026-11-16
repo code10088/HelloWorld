@@ -18,6 +18,7 @@ public sealed partial class ConstConfig : Luban.BeanBase
     {
         ID = _buf.ReadInt();
         BattleConst = global::cfg.BattleConst.DeserializeBattleConst(_buf);
+        BagConst = global::cfg.BagConst.DeserializeBagConst(_buf);
     }
 
     public static ConstConfig DeserializeConstConfig(ByteBuf _buf)
@@ -27,6 +28,7 @@ public sealed partial class ConstConfig : Luban.BeanBase
 
     public readonly int ID;
     public readonly BattleConst BattleConst;
+    public readonly BagConst BagConst;
    
     public const int __ID__ = -1271334811;
     public override int GetTypeId() => __ID__;
@@ -34,6 +36,7 @@ public sealed partial class ConstConfig : Luban.BeanBase
     public  void ResolveRef(Tables tables)
     {
         BattleConst?.ResolveRef(tables);
+        BagConst?.ResolveRef(tables);
     }
 
     public override string ToString()
@@ -41,6 +44,7 @@ public sealed partial class ConstConfig : Luban.BeanBase
         return "{ "
         + "ID:" + ID + ","
         + "BattleConst:" + BattleConst + ","
+        + "BagConst:" + BagConst + ","
         + "}";
     }
 }

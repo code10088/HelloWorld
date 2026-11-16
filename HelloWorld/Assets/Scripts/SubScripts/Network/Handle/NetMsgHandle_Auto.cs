@@ -11,6 +11,8 @@ public class NetMsgId
     public const ushort Message_CSGetMailAllReward = 103;
     public const ushort Message_CSDeleteMail = 104;
     public const ushort Message_CSDeleteAllMail = 105;
+    public const ushort Message_CSBag = 106;
+    public const ushort Message_CSUseItem = 107;
     public const ushort Message_SCSession = 10000;
     public const ushort Message_SCAuth = 10001;
     public const ushort Message_SCHeart = 10002;
@@ -19,6 +21,8 @@ public class NetMsgId
     public const ushort Message_SCGetMailReward = 10102;
     public const ushort Message_SCGetMailAllReward = 10103;
     public const ushort Message_SCDeleteMail = 10104;
+    public const ushort Message_SCBag = 10106;
+    public const ushort Message_SCUseItem = 10107;
 }
 public partial class NetMsgHandle
 {
@@ -38,6 +42,8 @@ public partial class NetMsgHandle
                 case NetMsgId.Message_SCGetMailReward: msg = new Message.SCGetMailReward(); break;
                 case NetMsgId.Message_SCGetMailAllReward: msg = new Message.SCGetMailAllReward(); break;
                 case NetMsgId.Message_SCDeleteMail: msg = new Message.SCDeleteMail(); break;
+                case NetMsgId.Message_SCBag: msg = new Message.SCBag(); break;
+                case NetMsgId.Message_SCUseItem: msg = new Message.SCUseItem(); break;
                 default: return true;
             }
             msg.Deserialize(buffer);

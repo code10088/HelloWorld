@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option csharp_namespace = "Message";
+
+message BagData
+{
+	uint32 itemId = 1;
+	uint32 count = 2;
+}
+
+message EquipData
+{
+	int64 uid = 1;
+	uint32 equipId = 2;
+	uint32 level = 3;
+	uint32 bind = 4;
+}
+
+message CSBag
+{
+}
+message SCBag
+{
+	repeated BagData items = 1;
+	repeated EquipData equips = 2;
+}
+
+message CSUseItem
+{
+	uint32 itemId = 1;
+	uint32 count = 2;
+}
+message SCUseItem
+{
+	int32 code = 1;
+	uint32 itemId = 2;
+	uint32 count = 3;
+}

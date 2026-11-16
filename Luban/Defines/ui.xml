@@ -11,6 +11,7 @@
         <var name="UIMail" value="9"/>
         <var name="UIShowReward" value="10"/>
         <var name="UILogin" value="11"/>
+        <var name="UIBag" value="12"/>
     </enum>
     <enum name="UIWindowType">
         <var name="Normal" value="0"/>

@@ -29,6 +29,7 @@ public partial class Tables
     public TbItems TbItems {get; }
     public TbLanguageCN TbLanguageCN {get; }
     public TbLanguageEN TbLanguageEN {get; }
+    public TbEquipItems TbEquipItems {get; }
 
     public Tables(System.Func<string, ByteBuf> loader)
     {
@@ -48,6 +49,7 @@ public partial class Tables
         TbItems = new TbItems(loader("tbitems"));
         TbLanguageCN = new TbLanguageCN(loader("tblanguagecn"));
         TbLanguageEN = new TbLanguageEN(loader("tblanguageen"));
+        TbEquipItems = new TbEquipItems(loader("tbequipitems"));
         ResolveRef();
     }
     
@@ -69,6 +71,7 @@ public partial class Tables
         TbItems.ResolveRef(this);
         TbLanguageCN.ResolveRef(this);
         TbLanguageEN.ResolveRef(this);
+        TbEquipItems.ResolveRef(this);
     }
 }
 

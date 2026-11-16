@@ -64,5 +64,11 @@
         "Name": "UILogin",
         "PrefabPath": "Assets/ZRes/UI/Prefab/UILogin/UILogin.prefab",
         "UIWindowType": "Tips"
+    },
+    {
+        "UIType": "UIBag",
+        "Name": "UIBag",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIBag/UIBag.prefab",
+        "UIWindowType": "Normal"
     }
 ]
