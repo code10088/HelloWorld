@@ -70,5 +70,29 @@
         "Name": "UIBag",
         "PrefabPath": "Assets/ZRes/UI/Prefab/UIBag/UIBag.prefab",
         "UIWindowType": "Normal"
+    },
+    {
+        "UIType": "UIFriend",
+        "Name": "UIFriend",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIFriend/UIFriend.prefab",
+        "UIWindowType": "Normal"
+    },
+    {
+        "UIType": "UIFriendApply",
+        "Name": "UIFriendApply",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIFriend/UIFriendApply.prefab",
+        "UIWindowType": "Normal"
+    },
+    {
+        "UIType": "UIFriendAdd",
+        "Name": "UIFriendAdd",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIFriend/UIFriendAdd.prefab",
+        "UIWindowType": "Normal"
+    },
+    {
+        "UIType": "UIFriendRemark",
+        "Name": "UIFriendRemark",
+        "PrefabPath": "Assets/ZRes/UI/Prefab/UIFriend/UIFriendRemark.prefab",
+        "UIWindowType": "Normal"
     }
 ]

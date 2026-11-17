@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+option csharp_namespace = "Message";
+
+message FriendInfo
+{
+	uint32 playerId = 1;
+	string nickName = 2;
+	string avatar = 3;
+	uint32 level = 4;
+	string remark = 5;	// 我给他的备注，空串显示 nickName
+}
+
+message FriendApplyInfo
+{
+	uint32 playerId = 1;
+	string nickName = 2;
+	string avatar = 3;
+	uint32 level = 4;
+	int64 time = 5;
+}
+
+// relation: 0陌生人 1已是好友 2已申请
+message SearchPlayerInfo
+{
+	uint32 playerId = 1;
+	string nickName = 2;
+	string avatar = 3;
+	uint32 level = 4;
+	uint32 relation = 5;
+}
+
+message CSFriendList
+{
+}
+message SCFriendList
+{
+	repeated FriendInfo friends = 1;
+}
+
+message CSFindFriend
+{
+	string nickName = 1;
+}
+message SCFindFriend
+{
+	repeated SearchPlayerInfo players = 1;
+}
+
+message CSAddFriend
+{
+	uint32 playerId = 1;
+}
+// code: 0成功 1已是好友 2申请已存在 3对方不存在 4好友已满 6参数错误
+message SCAddFriend
+{
+	int32 code = 1;
+	uint32 playerId = 2;
+}
+
+message CSFriendApplyList
+{
+}
+message SCFriendApplyList
+{
+	repeated FriendApplyInfo applies = 1;
+}
+
+// handle: 1同意 2忽略
+message CSHandleFriendApply
+{
+	uint32 playerId = 1;
+	uint32 handle = 2;
+}
+message SCHandleFriendApply
+{
+	int32 code = 1;
+	uint32 playerId = 2;
+	uint32 handle = 3;
+}
+
+message CSAcceptAllFriendApply
+{
+}
+message SCAcceptAllFriendApply
+{
+	int32 code = 1;
+	uint32 count = 2;
+}
+
+message CSDeleteFriend
+{
+	uint32 playerId = 1;
+}
+// code: 0成功 3对方不存在 5不是好友
+message SCDeleteFriend
+{
+	int32 code = 1;
+	uint32 playerId = 2;
+}
+
+message CSSetFriendRemark
+{
+	uint32 playerId = 1;
+	string remark = 2;
+}
+// code: 0成功 5不是好友 6参数错误
+message SCSetFriendRemark
+{
+	int32 code = 1;
+	uint32 playerId = 2;
+	string remark = 3;
+}

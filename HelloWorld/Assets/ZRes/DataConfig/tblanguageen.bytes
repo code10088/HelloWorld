@@ -1,4 +1,5 @@
-§Hello World!§
+>§Hello World!§
 Hello {0}!§	{0}å¤©å‰§{0}å°æ—¶å‰§{0}åˆ†é’Ÿå‰§åˆšåˆš§ä¸€é”®é¢†å–§ä¸€é”®å·²è¯»§æˆæƒå¤±è´¥§ç‚¹å‡»å¤ªå¿«å•¦§æœåŠ¡å™¨ç»´æŠ¤ä¸­§è´¦å·å°ç¦ï¼Œè¯·åˆ‡æ¢è´¦å·§è¯·é‡æ–°ç™»å½•§tBag§uItems§vEquip§wUse§xBag is full§y
 Not enough§zHP§{ATK§|OK§}Close§ØHealing Pill§Ù
-Restore HP§ÚEXP Pill§ÛGain EXP§ÜTianyuan Brush§İAttack Weapon§ŞAmethyst Boots§ßDefense Boots
+Restore HP§ÚEXP Pill§ÛGain EXP§ÜTianyuan Brush§İAttack Weapon§ŞAmethyst Boots§ßDefense Boots¨<Friends¨=Requests¨>Add¨?Remark¨@Delete¨AAccept¨BIgnore¨C
+Accept All¨DEnter nickname¨ESearch¨FAlready friends¨G	Requested¨HFriend Requests¨INo friends yet¨JNo requests¨KPlayer not found¨LPlease enter a nickname¨MDelete Friend¨NDelete friend "{0}"?¨ORemark¨PSave¨QCancel¨RPlayer not found¨SRequest sent¨TFriend list is full¨URequest already exists¨VYou cannot add yourself¨WOperation failed¨XFriends: {0}¨YPending requests: {0}¨ZClose

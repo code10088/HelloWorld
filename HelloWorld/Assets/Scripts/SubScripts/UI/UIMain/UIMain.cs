@@ -11,6 +11,7 @@ public class UIMain : UIBase
         comp.uIMailBtnUIButton.onClick.AddListener(OnClickMail);
         comp.uITestBtnUIButton.onClick.AddListener(OnClickTest);
         comp.uIBagBtnUIButton.onClick.AddListener(OnClickBag);
+        comp.uIFriendBtnUIButton.onClick.AddListener(OnClickFriend);
     }
     public override void OnEnable(params object[] param)
     {
@@ -39,5 +40,9 @@ public class UIMain : UIBase
     private void OnClickBag()
     {
         UIManager.Instance.OpenUI(UIType.UIBag);
+    }
+    private void OnClickFriend()
+    {
+        UIManager.Instance.OpenUI(UIType.UIFriend);
     }
 }

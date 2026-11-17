@@ -2,6 +2,7 @@ public partial class DataManager
 {
     private ActivityData activityData;
     private BagData bagData;
+    private FriendData friendData;
     private GuideData guideData;
     private HotUpdateResData hotUpdateResData;
     private MailData mailData;
@@ -31,6 +32,18 @@ public partial class DataManager
                 bagData.Init();
             }
             return bagData;
+        }
+    }
+    public FriendData FriendData
+    {
+        get
+        {
+            if (friendData == null)
+            {
+                friendData = new FriendData();
+                friendData.Init();
+            }
+            return friendData;
         }
     }
     public GuideData GuideData
@@ -112,6 +125,8 @@ public partial class DataManager
         activityData = null;
         bagData?.Clear();
         bagData = null;
+        friendData?.Clear();
+        friendData = null;
         guideData?.Clear();
         guideData = null;
         hotUpdateResData?.Clear();
