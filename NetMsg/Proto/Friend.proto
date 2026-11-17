@@ -8,7 +8,7 @@ message FriendInfo
 	string nickName = 2;
 	string avatar = 3;
 	uint32 level = 4;
-	string remark = 5;	// 我给他的备注，空串显示 nickName
+	string remark = 5;
 }
 
 message FriendApplyInfo
@@ -20,14 +20,13 @@ message FriendApplyInfo
 	int64 time = 5;
 }
 
-// relation: 0陌生人 1已是好友 2已申请
 message SearchPlayerInfo
 {
 	uint32 playerId = 1;
 	string nickName = 2;
 	string avatar = 3;
 	uint32 level = 4;
-	uint32 relation = 5;
+	uint32 relation = 5; //0陌生人 1好友
 }
 
 message CSFriendList
@@ -51,7 +50,6 @@ message CSAddFriend
 {
 	uint32 playerId = 1;
 }
-// code: 0成功 1已是好友 2申请已存在 3对方不存在 4好友已满 6参数错误
 message SCAddFriend
 {
 	int32 code = 1;
@@ -66,11 +64,10 @@ message SCFriendApplyList
 	repeated FriendApplyInfo applies = 1;
 }
 
-// handle: 1同意 2忽略
 message CSHandleFriendApply
 {
 	uint32 playerId = 1;
-	uint32 handle = 2;
+	uint32 handle = 2; //1同意 2忽略
 }
 message SCHandleFriendApply
 {
@@ -92,7 +89,6 @@ message CSDeleteFriend
 {
 	uint32 playerId = 1;
 }
-// code: 0成功 3对方不存在 5不是好友
 message SCDeleteFriend
 {
 	int32 code = 1;
@@ -104,7 +100,6 @@ message CSSetFriendRemark
 	uint32 playerId = 1;
 	string remark = 2;
 }
-// code: 0成功 5不是好友 6参数错误
 message SCSetFriendRemark
 {
 	int32 code = 1;

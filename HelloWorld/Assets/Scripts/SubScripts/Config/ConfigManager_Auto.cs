@@ -1,4 +1,4 @@
-using cfg;
+﻿using cfg;
 
 public partial class ConfigManager
 {
