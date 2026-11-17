@@ -159,14 +159,6 @@ public class UITest : UIBase
     #endregion
 
     #region Function
-    private IEnumerator<ICoroutine> _TestCoroutine()
-    {
-        GameDebug.Log(0);
-        yield return new WaitFrame(1);
-        GameDebug.Log(2);
-        yield return new WaitSeconds(1);
-        GameDebug.Log(3);
-    }
     public TriggerManager triggerManager = new TriggerManager();
     public BuffManager buffManager = new BuffManager();
     private void UpdateTrigger(float t)
