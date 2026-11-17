@@ -27,28 +27,17 @@ public class UITest : UIBase
         comp.openUIBtnUIButton.onClick.AddListener(OnOpenUI);
         comp.openFunctionBtnUIButton.onClick.AddListener(OnOpenFunction);
         comp.openUISettingUIButton.onClick.AddListener(OnOpenUISetting);
-        comp.openMiniGameBtnUIButton.onClick.AddListener(OnOpenMiniGame);
 
         //Scene
         comp.openTestSceneUIButton.onClick.AddListener(OpenTestScene);
         comp.closeTestSceneUIButton.onClick.AddListener(CloseTestScene);
-        comp.poolEnqueueUIButton.onClick.AddListener(LoadBulletFromPool);
-        comp.poolDequeueUIButton.onClick.AddListener(DelectBullet);
         comp.openBattleSceneUIButton.onClick.AddListener(OpenBattleScene);
         comp.closeBattleSceneUIButton.onClick.AddListener(CloseBattleScene);
-        comp.cameraTRSUIButton.onClick.AddListener(SetCameraTRS);
 
         //UI
         comp.openSubBtnUIButton.onClick.AddListener(OnOpenSub);
-        comp.openMsgBtnUIButton.onClick.AddListener(OnOpenMessage);
-        comp.openTipsBtnUIButton.onClick.AddListener(OnOpenTips);
-        comp.loadSpriteUIButton.onClick.AddListener(LoadSprite);
-        comp.uIProcessBtnUIButton.onClick.AddListener(OpenUIProcess);
-        comp.commonItemBtnUIButton.onClick.AddListener(ShowCommonItem);
-        comp.languageBtnUIButton.onClick.AddListener(SetText);
 
         //Function
-        comp.coroutineBtnUIButton.onClick.AddListener(TestCoroutine);
         comp.addTriggerBtnUIButton.onClick.AddListener(AddTrigger);
         comp.excuteTriggerBtnUIButton.onClick.AddListener(ExcuteTrigger);
         comp.guideUIButton.onClick.AddListener(StartGuide);
@@ -66,7 +55,6 @@ public class UITest : UIBase
     public override void OnEnable(params object[] param)
     {
         base.OnEnable(param);
-        EventManager.Instance.Register<UIType>(EventType.CloseUI, NextUIProcess);
 
         updateId = Driver.Instance.StartUpdate(UpdateTrigger);
         GameDebug.Log("UITest OnEnable");
@@ -84,7 +72,6 @@ public class UITest : UIBase
     public override void OnDisable()
     {
         base.OnDisable();
-        EventManager.Instance.Unregister<UIType>(EventType.CloseUI, NextUIProcess);
 
         subUI.Close();
         Driver.Instance.Remove(updateId);
@@ -116,11 +103,6 @@ public class UITest : UIBase
     {
         UIManager.Instance.OpenUI(UIType.UISetting);
     }
-    private void OnOpenMiniGame()
-    {
-        comp.totalGameObject.SetActive(false);
-        comp.miniGameGameObject.SetActive(true);
-    }
     private void OnClickClose()
     {
         if (comp.totalGameObject.activeSelf)
@@ -138,16 +120,6 @@ public class UITest : UIBase
     }
 
     #region Scene
-    private void LoadBulletFromPool()
-    {
-        TestScene ts = SceneManager.Instance.GetScene(SceneType.TestScene) as TestScene;
-        ts.LoadBulletFromPool();
-    }
-    private void DelectBullet()
-    {
-        TestScene ts = SceneManager.Instance.GetScene(SceneType.TestScene) as TestScene;
-        ts.DelectBullet();
-    }
     private void OpenTestScene()
     {
         SceneManager.Instance.OpenScene(SceneType.TestScene);
@@ -164,10 +136,6 @@ public class UITest : UIBase
     {
         BattleManager.Instance.Exit();
     }
-    private void SetCameraTRS()
-    {
-        SceneManager.Instance.CameraController.SetTarget(1, Vector3.right, 50, Vector2.right);
-    }
     #endregion
 
     #region UI
@@ -183,69 +151,14 @@ public class UITest : UIBase
         test.SetData(data);
         return item;
     }
-    private void OnOpenMessage()
-    {
-        UICommonBoxParam param = new UICommonBoxParam();
-        param.type = UICommonBoxType.SureAndCancel;
-        param.title = "Tips";
-        param.content = "Content";
-        param.sure = a => OnOpenMessage();
-        UICommonBox.OpenCommonBox(param);
-    }
-    private void OnOpenTips()
-    {
-        UICommonTips.ShowTips(ServerTime.Instance.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-    }
     private void OnOpenSub()
     {
         if (subUI.Active) subUI.Close();
         else subUI.Open(comp.subRootGameObject.transform);
     }
-    private void LoadSprite()
-    {
-        SetSprite(comp.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon");
-        SetSprite(comp.imageImage, ZResConst.ResUIAtlasTestPath, "TestIcon2");
-        GameDebug.Log("SetSprite");
-    }
-    private ProcessControl UIProcess = new ProcessControl();
-    private void OpenUIProcess()
-    {
-        UIProcess = new ProcessControl();
-        UIProcess.Add(new UIProcessItem(UIType.UISetting));
-        UIProcess.Add(new UIProcessItem(UIType.UISetting));
-        UIProcess.Start();
-    }
-    private void NextUIProcess(UIType type)
-    {
-        if (type == ((UIProcessItem)UIProcess.Cur).type) UIProcess.Next();
-    }
-    private void ShowCommonItem()
-    {
-        var item = CommonItemPool.Instance.Get();
-        item.SetParent(comp.itemRootGameObject.transform);
-        item.Refresh(1);
-        item.SetActive(true);
-        item.SetCount(10);
-        CommonItemPool.Instance.Return(item);
-        item = CommonItemPool.Instance.Get();
-        item.SetParent(comp.itemRootGameObject.transform);
-        item.Refresh(1);
-        item.SetActive(true);
-        item.SetCount(10);
-    }
-    private void SetText()
-    {
-        comp.languageUIText.SetText(10001, "World!!");
-    }
     #endregion
 
     #region Function
-    private void TestCoroutine()
-    {
-        var a = _TestCoroutine();
-        Driver.Instance.StartCoroutine(a);
-        GameDebug.Log(1);
-    }
     private IEnumerator<ICoroutine> _TestCoroutine()
     {
         GameDebug.Log(0);
