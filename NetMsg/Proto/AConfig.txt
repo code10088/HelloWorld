@@ -10,14 +10,6 @@
 105		= Message.CSDeleteAllMail
 106		= Message.CSBag
 107		= Message.CSUseItem
-108		= Message.CSFriendList
-109		= Message.CSFindFriend
-110		= Message.CSAddFriend
-111		= Message.CSFriendApplyList
-112		= Message.CSHandleFriendApply
-113		= Message.CSAcceptAllFriendApply
-114		= Message.CSDeleteFriend
-115		= Message.CSSetFriendRemark
 
 10000	= Message.SCSession
 10001	= Message.SCAuth
@@ -29,11 +21,3 @@
 10104	= Message.SCDeleteMail
 10106	= Message.SCBag
 10107	= Message.SCUseItem
-10108	= Message.SCFriendList
-10109	= Message.SCFindFriend
-10110	= Message.SCAddFriend
-10111	= Message.SCFriendApplyList
-10112	= Message.SCHandleFriendApply
-10113	= Message.SCAcceptAllFriendApply
-10114	= Message.SCDeleteFriend
-10115	= Message.SCSetFriendRemark

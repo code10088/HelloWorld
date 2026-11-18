@@ -25,10 +25,6 @@ namespace cfg
         UIShowReward = 10,
         UILogin = 11,
         UIBag = 12,
-        UIFriend = 13,
-        UIFriendApply = 14,
-        UIFriendAdd = 15,
-        UIFriendRemark = 16,
     }
 
 } 

@@ -16,8 +16,5 @@
     EndActivity,
     RefreshMail,
     RefreshBag,
-    RefreshFriend,
-    RefreshFriendApply,
-    RefreshFriendSearch,
     CrossDay,
 }
