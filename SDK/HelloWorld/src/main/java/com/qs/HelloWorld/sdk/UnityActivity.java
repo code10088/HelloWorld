@@ -28,4 +28,9 @@ public class UnityActivity {
     public static void QQLogin() {
         QQSDK.Login(CurrentActivity());
     }
+
+    //谷歌登录
+    public static void GoogleLogin() {
+        GoogleSDK.Login(CurrentActivity());
+    }
 }

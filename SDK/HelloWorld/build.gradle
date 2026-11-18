@@ -19,6 +19,8 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    // QQ SDK's login(Fragment) overload references the old support library, compile-time only
     compileOnly 'com.android.support:support-fragment:28.0.0'
+    compileOnly 'androidx.credentials:credentials:1.6.0'
+    compileOnly 'androidx.credentials:credentials-play-services-auth:1.6.0'
+    compileOnly 'com.google.android.libraries.identity.googleid:googleid:1.2.1'
 }

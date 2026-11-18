@@ -12,11 +12,11 @@ using TTSDK.UNBridgeLib.LitJson;
 public class SDK : MonoSingleton<SDK>
 {
 #if UNITY_ANDROID
-    private Action<string> qqLoginCallback;
+    private Action<string> loginCallback;
 
     public void QQLogin(Action<string> callBack)
     {
-        qqLoginCallback = callBack;
+        loginCallback = callBack;
         using (var cls = new AndroidJavaClass("com.qs.helloworld.sdk.UnityActivity"))
         {
             cls.CallStatic("QQLogin");
@@ -24,8 +24,21 @@ public class SDK : MonoSingleton<SDK>
     }
     public void QQLoginCallback(string content)
     {
-        qqLoginCallback?.Invoke(content);
-        qqLoginCallback = null;
+        loginCallback?.Invoke(content);
+        loginCallback = null;
+    }
+    public void GoogleLogin(Action<string> callBack)
+    {
+        loginCallback = callBack;
+        using (var cls = new AndroidJavaClass("com.qs.helloworld.sdk.UnityActivity"))
+        {
+            cls.CallStatic("GoogleLogin");
+        }
+    }
+    public void GoogleLoginCallback(string content)
+    {
+        loginCallback?.Invoke(content);
+        loginCallback = null;
     }
 #endif
 

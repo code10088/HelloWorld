@@ -6,6 +6,7 @@ using UnityEngine;
 public enum LoginPlatform
 {
     QQ,
+    Google,
 }
 public enum LoginCode
 {

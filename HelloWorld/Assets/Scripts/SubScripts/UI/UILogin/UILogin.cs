@@ -8,7 +8,7 @@ public class UILogin : UIBase
         base.Init();
         comp = component as UILoginComponent;
         comp.qQLoginButton.onClick.AddListener(OnClickQQ);
-
+        comp.googleLoginButton.onClick.AddListener(OnClickGoogle);
     }
 
     private void OnClickQQ()
@@ -40,6 +40,38 @@ public class UILogin : UIBase
         {
             var args = content.Split('|');
             AccountInfo.Instance.LoginWithCode(LoginPlatform.QQ, args[2]);
+            OnClose();
+        }
+    }
+    private void OnClickGoogle()
+    {
+        if (login)
+        {
+            UICommonTips.ShowTips(LanguageManager.Instance.Get(10009));
+            return;
+        }
+        else
+        {
+            login = true;
+#if UNITY_EDITOR
+            OnGoogleLogin("0|0");
+#else
+            SDK.Instance.GoogleLogin(OnGoogleLogin);
+#endif
+        }
+    }
+    private void OnGoogleLogin(string content)
+    {
+        login = false;
+        //成功 "0|id_token"，取消 "-3"，失败 "-4|type|msg"
+        if (string.IsNullOrEmpty(content) || content[0] != '0')
+        {
+            UICommonTips.ShowTips(LanguageManager.Instance.Get(10008));
+        }
+        else
+        {
+            var args = content.Split('|');
+            AccountInfo.Instance.LoginWithCode(LoginPlatform.Google, args[1]);
             OnClose();
         }
     }
