@@ -276,9 +276,7 @@ PlayerSettings:
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: '{inproject}: Assets/Editor/user.keystore'
-  AndroidKeystorePass: 123456
   AndroidKeyaliasName: helloworld
-  AndroidKeyaliasPass: 123456
   AndroidEnableArmv9SecurityFeatures: 0
   AndroidEnableArm64MTE: 0
   AndroidBuildApkPerCpuArchitecture: 0

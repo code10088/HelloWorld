@@ -55,6 +55,8 @@ public class BuildEditor
                 switch (platform)
                 {
                     case "Android":
+                        PlayerSettings.Android.keystorePass = "123456";
+                        PlayerSettings.Android.keyaliasPass = "123456";
                         break;
                     case "iOS":
                         break;
