@@ -12,7 +12,7 @@ taskkill /f /im Unity.exe
 "C:/Program Files/Unity 6000.5.3f1/Editor/Unity.exe" ^
 -quit ^
 -batchmode ^
--projectPath "D:/HelloWorld/HelloWorld" ^
+-projectPath "D:/HelloWorld/Client" ^
 -logFile - ^
 -executeMethod %2 ^
 --platform:%3 ^
