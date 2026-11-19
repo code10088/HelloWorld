@@ -108,16 +108,29 @@ D:\HelloWorld\Server\skynet\run-server.bat
 
 `test-auth-sign.ps1` 覆盖了 sign 模式的合法签名、错误签名、过期、格式错误、不同 userId。
 
-### Google 登录
+### 平台回调直传
 
-`platform = 1` 表示 Google，`authCode` 是 Google ID Token（JWT），**不走** `auth_mode`：
+客户端把 SDK 原始回调串整个当 `authCode` 上报，服务端自己取需要的字段：
 
-- 解 payload 取 `sub`，返回 `userId = "g_" .. sub`
+| platform | 客户端上报 | 服务端取值 |
+| --- | --- | --- |
+| 0 QQ | `0\|openid\|access_token\|expires_in` | `userId = "q_" .. openid` |
+| 1 Google | `0\|id_token` | `userId = "g_" .. sub` |
+
+解析规则：服务端按 `ret|payload` 拆开，只处理第一个 `|` 之后的部分；**不带 `|` 的串**（如 `"1"`）仍走上面的 `auth_mode`，所以老的白名单测试不受影响。编辑器桩 `0\|0` / `0\|0\|0\|0` 分别落到白名单 `test-user-1` 和 `q_0`。
+
+**QQ**
+
+- 目前**不校验 access_token**，直接信任客户端上报的 openid
+- 上线前改成 `GET https://graph.qq.com/oauth2.0/me?access_token=<token>&unionid=1`，校验返回的 `client_id == 1906400845` 且 `openid` 与上报一致
+
+**Google**
+
+- 解 payload 取 `sub`
 - 校验 `aud == google_client_id`、`iss` 是 `accounts.google.com`、`exp` 未过期
-- `google_client_id` 填 Google Auth Platform 里 **Web 应用** 客户端的 ID
+- 目前**不验签**，上线前改成 `GET https://oauth2.googleapis.com/tokeninfo?id_token=<token>`
 
-> 目前**只解 payload，没有验签**：skynet 这套构建没有编 `ltls.so`（拿不到 https），也没有 RSA 库。
-> 联调用没问题，公网开放前必须改成调 `https://oauth2.googleapis.com/tokeninfo?id_token=...` 让 Google 验签。
+> 两个平台的正式校验都需要 https（`ltls.so`），而当前 skynet 构建没编它。补齐之前，任何客户端都能伪造 openid / JWT 冒充别人，仅限内测。
 
 新用户第一次登录时 `store.lua` 的 `create_player` 会自动建号（`player_id = MAX + 1`，从 `10000` 起）。
 

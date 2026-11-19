@@ -38,8 +38,7 @@ public class UILogin : UIBase
         }
         else
         {
-            var args = content.Split('|');
-            AccountInfo.Instance.LoginWithCode(LoginPlatform.QQ, args[2]);
+            AccountInfo.Instance.LoginWithCode(LoginPlatform.QQ, content);
             OnClose();
         }
     }
@@ -70,8 +69,7 @@ public class UILogin : UIBase
         }
         else
         {
-            var args = content.Split('|');
-            AccountInfo.Instance.LoginWithCode(LoginPlatform.Google, args[1]);
+            AccountInfo.Instance.LoginWithCode(LoginPlatform.Google, content);
             OnClose();
         }
     }

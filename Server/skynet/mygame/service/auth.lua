@@ -139,14 +139,25 @@ local function verify_local(auth_code)
 	return nil, "未知 auth_mode: " .. tostring(mode)
 end
 
+-- 客户端上报的是 SDK 原始回调串：
+--   QQ     "0|openid|access_token|expires_in"
+--   Google "0|id_token"
 function M.verify(auth_code, platform)
 	auth_code = auth_code or ""
 
-	if platform == PLATFORM_GOOGLE and auth_code:find("%.") then
-		return verify_google(auth_code)
+	local _, payload = auth_code:match("^(%-?%d+)|(.+)$")
+	if not payload then
+		return verify_local(auth_code)
 	end
 
-	return verify_local(auth_code)
+	if platform == PLATFORM_GOOGLE then
+		if not payload:find("%.") then
+			return verify_local(payload)
+		end
+		return verify_google(payload)
+	end
+
+	return "q_" .. payload:match("^([^|]+)")
 end
 
 -- 测试/工具用：生成一个 sign 模式下合法的 authCode
