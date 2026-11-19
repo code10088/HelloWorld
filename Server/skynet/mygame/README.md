@@ -284,6 +284,67 @@ powershell -ExecutionPolicy Bypass -File D:\HelloWorld\Server\skynet\mygame\test
 | 游戏服 | `0.0.0.0:8088` |
 | 下发地址 | `game_host = "112.126.84.17"` |
 
+### 打包（本地 → ECS）
+
+本地改完并 **commit** 后，用 git 里已提交的内容生成包（`git archive` 只收录跟踪文件，`mygame/config`、编译产物、`msys64/mysql/redis` 都不会进来）：
+
+```powershell
+cd D:\HelloWorld
+git archive --format=tar.gz --prefix=skynet/ `
+  -o Server\skynet-linux.tar.gz HEAD:Server/skynet `
+  -- . ":(exclude)mygame/config"
+```
+
+> 必须显式排除 `mygame/config`：它目前仍被 git 跟踪（含本机数据库密码），不排除会覆盖线上配置。
+>
+> 注意用 `HEAD:Server/skynet`：这样打出来的是**已提交**的版本；工作区里未提交的改动不会进包。
+
+上传（`<instance-id>` 换成 ECS 实例 ID）：
+
+```powershell
+$wb = "$env:LOCALAPPDATA\Programs\workbench\workbench.exe"
+& $wb upload Server\skynet-linux.tar.gz /tmp/skynet-linux.tar.gz -i <instance-id> -f
+```
+
+服务器上解压 + 编译 + 启动（保留线上 `config`，旧目录留作回滚）：
+
+```bash
+cp -a /opt/aiserver/skynet/mygame/config /tmp/mygame.config.bak
+systemctl stop skynet
+mv /opt/aiserver/skynet /opt/aiserver/skynet.bak.$(date +%Y%m%d)
+
+mkdir /opt/aiserver/skynet
+tar -xzf /tmp/skynet-linux.tar.gz -C /opt/aiserver
+cp -a /tmp/mygame.config.bak /opt/aiserver/skynet/mygame/config
+chown -R aiserver:aiserver /opt/aiserver/skynet
+
+cd /opt/aiserver/skynet
+make clean && make linux -j4 MALLOC_STATICLIB= SKYNET_DEFINES=-DNOUSE_JEMALLOC
+systemctl start skynet
+systemctl is-active skynet
+```
+
+验证：`journalctl -u skynet -n 30 --no-pager` 应看到
+
+```text
+数据层 store 已就绪（MySQL 池 4 / Redis 池 4）
+游戏服已启动: TCP 0.0.0.0:8088
+登录服已启动: HTTP 127.0.0.1:5080, 下发游戏服 <game_host>:8088
+服务已全部启动
+```
+
+回滚：
+
+```bash
+systemctl stop skynet
+mv /opt/aiserver/skynet /opt/aiserver/skynet.failed
+mv /opt/aiserver/skynet.bak.<日期> /opt/aiserver/skynet
+systemctl start skynet
+```
+
+> 实测 Workbench 的 `upload` 会破坏 `.sh` 内容（`/opt/aiserver` 被存成 `/opt/aiserve`），
+> **不要用它上传 shell 脚本**；脚本直接在服务器上执行，或上传后先 `md5sum` / `cat` 核对。
+
 Linux 编译（禁用 jemalloc，免去拉子模块）：
 
 ```bash
@@ -299,7 +360,7 @@ systemctl restart skynet
 journalctl -u skynet -f
 ```
 
-升级：覆盖 `/opt/aiserver/skynet` 后重新编译，再 `systemctl restart skynet`。
+升级：按上面「打包（本地 → ECS）」生成包 → 解压覆盖 → 重新编译 → `systemctl restart skynet`。
 
 数据库结构变更走增量脚本，例如背包：
 
