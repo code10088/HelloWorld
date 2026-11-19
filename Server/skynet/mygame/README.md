@@ -21,6 +21,7 @@
                                                   │
                      ┌──────────────┐             │
   TCP 8088 ─────────►│  gameserver  │──┐          │
+  KCP(UDP) 8088 ────►│              │  │   ┌──────┴──────┐
                      └──────────────┘  │   ┌──────┴──────┐
                                        └──►│    store    │
                                            │ MySQL/Redis │
@@ -52,6 +53,8 @@ mygame/
 ├─ test-mailreward.ps1            邮件奖励入包测试（领取/重复领取/堆叠合并）
 ├─ test-auth-sign.ps1             sign 模式签名校验测试
 ├─ test-gameserver.ps1            游戏服测试（含持久化、缓存、并发）
+├─ tools/
+│  └─ kcp-client.c                KCP 测试客户端（C，握手/鉴权/背包/心跳/丢包）
 └─ service/
    ├─ server_main.lua             启动器：store → gameserver → loginserver
    ├─ store.lua                   MySQL + Redis 数据层（连接池 + 缓存）
@@ -187,6 +190,8 @@ D:\HelloWorld\Server\skynet\run-server.bat
 | 键 | 默认 | 说明 |
 | --- | --- | --- |
 | `game_port` | `8088` | 游戏服端口，也是登录服下发的端口 |
+| `game_kcp_port` | `8088` | KCP(UDP) 端口，默认与 `game_port` 同号（TCP/UDP 可共用同一端口号） |
+| `kcp_timeout` | `30` | KCP 会话超时（秒），超过这么久没有 UDP 输入就判定掉线 |
 | `login_host` / `login_port` | `127.0.0.1` / `5080` | 登录服监听地址 |
 | `game_host` | `127.0.0.1` | **下发给客户端的游戏服地址**，部署时改公网 IP/域名 |
 | `user_id` | `test-user-1` | whitelist/mock 模式登录的账号 |
@@ -284,6 +289,49 @@ powershell -ExecutionPolicy Bypass -File D:\HelloWorld\Server\skynet\mygame\test
 - `test-bag.ps1`：重置背包 → 首登自动发放演示数据（并校验 SCPlayerData 携带背包）→ 使用道具（普通/超量/异常参数，校验 SCUseItem.count 为剩余数量）→ 重连验证持久化 → 确认不会重复发放。
 - `test-mailreward.ps1`：领取邮件奖励入包 → 重复领取不重复发 → 多封同道具合并堆叠 → 邮件状态置 2 → 重连持久化。
 
+### KCP 通道测试（C 客户端）
+
+```bash
+# 编译（Windows / MSYS2）
+gcc -O2 -o kcp-client.exe kcp-client.c ../../3rd/kcp/ikcp.c -I../../3rd/kcp -lws2_32
+# 编译（Linux）
+gcc -O2 -o kcp-client kcp-client.c ../../3rd/kcp/ikcp.c -I../../3rd/kcp
+
+# 正常链路
+./kcp-client 127.0.0.1 8088 <accessToken>
+# 20% 丢包下验证重传
+./kcp-client 127.0.0.1 8088 <accessToken> --drop 20
+# 伪造 token 应被拒（conv=0）
+./kcp-client 127.0.0.1 8088 fake-token --expect-bad-token
+```
+
+## 传输协议（TCP / KCP）
+
+客户端根据 `GameStart.cs` 选择的 `IChannel` 决定用哪种传输，两种连接跑同一套业务逻辑。
+
+```text
+TCP 帧：  [i32 bodyLength][u16 messageId][payload]     // bodyLength = 2 + #payload
+KCP 帧：  [u16 messageId][payload]                    // 靠 KCP 消息边界，没有长度前缀
+```
+
+KCP 握手（客户端 `KcpChannel` 已实现，服务端在 `gameserver.lua` 的 UDP 回调里处理）：
+
+```text
+请求（裸 UDP 包）: u16 0x0000(CSSession) | u16 tokenLen | token | i32 version
+响应（裸 UDP 包）: u16 10000(SCSession) | i32 1 | u32 conv      // conv == 0 表示 token 无效
+之后：全部走 KCP，conv 用于区分会话
+```
+
+KCP 参数必须与客户端一致：
+
+```text
+NoDelay(1, 10, 2, 1)    窗口 32 / 128    MTU 1400    消息模式（stream = 0）
+```
+
+服务端每 10ms 驱动一次所有会话（`update` → `flush` → `sendto`）；超过 `kcp_timeout` 没有收到任何 UDP 包即判定掉线，走与 TCP 相同的下线清理。
+
+> KCP 依赖 `luaclib/kcp.so`（`3rd/kcp` + `lualib-src/lkcp.c`）。缺这个模块时游戏服只开 TCP，日志会打印 `luaclib kcp 未加载`。
+
 ## 部署（线上 ECS）
 
 | 项 | 值 |
@@ -294,7 +342,8 @@ powershell -ExecutionPolicy Bypass -File D:\HelloWorld\Server\skynet\mygame\test
 | MySQL | 8.0.46，`127.0.0.1:3306`，库 `helloworld` |
 | Redis | 6.0.16，`127.0.0.1:6379` |
 | 登录服 | `127.0.0.1:5080`，由 nginx 反代 443 |
-| 游戏服 | `0.0.0.0:8088` |
+| 游戏服 | `0.0.0.0:8088`（TCP）+ `0.0.0.0:8088`（UDP/KCP） |
+| 安全组 | 需要放行 **8088/TCP 和 8088/UDP**（UDP 漏放行时客户端握手超时） |
 | 下发地址 | `game_host = "112.126.84.17"` |
 
 ### 打包（本地 → ECS）
@@ -415,7 +464,9 @@ mysql < /opt/aiserver/skynet/mygame/sql/migrate-bag.sql
 - 玩家缓存是**读时回填 + 写时删除**，没有主动预热；冷启动后第一次登录会多一次查库；
 - 邮件缓存的 key 是整体列表，单封改动会整表失效（数据量小无所谓，邮件多了要改成按封缓存）；
 - `auth_whitelist` 适合测试，正式环境要么用 `sign`，要么接平台校验；
-- 只有 TCP，没有 KCP；单节点 `harbor = 0`；
+- 传输同时支持 TCP 与 KCP(UDP)，但客户端同一时刻只用其中一种（`GameStart.cs` 里选的 `IChannel`）；
+- KCP 不做连接级鉴权之外的防重放：`conv` 随机分配 + 地址绑定，token 仍是唯一身份凭据；
+- 单节点 `harbor = 0`；
 - MySQL/Redis 都装在本机 `D:\HelloWorld\Server`（`mysql\`、`redis\`），重启电脑后需要重新执行 `start-db.bat`。
 
 ## 日志

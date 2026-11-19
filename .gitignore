@@ -61,3 +61,4 @@
 /Server/skynet/mygame/*.log
 /Server/skynet/mygame/*.err
 /Server/skynet/mygame/config
+/Server/skynet/mygame/tools/*.exe

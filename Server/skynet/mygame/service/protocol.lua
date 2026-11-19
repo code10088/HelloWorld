@@ -127,6 +127,11 @@ function M.frame(id, payload)
 	return string.pack("<i4", #body) .. body
 end
 
+-- KCP 帧：u16 messageId + payload（没有长度前缀，靠 KCP 的消息边界）
+function M.kcp_frame(id, payload)
+	return string.pack("<I2", id) .. (payload or "")
+end
+
 function M.parse_frame(body)
 	local id = string.unpack("<I2", body, 1)
 	return id, M.reader(body, 3)

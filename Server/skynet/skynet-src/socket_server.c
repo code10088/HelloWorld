@@ -1550,6 +1550,14 @@ forward_message_udp(struct socket_server *ss, struct socket *s, struct socket_lo
 		case AGAIN_WOULDBLOCK:
 			return -1;
 		}
+#ifdef _WIN32
+		// winsock 不写 errno，非阻塞读拿不到数据时是 WSAEWOULDBLOCK；
+		// 对端关闭/ICMP 不可达时是 WSAECONNRESET。UDP 监听 socket 不能因此被关闭。
+		int wsaerr = WSAGetLastError();
+		if (wsaerr == WSAEWOULDBLOCK || wsaerr == WSAECONNRESET) {
+			return -1;
+		}
+#endif
 		int error = errno;
 		// close when error
 		force_close(ss, s, l, result);

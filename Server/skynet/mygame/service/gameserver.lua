@@ -1,6 +1,8 @@
 -- 游戏服（skynet 版）
--- 协议与 Server/GameServer（C#）一致，客户端无需改动。
--- 玩家和邮件来自 store 服务（MySQL + Redis），拿到内存副本后按操作回写。
+-- 传输：TCP 8088 + KCP(UDP) 8088，两种连接共用同一套业务逻辑。
+--   业务帧：TCP = [i32 len][u16 id][payload]
+--           KCP = [u16 id][payload]（KCP 自带消息边界，没有长度前缀）
+--   玩家和邮件来自 store 服务（MySQL + Redis），拿到内存副本后按操作回写。
 local skynet = require "skynet"
 local socket = require "skynet.socket"
 local proto = require "protocol"
@@ -9,6 +11,13 @@ local ID = proto.ID
 local MAX_BODY = 16 * 1024
 
 local store   -- store 服务地址，启动时填充
+
+-- KCP 握手帧宽（u16 id + i32 1 + u32 conv）
+local KCP_TIMEOUT_S = tonumber(skynet.getenv("kcp_timeout") or "30")
+-- KCP 参数：必须和客户端 KcpChannel 一致（NoDelay(1,10,2,1) / 默认窗口 / MTU 1400）
+local KCP_MTU     = 1400
+local KCP_WND_SND = 32
+local KCP_WND_RCV = 128
 
 ------------------------------------------------------------------
 -- 默认数据（DB 不可用时的兜底）
@@ -111,11 +120,12 @@ local function find_mail(mails, mail_id)
 	end
 end
 
-local function send(fd, id, payload)
-	socket.write(fd, proto.frame(id, payload))
+-- conn 抽象：TCP 与 KCP 各有一个实现，业务层只认 conn.send
+local function send(conn, id, payload)
+	conn.send(id, payload)
 end
 
-local function handle_auth(fd, session, token)
+local function handle_auth(conn, session, token)
 	local user_id = skynet.call(store, "lua", "resolve_token", token)
 	if not user_id then
 		user_id = "test-user-1"
@@ -146,15 +156,15 @@ local function handle_auth(fd, session, token)
 	local w = proto.writer()
 	w:i32(1)                 -- code: 1=成功
 	w:i64(now_ms())          -- 服务器时间
-	send(fd, ID.SCAuth, w:build())
-	send(fd, ID.SCPlayerData, write_player_data(session.player, bag))
+	send(conn, ID.SCAuth, w:build())
+	send(conn, ID.SCPlayerData, write_player_data(session.player, bag))
 
 	skynet.error(string.format("玩家已登录: %s, 邮件 %d 封", user_id, #session.mails))
 end
 
-local function handle_message(fd, session, id, r)
+local function handle_message(conn, session, id, r)
 	if id == ID.CSAuth then
-		handle_auth(fd, session, r:str())
+		handle_auth(conn, session, r:str())
 
 	elseif id == ID.CSHeart then
 		if session.user_id then
@@ -166,10 +176,10 @@ local function handle_message(fd, session, id, r)
 		end
 		local w = proto.writer()
 		w:i64(now_ms())
-		send(fd, ID.SCHeart, w:build())
+		send(conn, ID.SCHeart, w:build())
 
 	elseif id == ID.CSMail then
-		send(fd, ID.SCMail, write_mail_list(session.mails))
+		send(conn, ID.SCMail, write_mail_list(session.mails))
 
 	elseif id == ID.CSReadMail then
 		local count = r:i32()
@@ -186,7 +196,7 @@ local function handle_message(fd, session, id, r)
 		if session.user_id then
 			skynet.call(store, "lua", "set_mail_status", session.user_id, ids, 1)
 		end
-		send(fd, ID.SCMail, write_mail_list(session.mails))
+		send(conn, ID.SCMail, write_mail_list(session.mails))
 
 	elseif id == ID.CSGetMailReward then
 		local mail_id = r:u32()
@@ -204,11 +214,11 @@ local function handle_message(fd, session, id, r)
 		local w = proto.writer()
 		w:i32(rewards and 0 or 1)   -- 0=成功
 		w:u32(mail_id)
-		send(fd, ID.SCGetMailReward, w:build())
+		send(conn, ID.SCGetMailReward, w:build())
 
 		-- 主动推一次背包，客户端不用再请求
 		if bag then
-			send(fd, ID.SCBag, write_bag(bag))
+			send(conn, ID.SCBag, write_bag(bag))
 		end
 
 	elseif id == ID.CSGetMailAllReward then
@@ -223,9 +233,9 @@ local function handle_message(fd, session, id, r)
 			_, bag = skynet.call(store, "lua", "claim_all_mail_rewards", session.user_id)
 		end
 
-		send(fd, ID.SCGetMailAllReward, "")
+		send(conn, ID.SCGetMailAllReward, "")
 		if bag then
-			send(fd, ID.SCBag, write_bag(bag))
+			send(conn, ID.SCBag, write_bag(bag))
 		end
 
 	elseif id == ID.CSDeleteMail then
@@ -242,7 +252,7 @@ local function handle_message(fd, session, id, r)
 		local w = proto.writer()
 		w:i32(0)                 -- 0=成功
 		w:u32(mail_id)
-		send(fd, ID.SCDeleteMail, w:build())
+		send(conn, ID.SCDeleteMail, w:build())
 
 	elseif id == ID.CSDeleteAllMail then
 		for i = #session.mails, 1, -1 do
@@ -253,7 +263,7 @@ local function handle_message(fd, session, id, r)
 		end
 		local w = proto.writer()
 		w:i32(0)                 -- 空邮件列表
-		send(fd, ID.SCMail, w:build())
+		send(conn, ID.SCMail, w:build())
 
 	elseif id == ID.CSBag then
 		local bag
@@ -263,7 +273,7 @@ local function handle_message(fd, session, id, r)
 		if not bag then
 			bag = { items = {}, equips = {} }
 		end
-		send(fd, ID.SCBag, write_bag(bag))
+		send(conn, ID.SCBag, write_bag(bag))
 
 	elseif id == ID.CSUseItem then
 		local item_id = r:u32()
@@ -278,20 +288,39 @@ local function handle_message(fd, session, id, r)
 		w:i32(ok and 1 or 0)     -- 1=成功
 		w:u32(item_id)
 		w:u32(left or 0)         -- 使用后剩余数量（Bag.proto 定义）
-		send(fd, ID.SCUseItem, w:build())
+		send(conn, ID.SCUseItem, w:build())
 
 	else
 		skynet.error(string.format("未处理的消息 id=%d", id))
 	end
 end
 
+local function offline(session, addr, tag)
+	if session.user_id then
+		pcall(skynet.call, store, "lua", "offline", session.user_id)
+	end
+	skynet.error(string.format("客户端已断开[%s]: %s", tag, tostring(addr)))
+end
+
 ------------------------------------------------------------------
--- 连接
+-- TCP
 ------------------------------------------------------------------
+local function tcp_conn(fd, addr)
+	return {
+		kind = "tcp",
+		addr = addr,
+		fd = fd,
+		send = function(id, payload)
+			socket.write(fd, proto.frame(id, payload))
+		end,
+	}
+end
+
 local function handle_connection(fd, addr)
 	socket.start(fd)
-	skynet.error(string.format("客户端已连接: %s (fd=%d)", tostring(addr), fd))
+	skynet.error(string.format("客户端已连接[TCP]: %s (fd=%d)", tostring(addr), fd))
 
+	local conn = tcp_conn(fd, addr)
 	local session = {}
 
 	while true do
@@ -316,7 +345,7 @@ local function handle_connection(fd, addr)
 			if id ~= ID.CSHeart then
 				skynet.error(string.format("[%s] 收到消息 id=%d, len=%d", tostring(addr), id, len))
 			end
-			handle_message(fd, session, id, r)
+			handle_message(conn, session, id, r)
 		end)
 
 		if not ok then
@@ -325,12 +354,190 @@ local function handle_connection(fd, addr)
 		end
 	end
 
-	if session.user_id then
-		pcall(skynet.call, store, "lua", "offline", session.user_id)
+	offline(session, addr, "TCP")
+	socket.close(fd)
+end
+
+------------------------------------------------------------------
+-- KCP
+------------------------------------------------------------------
+local ok_kcp, kcplib = pcall(require, "kcp")
+if not ok_kcp then
+	skynet.error(string.format("luaclib kcp 未加载（%s），KCP 通道关闭", tostring(kcplib)))
+	kcplib = nil
+end
+
+local kcp_sessions = {}   -- conv -> sess
+local kcp_by_addr  = {}   -- addr -> sess
+local kcp_udp_id
+local kcp_conv_seed = 0
+
+local function kcp_close(sess, reason)
+	if kcp_sessions[sess.conv] == sess then
+		kcp_sessions[sess.conv] = nil
+	end
+	if kcp_by_addr[sess.addr] == sess then
+		kcp_by_addr[sess.addr] = nil
+	end
+	offline(sess.app, sess.addr, string.format("KCP conv=%d %s", sess.conv, reason or ""))
+	sess.kcp = nil
+end
+
+local function kcp_new_conv()
+	kcp_conv_seed = kcp_conv_seed + 1
+	local conv = (os.time() * 2654435761 + kcp_conv_seed * 40503) % 0x100000000
+	if conv == 0 then conv = 1 end
+	while kcp_sessions[conv] do
+		conv = conv % 0xFFFFFFFF + 1
+	end
+	return conv
+end
+
+local function kcp_reply_handshake(addr, conv)
+	local pkt = string.pack("<I2", ID.SCSession)
+		.. string.pack("<i4", 1)
+		.. string.pack("<I4", conv)
+	socket.sendto(kcp_udp_id, addr, pkt)
+end
+
+-- 握手（可能在 token 校验上阻塞，所以 fork 出去）
+local function kcp_handle_handshake(addr, token, version)
+	local user_id = skynet.call(store, "lua", "resolve_token", token)
+	if not user_id then
+		skynet.error(string.format("KCP 握手失败: token 无效 (%s)", tostring(token)))
+		kcp_reply_handshake(addr, 0)
+		return
 	end
 
-	socket.close(fd)
-	skynet.error(string.format("客户端已断开: %s (fd=%d)", tostring(addr), fd))
+	local old = kcp_by_addr[addr]
+	if old then
+		kcp_close(old, "重复握手")
+	end
+
+	local conv = kcp_new_conv()
+	local obj = kcplib.new(conv)
+	obj:nodelay(1, 10, 2, 1)
+	obj:wndsize(KCP_WND_SND, KCP_WND_RCV)
+	obj:setmtu(KCP_MTU)
+
+	local sess = {
+		conv = conv,
+		addr = addr,
+		kcp = obj,
+		version = version,
+		last_recv = now_ms(),
+		app = {},
+	}
+	sess.conn = {
+		kind = "kcp",
+		addr = addr,
+		send = function(id, payload)
+			obj:send(proto.kcp_frame(id, payload))
+		end,
+	}
+
+	kcp_sessions[conv] = sess
+	kcp_by_addr[addr] = sess
+	kcp_reply_handshake(addr, conv)
+
+	skynet.error(string.format("KCP 握手成功: %s conv=%d user=%s ver=%d",
+		addr, conv, user_id, tonumber(version) or 0))
+end
+
+local function kcp_is_handshake(data)
+	if #data < 10 then
+		return false
+	end
+	if string.unpack("<I2", data) ~= ID.CSSession then
+		return false
+	end
+	local token_len = string.unpack("<I2", data, 3)
+	return token_len + 8 <= #data
+end
+
+local function kcp_on_udp(data, addr)
+	local sess = kcp_by_addr[addr]
+
+	-- 握手包（含客户端重传）
+	if kcp_is_handshake(data) and (not sess or string.unpack("<I4", data) ~= sess.conv) then
+		local ok, token, version = pcall(function()
+			local r = proto.reader(data, 3)
+			return r:str(), r:i32()
+		end)
+		if ok and token then
+			skynet.fork(kcp_handle_handshake, addr, token, version)
+		end
+		return
+	end
+
+	if not sess then
+		return
+	end
+
+	if #data < 4 then
+		return
+	end
+	if string.unpack("<I4", data) ~= sess.conv then
+		return
+	end
+
+	sess.last_recv = now_ms()
+
+	local ok, err = pcall(sess.kcp.input, sess.kcp, data)
+	if not ok then
+		kcp_close(sess, "input 异常: " .. tostring(err))
+		return
+	end
+
+	while true do
+		local size = sess.kcp:peek()
+		if size < 0 then
+			break
+		end
+		local msg = sess.kcp:recv()
+		if not msg then
+			break
+		end
+		if #msg < 2 then
+			kcp_close(sess, "消息过短")
+			return
+		end
+
+		local id = string.unpack("<I2", msg)
+		local r = proto.reader(msg, 3)
+		local ok2, err2 = pcall(handle_message, sess.conn, sess.app, id, r)
+		if not ok2 then
+			kcp_close(sess, "处理异常: " .. tostring(err2))
+			return
+		end
+	end
+end
+
+-- 10ms 驱动一次：KCP 重传/ack + 下发送 + 超时检查
+local function kcp_update_loop()
+	local timeout_ms = KCP_TIMEOUT_S * 1000
+	while true do
+		local now = now_ms()
+		for _, sess in pairs(kcp_sessions) do
+			local k = sess.kcp
+			if k then
+				local ok = pcall(k.update, k, now)
+				if ok then
+					local outs = k:flush()
+					for i = 1, #outs do
+						socket.sendto(kcp_udp_id, sess.addr, outs[i])
+					end
+				else
+					kcp_close(sess, "update 异常")
+				end
+
+				if sess.kcp and now - sess.last_recv > timeout_ms then
+					kcp_close(sess, "超时")
+				end
+			end
+		end
+		skynet.sleep(1)   -- 10ms
+	end
 end
 
 ------------------------------------------------------------------
@@ -340,6 +547,8 @@ skynet.start(function()
 	store = skynet.uniqueservice("store")
 
 	local port = tonumber(skynet.getenv("game_port") or "8088")
+	local kcp_port = tonumber(skynet.getenv("game_kcp_port") or port)
+
 	local listen_id, ip = socket.listen("0.0.0.0", port)
 	skynet.error(string.format(
 		"游戏服已启动: TCP %s:%d (listen fd=%d)", tostring(ip), port, listen_id))
@@ -347,4 +556,12 @@ skynet.start(function()
 	socket.start(listen_id, function(fd, addr)
 		skynet.fork(handle_connection, fd, addr)
 	end)
+
+	if kcplib then
+		kcp_udp_id = socket.udp_listen("0.0.0.0", kcp_port, kcp_on_udp)
+		skynet.error(string.format(
+			"游戏服已启动: KCP/UDP 0.0.0.0:%d (fd=%d), 超时 %ds",
+			kcp_port, kcp_udp_id, KCP_TIMEOUT_S))
+		skynet.fork(kcp_update_loop)
+	end
 end)

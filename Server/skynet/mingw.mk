@@ -41,7 +41,7 @@ COMPAT_LIB = $(COMPAT_MINGW_DIR)/libcompat.a
 
 CSERVICE = snlua logger gate harbor
 
-LUA_CLIB = skynet client bson md5 sproto lpeg
+LUA_CLIB = skynet client bson md5 sproto lpeg kcp
 
 LUA_CLIB_SKYNET = \
   lua-skynet.c lua-seri.c \
@@ -147,6 +147,9 @@ $(LUA_CLIB_PATH)/sproto.so : lualib-src/sproto/sproto.c lualib-src/sproto/lsprot
 
 $(LUA_CLIB_PATH)/lpeg.so : 3rd/lpeg/lpcap.c 3rd/lpeg/lpcode.c 3rd/lpeg/lpprint.c 3rd/lpeg/lptree.c 3rd/lpeg/lpvm.c 3rd/lpeg/lpcset.c $(LUA_DLL) | $(LUA_CLIB_PATH)
 	$(SHARED_BUILD) -I3rd/lpeg $^ -o $@ $(LUA_LIBS) $(SKYNET_LIBS)
+
+$(LUA_CLIB_PATH)/kcp.so : 3rd/kcp/ikcp.c lualib-src/lkcp.c $(LUA_DLL) | $(LUA_CLIB_PATH)
+	$(SHARED_BUILD) -I3rd/kcp $^ -o $@ $(LUA_LIBS) $(SKYNET_LIBS)
 
 .PHONY: clean cleanall core_libs modules tools
 

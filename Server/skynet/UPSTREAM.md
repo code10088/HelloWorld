@@ -14,6 +14,16 @@
 | 文件 | 改动 | 原因 |
 | --- | --- | --- |
 | `3rd/compat-mingw/unistd.c` | `clock_gettime` 用 `#ifndef WIN_PTHREADS_TIME_H` 包住 | 新版 mingw-w64 的 winpthreads 已提供该函数，重复定义会导致 Windows 编译失败 |
+| `skynet-src/socket_server.c` | `forward_message_udp` 的 `recvfrom` 失败分支增加 `#ifdef _WIN32` 判断：`WSAEWOULDBLOCK` / `WSAECONNRESET` 视为可忽略 | winsock 不写 `errno`，非阻塞 UDP 读空会把 `EAGAIN` 误判为致命错误，直接 `force_close` 掉 UDP 监听 socket（Windows 下 KCP 完全不可用） |
+
+## 新增的 luaclib
+
+| 文件 | 说明 |
+| --- | --- |
+| `3rd/kcp/ikcp.c`、`ikcp.h`、`LICENSE` | vendor https://github.com/skywind3000/kcp（MIT），commit `b1a7a2101dcbb96017681a500d6b82bbe5a88766` |
+| `lualib-src/lkcp.c` | `luaclib/kcp.so` 的绑定（拉模式：`update` 后 `flush()` 取数据报） |
+
+`Makefile` / `mingw.mk` 的 `LUA_CLIB` 已加入 `kcp`。
 
 ## 升级步骤
 
