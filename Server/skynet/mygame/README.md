@@ -324,6 +324,30 @@ systemctl start skynet
 systemctl is-active skynet
 ```
 
+### 首次部署（新机器 / 新目录）
+
+包里的 `mygame/config` 是**排除**的（含数据库密码），所以新机器第一次部署要自己建：
+
+```bash
+cd /opt/aiserver/skynet/mygame
+cp config.example config
+vi config
+```
+
+至少确认这几项：
+
+| 配置项 | 说明 |
+| --- | --- |
+| `game_host` | 下发给客户端的游戏服地址（公网 IP / 域名，如 `112.126.84.17`） |
+| `mysql_password` | 线上真实数据库密码 |
+| `auth_secret` | `sign` 模式用的签名密钥 |
+| `google_client_id` | Google 登录（`platform=1`）校验 ID Token 的 `aud`；**漏了会报 `idToken audience 不匹配`** |
+| `auth_mode` / `auth_whitelist` | 测试环境 `whitelist`；正式环境用 `sign` 或接平台校验 |
+
+> 已经在跑的机器做升级时**不用动** `config`：解压前备份、解压后还原即可，线上配置（含 `google_client_id`）保持不变。
+>
+> `auth.lua`（Google 分支）和 `store.lua`（首次登录自动建号）都是代码，随包一起更新；只要包是用最新提交打的就不会漏。
+
 验证：`journalctl -u skynet -n 30 --no-pager` 应看到
 
 ```text
