@@ -15,7 +15,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 public class GoogleSDK {
 
     // Web OAuth client ID, also the aud of the returned ID token
-    public static final String WEB_CLIENT_ID = "REPLACE_ME.apps.googleusercontent.com";
+    public static final String WEB_CLIENT_ID = "33980766200-3i6g7egcillmld5n6phmf6li4bh47aru.apps.googleusercontent.com";
 
     public static void Login(Activity activity) {
         GetCredentialRequest request = new GetCredentialRequest.Builder()
