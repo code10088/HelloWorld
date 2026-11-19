@@ -368,16 +368,13 @@ $wb = "$env:LOCALAPPDATA\Programs\workbench\workbench.exe"
 & $wb upload Server\skynet-linux.tar.gz /tmp/skynet-linux.tar.gz -i <instance-id> -f
 ```
 
-服务器上解压 + 编译 + 启动（保留线上 `config`，旧目录留作回滚）：
+服务器上解压 + 编译 + 启动（**直接覆盖，不保留备份**）：
 
 ```bash
-cp -a /opt/aiserver/skynet/mygame/config /tmp/mygame.config.bak
 systemctl stop skynet
-mv /opt/aiserver/skynet /opt/aiserver/skynet.bak.$(date +%Y%m%d)
 
-mkdir /opt/aiserver/skynet
+# 包里没有 mygame/config，直接解压不会碰到线上配置
 tar -xzf /tmp/skynet-linux.tar.gz -C /opt/aiserver
-cp -a /tmp/mygame.config.bak /opt/aiserver/skynet/mygame/config
 chown -R aiserver:aiserver /opt/aiserver/skynet
 
 cd /opt/aiserver/skynet
@@ -385,6 +382,10 @@ make clean && make linux -j4 MALLOC_STATICLIB= SKYNET_DEFINES=-DNOUSE_JEMALLOC
 systemctl start skynet
 systemctl is-active skynet
 ```
+
+> 本项目**不做部署备份**：不创建 `skynet.bak.*`，也不复制 `mygame/config`。
+> 覆盖式解压依赖两点前提：包的根目录固定是 `skynet/`，且 `mygame/config` 始终在打包时排除。
+> 出问题时的恢复手段是重新打一次包再覆盖，而不是回滚目录。
 
 ### 首次部署（新机器 / 新目录）
 
@@ -406,7 +407,7 @@ vi config
 | `google_client_id` | Google 登录（`platform=1`）校验 ID Token 的 `aud`；**漏了会报 `idToken audience 不匹配`** |
 | `auth_mode` / `auth_whitelist` | 测试环境 `whitelist`；正式环境用 `sign` 或接平台校验 |
 
-> 已经在跑的机器做升级时**不用动** `config`：解压前备份、解压后还原即可，线上配置（含 `google_client_id`）保持不变。
+> 已经在跑的机器做升级时**不用动** `config`：包里不含 `config`，覆盖解压不会影响它。
 >
 > `auth.lua`（Google 分支）和 `store.lua`（首次登录自动建号）都是代码，随包一起更新；只要包是用最新提交打的就不会漏。
 
@@ -419,12 +420,13 @@ vi config
 服务已全部启动
 ```
 
-回滚：
+出问题时的处理：
 
 ```bash
+# 本项目不保留部署备份，恢复手段 = 用目标版本重新打包 + 覆盖部署
 systemctl stop skynet
-mv /opt/aiserver/skynet /opt/aiserver/skynet.failed
-mv /opt/aiserver/skynet.bak.<日期> /opt/aiserver/skynet
+tar -xzf /tmp/skynet-linux.tar.gz -C /opt/aiserver
+cd /opt/aiserver/skynet && make clean && make linux -j4 MALLOC_STATICLIB= SKYNET_DEFINES=-DNOUSE_JEMALLOC
 systemctl start skynet
 ```
 
