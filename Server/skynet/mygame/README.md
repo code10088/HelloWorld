@@ -1,0 +1,332 @@
+# mygame —— skynet 服务器（MySQL + Redis）
+
+把现有 Unity 客户端用到的服务搬到 skynet 上，**协议和接口保持不变**，客户端不需要改代码：
+
+- 游戏服：TCP 二进制协议（原 `Server/GameServer`）
+- 登录服：HTTP `/auth/login`、`/auth/refresh`（原 `Server/LoginServer`）
+- 数据层：MySQL 持久化 + Redis 缓存/token，带连接池
+- 登录安全：authCode 校验（白名单 / 签名 / mock 三种模式）
+
+## 架构
+
+```text
+                     ┌──────────────┐
+  HTTPS 443 ────────►│  nginx       │
+                     └──────┬───────┘
+                            │ http 127.0.0.1:5080
+                     ┌──────▼───────┐        ┌─────────┐
+                     │ loginserver  │───────►│  Redis  │
+                     │ authCode 校验 │        │  6379   │
+                     └──────────────┘        └────▲────┘
+                                                  │
+                     ┌──────────────┐             │
+  TCP 8088 ─────────►│  gameserver  │──┐          │
+                     └──────────────┘  │   ┌──────┴──────┐
+                                       └──►│    store    │
+                                           │ MySQL/Redis │
+                                           │   连接池     │
+                                           └──────┬──────┘
+                                                  │
+                                           ┌──────▼──────┐
+                                           │    MySQL    │
+                                           │    3306     │
+                                           └─────────────┘
+```
+
+`store.lua` 是唯一持有数据库连接的服务，其他服务通过 `skynet.call` 访问。
+MySQL / Redis 各有一个连接池，skynet 的驱动在等响应时会 yield，同一个服务内的
+多个请求会交错，所以每次访问都要独占一个连接。
+
+## 目录
+
+```text
+mygame/
+├─ config                         skynet 配置（端口、auth、MySQL/Redis、缓存 TTL）
+├─ start-db.bat                   启动本地 MySQL + Redis
+├─ sql/
+│  ├─ init.sql                    建库建表 + 种子数据（可重复执行）
+│  ├─ verify.sql                  查表内容
+│  └─ migrate-bag.sql             背包增量迁移（已有环境用这个，别重跑 init.sql）
+├─ test-login.ps1                 登录服测试（含 authCode 校验、token 轮换）
+├─ test-bag.ps1                   背包测试（发放/使用/持久化/不重复发放）
+├─ test-mailreward.ps1            邮件奖励入包测试（领取/重复领取/堆叠合并）
+├─ test-auth-sign.ps1             sign 模式签名校验测试
+├─ test-gameserver.ps1            游戏服测试（含持久化、缓存、并发）
+└─ service/
+   ├─ server_main.lua             启动器：store → gameserver → loginserver
+   ├─ store.lua                   MySQL + Redis 数据层（连接池 + 缓存）
+   ├─ auth.lua                    authCode 校验
+   ├─ gameserver.lua              连接管理 + 消息分发 + 邮件逻辑
+   ├─ loginserver.lua             HTTP 登录服
+   └─ protocol.lua                手写二进制协议（消息 ID、读写、封帧）
+```
+
+## 启动
+
+1. 启动 MySQL + Redis（便携版在 `D:\HelloWorld\Server`）：
+
+```bat
+D:\HelloWorld\Server\skynet\mygame\start-db.bat
+```
+
+2. 首次初始化数据库：
+
+```powershell
+D:\HelloWorld\Server\mysql\bin\mysql.exe -u root --skip-password --default-character-set=utf8mb4 < D:\HelloWorld\Server\skynet\mygame\sql\init.sql
+```
+
+3. 启动 skynet：
+
+```bat
+D:\HelloWorld\Server\skynet\run-server.bat
+```
+
+启动后：
+
+```text
+游戏服   TCP  0.0.0.0:8088
+登录服   HTTP 127.0.0.1:5080
+```
+
+## authCode 校验
+
+`service/auth.lua` 支持三种模式，由 `config` 的 `auth_mode` 决定：
+
+| 模式 | 行为 | 用途 |
+| --- | --- | --- |
+| `whitelist`（默认） | authCode 必须出现在 `auth_whitelist` 里 | 测试服，现有客户端发 `"1"` 可直接登录 |
+| `sign` | `authCode = "<userId>.<expire>.<md5(userId.."."..expire.."."..secret)>"` | 有服务端签发能力的场景 |
+| `mock` | 任意 authCode 都通过 | 本地调试 |
+
+校验失败返回：
+
+```json
+{"code":0,"message":"authCode 不在白名单"}
+```
+
+**接真实平台**：Google 见下面的小节；微信 / Apple / 抖音等还没接，在 `service/auth.lua` 里按 `platform` 加分支。
+
+`test-auth-sign.ps1` 覆盖了 sign 模式的合法签名、错误签名、过期、格式错误、不同 userId。
+
+### Google 登录
+
+`platform = 1` 表示 Google，`authCode` 是 Google ID Token（JWT），**不走** `auth_mode`：
+
+- 解 payload 取 `sub`，返回 `userId = "g_" .. sub`
+- 校验 `aud == google_client_id`、`iss` 是 `accounts.google.com`、`exp` 未过期
+- `google_client_id` 填 Google Auth Platform 里 **Web 应用** 客户端的 ID
+
+> 目前**只解 payload，没有验签**：skynet 这套构建没有编 `ltls.so`（拿不到 https），也没有 RSA 库。
+> 联调用没问题，公网开放前必须改成调 `https://oauth2.googleapis.com/tokeninfo?id_token=...` 让 Google 验签。
+
+新用户第一次登录时 `store.lua` 的 `create_player` 会自动建号（`player_id = MAX + 1`，从 `10000` 起）。
+
+## 数据库
+
+库名 `helloworld`，账号 `hw / hw123456`（`mysql_native_password`，skynet 的驱动只支持这个插件）。
+
+| 表 | 说明 |
+| --- | --- |
+| `players` | `user_id` 主键，`player_id / nick_name / avatar / level / register_time` |
+| `mails` | `(user_id, mail_id)` 唯一，`type / status / title / content / create_time` |
+| `mail_rewards` | `(user_id, mail_id, item_id)` 唯一，`item_count` |
+| `bag_items` | 道具格子，`(user_id, item_id)` 索引，一行一个堆叠 |
+| `bag_equips` | 装备实例，`uid` 自增就是客户端看到的装备唯一 ID |
+| `player_flags` | 玩家级开关（如 `bag_init`：是否已发放过背包演示数据） |
+
+种子数据：`test-user-1` / `TestPlayer`，2 封邮件，邮件 1 带 `item=1 x10`。
+
+## Redis 键
+
+| Key | 类型 | TTL | 用途 |
+| --- | --- | --- | --- |
+| `token:<access>` | string | `token_ttl`(24h) | 游戏服校验 token → userId |
+| `refresh:<refresh>` | string | `token_ttl` | 刷新用，**使用一次后删除** |
+| `online:<userId>` | string | 120s | 在线标记，心跳每 30s 续期，断线立即删除 |
+| `player:<userId>` | hash | `player_cache_ttl`(300s) | 玩家字段缓存 |
+| `mails:<userId>` | string | `mail_cache_ttl`(60s) | 邮件列表缓存（`skynet.packstring` 序列化） |
+| `bag:<userId>` | string | `bag_cache_ttl`(60s) | 背包缓存（`skynet.packstring` 序列化） |
+
+## 缓存策略
+
+读：cache-aside。先查 Redis，未命中查 MySQL 并回填。
+
+写：delete-after-write。任何写操作成功后**删除对应缓存键**，下次读自然回源。
+
+| 操作 | 失效的键 |
+| --- | --- |
+| `save_player`（改昵称/头像/等级） | `player:<uid>` |
+| 已读 / 领取 / 删除邮件 | `mails:<uid>` |
+| `invalidate_all` | 两个键都删 |
+
+日志里可以直接看到：
+
+```text
+玩家缓存未命中，已从 MySQL 载入: test-user-1
+邮件缓存未命中，已从 MySQL 载入: test-user-1 (2 封)
+玩家缓存命中: test-user-1
+邮件缓存命中: test-user-1 (0 封)
+玩家已更新并清除缓存: test-user-1
+```
+
+## 配置（`mygame/config`）
+
+| 键 | 默认 | 说明 |
+| --- | --- | --- |
+| `game_port` | `8088` | 游戏服端口，也是登录服下发的端口 |
+| `login_host` / `login_port` | `127.0.0.1` / `5080` | 登录服监听地址 |
+| `game_host` | `127.0.0.1` | **下发给客户端的游戏服地址**，部署时改公网 IP/域名 |
+| `user_id` | `test-user-1` | whitelist/mock 模式登录的账号 |
+| `auth_mode` | `whitelist` | `whitelist` / `sign` / `mock` |
+| `auth_whitelist` | `1,test` | 白名单 authCode，逗号分隔 |
+| `auth_secret` | `dev-secret-change-me` | sign 模式密钥 |
+| `mysql_*` | `127.0.0.1:3306/helloworld` | 账号 `hw / hw123456` |
+| `mysql_pool_size` | `4` | MySQL 连接池大小 |
+| `redis_*` / `redis_pool_size` | `127.0.0.1:6379` / `4` | Redis 连接池 |
+| `token_ttl` | `86400` | token 有效期（秒） |
+| `player_cache_ttl` | `300` | 玩家缓存有效期 |
+| `mail_cache_ttl` | `60` | 邮件缓存有效期 |
+| `bag_cache_ttl` | `60` | 背包缓存有效期 |
+| `bag_stack_limit` | `99` | 服务端合并道具时的堆叠上限 |
+
+## 数据流
+
+**登录**
+
+```text
+POST /auth/login
+  → auth.verify(authCode, platform)   -- 白名单 / 签名 / mock
+  → store.issue_token(userId)         -- Redis: token / refresh / online
+  → 返回 { code, accessToken, refreshToken, userId, serverId, host, port }
+```
+
+**进游戏**
+
+```text
+CSAuth(accessToken)
+  → store.resolve_token → Redis GET token:<token>
+  → 查不到则回退到配置账号 test-user-1（兼容旧 token）
+  → store.load_player
+       player：Redis HGETALL，未命中查 MySQL 回填
+       mails ：Redis GET，未命中查 MySQL 回填
+  → store.load_bag（首次登录在这里发演示数据）
+  → SCAuth + SCPlayerData
+       SCPlayerData = 玩家字段 + registerTime + mail + **items[] + equips[]**
+       （Player.proto 已带背包快照，客户端不需要再单独发 CSBag 拿首屏数据）
+```
+
+**邮件**
+
+```text
+CSMail          → 返回内存副本
+CSReadMail      → 内存置 status=1 + MySQL UPDATE + DEL mails:<uid>
+CSGetMailReward → store.claim_mail_reward
+                   置 status=2（重复领取不再发奖）
+                   mail_rewards 里的道具按 bag_stack_limit 合并进 bag_items
+                   DEL mails:<uid> + DEL bag:<uid>
+                   → SCGetMailReward + **SCBag 主动推送**
+CSGetMailAll…   → store.claim_all_mail_rewards（同上，批量）
+                   → SCGetMailAllReward + **SCBag 主动推送**
+CSDeleteMail    → 内存删除 + MySQL DELETE + DEL mails:<uid>
+CSDeleteAllMail → 内存清空 + MySQL DELETE + DEL mails:<uid>
+```
+
+**背包**
+
+```text
+CSBag
+  → store.load_bag
+       首次：player_flags 无 bag_init → 发放演示数据（9×5、10×3、装备 1/2）并打标记
+       Redis GET bag:<uid>，未命中查 bag_items / bag_equips 回填
+  → SCBag { items: [itemId,count...], equips: [uid,equipId,level,bind...] }
+
+CSUseItem { itemId, count }
+  → store.use_item：按格子顺序扣减，清零删行，DEL bag:<uid>
+  → SCUseItem { code: 1成功 / 0失败, itemId, count: **使用后剩余总数量** }
+       Bag.proto 定义：count = 当前道具剩余数量（不是本次使用量）
+```
+
+> 道具没有格子索引，顺序由 `bag_items.id` 决定；装备 `uid` 就是 `bag_equips.uid`（自增）。
+> 客户端只做展示副本，扣减以服务端返回的 `count` 为准。
+
+**断线**
+
+```text
+连接关闭 → store.offline(userId) → DEL online:<uid>
+```
+
+## 测试
+
+```powershell
+powershell -ExecutionPolicy Bypass -File D:\HelloWorld\Server\skynet\mygame\test-login.ps1
+powershell -ExecutionPolicy Bypass -File D:\HelloWorld\Server\skynet\mygame\test-auth-sign.ps1   # 需临时切 auth_mode=sign
+powershell -ExecutionPolicy Bypass -File D:\HelloWorld\Server\skynet\mygame\test-gameserver.ps1 127.0.0.1 8088 5080
+powershell -ExecutionPolicy Bypass -File D:\HelloWorld\Server\skynet\mygame\test-bag.ps1 127.0.0.1 8088 5080
+powershell -ExecutionPolicy Bypass -File D:\HelloWorld\Server\skynet\mygame\test-mailreward.ps1 127.0.0.1 8088 5080
+```
+
+- `test-login.ps1`：health、合法/非法/空 authCode、token 是 32 位 hex、两次登录不同、refresh 轮换、userId 保持、旧 refresh 复用失败、405、404、连续 20 次。
+- `test-auth-sign.ps1`：合法签名、错误签名、过期、格式错误、签名里的 userId 生效。
+- `test-gameserver.ps1`：重置库 → 登录拿 token → 鉴权 → 心跳 → 邮件全流程 → 重连验证持久化 → 无效 token 回退 → **5 个并发连接**（连接池）→ 恢复种子数据。
+- `test-bag.ps1`：重置背包 → 首登自动发放演示数据（并校验 SCPlayerData 携带背包）→ 使用道具（普通/超量/异常参数，校验 SCUseItem.count 为剩余数量）→ 重连验证持久化 → 确认不会重复发放。
+- `test-mailreward.ps1`：领取邮件奖励入包 → 重复领取不重复发 → 多封同道具合并堆叠 → 邮件状态置 2 → 重连持久化。
+
+## 部署（线上 ECS）
+
+| 项 | 值 |
+| --- | --- |
+| 服务器 | 阿里云 Ubuntu 22.04，`112.126.84.17` |
+| 目录 | `/opt/aiserver/skynet`（运行用户 `aiserver`） |
+| systemd | `skynet.service`（开机自启，`Restart=always`） |
+| MySQL | 8.0.46，`127.0.0.1:3306`，库 `helloworld` |
+| Redis | 6.0.16，`127.0.0.1:6379` |
+| 登录服 | `127.0.0.1:5080`，由 nginx 反代 443 |
+| 游戏服 | `0.0.0.0:8088` |
+| 下发地址 | `game_host = "112.126.84.17"` |
+
+Linux 编译（禁用 jemalloc，免去拉子模块）：
+
+```bash
+cd /opt/aiserver/skynet
+make clean && make linux -j4 MALLOC_STATICLIB= SKYNET_DEFINES=-DNOUSE_JEMALLOC
+```
+
+运维：
+
+```bash
+systemctl status skynet
+systemctl restart skynet
+journalctl -u skynet -f
+```
+
+升级：覆盖 `/opt/aiserver/skynet` 后重新编译，再 `systemctl restart skynet`。
+
+数据库结构变更走增量脚本，例如背包：
+
+```bash
+mysql < /opt/aiserver/skynet/mygame/sql/migrate-bag.sql
+```
+
+> 已有环境**不要**重跑 `init.sql`：它会把被删掉的种子邮件重新插回去（`ON DUPLICATE` 只保护未删除的数据）。
+
+> 注意：直接改数据库**不会**触发缓存失效。手工改完要
+> `redis-cli del player:<uid> mails:<uid>`，否则得等 TTL（默认 300s / 60s）。
+
+## 当前限制
+
+- 玩家缓存是**读时回填 + 写时删除**，没有主动预热；冷启动后第一次登录会多一次查库；
+- 邮件缓存的 key 是整体列表，单封改动会整表失效（数据量小无所谓，邮件多了要改成按封缓存）；
+- `auth_whitelist` 适合测试，正式环境要么用 `sign`，要么接平台校验；
+- 只有 TCP，没有 KCP；单节点 `harbor = 0`；
+- MySQL/Redis 都装在本机 `D:\HelloWorld\Server`（`mysql\`、`redis\`），重启电脑后需要重新执行 `start-db.bat`。
+
+## 日志
+
+`skynet.error` 输出到启动终端。重定向到文件：
+
+```powershell
+skynet.exe mygame\config > mygame\server.log 2>&1
+```
+
+关键日志：`数据层 store 已就绪（MySQL 池 4 / Redis 池 4）`、`登录成功: user=..., auth_mode=...`、
+`玩家缓存命中/未命中`、`邮件缓存命中/未命中`、`玩家已更新并清除缓存`、`客户端已断开`。

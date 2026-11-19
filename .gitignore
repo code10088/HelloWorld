@@ -43,6 +43,20 @@
 /NetMsg/Net/NetMsgGen/.vs/
 /NetMsg/Net/NetMsgGen/publish/*.pdb
 
-/Server/**/bin/
-/Server/**/obj/
-/Server/publish/
+/Server/msys64/
+/Server/mysql/
+/Server/redis/
+/Server/*.tar.gz
+/Server/skynet/*.exe
+/Server/skynet/*.dll
+/Server/skynet/*.a
+/Server/skynet/cservice/
+/Server/skynet/luaclib/
+/Server/skynet/3rd/**/*.o
+/Server/skynet/3rd/**/*.a
+/Server/skynet/3rd/**/*.dll
+/Server/skynet/3rd/**/*.exe
+/Server/skynet/.github/
+/Server/skynet/test/
+/Server/skynet/mygame/*.log
+/Server/skynet/mygame/*.err

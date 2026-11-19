@@ -1,0 +1,79 @@
+-- ============================================================
+-- 配置模板
+-- 使用：copy mygame\config.example mygame\config，然后按环境填写
+--       （config 已在 .gitignore 中，不会被提交）
+-- ============================================================
+-- 运行：skynet.exe mygame\config
+root = "./"
+
+thread = 8
+logger = nil
+logpath = "."
+harbor = 0
+
+-- 启动器：会拉起 store / gameserver / loginserver
+start = "server_main"
+bootstrap = "snlua bootstrap"
+
+cpath = root .. "cservice/?.so"
+luaservice = root .. "service/?.lua;" .. root .. "mygame/service/?.lua"
+lua_path = root .. "lualib/?.lua;" .. root .. "lualib/?/init.lua;" .. root .. "mygame/service/?.lua"
+lua_cpath = root .. "luaclib/?.so"
+
+------------------------------------------------------------------
+-- 游戏服
+------------------------------------------------------------------
+game_port = 8088
+
+------------------------------------------------------------------
+-- 登录服
+------------------------------------------------------------------
+-- 只监听本机，由 nginx 负责 443/TLS
+login_host = "127.0.0.1"
+login_port = 5080
+
+-- 下发给客户端的游戏服地址。
+-- 本机联调填 "127.0.0.1"；部署到服务器后改成公网 IP 或域名。
+game_host = "127.0.0.1"
+
+server_id = "test-server-1"
+user_id   = "test-user-1"
+
+------------------------------------------------------------------
+-- authCode 校验
+------------------------------------------------------------------
+-- whitelist: authCode 必须在 auth_whitelist 里（测试用）
+-- sign:      authCode = "<userId>.<expire>.<md5(...)>"
+-- mock:      任意值都通过（仅本地调试）
+auth_mode = "whitelist"
+auth_whitelist = "0,1,test"
+auth_secret = "CHANGE_ME"
+-- Google Web Client ID
+google_client_id = "CHANGE_ME.apps.googleusercontent.com"
+
+------------------------------------------------------------------
+-- MySQL
+------------------------------------------------------------------
+mysql_host = "127.0.0.1"
+mysql_port = 3306
+mysql_db   = "helloworld"
+mysql_user = "hw"
+mysql_password = "CHANGE_ME"
+mysql_pool_size = 4
+
+------------------------------------------------------------------
+-- Redis
+------------------------------------------------------------------
+redis_host = "127.0.0.1"
+redis_port = 6379
+redis_pool_size = 4
+
+------------------------------------------------------------------
+-- 缓存 / token 有效期（秒）
+------------------------------------------------------------------
+token_ttl = 86400
+player_cache_ttl = 300
+mail_cache_ttl = 60
+bag_cache_ttl = 60
+-- 道具堆叠上限（服务端合并用；客户端只展示，不再自行拆分）
+bag_stack_limit = 99
