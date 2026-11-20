@@ -78,14 +78,26 @@ static void check(const char *name, int ok, const char *detail) {
 	fflush(stdout);
 }
 
-static long long now_ms(void) {
+static long long now_us(void) {
 #ifdef _WIN32
-	return (long long)GetTickCount64();
+	static LARGE_INTEGER freq;
+	static int init = 0;
+	LARGE_INTEGER c;
+	if (!init) {
+		QueryPerformanceFrequency(&freq);
+		init = 1;
+	}
+	QueryPerformanceCounter(&c);
+	return (long long)((double)c.QuadPart * 1000000.0 / (double)freq.QuadPart);
 #else
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
-	return (long long)ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+	return (long long)ts.tv_sec * 1000000 + ts.tv_nsec / 1000;
 #endif
+}
+
+static long long now_ms(void) {
+	return now_us() / 1000;
 }
 
 static void put_u16(unsigned char *p, unsigned v) { p[0] = v & 0xff; p[1] = (v >> 8) & 0xff; }
@@ -206,13 +218,21 @@ static unsigned wait_msg(struct kcp_state *st, long long timeout_ms) {
 	return 0;
 }
 
+static int
+cmp_ll(const void *a, const void *b) {
+	long long x = *(const long long *)a, y = *(const long long *)b;
+	return (x > y) - (x < y);
+}
+
 int main(int argc, char **argv) {
 	struct kcp_state st;
 	struct sockaddr_in peer;
 	const char *host, *token;
 	int port, i, expect_bad = 0, hs_tries;
+	int latency_n = 0;
 	unsigned conv = 0;
 	long long deadline;
+	long long hs_t0 = 0, hs_rtt = -1;
 
 	if (argc < 4) {
 		fprintf(stderr, "usage: %s <host> <port> <token> [--drop N] [--expect-bad-token]\n", argv[0]);
@@ -226,10 +246,15 @@ int main(int argc, char **argv) {
 	for (i = 4; i < argc; i++) {
 		if (!strcmp(argv[i], "--drop") && i + 1 < argc) {
 			st.drop_percent = atoi(argv[++i]);
+		} else if (!strcmp(argv[i], "--latency") && i + 1 < argc) {
+			latency_n = atoi(argv[++i]);
 		} else if (!strcmp(argv[i], "--expect-bad-token")) {
 			expect_bad = 1;
 		}
 	}
+	#ifdef _WIN32
+	timeBeginPeriod(1);   /* select 超时精度 1ms，否则按 15.6ms 取整 */
+#endif
 	srand((unsigned)now_ms());
 
 #ifdef _WIN32
@@ -266,6 +291,8 @@ int main(int argc, char **argv) {
 		put_u32(pkt + n, 1u); n += 4;   /* version */
 
 		deadline = now_ms() + 6000;
+		hs_rtt = -1;
+		hs_t0 = now_us();
 		for (hs_tries = 0; hs_tries < 6 && now_ms() < deadline; hs_tries++) {
 			unsigned char rbuf[256];
 			struct timeval tv = { 1, 0 };
@@ -284,6 +311,7 @@ int main(int argc, char **argv) {
 					(struct sockaddr *)&from, &fl);
 				if (r >= 10 && get_u16(rbuf) == SC_SESSION) {
 					conv = get_u32(rbuf + 6);
+					hs_rtt = now_us() - hs_t0;
 					break;
 				}
 			}
@@ -302,7 +330,7 @@ int main(int argc, char **argv) {
 
 	{
 		char detail[64];
-		snprintf(detail, sizeof(detail), "conv=%u tries=%d", conv, hs_tries);
+		snprintf(detail, sizeof(detail), "conv=%u tries=%d hs_rtt=%.1fms", conv, hs_tries, hs_rtt / 1000.0);
 		check("握手拿到 conv", conv != 0, detail);
 	}
 	if (conv == 0) {
@@ -315,7 +343,10 @@ int main(int argc, char **argv) {
 	/* ---------- 2. 建 KCP 会话 ---------- */
 	st.kcp = ikcp_create(conv, &st);
 	ikcp_setoutput(st.kcp, kcp_output);
-	ikcp_nodelay(st.kcp, 1, 10, 2, 1);
+	#ifndef KCP_INTERVAL_MS
+#define KCP_INTERVAL_MS 5
+#endif
+	ikcp_nodelay(st.kcp, 1, KCP_INTERVAL_MS, 2, 1);
 	ikcp_wndsize(st.kcp, 32, 128);
 	ikcp_setmtu(st.kcp, 1400);
 
@@ -383,6 +414,41 @@ int main(int argc, char **argv) {
 			snprintf(d, sizeof(d), "收到 %ld 字节", st.recv_bytes);
 			check("连续 6 次请求都收到响应", ok, d);
 		}
+	}
+
+	if (latency_n > 0) {
+		long long *samples = (long long *)malloc(sizeof(long long) * latency_n);
+		int got = 0, k;
+		long long sum = 0;
+
+		for (k = 0; k < latency_n; k++) {
+			long long t0 = now_us();
+			unsigned id;
+			send_msg(&st, CS_HEART, NULL, 0);
+			id = wait_msg(&st, 2000);
+			if (id == SC_HEART) {
+				samples[got++] = now_us() - t0;
+			}
+			{	/* 两次采样间隔 50ms */
+				long long end = now_ms() + 50;
+				while (now_ms() < end) {
+					struct recv_msg m;
+					pump(&st, &m, 10);
+				}
+			}
+		}
+
+		if (got > 0) {
+			qsort(samples, got, sizeof(long long), cmp_ll);
+			for (k = 0; k < got; k++) sum += samples[k];
+			printf("  延迟采样 %d/%d  min=%.1fms  avg=%.1fms  p50=%.1fms  max=%.1fms\n",
+				got, latency_n, samples[0] / 1000.0, (double)sum / got / 1000.0,
+				samples[got / 2] / 1000.0, samples[got - 1] / 1000.0);
+			check("延迟采样完成", 1, "");
+		} else {
+			check("延迟采样完成", 0, "没有收到 SCHeart");
+		}
+		free(samples);
 	}
 
 	ikcp_release(st.kcp);

@@ -14,15 +14,20 @@ public class KcpChannel : IChannel
     private ushort port;
     private IChannelHandle handle;
     private KcpContent content;
+    private Stopwatch clock;
+    private DateTimeOffset epoch;
     private int version;
 
     public ConnectState State => content?.State ?? ConnectState.Idle;
+    private DateTimeOffset Now => epoch.AddMilliseconds(clock.ElapsedMilliseconds);
 
     public void Init(string ip, ushort port, IChannelHandle handle)
     {
         this.ip = ip;
         this.port = port;
         this.handle = handle;
+        clock = Stopwatch.StartNew();
+        epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
     }
     public void Connect()
     {
@@ -119,10 +124,10 @@ public class KcpChannel : IChannel
             this.socket = socket;
             kcpSend = new KcpSend(Output);
             kcp = new PoolSegManager.Kcp(conv, kcpSend);
-            kcp.NoDelay(1, 10, 2, 1);
+            kcp.NoDelay(1, 5, 2, 1);
             kcp.WndSize();
             kcp.SetMtu();
-            next = DateTime.UtcNow;
+            next = channel.Now;
             _ = SendTask(send, cts.Token);
             _ = UpdateTask(cts.Token);
             _ = RecvTask(recv, cts.Token);
@@ -239,7 +244,7 @@ public class KcpChannel : IChannel
             {
                 try
                 {
-                    var current = DateTime.UtcNow;
+                    var current = channel.Now;
                     kcp.Update(current);
                     next = kcp.Check(current);
                     var ms = (next - current).TotalMilliseconds;

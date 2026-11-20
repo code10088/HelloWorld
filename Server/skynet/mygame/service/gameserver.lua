@@ -14,7 +14,7 @@ local store   -- store 服务地址，启动时填充
 
 -- KCP 握手帧宽（u16 id + i32 1 + u32 conv）
 local KCP_TIMEOUT_S = tonumber(skynet.getenv("kcp_timeout") or "30")
--- KCP 参数：必须和客户端 KcpChannel 一致（NoDelay(1,10,2,1) / 默认窗口 / MTU 1400）
+-- KCP 参数：必须和客户端 KcpChannel 一致（NoDelay(1,5,2,1) / 默认窗口 / MTU 1400）
 local KCP_MTU     = 1400
 local KCP_WND_SND = 32
 local KCP_WND_RCV = 128
@@ -416,7 +416,7 @@ local function kcp_handle_handshake(addr, token, version)
 
 	local conv = kcp_new_conv()
 	local obj = kcplib.new(conv)
-	obj:nodelay(1, 10, 2, 1)
+	obj:nodelay(1, 5, 2, 1)
 	obj:wndsize(KCP_WND_SND, KCP_WND_RCV)
 	obj:setmtu(KCP_MTU)
 
@@ -509,6 +509,18 @@ local function kcp_on_udp(data, addr)
 		if not ok2 then
 			kcp_close(sess, "处理异常: " .. tostring(err2))
 			return
+		end
+	end
+
+	-- 处理完立即把响应刷出去（flush_now 跳过 interval 门控，避免多等一个 tick）
+	if sess.kcp then
+		local ok3 = pcall(sess.kcp.flush_now, sess.kcp, now_ms())
+		local outs = sess.kcp:flush()
+		for i = 1, #outs do
+			socket.sendto(kcp_udp_id, sess.addr, outs[i])
+		end
+		if not ok3 then
+			kcp_close(sess, "flush 异常")
 		end
 	end
 end

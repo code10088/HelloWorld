@@ -293,7 +293,7 @@ powershell -ExecutionPolicy Bypass -File D:\HelloWorld\Server\skynet\mygame\test
 
 ```bash
 # 编译（Windows / MSYS2）
-gcc -O2 -o kcp-client.exe kcp-client.c ../../3rd/kcp/ikcp.c -I../../3rd/kcp -lws2_32
+gcc -O2 -o kcp-client.exe kcp-client.c ../../3rd/kcp/ikcp.c -I../../3rd/kcp -lws2_32 -lwinmm
 # 编译（Linux）
 gcc -O2 -o kcp-client kcp-client.c ../../3rd/kcp/ikcp.c -I../../3rd/kcp
 
@@ -303,6 +303,8 @@ gcc -O2 -o kcp-client kcp-client.c ../../3rd/kcp/ikcp.c -I../../3rd/kcp
 ./kcp-client 127.0.0.1 8088 <accessToken> --drop 20
 # 伪造 token 应被拒（conv=0）
 ./kcp-client 127.0.0.1 8088 fake-token --expect-bad-token
+# 延迟采样（CSHeart 往返，30 次）
+./kcp-client 112.126.84.17 8088 <accessToken> --latency 30
 ```
 
 ## 传输协议（TCP / KCP）
@@ -325,10 +327,20 @@ KCP 握手（客户端 `KcpChannel` 已实现，服务端在 `gameserver.lua` �
 KCP 参数必须与客户端一致：
 
 ```text
-NoDelay(1, 10, 2, 1)    窗口 32 / 128    MTU 1400    消息模式（stream = 0）
+NoDelay(1, 5, 2, 1)     窗口 32 / 128    MTU 1400    消息模式（stream = 0）
 ```
 
-服务端每 10ms 驱动一次所有会话（`update` → `flush` → `sendto`）；超过 `kcp_timeout` 没有收到任何 UDP 包即判定掉线，走与 TCP 相同的下线清理。
+服务端每 10ms 驱动一次所有会话（`update` → `flush` → `sendto`）；收到数据并处理完后会立即 `flush_now`（跳过 KCP interval 门控）+ `flush` 下发，避免多等一个 tick；超过 `kcp_timeout` 没有收到任何 UDP 包即判定掉线，走与 TCP 相同的下线清理。
+
+> **为什么不能只调小 `interval` 让 `update` 自己发**：`ikcp_update` 只在 `current >= ts_flush` 时才真正 flush，而 skynet 的定时器最小粒度是 10ms。数据到达时若正好落在 interval 窗口内，`update` 不会发，响应要等下一个 tick。
+> 实测（本机回环，同一客户端）：
+>
+> | 数据路径 | interval | avg | p50 |
+> | --- | --- | --- | --- |
+> | `update(now)` | 1ms | 19.5ms | 20.5ms |
+> | `flush_now(now)` | 5ms | 10.1ms | 11.2ms |
+>
+> 所以低延迟必须靠数据路径上的强制 flush；`flush_now(now)` 会先刷新 `kcp->current`，避免 RTT 采样偏大。
 
 > KCP 依赖 `luaclib/kcp.so`（`3rd/kcp` + `lualib-src/lkcp.c`）。缺这个模块时游戏服只开 TCP，日志会打印 `luaclib kcp 未加载`。
 

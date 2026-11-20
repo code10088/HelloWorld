@@ -9,6 +9,7 @@
  *   obj:input(udp_bytes)          -- 收到 UDP 包喂给 kcp
  *   obj:update(now_ms)            -- 驱动重传/ack（内部会 flush 到输出队列）
  *   local outs = obj:flush()      -- 取走本次产生的 UDP 包，逐个 sendto
+ *   obj:flush_now(now_ms)        -- 立即 ikcp_flush（刷新 current、跳过 interval 门控）
  *   obj:check(now_ms)             -- 下次建议的 update 时间
  *   local size = obj:peek()       -- 下一条消息长度，-1 表示没有
  *   local msg  = obj:recv()       -- 取出一条消息
@@ -167,6 +168,20 @@ lcheck(lua_State *L) {
 }
 
 static int
+lflush_now(lua_State *L) {
+	struct kcp_handle *h = check_handle(L);
+	/* 用调用方给的时间刷新 current，否则 flush 里的 RTT/时间戳会用旧值 */
+	IUINT32 now = (IUINT32)luaL_checkinteger(L, 2);
+	h->kcp->current = now;
+	if (h->kcp->updated == 0) {
+		h->kcp->updated = 1;
+		h->kcp->ts_flush = now;
+	}
+	ikcp_flush(h->kcp);
+	return 0;
+}
+
+static int
 lflush(lua_State *L) {
 	struct kcp_handle *h = check_handle(L);
 	int n = 0;
@@ -242,6 +257,7 @@ static const luaL_Reg kcp_methods[] = {
 	{ "update",   lupdate },
 	{ "check",    lcheck },
 	{ "flush",    lflush },
+	{ "flush_now", lflush_now },
 	{ "nodelay",  lnodelay },
 	{ "wndsize",  lwndsize },
 	{ "setmtu",   lsetmtu },
