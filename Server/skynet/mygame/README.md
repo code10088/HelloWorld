@@ -409,6 +409,71 @@ adb shell ping -i 0.2 -c 50 192.168.103.254
 - KCP 时间基准不能用 `DateTime.UtcNow`（墙钟会被 NTP 改、Windows 精度差），客户端已改 `Stopwatch`（单调）。
 - 调小 `interval` 不能替代数据路径上的 `flush_now`（见上一节的对照数据）。
 
+## Docker（本地开发环境）
+
+Windows 上写码、Linux 环境里运行：用 Docker 跑 MySQL + Redis + skynet，避免「本地能跑、上线不行」。
+
+### 前置
+
+Windows 需要 Docker Desktop（WSL2 后端）：
+
+```powershell
+winget install -e --id Docker.DockerDesktop
+```
+
+安装后**必须用「开始菜单 → 电源 → 重启」**（Windows 10/11 的快速启动会让「关机再开机」从休眠恢复，WSL 功能不会生效）。重启后首次启动 Docker Desktop，确认：
+
+```powershell
+docker version          # 能看到 Server 版本
+docker compose version
+```
+
+### 启动
+
+```bash
+cd Server/skynet/deploy/docker
+docker compose up -d --build
+docker compose logs -f skynet
+```
+
+首次启动会：
+
+- 拉取 `mysql:8.0` / `redis:7-alpine`
+- 在容器内用 Ubuntu 22.04 编译 skynet（约 1～2 分钟，参数与线上一致）
+- 数据卷为空时执行 `mygame/sql/init.sql` 初始化数据库
+
+### 端口
+
+| 端口 | 用途 |
+| --- | --- |
+| `5080/tcp` | 登录服 HTTP |
+| `8088/tcp` | 游戏服 TCP |
+| `8088/udp` | 游戏服 KCP |
+
+MySQL / Redis 只在 compose 网络内，不映射到宿主。
+
+### 客户端连本地 Docker
+
+`GameSetting.LoginUrl` 临时改为 `http://127.0.0.1:5080/`（本地没有 nginx/HTTPS）；
+登录返回的 `game_host` 是 `127.0.0.1`，客户端会连宿主映射出来的 8088。
+
+### 常用命令
+
+```bash
+docker compose ps
+docker compose logs -f skynet
+docker compose restart skynet
+docker compose down          # 停止，保留数据
+docker compose down -v       # 停止并清空 MySQL/Redis（下次启动重新跑 init.sql）
+```
+
+### 配置
+
+容器使用 `deploy/docker/config.docker`：MySQL/Redis 走 compose 服务名，登录服监听 `0.0.0.0`。
+改完配置重建：`docker compose up -d --build skynet`。
+
+> 这套 compose 只用于本地开发；线上仍按下面的「打包 → ECS 覆盖 → make linux → systemctl」流程，二者互不影响。
+
 ## 部署（线上 ECS）
 
 | 项 | 值 |

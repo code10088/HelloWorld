@@ -1,0 +1,67 @@
+# 本地开发用：MySQL 8 + Redis 7 + skynet 游戏服（Linux 容器）
+#
+#   cd Server/skynet/deploy/docker
+#   docker compose up -d --build
+#   docker compose logs -f skynet
+#
+# 端口：
+#   5080/tcp  登录服（HTTP）
+#   8088/tcp  游戏服 TCP
+#   8088/udp  游戏服 KCP
+#
+# 重置数据库：docker compose down -v
+
+name: helloworld
+
+services:
+  mysql:
+    image: mysql:8.0
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_DATABASE: helloworld
+      TZ: Asia/Shanghai
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ../../mygame/sql/init.sql:/docker-entrypoint-initdb.d/10-init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-proot123456"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  skynet:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "5080:5080/tcp"
+      - "8088:8088/tcp"
+      - "8088:8088/udp"
+    environment:
+      TZ: Asia/Shanghai
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+  redis-data:

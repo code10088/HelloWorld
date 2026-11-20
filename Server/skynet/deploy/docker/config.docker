@@ -1,0 +1,71 @@
+-- Docker 本地开发配置
+--   MySQL / Redis 用 compose 里的服务名；登录服监听 0.0.0.0 方便宿主访问
+--   启动：docker compose up -d --build
+root = "./"
+
+thread = 8
+logger = nil
+logpath = "."
+harbor = 0
+
+start = "server_main"
+bootstrap = "snlua bootstrap"
+
+cpath = root .. "cservice/?.so"
+luaservice = root .. "service/?.lua;" .. root .. "mygame/service/?.lua"
+lua_path = root .. "lualib/?.lua;" .. root .. "lualib/?/init.lua;" .. root .. "mygame/service/?.lua"
+lua_cpath = root .. "luaclib/?.so"
+
+------------------------------------------------------------------
+-- 游戏服
+------------------------------------------------------------------
+game_port = 8088
+game_kcp_port = 8088
+kcp_timeout = 30
+
+------------------------------------------------------------------
+-- 登录服
+------------------------------------------------------------------
+-- 容器内监听 0.0.0.0，compose 映射到宿主 5080
+login_host = "0.0.0.0"
+login_port = 5080
+
+-- 下发给客户端的游戏服地址：本机联调用 127.0.0.1
+game_host = "127.0.0.1"
+
+server_id = "docker-1"
+user_id   = "test-user-1"
+
+------------------------------------------------------------------
+-- authCode 校验
+------------------------------------------------------------------
+auth_mode = "whitelist"
+auth_whitelist = "0,1,test"
+auth_secret = "dev-secret-change-me"
+google_client_id = "33980766200-3i6g7egcillmld5n6phmf6li4bh47aru.apps.googleusercontent.com"
+
+------------------------------------------------------------------
+-- MySQL（compose 服务名）
+------------------------------------------------------------------
+mysql_host = "mysql"
+mysql_port = 3306
+mysql_db   = "helloworld"
+mysql_user = "hw"
+mysql_password = "hw123456"
+mysql_pool_size = 4
+
+------------------------------------------------------------------
+-- Redis（compose 服务名）
+------------------------------------------------------------------
+redis_host = "redis"
+redis_port = 6379
+redis_pool_size = 4
+
+------------------------------------------------------------------
+-- 缓存 / token 有效期（秒）
+------------------------------------------------------------------
+token_ttl = 86400
+player_cache_ttl = 300
+mail_cache_ttl = 60
+bag_cache_ttl = 60
+bag_stack_limit = 99

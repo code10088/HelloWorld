@@ -1,0 +1,30 @@
+# Docker 构建上下文（context = Server/skynet）
+# 排除本地编译产物、本地配置和日志；容器里会从源码重新编译
+
+# 产物（递归排除，注意 .dockerignore 的 *.o 只匹配根目录）
+skynet
+skynet.exe
+**/*.o
+**/*.a
+**/*.so
+**/*.dll
+**/*.exe
+**/*.dSYM
+cservice/
+luaclib/
+3rd/lua/lua
+3rd/lua/luac
+3rd/jemalloc/
+3rd/compat-mingw/
+
+# 本地配置 / 日志 / 工具产物
+mygame/config
+mygame/config.docker
+mygame/*.log
+mygame/*.err
+mygame/tools/kcp-client.exe
+mygame/tools/kcp-client-arm64
+
+# 上游无关
+.github/
+test/
