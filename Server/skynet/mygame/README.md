@@ -344,6 +344,71 @@ NoDelay(1, 5, 2, 1)     窗口 32 / 128    MTU 1400    消息模式（stream = 0
 
 > KCP 依赖 `luaclib/kcp.so`（`3rd/kcp` + `lualib-src/lkcp.c`）。缺这个模块时游戏服只开 TCP，日志会打印 `luaclib kcp 未加载`。
 
+## 延迟排查（真机）
+
+结论：**KCP 协议本身没问题**，真机 30～50ms 主要来自客户端发包节奏（心跳 10s）、Wi-Fi 省电和单节点距离。
+
+### 实测参考（2026-11-20）
+
+| 测量点 | min | avg | p50 | max | 丢包 |
+| --- | --- | --- | --- | --- | --- |
+| 服务器回环（ECS 本机） | 5.2 | 8.8～9.3 | 10.3 | 11.7 | 0 |
+| 手机 → 网关（纯局域网） | 4.2 | 25.2 | — | 166.9 | 8% |
+| 手机 → 服务器 ICMP | 11.9 | 23.9 | — | 126.7 | 2% |
+| 手机 KCP 握手（裸 UDP） | — | 24.6～30.9 | — | — | — |
+| 手机 KCP `--gap 50ms` | 25.0 | 65.5 | **41.3** | 524 | — |
+| 手机 KCP `--gap 5ms` | 17.5 | 54.5 | **29.5** | 483 | — |
+| 手机 KCP `--gap 1ms` | 16.3 | 37.6 | **23.6** | 327 | — |
+
+> 手机到自家网关就 25ms + 8% 丢包（正常 5GHz 局域网应 1～3ms、0 丢包）→ 该 Wi-Fi 链路本身有问题。
+>
+> 发包越密延迟越低（p50 41 → 24ms），约 30Hz 时接近 17ms —— 和王者荣耀显示的量级一致。
+
+### 30～50ms 的来源（按影响排序）
+
+| # | 原因 | 影响 | 位置 |
+| --- | --- | --- | --- |
+| 1 | 心跳 10 秒一次，Wi-Fi 省电/AP 缓冲 | +15～30ms | `HeartHandle.heartInterval` |
+| 2 | RTT 在主线程计算，含一帧等待 | +0～33ms（60fps 16.7 / 30fps 33） | `NetMsgHandle.Update` → `RefreshDelay` |
+| 3 | 单节点阿里云北京 | +10～20ms（视玩家位置） | 部署 |
+| 4 | 王者用 30Hz 连续发包 + 边缘节点 + 网络层测量 | 显示值更低 | — |
+
+### 复现命令
+
+```powershell
+# PC 侧
+gcc -O2 -o kcp-client.exe kcp-client.c ../../3rd/kcp/ikcp.c -I../../3rd/kcp -lws2_32 -lwinmm
+.\kcp-client.exe 112.126.84.17 8088 <token> --latency 30
+
+# 手机侧（用 Unity 自带 NDK 交叉编译，绕开 Unity 调度）
+$ndk = "$env:LOCALAPPDATA\Android\Sdk\ndk\27.2.12479018\toolchains\llvm\prebuilt\windows-x86_64\bin\aarch64-linux-android24-clang.cmd"
+& $ndk -O2 -o kcp-client-arm64 kcp-client.c ../../3rd/kcp/ikcp.c -I../../3rd/kcp
+adb push kcp-client-arm64 /data/local/tmp/kcp-client
+adb shell /data/local/tmp/kcp-client 112.126.84.17 8088 <token> --latency 50 --gap 5
+
+# 网络基线
+adb shell ping -c 20 192.168.103.254   # 网关（正常 1～3ms）
+adb shell ping -c 20 112.126.84.17     # 服务器
+adb shell ping -i 0.2 -c 50 192.168.103.254
+```
+
+判定：到网关就 >10ms 或有丢包 → Wi-Fi/AP 问题；网关正常、到服务器高 → 跨网/距离问题。
+
+### 优化清单（截至记录时未实施）
+
+| 改动 | 预期收益 | 代价 |
+| --- | --- | --- |
+| 心跳 10s → 1s（或 200～500ms keepalive） | −10～20ms，尖刺减少 | 流量/耗电略增 |
+| RTT 改到网络线程计算（收包即计时再入队） | 显示值去掉 0～33ms 帧等待 | 无 |
+| Android `WifiLock`（HIGH_PERF，前台持有） | 空闲也保持射频唤醒 | 耗电 |
+| 多区域部署 / 就近接入 | −10～20ms | 运维成本 |
+
+### 测量注意事项
+
+- Windows 上 `GetTickCount64` / `select` 超时默认 **15.6ms**，会把结果量子化成 15/31/47ms；测试客户端已改用 `QueryPerformanceCounter` + `timeBeginPeriod(1)`。
+- KCP 时间基准不能用 `DateTime.UtcNow`（墙钟会被 NTP 改、Windows 精度差），客户端已改 `Stopwatch`（单调）。
+- 调小 `interval` 不能替代数据路径上的 `flush_now`（见上一节的对照数据）。
+
 ## 部署（线上 ECS）
 
 | 项 | 值 |
